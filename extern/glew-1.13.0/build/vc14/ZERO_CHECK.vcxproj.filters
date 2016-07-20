@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glew-1.13.0\build\vc14\CMakeFiles\9be8f8ab1c322ed3ef7258d8bf06e288\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{B90C7302-D881-3D8E-88DD-2B9F3422A076}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

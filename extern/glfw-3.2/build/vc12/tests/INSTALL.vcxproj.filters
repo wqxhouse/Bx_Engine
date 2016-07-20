@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\vc12\CMakeFiles\897331ff49340882c855116af67423ae\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{FC7D7699-0B28-32AB-9966-2423600CFCE2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
