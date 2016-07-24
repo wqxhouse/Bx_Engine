@@ -5,12 +5,15 @@
 
 */
 
-#include <../../../OpenGLTemplate/header/PCH.h>
+#include "../header/OpenGLPCH.h"
+#include "../header/FirstTriangle.h"
 
-const int width = 1280;
-const int height = 720;
+const int width = 800;
+const int height = 600;
 
 GLFWwindow* window;
+
+FirstTriangle mFirstTriangle;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -46,6 +49,13 @@ int initialize()
 
 	glViewport(0, 0, width, height);
 
+	glClearColor(0.0f, 0.0f, 0.6f, 1.0f);
+
+	if (mFirstTriangle.Initialize() == -1)
+	{
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -72,12 +82,14 @@ int main()
 		glfwPollEvents();
 
 		//Start Rendering
-		glClearColor(0.0f, 0.0f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		mFirstTriangle.Render();
 
 		glfwSwapBuffers(window);
 	}
 
+	mFirstTriangle.~FirstTriangle();
 	glfwTerminate();
 	return 0;
 }

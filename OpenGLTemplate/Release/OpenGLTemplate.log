@@ -1,0 +1,6 @@
+﻿  FirstTriangle.cpp
+c:\study_ssd\graphics\opengltemplate\opengltemplate\header\OpenGLPCH.h(20): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  main.cpp
+c:\study_ssd\graphics\opengltemplate\opengltemplate\src\../header/OpenGLPCH.h(20): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  OpenGLPCH.cpp
+c:\study_ssd\graphics\opengltemplate\opengltemplate\src\../header/OpenGLPCH.h(20): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory

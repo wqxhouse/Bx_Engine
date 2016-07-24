@@ -75,6 +75,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\extern\glfw-3.2\include;..\extern\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>OpenGLPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\extern\glfw-3.2\build\src\Debug\;..\\extern\glew-1.13.0\build\vc14\lib\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -115,10 +117,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\FirstTriangle.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\OpenGLPCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">OpenGLPCH.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\PCH.h" />
+    <ClInclude Include="Header\FirstTriangle.h" />
+    <ClInclude Include="header\OpenGLPCH.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\SingleTriangleFS.glsl" />
+    <None Include="shaders\SingleTriangleVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

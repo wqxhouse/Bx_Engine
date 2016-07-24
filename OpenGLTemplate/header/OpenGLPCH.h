@@ -9,8 +9,11 @@
 
 //General C++ Library
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
+#include <ctime>
 
 //Include GLEW Library
 #define GLEW_STATIC
