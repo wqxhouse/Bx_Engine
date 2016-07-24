@@ -45,8 +45,8 @@ Temporary Items
 
 # Visual Studio Solution Files
 *.sdf
-/iphc/*
-/.vs/*
-/Debug/*
-/Release/*
-/extern/*
+iphc/*
+.vs/*
+Debug/*
+Release/*
+extern/*
