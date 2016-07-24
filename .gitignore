@@ -42,3 +42,11 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Visual Studio Solution Files
+*.sdf
+/iphc/*
+/.vs/*
+/Debug/*
+/Release/*
+/extern/*
