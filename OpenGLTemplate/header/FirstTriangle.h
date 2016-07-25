@@ -24,7 +24,7 @@ private:
 	GLchar compileLog[512];
 
 	//TODO: Build the compiler 
-	void getStringFromFile(const char* path, string* resStr);
+	void getStringFromFile(const char* path, char** resStr);
 
 	//Test
 	int compileShaders();

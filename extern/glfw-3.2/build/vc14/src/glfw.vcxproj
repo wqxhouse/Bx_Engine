@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>glfw</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -56,25 +57,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-    <PropertyGroup>
-      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\Debug\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">glfw.dir\Debug\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">glfw3</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\Release\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">glfw.dir\Release\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">glfw3</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\MinSizeRel\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">glfw.dir\MinSizeRel\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">glfw3</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\RelWithDebInfo\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">glfw.dir\RelWithDebInfo\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">glfw3</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
-    </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Resources\bin\lib\glfw3\$(Configuration)</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">glfw.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">glfw3_d</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Resources\bin\lib\glfw3\$(Configuration)</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">glfw.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">glfw3</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">glfw.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">glfw3</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">glfw.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">glfw3</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\include;C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src;C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -122,7 +123,8 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -154,7 +156,8 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -269,20 +272,20 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_joystick.h" />
     <ClInclude Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\wgl_context.h" />
     <ClInclude Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\egl_context.h" />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\context.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\init.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\input.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\monitor.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\vulkan.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\window.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_init.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_joystick.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_monitor.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_time.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_tls.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_window.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\wgl_context.c"  />
-    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\egl_context.c"  />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\context.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\init.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\input.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\monitor.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\vulkan.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\window.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_init.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_joystick.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_monitor.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_time.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_tls.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\win32_window.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\wgl_context.c" />
+    <ClCompile Include="C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\src\egl_context.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:/Study_SSD/Graphics/OpenGLTemplate/extern/glfw-3.2/build/ZERO_CHECK.vcxproj">

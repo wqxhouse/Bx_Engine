@@ -1,4 +1,5 @@
-﻿  Building Custom Rule C:/Study_SSD/Graphics/OpenGLTemplate/extern/glfw-3.2/src/CMakeLists.txt
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  Building Custom Rule C:/Study_SSD/Graphics/OpenGLTemplate/extern/glfw-3.2/src/CMakeLists.txt
   CMake does not need to re-run because C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\CMakeFiles\generate.stamp is up-to-date.
   context.c
   init.c
@@ -15,4 +16,4 @@
   wgl_context.c
   egl_context.c
   Generating Code...
-  glfw.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\extern\glfw-3.2\build\src\Debug\glfw3.lib
+  glfw.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\Resources\bin\lib\glfw3\Debug\glfw3_d.lib

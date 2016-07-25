@@ -1,0 +1,4 @@
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  ShaderCompiler.cpp
+c:\study_ssd\graphics\opengltemplate\opengltools\shadercompiler.cpp(166): warning C4715: 'ShaderCompiler::compileShader': not all control paths return a value
+  OpenGLTools.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\Resources\bin\lib\OpenGLTools\Debug\OpenGLTools_d.lib

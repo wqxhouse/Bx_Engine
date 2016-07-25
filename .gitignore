@@ -45,8 +45,16 @@ Temporary Items
 
 # Visual Studio Solution Files
 *.sdf
+*.pdb
+*.opendb
 iphc/*
 .vs/*
-Debug/*
-Release/*
+bin/*
 extern/*
+
+#Model files
+*.obj
+*.fbx
+
+#Texture files
+*.dds

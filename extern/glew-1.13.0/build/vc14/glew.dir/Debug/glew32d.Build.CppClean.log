@@ -3,9 +3,11 @@ c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\glew.dir\debu
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\cmakefiles\generate.stamp
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\lib\debug\glew32d.lib
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\lib\debug\glew32d.exp
-c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\bin\debug\glew32d.ilk
-c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\bin\debug\glew32d.dll
+c:\study_ssd\graphics\opengltemplate\resources\build\dll\glew-1.13.0\vc14\debug\glew32d.ilk
+c:\study_ssd\graphics\opengltemplate\resources\build\dll\glew-1.13.0\vc14\debug\glew32d.dll
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\bin\debug\glew32d.pdb
+c:\study_ssd\graphics\opengltemplate\resources\bin\dll\glew-1.13.0\vc14\debug\glew32d.dll
+c:\study_ssd\graphics\opengltemplate\resources\bin\dll\glew-1.13.0\vc14\debug\glew32d.ilk
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\glew.dir\debug\glew.tlog\cl.command.1.tlog
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\glew.dir\debug\glew.tlog\cl.read.1.tlog
 c:\study_ssd\graphics\opengltemplate\extern\glew-1.13.0\build\vc14\glew.dir\debug\glew.tlog\cl.write.1.tlog

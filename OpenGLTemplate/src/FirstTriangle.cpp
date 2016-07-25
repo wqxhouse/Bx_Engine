@@ -54,7 +54,7 @@ FirstTriangle::~FirstTriangle()
 	glDeleteProgram(shaderProgram);
 }
 
-void FirstTriangle::getStringFromFile(const char * path, string* resStr)
+void FirstTriangle::getStringFromFile(const char * path, char** resStr)
 {
 	string shaderStr;
 
@@ -69,16 +69,18 @@ void FirstTriangle::getStringFromFile(const char * path, string* resStr)
 		shaderFile.close();
 	}
 
-	*resStr = shaderStr + "\0";
+	char* shaderCStr = (char*)shaderStr.c_str();
+	*resStr = (char*)malloc(strlen(shaderCStr) + 1);
+	memcpy(*resStr, shaderCStr, strlen(shaderCStr) + 1);
+	//*resStr = (char*)shaderStr.c_str();// +"\0";
 	//*resStr = shaderStr.c_str();
 }
 
 int FirstTriangle::compileShaders()
 {
-	const char* vertexPath = "C:\\Study_SSD\\Graphics\\OpenGLTemplate\\OpenGLTemplate\\shaders\\SingleTriangleVS.glsl";
-	string vsStr;
-	getStringFromFile(vertexPath, &vsStr);
-	const GLchar* vertexShaderSource = vsStr.c_str();
+	const char* vertexPath = "../Resources/shaders/SingleTriangleVS.glsl";
+	GLchar* vertexShaderSource = nullptr;
+	getStringFromFile(vertexPath, &vertexShaderSource);
 
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -96,10 +98,9 @@ int FirstTriangle::compileShaders()
 		return -1;
 	}
 
-	const char* fragPath = "C:\\Study_SSD\\Graphics\\OpenGLTemplate\\OpenGLTemplate\\shaders\\SingleTriangleFS.glsl";
-	string fsStr;
-	getStringFromFile(fragPath, &fsStr);
-	const GLchar* fragmentShaderSource = fsStr.c_str();
+	const char* fragPath = "../Resources/shaders/SingleTriangleFS.glsl";
+	GLchar* fragmentShaderSource = nullptr;
+	getStringFromFile(fragPath, &fragmentShaderSource);
 
 	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
