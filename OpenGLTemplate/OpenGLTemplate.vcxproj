@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Resources\bin\lib\glfw3\include;..\Resources\bin\dll\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Resources\bin\lib\glfw3\include;..\Resources\bin\dll\glew-1.13.0\include;..\Resources\bin\lib\OpenGLTools\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>OpenGLPCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -133,10 +133,6 @@
   <ItemGroup>
     <ClInclude Include="Header\FirstTriangle.h" />
     <ClInclude Include="header\OpenGLPCH.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\SingleTriangleFS.glsl" />
-    <None Include="shaders\SingleTriangleVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

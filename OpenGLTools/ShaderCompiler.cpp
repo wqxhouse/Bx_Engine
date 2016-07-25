@@ -10,7 +10,6 @@ ShaderCompiler::ShaderCompiler(const char * shaderPath)
 	memcpy(this->shaderPath, shaderPath, strlen(shaderPath) + 1);
 }
 
-
 const char* ShaderCompiler::combileShaderPathAndFile(const char * path, const char * file)
 {
 	char* filePath = (char*)malloc(strlen(path) + strlen(file) + 1);
@@ -24,6 +23,7 @@ void ShaderCompiler::parseShaderFile(const char * path, const char * file, unsig
 {
 	const char* filePath = combileShaderPathAndFile(path, file);
 	parseShaderFile(filePath, sourceSize, shaderSource);
+	free((char*)filePath);
 }
 
 
@@ -163,4 +163,10 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragShader);
+}
+
+
+ShaderCompiler::~ShaderCompiler()
+{
+
 }

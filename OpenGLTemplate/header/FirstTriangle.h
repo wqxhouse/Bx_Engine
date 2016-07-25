@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../header/OpenGLPCH.h"
+#include <ShaderCompiler.h>
 
 class FirstTriangle
 {
@@ -22,6 +23,8 @@ private:
 
 	GLint success;
 	GLchar compileLog[512];
+
+	ShaderCompiler shaderCompiler;
 
 	//TODO: Build the compiler 
 	void getStringFromFile(const char* path, char** resStr);

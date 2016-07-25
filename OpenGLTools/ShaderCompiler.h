@@ -8,6 +8,8 @@ public:
 	ShaderCompiler();
 	ShaderCompiler(const char* shaderPath);
 
+	~ShaderCompiler();
+
 	void setDefaultShaderPath(const char* path);
 	char* getDefaultPath();
 

@@ -1,6 +1,15 @@
 #pragma once
 
-#include "../OpenGLTemplate/header/OpenGLPCH.h"
+#define IN
+#define OUT
+
+//Include GLEW Library
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+//Include GLFW Library
+#include <GLFW/glfw3.h>
+
 
 class ShaderCompiler
 {
