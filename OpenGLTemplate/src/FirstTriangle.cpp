@@ -2,14 +2,10 @@
 
 FirstTriangle::FirstTriangle()
 	:vertices{ 
-	// First triangle
 		 0.5f,  0.5f, 0.0f,  // Top Right
 		 0.5f, -0.5f, 0.0f,  // Bottom Right
-		-0.5f,  0.5f, 0.0f,  // Top Left 
-	// Second triangle
-		0.5f, -0.5f, 0.0f,  // Bottom Right
 		-0.5f, -0.5f, 0.0f,  // Bottom Left
-		-0.5f,  0.5f, 0.0f   // Top Left
+		-0.5f,  0.5f, 0.0f   // Top Left 
 	},
 	indices{ 0, 1, 3, 1, 2, 3 },
 	m_shaderCompiler()
@@ -67,9 +63,11 @@ void FirstTriangle::Draw()
 {
 	glUseProgram(shaderProgram);
 	glBindVertexArray(vertexArrayObject);
-	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
 

@@ -20,7 +20,7 @@ private:
 	GLuint vertexShader;
 	GLuint fragShader;
 
-	GLfloat vertices[18];
+	GLfloat vertices[12];
 	GLuint indices[6];
 
 	GLint success;
