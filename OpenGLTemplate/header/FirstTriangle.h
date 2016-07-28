@@ -24,11 +24,5 @@ private:
 	GLint success;
 	GLchar compileLog[512];
 
-	ShaderCompiler shaderCompiler;
-
-	//TODO: Build the compiler 
-	void getStringFromFile(const char* path, char** resStr);
-
-	//Test
-	int compileShaders();
+	ShaderCompiler m_shaderCompiler;
 };

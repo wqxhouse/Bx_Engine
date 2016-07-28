@@ -26,5 +26,3 @@
 #include <GLFW/glfw3.h>
 
 using namespace std;
-
-#define DEFAULT_SHADER_PATH "../Resources/shaders/"

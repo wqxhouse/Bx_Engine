@@ -7,71 +7,90 @@ ShaderCompiler::ShaderCompiler()
 
 ShaderCompiler::ShaderCompiler(const char * shaderPath)
 {
-	memcpy(this->shaderPath, shaderPath, strlen(shaderPath) + 1);
+	memcpy((char*)(this->shaderPath), shaderPath, strlen(shaderPath) + 1);
 }
 
-const char* ShaderCompiler::combileShaderPathAndFile(const char * path, const char * file)
+void ShaderCompiler::combileShaderPathAndFile(const char * path, const char * file, OUT const char* filePath)
 {
-	char* filePath = (char*)malloc(strlen(path) + strlen(file) + 1);
-	strcpy_s(filePath, strlen(path), shaderPath);
-	strcat_s(filePath, strlen(file) + 1, file);
-	return (const char*)filePath;
+	strcpy((char*)filePath, path);
+	strcat((char*)filePath, file);
+	strcat((char*)filePath, "\0");
 }
 
 
 void ShaderCompiler::parseShaderFile(const char * path, const char * file, unsigned int sourceSize, OUT char * shaderSource)
 {
-	const char* filePath = combileShaderPathAndFile(path, file);
+	const char* filePath = nullptr;
+	memcpy((char*)(this->shaderPath), path, strlen(path));
 	parseShaderFile(filePath, sourceSize, shaderSource);
-	free((char*)filePath);
 }
 
 
 void ShaderCompiler::parseShaderFile(const char * file, unsigned int sourceSize, OUT char * shaderSource)
 {
-	const char* filePath = combileShaderPathAndFile(shaderPath, file);
+	const char* filePath = (const char*)malloc(256 * sizeof(char));
+	combileShaderPathAndFile(shaderPath, file, filePath);
 	FILE* filePtr = nullptr;
 	fopen_s(&filePtr, filePath, "r");
 	char fileCharacter;
 	unsigned int size = 0;
 
-	while ((fileCharacter = getc(filePtr)) != EOF)
+	if (filePtr != NULL)
 	{
-		size += sizeof(fileCharacter);
-
-		if (size < sourceSize)
+		memset(shaderSource, 0, sourceSize);
+		while ((fileCharacter = getc(filePtr)) != EOF)
 		{
-			strcat_s(shaderSource, sizeof(char), &fileCharacter);
-		}
-		else
-		{
-			printf("Exceed the shader source size, reallocate memory position.");
-			sourceSize *= 2;
-			char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
-
-			if (newShaderSource != nullptr)
+			if (size < sourceSize)
 			{
-				free(shaderSource);
-				shaderSource = newShaderSource;
+				if (size == 0)
+				{
+					strncpy(shaderSource, &fileCharacter, 1);
+				}
+				else
+				{
+					strncat(shaderSource, &fileCharacter, 1);
+				}
 			}
 			else
 			{
-				free(shaderSource);
-				printf("Error when reallocate for shader source.\n");
-				exit(1);
+				printf("Exceed the shader source size, reallocate memory position.");
+				sourceSize *= 2;
+				char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
+
+				if (newShaderSource != nullptr)
+				{
+					free(shaderSource);
+					shaderSource = newShaderSource;
+				}
+				else
+				{
+					free(shaderSource);
+					printf("Error when reallocate for shader source.\n");
+					exit(1);
+				}
 			}
+
+			size += sizeof(fileCharacter);
 		}
+		char endChar = '\0';
+		strncat(shaderSource, &endChar, 1);
 	}
-	strcat_s(shaderSource, sizeof(char), '\0');
+	else
+	{
+		printf("Can't open the shader file\n");
+	}
+
+	//Release file path array
+	SafeRelease((void*)filePath, MALLOC);
 }
 
 
 void ShaderCompiler::setDefaultShaderPath(const char* path)
 {
-	memcpy(this->shaderPath, path, strlen(path) + 1);
+	memcpy((char*)(this->shaderPath), path, strlen(path) + 1);
 }
 
-char* ShaderCompiler::getDefaultPath()
+const char* ShaderCompiler::getDefaultPath()
 {
 	return shaderPath;
 }
@@ -81,8 +100,10 @@ int ShaderCompiler::compileShader(const char * vertexShaderPath, const char * ve
 	const char * fragmentShaderPath, const char * fragmentShaderFile, OUT GLuint* shaderProgram,
 	unsigned int vertexShaderSourceSize, unsigned int fragmentShaderSourceSize)
 {
-	const char* vertexShaderFilePath = combileShaderPathAndFile(vertexShaderPath, vertexShaderFile);
-	const char* fragmentShaderFilePath = combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile);
+	const char* vertexShaderFilePath = (const char*)malloc(256 * sizeof(char));
+	combileShaderPathAndFile(vertexShaderPath, vertexShaderFile, vertexShaderFilePath);
+	const char* fragmentShaderFilePath = (const char*)malloc(256 * sizeof(char));
+	combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile, fragmentShaderFilePath);
 	
 	int hs = compileShader(vertexShaderFilePath, fragmentShaderFilePath, shaderProgram, 
 		vertexShaderSourceSize, fragmentShaderSourceSize);
@@ -117,7 +138,7 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 		return -1;
 	}
 
-	//Comile fragment(pixal) shader
+	//Compile fragment(pixal) shader
 	char* fragmentShaderSource = (char*)malloc(vertexShaderSourceSize * sizeof(char));
 	parseShaderFile(fragmentShaderFile, fragmentShaderSourceSize, fragmentShaderSource);
 
@@ -163,6 +184,11 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragShader);
+
+	SafeRelease(vertexShaderSource, MALLOC);
+	SafeRelease(fragmentShaderSource, MALLOC);
+
+	return 0;
 }
 
 

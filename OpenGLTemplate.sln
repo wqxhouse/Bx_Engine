@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLTemplate", "OpenGLTemplate\OpenGLTemplate.vcxproj", "{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A3F15A0A-40E5-3A64-A8D1-0E84677D761B} = {A3F15A0A-40E5-3A64-A8D1-0E84677D761B}
+		{2D3F88DC-584A-361B-BB8C-9FAC6BBD178A} = {2D3F88DC-584A-361B-BB8C-9FAC6BBD178A}
+		{855C7BF4-681D-4EA9-A240-FA9483CED820} = {855C7BF4-681D-4EA9-A240-FA9483CED820}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw", "extern\glfw-3.2\build\vc14\src\glfw.vcxproj", "{A3F15A0A-40E5-3A64-A8D1-0E84677D761B}"
 EndProject
