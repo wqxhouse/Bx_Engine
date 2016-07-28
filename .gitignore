@@ -50,7 +50,6 @@ Temporary Items
 iphc/*
 .vs/*
 bin/*
-extern/*
 
 #Model files
 *.obj
