@@ -8,18 +8,20 @@ class FirstTriangle
 public:
 	FirstTriangle();
 	int Initialize();
-	void Render();
+	void Draw();
 	~FirstTriangle();
 private:
-	GLuint VAO;//Vertex Array Object
-	GLuint VBO;//Vertex Buffer Object
+	GLuint vertexArrayObject;
+	GLuint vertexBufferObject;
+
+	GLuint indexBufferObject;
 
 	GLuint shaderProgram;
 	GLuint vertexShader;
 	GLuint fragShader;
 
-	//GLuint vertexbuffer;
-	GLfloat vertices[9];
+	GLfloat vertices[18];
+	GLuint indices[6];
 
 	GLint success;
 	GLchar compileLog[512];

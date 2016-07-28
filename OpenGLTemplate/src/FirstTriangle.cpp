@@ -1,22 +1,38 @@
 #include "../header/FirstTriangle.h"
 
 FirstTriangle::FirstTriangle()
-	:vertices{ -0.5f, -0.5f, 0.0f,
-				0.5f, -0.5f, 0.0f,
-				0.0f,  0.5f, 0.0f },
+	:vertices{ 
+	// First triangle
+		 0.5f,  0.5f, 0.0f,  // Top Right
+		 0.5f, -0.5f, 0.0f,  // Bottom Right
+		-0.5f,  0.5f, 0.0f,  // Top Left 
+	// Second triangle
+		0.5f, -0.5f, 0.0f,  // Bottom Right
+		-0.5f, -0.5f, 0.0f,  // Bottom Left
+		-0.5f,  0.5f, 0.0f   // Top Left
+	},
+	indices{ 0, 1, 3, 1, 2, 3 },
 	m_shaderCompiler()
 {
 }
 
 int FirstTriangle::Initialize()
 {
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	//Create vertex buffer and vertex array
+	glGenVertexArrays(1, &vertexArrayObject);
+	glBindVertexArray(vertexArrayObject);
 
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//Set vertex buffer data
+	glGenBuffers(1, &vertexBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	//Create index buffer data and bind to VAO
+	glGenBuffers(1, &indexBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	//Bind vertex buffer attributes to VAO
 	/*
 		glVertexAttribPointer:
 		1. index in vertex shader,
@@ -28,8 +44,10 @@ int FirstTriangle::Initialize()
 	*/
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
+
 
 	//Compile shaders
 	const char* vertexShaderFile = "SingleTriangleVS.glsl";
@@ -45,17 +63,20 @@ int FirstTriangle::Initialize()
 	return 0;
 }
 
-void FirstTriangle::Render()
+void FirstTriangle::Draw()
 {
 	glUseProgram(shaderProgram);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(vertexArrayObject);
+	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
 
 FirstTriangle::~FirstTriangle()
 {
-	glDeleteBuffers(1, &VAO);
-	glDeleteVertexArrays(1, &VBO);
+	glDeleteBuffers(1, &vertexArrayObject);
+	glDeleteBuffers(1, &indexBufferObject);
+	glDeleteVertexArrays(1, &vertexBufferObject);
 	glDeleteProgram(shaderProgram);
 }

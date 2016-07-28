@@ -84,7 +84,7 @@ int main()
 		//Start Rendering
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		mFirstTriangle.Render();
+		mFirstTriangle.Draw();
 
 		glfwSwapBuffers(window);
 	}

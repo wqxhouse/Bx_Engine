@@ -2,7 +2,11 @@
 
 ShaderCompiler::ShaderCompiler()
 {
+#if _DEBUG
 	this->shaderPath = "../Resources/shaders/";
+#else
+	this->shaderPath = "../../Resources/shaders/";
+#endif
 }
 
 ShaderCompiler::ShaderCompiler(const char * shaderPath)
@@ -154,7 +158,7 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 	else
 	{
 		glGetShaderInfoLog(fragShader, 512, NULL, compileLog);
-		cerr << "Fail to compile fragment shader.\n" << compileLog << endl;
+		printf("Fail to compile fragment shader.\n");
 		return -1;
 	}
 
@@ -174,7 +178,7 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 	else
 	{
 		glGetShaderInfoLog(*shaderProgram, InfoLogLength, NULL, &compileLog[0]);
-		cerr << "Fail to link shaders in the program.\n" << compileLog << endl;
+		printf("Fail to link shaders in the program.\n");
 
 		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(*shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);

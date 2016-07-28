@@ -8,9 +8,6 @@
 #include <vector>
 #include <ctime>
 
-#define IN
-#define OUT
-
 //Include GLEW Library
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -18,7 +15,10 @@
 //Include GLFW Library
 #include <GLFW/glfw3.h>
 
-using namespace std;
+#define IN
+#define OUT
+
+#define DEBUG
 
 #define DEFAULT_SHADER_PATH "../Resources/shaders/"
 
