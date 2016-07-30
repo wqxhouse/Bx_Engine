@@ -1,13 +1,13 @@
 #include "../header/FirstTriangle.h"
 
 FirstTriangle::FirstTriangle()
-	:vertices{ 
-		 0.5f,  0.5f, 0.0f,  // Top Right
-		 0.5f, -0.5f, 0.0f,  // Bottom Right
-		-0.5f, -0.5f, 0.0f,  // Bottom Left
-		-0.5f,  0.5f, 0.0f   // Top Left 
+	:vertices
+	{
+		{ {  0.5f, -0.5f,  0.0f }, { 1.0f, 0.0f, 0.0f } },
+		{ { -0.5f, -0.5f,  0.0f }, { 0.0f, 1.0f, 0.0f } },
+		{ { 0.0f,  0.5f,  0.0f }, { 0.0f, 0.0f, 1.0f } }
 	},
-	indices{ 0, 1, 3, 1, 2, 3 },
+	indices{ 0, 1, 2 },
 	m_shaderCompiler()
 {
 }
@@ -38,21 +38,27 @@ int FirstTriangle::Initialize()
 		5. space between attribute sets,
 		6. offset in every stride
 	*/
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(1);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
 
 
 	//Compile shaders
-	const char* vertexShaderFile = "SingleTriangleVS.glsl";
-	const char* fragmentShaderFile = "SingleTriangleFS.glsl";
+	const char* vertexShaderFile = "SingleTriangle.vert";
+	const char* fragmentShaderFile = "SingleTriangle.frag";
 	int hs = m_shaderCompiler.compileShader(vertexShaderFile, fragmentShaderFile, &shaderProgram);
+	/*int hs = m_shaderCompiler.compileShader("OpenGLTemplate/src/shaders", vertexShaderFile, "OpenGLTemplate/src/shaders", 
+		fragmentShaderFile, &shaderProgram);*/
 
 	if (hs != 0)
 	{
-		cerr << "Fail to compile shaders.\n" << endl;
+		printf("Fail to compile shaders.\n");
 		return -1;
 	}
 
@@ -65,7 +71,7 @@ void FirstTriangle::Draw()
 	glBindVertexArray(vertexArrayObject);
 	
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 	//glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);

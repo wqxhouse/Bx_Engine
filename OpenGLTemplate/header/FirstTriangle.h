@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../header/OpenGLPCH.h"
+#include <OpenGLToolsPCH.h>
 #include <ShaderCompiler.h>
+
+using namespace std;
 
 class FirstTriangle
 {
@@ -11,6 +13,12 @@ public:
 	void Draw();
 	~FirstTriangle();
 private:
+	struct Vertex
+	{
+		GLfloat pos[3];
+		GLfloat color[3];
+	};
+
 	GLuint vertexArrayObject;
 	GLuint vertexBufferObject;
 
@@ -20,7 +28,7 @@ private:
 	GLuint vertexShader;
 	GLuint fragShader;
 
-	GLfloat vertices[12];
+	Vertex vertices[12];
 	GLuint indices[6];
 
 	GLint success;

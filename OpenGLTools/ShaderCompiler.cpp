@@ -2,11 +2,13 @@
 
 ShaderCompiler::ShaderCompiler()
 {
+	shaderPath = (char*)malloc(512 * sizeof(char));
 #if _DEBUG
-	this->shaderPath = "../Resources/shaders/";
+	char defaultPath[] = "../Resources/shaders/\0";
 #else
-	this->shaderPath = "../../Resources/shaders/";
+	this->shaderPath = "../../Resources/shaders/\0";
 #endif
+	memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 }
 
 ShaderCompiler::ShaderCompiler(const char * shaderPath)
@@ -16,18 +18,20 @@ ShaderCompiler::ShaderCompiler(const char * shaderPath)
 
 void ShaderCompiler::combileShaderPathAndFile(const char * path, const char * file, OUT const char* filePath)
 {
+	//memset((char*)filePath, 0, strlen(filePath));
 	strcpy((char*)filePath, path);
+	strcat((char*)filePath, "/");
 	strcat((char*)filePath, file);
 	strcat((char*)filePath, "\0");
 }
 
 
-void ShaderCompiler::parseShaderFile(const char * path, const char * file, unsigned int sourceSize, OUT char * shaderSource)
-{
-	const char* filePath = nullptr;
-	memcpy((char*)(this->shaderPath), path, strlen(path));
-	parseShaderFile(filePath, sourceSize, shaderSource);
-}
+//void ShaderCompiler::parseShaderFile(const char * path, const char * file, unsigned int sourceSize, OUT char * shaderSource)
+//{
+//	const char* filePath = nullptr;
+//	memcpy((char*)(this->shaderPath), path, strlen(path));
+//	parseShaderFile(filePath, sourceSize, shaderSource);
+//}
 
 
 void ShaderCompiler::parseShaderFile(const char * file, unsigned int sourceSize, OUT char * shaderSource)
@@ -81,7 +85,7 @@ void ShaderCompiler::parseShaderFile(const char * file, unsigned int sourceSize,
 	}
 	else
 	{
-		printf("Can't open the shader file\n");
+		printf("Can't open the shader file: %s\n", file);
 	}
 
 	//Release file path array
@@ -91,7 +95,10 @@ void ShaderCompiler::parseShaderFile(const char * file, unsigned int sourceSize,
 
 void ShaderCompiler::setDefaultShaderPath(const char* path)
 {
-	memcpy((char*)(this->shaderPath), path, strlen(path) + 1);
+	memset(this->shaderPath, 0, strlen(shaderPath));
+	memcpy(this->shaderPath, path, strlen(path));
+	strcat(this->shaderPath, "\0");
+	//memcpy((char*)(this->shaderPath), path, strlen(path) + 1);
 }
 
 const char* ShaderCompiler::getDefaultPath()
@@ -100,6 +107,7 @@ const char* ShaderCompiler::getDefaultPath()
 }
 
 
+//TODO: Crash when using customized shader file path
 int ShaderCompiler::compileShader(const char * vertexShaderPath, const char * vertexShaderFile, 
 	const char * fragmentShaderPath, const char * fragmentShaderFile, OUT GLuint* shaderProgram,
 	unsigned int vertexShaderSourceSize, unsigned int fragmentShaderSourceSize)
@@ -108,6 +116,7 @@ int ShaderCompiler::compileShader(const char * vertexShaderPath, const char * ve
 	combileShaderPathAndFile(vertexShaderPath, vertexShaderFile, vertexShaderFilePath);
 	const char* fragmentShaderFilePath = (const char*)malloc(256 * sizeof(char));
 	combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile, fragmentShaderFilePath);
+	setDefaultShaderPath(vertexShaderPath);
 	
 	int hs = compileShader(vertexShaderFilePath, fragmentShaderFilePath, shaderProgram, 
 		vertexShaderSourceSize, fragmentShaderSourceSize);
@@ -158,11 +167,11 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 	else
 	{
 		glGetShaderInfoLog(fragShader, 512, NULL, compileLog);
-		printf("Fail to compile fragment shader.\n");
+		printf("Fail to compile fragment shader.\n%s\n", compileLog);
 		return -1;
 	}
 
-	*shaderProgram = glCreateProgram();
+	*shaderProgram = glCreateProgram();	
 	glAttachShader(*shaderProgram, vertexShader);
 	glAttachShader(*shaderProgram, fragShader);
 	glLinkProgram(*shaderProgram);
@@ -198,5 +207,5 @@ int ShaderCompiler::compileShader(const char * vertexShaderFile, const char * fr
 
 ShaderCompiler::~ShaderCompiler()
 {
-
+	SafeRelease((char*)shaderPath, MALLOC);
 }

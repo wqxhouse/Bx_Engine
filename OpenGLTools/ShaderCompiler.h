@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenGLTools.h"
+#include "OpenGLToolsPCH.h"
 
 class ShaderCompiler
 {
@@ -20,7 +20,7 @@ public:
 	int compileShader(const char* vertexShaderFile, const char* fragmentShaderFile, OUT GLuint* shaderProgram,
 		unsigned int vertexShaderSourceSize = 1024, unsigned int fragShaderSourceSize = 1024);
 private:
-	const char* shaderPath;
+	char* shaderPath;
 
 	//Parsing the shader file
 	void ShaderCompiler::combileShaderPathAndFile(const char * path, const char * file, OUT const char* filePath);

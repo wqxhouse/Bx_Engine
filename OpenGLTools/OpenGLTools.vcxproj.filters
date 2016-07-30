@@ -18,12 +18,15 @@
     <ClInclude Include="ShaderCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLTools.h">
+    <ClInclude Include="OpenGLToolsPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderCompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLToolsPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
