@@ -1,6 +1,6 @@
 #pragma once
 
-#include <OpenGLToolsPCH.h>
+#include <OpenGLPCH.h>
 #include <ShaderCompiler.h>
 
 using namespace std;

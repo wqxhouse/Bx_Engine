@@ -5,7 +5,7 @@
 
 */
 
-#include <OpenGLToolsPCH.h>
+#include <OpenGLPCH.h>
 #include "../header/FirstTriangle.h"
 
 const int width = 800;
@@ -90,7 +90,6 @@ int main()
 		glfwSwapBuffers(window);
 	}
 
-	mFirstTriangle.~FirstTriangle();
 	glfwTerminate();
 	return 0;
 }

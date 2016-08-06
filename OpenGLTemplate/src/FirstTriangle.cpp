@@ -48,7 +48,6 @@ int FirstTriangle::Initialize()
 
 	glBindVertexArray(0);
 
-
 	//Compile shaders
 	const char* vertexShaderFile = "SingleTriangle.vert";
 	const char* fragmentShaderFile = "SingleTriangle.frag";
@@ -61,6 +60,14 @@ int FirstTriangle::Initialize()
 		printf("Fail to compile shaders.\n");
 		return -1;
 	}
+
+	glUseProgram(shaderProgram);
+
+	GLfloat timeValue = glfwGetTime();
+	GLfloat colorValue = (sin(timeValue) / 2) + 0.5;
+	GLint glVertexColorLocation = glGetUniformLocation(shaderProgram, "uniformColor");
+	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
+
 
 	return 0;
 }
