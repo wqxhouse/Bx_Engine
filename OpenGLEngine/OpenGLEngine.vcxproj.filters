@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -13,26 +9,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Model">
-      <UniqueIdentifier>{77392cd6-7e95-4407-b4d6-080e01e82739}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Compiler">
-      <UniqueIdentifier>{54cdd8b6-7b2d-4cc2-a184-b944f4378a7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Math">
+    <Filter Include="Header Files\Math">
       <UniqueIdentifier>{18de9c0f-ea6b-4092-ba7c-4d08d21f9761}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ShaderCompiler.cpp">
-      <Filter>Source Files\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelLoaderBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGLPCH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <Filter Include="Header Files\Mesh">
+      <UniqueIdentifier>{235ac7bc-c617-4e6a-ba69-e985776775af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Mesh">
+      <UniqueIdentifier>{a19da587-092f-43b6-ab04-003b84cb8d65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Compiler">
+      <UniqueIdentifier>{f8bff034-1731-4508-8cef-bc435156843a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Mesh\Buffer">
+      <UniqueIdentifier>{ffa17c06-23ae-4eb3-ac42-0fc7caa2b65c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\OpenGLPCH.h">
@@ -41,8 +32,43 @@
     <ClInclude Include="include\ShaderCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ModelLoaderBase.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Math\Vector3.h">
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="include\Math\Vector4.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Math\Vector2.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Math\Matrix3x3.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\IndexBuffer.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\ModelLoaderBase.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\VertexBuffer.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\Buffer.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
+      <Filter>Resource Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp">
+      <Filter>Resource Files\Mesh\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\ModelLoaderBase.cpp">
+      <Filter>Resource Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OpenGLPCH.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

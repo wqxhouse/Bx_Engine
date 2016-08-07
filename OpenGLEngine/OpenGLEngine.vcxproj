@@ -86,8 +86,16 @@
     </ClCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName)_d.lib"
-copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*.*"</Command>
+copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*.*"
+copy /Y "$(ProjectDir)include\Math\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\Math\*.*"
+copy /Y "$(ProjectDir)include\Mesh\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh\*.*"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include"
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\$(Configuration)" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\$(Configuration)"
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Math" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Math"
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -114,6 +122,20 @@ copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName).lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName).lib"
 copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*.*"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include"
+mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include"
+
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)"
+mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\$(Configuration)"
+
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Math"
+mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Math"
+
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
+mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
+</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -129,14 +151,22 @@ copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ModelLoaderBase.cpp" />
-    <ClCompile Include="OpenGLPCH.cpp" />
-    <ClCompile Include="ShaderCompiler.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\ModelLoaderBase.h" />
+    <ClInclude Include="include\Math\Matrix3x3.h" />
+    <ClInclude Include="include\Math\Vector2.h" />
+    <ClInclude Include="include\Math\Vector3.h" />
+    <ClInclude Include="include\Math\Vector4.h" />
+    <ClInclude Include="include\Mesh\Buffer.h" />
+    <ClInclude Include="include\Mesh\IndexBuffer.h" />
+    <ClInclude Include="include\Mesh\ModelLoaderBase.h" />
+    <ClInclude Include="include\Mesh\VertexBuffer.h" />
     <ClInclude Include="include\OpenGLPCH.h" />
     <ClInclude Include="include\ShaderCompiler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
+    <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Mesh\ModelLoaderBase.cpp" />
+    <ClCompile Include="src\OpenGLPCH.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,6 @@
 #include "../header/FirstTriangle.h"
+#include <cmath>
+#include <cstdio>
 
 FirstTriangle::FirstTriangle()
 	:vertices
@@ -61,13 +63,7 @@ int FirstTriangle::Initialize()
 		return -1;
 	}
 
-	glUseProgram(shaderProgram);
-
-	GLfloat timeValue = glfwGetTime();
-	GLfloat colorValue = (sin(timeValue) / 2) + 0.5;
-	GLint glVertexColorLocation = glGetUniformLocation(shaderProgram, "uniformColor");
-	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
-
+	//glUseProgram(shaderProgram);
 
 	return 0;
 }
@@ -75,6 +71,12 @@ int FirstTriangle::Initialize()
 void FirstTriangle::Draw()
 {
 	glUseProgram(shaderProgram);
+
+	GLfloat timeValue = glfwGetTime();
+	GLfloat colorValue = (sin(timeValue) / 2) + 0.5;
+	GLint glVertexColorLocation = glGetUniformLocation(shaderProgram, "uniformColor");
+	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
+
 	glBindVertexArray(vertexArrayObject);
 	
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
