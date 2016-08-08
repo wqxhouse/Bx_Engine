@@ -13,16 +13,16 @@ namespace Math
 
 		float dot(const Vector4 &v) { return X * v.X + Y * v.Y + Z * v.Z + W * v.W; }
 
-		Vector4 crossProduct(const Vector4 &v)
+		void crossProduct(const Vector4 &v)
 		{
 			Vector3 v1 = ToVector3();
 			Vector3 v2 = Vector3(v.X / v.W, v.Y / v.W, v.Z / v.W);//TODO: W = 0 ?
 
-			Vector3 res = Vector3::crossProduct(v1, v2);
+			Vector3Ptr res = Vector3::crossProduct(v1, v2);
 
-			X = res.X;
-			Y = res.Y;
-			Z = res.Z;
+			X = res->X;
+			Y = res->Y;
+			Z = res->Z;
 			W = 1.0f;
 		}
 
@@ -53,9 +53,12 @@ namespace Math
 			Vector3 v3_1 = Vector3(v1.X / v1.W, v1.Y / v1.W, v1.Z / v1.W);
 			Vector3 v3_2 = Vector3(v2.X / v2.W, v2.Y / v2.W, v2.Z / v2.W);
 
-			Vector3 res = Vector3::crossProduct(v3_1, v3_2);
+			Vector3Ptr res = Vector3::crossProduct(v3_1, v3_2);
 
-			return Vector4(res.X, res.Y, res.Z, 1.0f);
+			Vector4 newVector4(res->X, res->Y, res->Z, 1.0f);
+			delete res;
+
+			return newVector4;
 		}
 
 		Vector4& operator+(const Vector4 &v)

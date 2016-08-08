@@ -88,13 +88,15 @@
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName)_d.lib"
 copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*.*"
 copy /Y "$(ProjectDir)include\Math\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\Math\*.*"
-copy /Y "$(ProjectDir)include\Mesh\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh\*.*"</Command>
+copy /Y "$(ProjectDir)include\Mesh\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh\*.*"
+copy /Y "$(ProjectDir)include\Memory\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\Memory\*.*"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include"
 if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\$(Configuration)" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\$(Configuration)"
 if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Math" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Math"
-if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"</Command>
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
+if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Memory" mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Memory"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -155,6 +157,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="include\Math\Vector2.h" />
     <ClInclude Include="include\Math\Vector3.h" />
     <ClInclude Include="include\Math\Vector4.h" />
+    <ClInclude Include="include\Memory\MemoryPool.h" />
     <ClInclude Include="include\Mesh\Buffer.h" />
     <ClInclude Include="include\Mesh\IndexBuffer.h" />
     <ClInclude Include="include\Mesh\ModelLoaderBase.h" />
@@ -164,6 +167,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
+    <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\OpenGLPCH.cpp" />

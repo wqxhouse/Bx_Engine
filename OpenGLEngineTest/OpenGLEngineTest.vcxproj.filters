@@ -16,6 +16,9 @@
     <Filter Include="Source Files\MathTest">
       <UniqueIdentifier>{f47a9d56-c88a-42dd-b6d4-c9f9386d79eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MemoryTest">
+      <UniqueIdentifier>{50957f52-1622-490d-9e00-19cd60ada07e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MatrixTest.cpp">
@@ -23,6 +26,9 @@
     </ClCompile>
     <ClCompile Include="VectorTest.cpp">
       <Filter>Source Files\MathTest</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryTest.cpp">
+      <Filter>Source Files\MemoryTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

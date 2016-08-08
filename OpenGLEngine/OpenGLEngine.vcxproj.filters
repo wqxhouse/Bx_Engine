@@ -24,6 +24,12 @@
     <Filter Include="Resource Files\Mesh\Buffer">
       <UniqueIdentifier>{ffa17c06-23ae-4eb3-ac42-0fc7caa2b65c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Memory">
+      <UniqueIdentifier>{0b698246-b82d-4a92-8d3b-61e85bc02e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Memory">
+      <UniqueIdentifier>{b5dba684-fdf0-4b24-975e-8449a4dec349}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\OpenGLPCH.h">
@@ -56,6 +62,9 @@
     <ClInclude Include="include\Mesh\Buffer.h">
       <Filter>Header Files\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="include\Memory\MemoryPool.h">
+      <Filter>Header Files\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -69,6 +78,9 @@
     </ClCompile>
     <ClCompile Include="src\OpenGLPCH.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryPool.cpp">
+      <Filter>Resource Files\Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

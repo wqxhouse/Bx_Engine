@@ -9,6 +9,10 @@
 
 namespace Math
 {
+	class Vector3;
+
+	typedef Vector3* Vector3Ptr;
+
 	class Vector3
 	{
 	public:
@@ -41,34 +45,34 @@ namespace Math
 		}
 
 		//TODO: Solve the thread safety problem
-		static Vector3& crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
+		static Vector3Ptr crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
 		{
-			Vector3 resultVector;
-			resultVector.X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
-			resultVector.Y = leftVec3.Z * rightVec3.X - leftVec3.X * rightVec3.Z;
-			resultVector.Z = leftVec3.X * rightVec3.Y - leftVec3.Y * rightVec3.X;
+			Vector3Ptr resultVector = new Vector3();
+			resultVector->X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
+			resultVector->Y = leftVec3.Z * rightVec3.X - leftVec3.X * rightVec3.Z;
+			resultVector->Z = leftVec3.X * rightVec3.Y - leftVec3.Y * rightVec3.X;
 
 			return resultVector;
 		}
 		
-		Vector3& operator+(const Vector3 &v)
+		Vector3Ptr operator+(const Vector3 &v)
 		{
-			return Vector3(X + v.X, Y + v.Y, Z + v.Z);
+			return new Vector3(X + v.X, Y + v.Y, Z + v.Z);
 		}
 
-		Vector3& operator-(const Vector3 &v)
+		Vector3Ptr operator-(const Vector3 &v)
 		{
-			return Vector3(X - v.X, Y - v.Y, Z - v.Z);
+			return new Vector3(X - v.X, Y - v.Y, Z - v.Z);
 		}
 
-		Vector3& operator*(const Vector3 &v)
+		Vector3Ptr operator*(const Vector3 &v)
 		{
-			return Vector3(X * v.X, Y * v.Y, Z * v.Z);
+			return new Vector3(X * v.X, Y * v.Y, Z * v.Z);
 		}
 
-		Vector3& operator/(const Vector3 &v)
+		Vector3Ptr operator/(const Vector3 &v)
 		{
-			return Vector3(X / v.X, Y / v.Y, Z / v.Z);
+			return new Vector3(X / v.X, Y / v.Y, Z / v.Z);
 		}
 
 		void operator+=(float f) { X += f; Y += f; Z += f; }
@@ -98,6 +102,11 @@ namespace Math
 
 	inline std::ostream& operator<<(std::ostream& out, const Vector3 &v)
 	{
-		return out << v.X << " " << v.Y << " " << v.Z << std::endl;
+		return out << v.X << " " << v.Y << " " << v.Z;
+	}
+
+	inline std::ostream& operator<<(std::ostream& out, Vector3Ptr vPtr)
+	{
+		return out << vPtr->X << " " << vPtr->Y << " " << vPtr->Z;
 	}
 }
