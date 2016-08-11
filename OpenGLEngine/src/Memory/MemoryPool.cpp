@@ -4,6 +4,10 @@
 
 #include "../../include/Memory/MemoryPool.h"
 
+#include "../../include/Math/Vector3.h"
+
+std::unordered_set<void*> MemoryPool::dynamicMemorySet;
+
 MemoryPool::MemoryPool()
 {
 }
@@ -18,7 +22,7 @@ void MemoryPool::releaseMemory(void * ptr)
 	auto it = dynamicMemorySet.find(ptr);
 	if(it != dynamicMemorySet.end())
 	{
-		delete *it;
+		free(*it);
 		dynamicMemorySet.erase(ptr);
 	}
 }
@@ -27,7 +31,14 @@ void * MemoryPool::find(void * ptr)
 {
 	auto it = dynamicMemorySet.find(ptr);
 	
-	return *it;
+	if (it != dynamicMemorySet.end())
+	{
+		return *it;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 
@@ -40,7 +51,7 @@ void MemoryPool::release()
 		{
 			try
 			{
-				delete *it;
+				free(*it);
 			}
 			catch(std::exception e)
 			{
@@ -56,3 +67,16 @@ MemoryPool::~MemoryPool()
 {
 	release();
 }
+
+//void* operator new(size_t memorySize)
+//{
+//	void* ptr = malloc(memorySize);
+//	//MemoryPool::registerMemory(ptr);
+//
+//	return ptr;
+//}
+//
+//void operator delete(void* ptr)
+//{
+//	//MemoryPool::releaseMemory(ptr);
+//}

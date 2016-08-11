@@ -13,20 +13,18 @@ int main()
 	Vector3Ptr vec3Ptr1 = new Vector3(1, 2, 3);
 	Vector3Ptr vec3Ptr2 = new Vector3(4, 5, 6);
 
-	m_vec3_memory.registerMemory(vec3Ptr1);
-	m_vec3_memory.registerMemory(vec3Ptr2);
+	//MemoryPool::registerMemory(vec3Ptr1);
+	//MemoryPool::registerMemory(vec3Ptr2);
 
 	void* it = m_vec3_memory.find(vec3Ptr1);
-	Vector3Ptr vecPtr = (Vector3Ptr)(it);
+	Vector3Ptr vecPtr = static_cast<Vector3Ptr>(it);
 	cout << vecPtr << endl;
-	m_vec3_memory.releaseMemory(vecPtr);
+	//m_vec3_memory.releaseMemory(vecPtr);
 
 	it = m_vec3_memory.find(vec3Ptr2);
-	Vector3Ptr vecPtr2 = (Vector3Ptr)(it);
+	Vector3Ptr vecPtr2 = static_cast<Vector3Ptr>(it);
 	cout << vecPtr2 << endl;
 
-	m_vec3_memory.release();
-	
 	system("pause");
 	return 0;
 }

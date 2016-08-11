@@ -2,23 +2,28 @@
 
 #include <cstdio>
 #include <cstring>
-
 #include <iostream>
 
+#include "../Memory/MemoryPool.h"
 #include "Vector2.h"
+
 
 namespace Math
 {
 	class Vector3;
 
+	//TODO: Changing Vector3Ptr to class
 	typedef Vector3* Vector3Ptr;
 
 	class Vector3
 	{
 	public:
+		//TODO: Register the memory in the pool
 		Vector3(float x = 0.0f, float y = 0.0f, float z = 0.0f)
 			: X(x), Y(y), Z(z)
-		{}
+		{
+			MemoryPool::registerMemory(this);
+		}
 
 		float dot(const Vector3 &v)
 		{
@@ -44,7 +49,7 @@ namespace Math
 			return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
 		}
 
-		//TODO: Solve the thread safety problem
+
 		static Vector3Ptr crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
 		{
 			Vector3Ptr resultVector = new Vector3();

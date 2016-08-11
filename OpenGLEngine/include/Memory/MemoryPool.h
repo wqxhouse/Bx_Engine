@@ -6,13 +6,16 @@ class MemoryPool
 {
 public:
 	MemoryPool();
-	void registerMemory(void* ptr);
-	void releaseMemory(void* ptr);
+	static void registerMemory(void* ptr);
+	static void releaseMemory(void* ptr);
 
 	void* find(void* ptr);
-	void release();
+	static void release();
 	~MemoryPool();
+
+	//void* operator new(size_t memorySize);
+	//void operator delete(void* ptr);
 private:
-	std::unordered_set<void*> dynamicMemorySet;
+	static std::unordered_set<void*> dynamicMemorySet;
 };
 
