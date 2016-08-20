@@ -3,8 +3,10 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <typeinfo>
 
 #include "../Memory/MemoryPool.h"
+
 #include "Vector2.h"
 
 
@@ -22,7 +24,7 @@ namespace Math
 		Vector3(float x = 0.0f, float y = 0.0f, float z = 0.0f)
 			: X(x), Y(y), Z(z)
 		{
-			MemoryPool::registerMemory(this);
+			MemoryPool::registerMemory<Vector3Ptr>(this);
 		}
 
 		float dot(const Vector3 &v)

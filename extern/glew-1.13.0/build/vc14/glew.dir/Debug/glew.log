@@ -1,5 +1,1 @@
-﻿  Building Custom Rule C:/Study_SSD/Graphics/OpenGLTemplate/extern/glew-1.13.0/build/cmake/CMakeLists.txt
-  CMake does not need to re-run because C:\Study_SSD\Graphics\OpenGLTemplate\extern\glew-1.13.0\build\vc14\CMakeFiles\generate.stamp is up-to-date.
-  glew.c
-     Creating library C:/Study_SSD/Graphics/OpenGLTemplate/extern/glew-1.13.0/build/vc14/lib/Debug/glew32d.lib and object C:/Study_SSD/Graphics/OpenGLTemplate/extern/glew-1.13.0/build/vc14/lib/Debug/glew32d.exp
-  glew.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\bin\dll\glew-1.13.0\vc14\Debug\glew32d.dll
+﻿

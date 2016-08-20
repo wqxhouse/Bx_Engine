@@ -6,66 +6,127 @@
 
 #include "../../include/Math/Vector3.h"
 
-std::unordered_set<void*> MemoryPool::dynamicMemorySet;
+//std::unordered_set<void*> MemoryPool::dynamicMemorySet;
+
+std::unordered_map<const char*, std::unordered_set<void*>*> MemoryPool::dynamicMemoryPool;
 
 MemoryPool::MemoryPool()
 {
 }
 
-void MemoryPool::registerMemory(void* ptr)
-{
-	dynamicMemorySet.insert(ptr);
-}
+//template <typename T>
+//void MemoryPool::registerMemory(void* ptr)
+//{
+//	//dynamicMemorySet.insert(ptr);
+//
+//	const char* typeStr = typeid(T).name();
+//	std::unordered_set<void*>* typeTMemoryPool = dynamicMemoryPool[typeStr];
+//
+//	if(dynamicMemoryPool.find(typeStr) == dynamicMemoryPool.end())
+//	{
+//		typeTMemoryPool = new std::unordered_set<void*>();
+//		typeTMemoryPool->insert(ptr);
+//		dynamicMemoryPool[typeStr] = typeTMemoryPool;
+//	}
+//	else
+//	{
+//		typeTMemoryPool->insert(ptr);
+//	}
+//}
 
-void MemoryPool::releaseMemory(void * ptr)
-{
-	auto it = dynamicMemorySet.find(ptr);
-	if(it != dynamicMemorySet.end())
-	{
-		free(*it);
-		dynamicMemorySet.erase(ptr);
-	}
-}
+//template <typename T>
+//T MemoryPool::find(void * ptr)
+//{
+//	auto it = dynamicMemorySet.find(ptr);
+//	
+//	if (it != dynamicMemorySet.end())
+//	{
+//		return static_cast<T>(*it);
+//	}
+//	else
+//	{
+//		return nullptr;
+//	}
+//}
 
-void * MemoryPool::find(void * ptr)
-{
-	auto it = dynamicMemorySet.find(ptr);
-	
-	if (it != dynamicMemorySet.end())
-	{
-		return *it;
-	}
-	else
-	{
-		return nullptr;
-	}
-}
+//template <typename T>
+//void MemoryPool::release(void * ptr)
+//{
+//	/*auto it = dynamicMemorySet.find(ptr);
+//	if(it != dynamicMemorySet.end())
+//	{
+//	free(*it);
+//	dynamicMemorySet.erase(ptr);
+//	}*/
+//
+//	const char* typeStr = typeid(T).name();
+//	auto memoryPoolIterator = dynamicMemoryPool.find(typeStr);
+//
+//	if(memoryPoolIterator != dynamicMemoryPool.end())
+//	{
+//		std::unordered_set<void*>* typeTMemoryPool = memoryPoolIterator->second;
+//		auto typeTMemoryPoolIterator = typeTMemoryPool->find(ptr);
+//		if (typeTMemoryPoolIterator != dynamicMemorySet.end())
+//		{
+//			try
+//			{
+//				free(*typeTMemoryPoolIterator);
+//				typeTMemoryPool->erase(ptr);
+//			}
+//			catch(std::exception e)
+//			{
+//				printf("Can't release the memory for: %s\n", e.what());
+//			}
+//		}
+//	}
+//}
 
-
-
-void MemoryPool::release()
-{
-	for(auto it = dynamicMemorySet.begin(); it != dynamicMemorySet.end(); it++)
-	{
-		if(*it != nullptr)
-		{
-			try
-			{
-				free(*it);
-			}
-			catch(std::exception e)
-			{
-				printf("Can't release the memory for: %s\n", e.what());
-			}
-		}
-	}
-
-	dynamicMemorySet.clear();
-}
+//void MemoryPool::releaseAll()
+//{
+//	/*for(auto it = dynamicMemorySet.begin(); it != dynamicMemorySet.end(); ++it)
+//	{
+//		if(*it != nullptr)
+//		{
+//			try
+//			{
+//				free(*it);
+//			}
+//			catch(std::exception e)
+//			{
+//				printf("Can't release the memory for: %s\n", e.what());
+//			}
+//		}
+//	}
+//
+//	dynamicMemorySet.clear();*/
+//	for(auto memoryPoolIterator = dynamicMemoryPool.begin(); 
+//		memoryPoolIterator != dynamicMemoryPool.end(); ++memoryPoolIterator)
+//	{
+//		std::unordered_set<void*>* typeTMemoryPool = memoryPoolIterator->second;
+//		for(auto typeSubPoolIterator = typeTMemoryPool->begin(); 
+//			typeSubPoolIterator != typeTMemoryPool->end(); ++typeSubPoolIterator)
+//		{
+//			if (*typeSubPoolIterator != nullptr)
+//			{
+//				try
+//				{
+//					free(*typeSubPoolIterator);
+//				}
+//				catch (std::exception e)
+//				{
+//					printf("Can't release the memory for: %s\n", e.what());
+//				}
+//			}
+//		}
+//		typeTMemoryPool->clear();
+//		delete typeTMemoryPool;
+//	}
+//	dynamicMemoryPool.clear();
+//}
 
 MemoryPool::~MemoryPool()
 {
-	release();
+	releaseAll();
 }
 
 //void* operator new(size_t memorySize)
