@@ -25,11 +25,11 @@
     <Filter Include="src\Camera">
       <UniqueIdentifier>{d562ed20-a8b2-4ad4-929c-cfda51fe7061}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Mesh\Model">
+      <UniqueIdentifier>{1951c36e-a407-4290-89c8-b6b7db35305e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Mesh\ModelLoaderBase.h">
-      <Filter>src\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="include\Memory\MemoryPool.h">
       <Filter>src\Memory</Filter>
     </ClInclude>
@@ -41,9 +41,6 @@
     </ClInclude>
     <ClInclude Include="include\Mesh\VertexBuffer.h">
       <Filter>src\Mesh\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\OpenGLPCH.h">
-      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Compiler\ShaderCompiler.h">
       <Filter>src\Compiler</Filter>
@@ -66,6 +63,18 @@
     <ClInclude Include="src\Core\PointerTypes.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Mesh\Model\ModelLoaderBase.h">
+      <Filter>src\Mesh\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\Model\ObjModelLoader.h">
+      <Filter>src\Mesh\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\OpenGLPCH.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Helper.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp">
@@ -77,11 +86,12 @@
     <ClCompile Include="src\Memory\MemoryPool.cpp">
       <Filter>src\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh\ModelLoaderBase.cpp">
-      <Filter>src\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\OpenGLPCH.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Mesh\Model\ModelLoaderBase.cpp">
+      <Filter>src\Mesh\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp" />
   </ItemGroup>
 </Project>

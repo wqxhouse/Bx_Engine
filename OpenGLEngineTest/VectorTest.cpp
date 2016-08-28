@@ -61,13 +61,13 @@ void Vector4Test()
 	cout << vec3 << endl;
 }
 
-int main()
-{
-	cout << "Vector3 Test" << endl;
-	Vector3Test();
-
-	cout << "Vector4 Test" << endl;
-	Vector4Test();
-
-	system("pause");
-}
+//int main()
+//{
+//	cout << "Vector3 Test" << endl;
+//	Vector3Test();
+//
+//	cout << "Vector4 Test" << endl;
+//	Vector4Test();
+//
+//	system("pause");
+//}

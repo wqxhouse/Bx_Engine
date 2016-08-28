@@ -150,23 +150,26 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="include\Memory\MemoryPool.h" />
     <ClInclude Include="include\Mesh\Buffer.h" />
     <ClInclude Include="include\Mesh\IndexBuffer.h" />
-    <ClInclude Include="include\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="include\Mesh\VertexBuffer.h" />
-    <ClInclude Include="include\OpenGLPCH.h" />
     <ClInclude Include="src\Compiler\ShaderCompiler.h" />
+    <ClInclude Include="src\Core\Helper.h" />
+    <ClInclude Include="src\Core\OpenGLPCH.h" />
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
+    <ClInclude Include="src\Mesh\Model\ModelLoaderBase.h" />
+    <ClInclude Include="src\Mesh\Model\ObjModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp" />
-    <ClCompile Include="src\Mesh\ModelLoaderBase.cpp" />
+    <ClCompile Include="src\Mesh\Model\ModelLoaderBase.cpp" />
+    <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

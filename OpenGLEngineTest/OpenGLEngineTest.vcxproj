@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="MatrixTest.cpp" />
     <ClCompile Include="MemoryTest.cpp" />
+    <ClCompile Include="MeshTest\ObjLoaderTest.cpp" />
     <ClCompile Include="VectorTest.cpp" />
   </ItemGroup>
   <ItemGroup>
