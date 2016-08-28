@@ -48,26 +48,26 @@ void Vector3Test()
 
 void Vector4Test()
 {
-	Vector4 vec1(1, 2, 3, 1);
+	Vector4 vec1(1, 2, 3, 2);
 	Vector4 vec2(4, 5, 6, 1);
 
-	cout << vec1;
-	cout << vec2;
+	cout << vec1 << endl;
+	cout << vec2 << endl;
 
-	vec1.crossProduct(vec2);
-	cout << vec1;
+	vec1.crossProduct(&vec2);
+	cout << vec1 << endl;
 
-	Vector4 vec3 = Vector4::crossProduct(vec1, vec2);
-	cout << vec3;
+	Vector4Ptr vec3 = Vector4::crossProduct(vec1, vec2);
+	cout << vec3 << endl;
 }
 
-//int main()
-//{
-//	cout << "Vector3 Test" << endl;
-//	Vector3Test();
-//
-//	cout << "Vector4 Test" << endl;
-//	Vector4Test();
-//
-//	system("pause");
-//}
+int main()
+{
+	cout << "Vector3 Test" << endl;
+	Vector3Test();
+
+	cout << "Vector4 Test" << endl;
+	Vector4Test();
+
+	system("pause");
+}

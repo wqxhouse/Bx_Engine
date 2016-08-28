@@ -2,16 +2,48 @@
 #include <stdio.h>
 #include <exception>
 
-#include "../../include/Memory/MemoryPool.h"
+#include "MemoryPool.h"
 
-#include "../../include/Math/Vector3.h"
+#include "../Math/Vector3.h"
 
 //std::unordered_set<void*> MemoryPool::dynamicMemorySet;
 
-std::unordered_map<const char*, std::unordered_set<void*>*> MemoryPool::dynamicMemoryPool;
+std::unordered_map<const char*, std::unordered_set<void*>*> Memory::MemoryPool::dynamicMemoryPool;
 
-MemoryPool::MemoryPool()
+Memory::MemoryPool::MemoryPool()
 {
+}
+
+void Memory::MemoryPool::releaseAll()
+{
+	for (auto memoryPoolIterator = dynamicMemoryPool.begin();
+		memoryPoolIterator != dynamicMemoryPool.end(); ++memoryPoolIterator)
+	{
+		std::unordered_set<void*>* typeTMemoryPool = memoryPoolIterator->second;
+		for (auto typeSubPoolIterator = typeTMemoryPool->begin();
+			typeSubPoolIterator != typeTMemoryPool->end(); ++typeSubPoolIterator)
+		{
+			if (*typeSubPoolIterator != nullptr)
+			{
+				try
+				{
+					free(*typeSubPoolIterator);
+				}
+				catch (std::exception e)
+				{
+					printf("Can't release the memory for: %s\n", e.what());
+				}
+			}
+		}
+		typeTMemoryPool->clear();
+		delete typeTMemoryPool;
+	}
+	dynamicMemoryPool.clear();
+}
+
+Memory::MemoryPool::~MemoryPool()
+{
+	releaseAll();
 }
 
 //template <typename T>
@@ -123,11 +155,6 @@ MemoryPool::MemoryPool()
 //	}
 //	dynamicMemoryPool.clear();
 //}
-
-MemoryPool::~MemoryPool()
-{
-	releaseAll();
-}
 
 //void* operator new(size_t memorySize)
 //{

@@ -1,4 +1,4 @@
-#include "../../../include/Mesh/VertexBuffer.h"
+#include "VertexBuffer.h"
 
 template <typename T>
 VertexBuffer<T>::VertexBuffer()

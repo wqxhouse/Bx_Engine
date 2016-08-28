@@ -1,4 +1,4 @@
-#include "../../include/Mesh/ModelLoaderBase.h"
+#include "ModelLoaderBase.h"
 
 
 ModelLoaderBase::ModelLoaderBase()

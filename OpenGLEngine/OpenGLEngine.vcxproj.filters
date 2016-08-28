@@ -1,86 +1,87 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="src">
+      <UniqueIdentifier>{05a46859-abec-4788-a72e-0e9c4e16c0ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Header Files\Math">
+    <Filter Include="src\Math">
       <UniqueIdentifier>{18de9c0f-ea6b-4092-ba7c-4d08d21f9761}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Mesh">
-      <UniqueIdentifier>{235ac7bc-c617-4e6a-ba69-e985776775af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Mesh">
-      <UniqueIdentifier>{a19da587-092f-43b6-ab04-003b84cb8d65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Compiler">
-      <UniqueIdentifier>{f8bff034-1731-4508-8cef-bc435156843a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Mesh\Buffer">
-      <UniqueIdentifier>{ffa17c06-23ae-4eb3-ac42-0fc7caa2b65c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Memory">
+    <Filter Include="src\Memory">
       <UniqueIdentifier>{0b698246-b82d-4a92-8d3b-61e85bc02e42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Memory">
-      <UniqueIdentifier>{b5dba684-fdf0-4b24-975e-8449a4dec349}</UniqueIdentifier>
+    <Filter Include="src\Mesh">
+      <UniqueIdentifier>{235ac7bc-c617-4e6a-ba69-e985776775af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Compiler">
+      <UniqueIdentifier>{515659af-0b54-4b73-ae6a-c1cfedba0c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Mesh\Buffer">
+      <UniqueIdentifier>{ffa17c06-23ae-4eb3-ac42-0fc7caa2b65c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core">
+      <UniqueIdentifier>{bc9d3e7d-74fd-4a72-a759-3158faa8e9c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Camera">
+      <UniqueIdentifier>{d562ed20-a8b2-4ad4-929c-cfda51fe7061}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\OpenGLPCH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ShaderCompiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Math\Vector3.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Math\Vector4.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Math\Vector2.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Math\Matrix3x3.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Mesh\IndexBuffer.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="include\Mesh\ModelLoaderBase.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Mesh\VertexBuffer.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Mesh\Buffer.h">
-      <Filter>Header Files\Mesh</Filter>
+      <Filter>src\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="include\Memory\MemoryPool.h">
-      <Filter>Header Files\Memory</Filter>
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\Buffer.h">
+      <Filter>src\Mesh\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\IndexBuffer.h">
+      <Filter>src\Mesh\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh\VertexBuffer.h">
+      <Filter>src\Mesh\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OpenGLPCH.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Compiler\ShaderCompiler.h">
+      <Filter>src\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector3.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector4.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix3x3.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix4x4.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\PointerTypes.h">
+      <Filter>src\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
-      <Filter>Resource Files\Compiler</Filter>
-    </ClCompile>
     <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp">
-      <Filter>Resource Files\Mesh\Buffer</Filter>
+      <Filter>src\Mesh\Buffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh\ModelLoaderBase.cpp">
-      <Filter>Resource Files\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="src\OpenGLPCH.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
+      <Filter>src\Compiler</Filter>
     </ClCompile>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
-      <Filter>Resource Files\Memory</Filter>
+      <Filter>src\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\ModelLoaderBase.cpp">
+      <Filter>src\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\OpenGLPCH.cpp">
+      <Filter>src\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
