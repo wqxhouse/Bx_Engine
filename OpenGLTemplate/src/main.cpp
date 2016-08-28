@@ -5,7 +5,7 @@
 
 */
 
-#include <OpenGLPCH.h>
+#include "Core/OpenGLPCH.h"
 #include "../header/FirstTriangle.h"
 
 const int width = 800;

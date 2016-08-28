@@ -27,25 +27,25 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 			{
 				if (vecPtr[0] == "v")
 				{
-					vector<float> pos(3, 0);
-					pos[0] = stof(vecPtr[1]);
-					pos[1] = stof(vecPtr[2]);
-					pos[2] = stof(vecPtr[3]);
+					Math::Vector3 pos;
+					pos.X = stof(vecPtr[1]);
+					pos.Y = stof(vecPtr[2]);
+					pos.Z = stof(vecPtr[3]);
 					posBuffer.push_back(pos);
 				}
 				else if (vecPtr[0] == "vn")
 				{
-					vector<float> normal(3, 0);
-					normal[0] = stof(vecPtr[1]);
-					normal[1] = stof(vecPtr[2]);
-					normal[2] = stof(vecPtr[3]);
+					Math::Vector3 normal;
+					normal.X = stof(vecPtr[1]);
+					normal.Y = stof(vecPtr[2]);
+					normal.Z = stof(vecPtr[3]);
 					normalBuffer.push_back(normal);
 				}
 				else if (vecPtr[0] == "vt")
 				{
-					vector<float> tex(2, 0);
-					tex[0] = stof(vecPtr[1]);
-					tex[1] = stof(vecPtr[2]);
+					Math::Vector2 tex;
+					tex.X = stof(vecPtr[1]);
+					tex.Y = stof(vecPtr[2]);
 					texBuffer.push_back(tex);
 				}
 				else if (vecPtr[0] == "vp")
@@ -54,7 +54,15 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 				}
 				else if (vecPtr[0] == "f")
 				{
-
+					try 
+					{
+						parseIndices(vecPtr[1], vecPtr[2], vecPtr[3]);
+					}
+					catch (exception e)
+					{
+						cerr << "Can't parse the indices data from the obj file: " << e.what() << endl;
+						throw;
+					}
 				}
 				else
 				{
@@ -69,6 +77,51 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
 {
 	LoadModel(modelFile);
 
+}
+
+//TODO: Optimize the parse method, no need to check count each time
+void ObjModelLoader::parseIndices(const string & metadata)
+{
+	vector<string> indexData;
+	split(metadata, '/', &indexData);
+	int indexDataSize = indexData.size();
+
+	if (indexDataSize == 1)
+	{
+		posIndices.push_back(stof(indexData[0]));
+	}
+	else if (indexDataSize == 2)
+	{
+		posIndices.push_back(stof(indexData[0]));
+		for (int i = 0; i < metadata.size(); ++i)
+		{
+			if (metadata[i] == '/' && (i < metadata.size() && metadata[i + 1] == '/'))
+			{
+				normalIndices.push_back(stof(indexData[1]));
+			}
+			else
+			{
+				texIndices.push_back(stof(indexData[1]));
+			}
+		}
+	}
+	else if (indexDataSize == 3)
+	{
+		posIndices.push_back(stof(indexData[0]));
+		normalIndices.push_back(stof(indexData[1]));
+		texIndices.push_back(stof(indexData[2]));
+	}
+	else
+	{
+		throw exception("The count of element per index is wrong: Should be 1,2 or 3 not %d", indexDataSize);
+	}
+}
+
+void ObjModelLoader::parseIndices(const string & metadata1, const string & metadata2, const string & metadata3)
+{
+	parseIndices(metadata1);
+	parseIndices(metadata2);
+	parseIndices(metadata3);
 }
 
 ObjModelLoader::~ObjModelLoader()

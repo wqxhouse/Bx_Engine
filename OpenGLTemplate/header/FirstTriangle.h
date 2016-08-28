@@ -1,7 +1,7 @@
 #pragma once
 
-#include <OpenGLPCH.h>
-#include <ShaderCompiler.h>
+#include "Core/OpenGLPCH.h"
+#include "Compiler/ShaderCompiler.h"
 
 using namespace std;
 

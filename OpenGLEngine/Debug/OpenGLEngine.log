@@ -1,5 +1,16 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (OpenGLTools.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+cl : Command line warning D9025: overriding '/sdl' with '/GS-'
+  ObjModelLoader.cpp
+c:\study_ssd\graphics\opengltemplate\openglengine\src\mesh\model\objmodelloader.cpp(96): warning C4018: '<': signed/unsigned mismatch
+c:\study_ssd\graphics\opengltemplate\openglengine\src\mesh\model\objmodelloader.cpp(98): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Compiling...
+  ModelLoaderBase.cpp
+  Generating Code...
+OpenGLPCH.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
   OpenGLEngine.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\Debug\OpenGLEngine_d.lib
           1 file(s) copied.
-  0 File(s) copied
+  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Mesh\Model\ModelLoaderBase.h
+  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Mesh\Model\ObjModelLoader.h
+  2 File(s) copied

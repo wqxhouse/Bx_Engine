@@ -92,6 +92,8 @@
     <ClCompile Include="src\Mesh\Model\ModelLoaderBase.cpp">
       <Filter>src\Mesh\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp" />
+    <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp">
+      <Filter>src\Mesh\Model</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
