@@ -8,8 +8,7 @@
 #include "ObjModelLoader.h"
 
 ObjModelLoader::ObjModelLoader()
-{
-}
+{}
 
 void ObjModelLoader::LoadModel(const string& modelFile)
 {
@@ -46,7 +45,7 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 					Math::Vector2 tex;
 					tex.X = stof(vecPtr[1]);
 					tex.Y = stof(vecPtr[2]);
-					texBuffer.push_back(tex);
+					texCoords.push_back(tex);
 				}
 				else if (vecPtr[0] == "vp")
 				{
@@ -76,6 +75,12 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFile)
 {
 	LoadModel(modelFile);
+}
+
+void ObjModelLoader::LoadModel(const string & modelFile, OUT Mesh* meshPtr)
+{
+	LoadModel(modelFile);
+	meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
 
 }
 
@@ -107,9 +112,9 @@ void ObjModelLoader::parseIndices(const string & metadata)
 	}
 	else if (indexDataSize == 3)
 	{
-		posIndices.push_back(stof(indexData[0]));
-		normalIndices.push_back(stof(indexData[1]));
-		texIndices.push_back(stof(indexData[2]));
+		posIndices.push_back(stoi(indexData[0]));
+		normalIndices.push_back(stoi(indexData[1]));
+		texIndices.push_back(stoi(indexData[2]));
 	}
 	else
 	{

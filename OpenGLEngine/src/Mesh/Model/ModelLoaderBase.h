@@ -16,9 +16,6 @@ public:
 	ModelLoaderBase();
 	void virtual LoadModel(const string &fileName);
 	~ModelLoaderBase();
-
-	vector<float> vertexBuffer;
-	vector<float> indexBuffer;
 protected:
 	void split(const string &str, char delim, vector<string>* splitedStrings);
 };

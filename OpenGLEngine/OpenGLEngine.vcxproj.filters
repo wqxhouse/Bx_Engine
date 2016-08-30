@@ -75,6 +75,9 @@
     <ClInclude Include="src\Core\Helper.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Mesh\Model\Mesh.h">
+      <Filter>src\Mesh\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp">
@@ -93,6 +96,9 @@
       <Filter>src\Mesh\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp">
+      <Filter>src\Mesh\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\Model\Mesh.cpp">
       <Filter>src\Mesh\Model</Filter>
     </ClCompile>
   </ItemGroup>

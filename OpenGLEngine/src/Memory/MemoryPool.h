@@ -92,7 +92,7 @@ namespace Memory
 		
 		static void releaseAll();
 	private:
-		static ::std::unordered_map<const char*, ::std::unordered_set<void*>*> dynamicMemoryPool;
+		static std::unordered_map<const char*, std::unordered_set<void*>*> dynamicMemoryPool;
 		//static std::unordered_set<void*> dynamicMemorySet;
 	};
 

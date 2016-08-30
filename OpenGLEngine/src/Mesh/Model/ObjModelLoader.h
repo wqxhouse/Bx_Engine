@@ -2,24 +2,27 @@
 
 #include <vector>
 
+#include "Mesh.h"
 #include "ModelLoaderBase.h"
 
 class ObjModelLoader : ModelLoaderBase
 {
 public:
 	ObjModelLoader();
-	void LoadModel(const string& modelfile);
-	void LoadModel(const string& modelFile, const string& materialFile);
+	void LoadModel(const string& modelFile, OUT Mesh* meshPtr);
 	~ObjModelLoader();
 private:
+	void LoadModel(const string& modelFile);
+	void LoadModel(const string& modelFile, const string& materialFile);
+	
 	void parseIndices(const string& metadata);
 	void parseIndices(const string& metadata1, const string& metadata2, const string& metadata3);
 
 	vector<Math::Vector3> posBuffer;
 	vector<Math::Vector3> normalBuffer;
-	vector<Math::Vector2> texBuffer;
+	vector<Math::Vector2> texCoords;
 
-	vector<float> posIndices;
-	vector<float> normalIndices;
-	vector<float> texIndices;
+	vector<GLuint> posIndices;
+	vector<GLuint> normalIndices;
+	vector<GLuint> texIndices;
 };

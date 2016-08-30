@@ -112,6 +112,23 @@ namespace Math
 			W = v.W;
 		}
 
+		float operator[](int index)
+		{
+			switch (index)
+			{
+			case 0:
+				return X;
+			case 1:
+				return Y;
+			case 2:
+				return Z;
+			case 3:
+				return W;
+			Default:
+				throw std::exception("Index out of range of vector4.(Should be between 0-3)\n");
+			}
+		}
+
 		float X;
 		float Y;
 		float Z;
