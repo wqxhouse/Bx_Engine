@@ -8,20 +8,27 @@
 #include "ObjModelLoader.h"
 
 ObjModelLoader::ObjModelLoader()
-{
-	posBuffer.push_back(Math::Vector3());
-	normalBuffer.push_back(Math::Vector3());
-	texCoords.push_back(Math::Vector2());
-}
+	:vertexCount(1), texCoordCount(1), indicesCount(0)
+{}
 
 void ObjModelLoader::LoadModel(const string& modelFile)
 {
-	std::ifstream inputStream(modelFile, std::ios::out);
+	ifstream inputStream(modelFile, std::ios::out);
 
 	if (inputStream.is_open())
 	{
+		posBuffer.assign(vertexCount, Math::Vector3());
+		normalBuffer.assign(vertexCount, Math::Vector3());
+		texCoords.assign(texCoordCount, Math::Vector2());
+
+		posIndices.assign(indicesCount, 0);
+		normalIndices.assign(indicesCount, 0);
+		texIndices.assign(indicesCount, 0);
+
 		std::string modelFileLine;
-		while(std::getline(inputStream, modelFileLine))
+		int counter[4] = { 0,0,0,0 };//pos, normal, uv, index
+
+		while (std::getline(inputStream, modelFileLine))
 		{
 			vector<string> vecPtr;
 			split(modelFileLine, ' ', &vecPtr);
@@ -30,26 +37,31 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 			{
 				if (vecPtr[0] == "v")
 				{
-					Math::Vector3 pos;
-					pos.X = stof(vecPtr[1]);
-					pos.Y = stof(vecPtr[2]);
-					pos.Z = stof(vecPtr[3]);
-					posBuffer.push_back(pos);
+					//pos.X = stof(vecPtr[1]);
+					//pos.Y = stof(vecPtr[2]);
+					//pos.Z = stof(vecPtr[3]);
+					//posBuffer.push_back(pos);
+					posBuffer[counter[0]].setData(stof(vecPtr[1]), stof(vecPtr[2]), stof(vecPtr[3]));
+					counter[0] += 1;
 				}
 				else if (vecPtr[0] == "vn")
 				{
-					Math::Vector3 normal;
+					/*Math::Vector3 normal;
 					normal.X = stof(vecPtr[1]);
 					normal.Y = stof(vecPtr[2]);
 					normal.Z = stof(vecPtr[3]);
-					normalBuffer.push_back(normal);
+					normalBuffer.push_back(normal);*/
+					normalBuffer[counter[1]].setData(stof(vecPtr[1]), stof(vecPtr[2]), stof(vecPtr[3]));
+					counter[1] += 1;
 				}
 				else if (vecPtr[0] == "vt")
 				{
-					Math::Vector2 tex;
+					/*Math::Vector2 tex;
 					tex.X = stof(vecPtr[1]);
 					tex.Y = stof(vecPtr[2]);
-					texCoords.push_back(tex);
+					texCoords.push_back(tex);*/
+					texCoords[counter[2]].setData(stof(vecPtr[1]), stof(vecPtr[2]));
+					counter[2] += 1;
 				}
 				else if (vecPtr[0] == "vp")
 				{
@@ -57,9 +69,9 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 				}
 				else if (vecPtr[0] == "f")
 				{
-					try 
+					try
 					{
-						parseIndices(vecPtr[1], vecPtr[2], vecPtr[3]);
+						parseIndices(vecPtr[1], vecPtr[2], vecPtr[3], &(counter[3]));
 					}
 					catch (exception e)
 					{
@@ -78,19 +90,22 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 	}
 }
 
-void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFile)
+void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFile, OUT Mesh** meshPtr)
 {
+	counter(modelFile);
 	LoadModel(modelFile);
+	*meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
 }
 
 void ObjModelLoader::LoadModel(const string & modelFile, OUT Mesh** meshPtr)
 {
+	counter(modelFile);
 	LoadModel(modelFile);
 	*meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
 }
 
 //TODO: Optimize the parse method, no need to check count each time
-void ObjModelLoader::parseIndices(const string & metadata)
+void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 {
 	vector<string> indexData;
 	split(metadata, '/', &indexData);
@@ -98,7 +113,8 @@ void ObjModelLoader::parseIndices(const string & metadata)
 
 	if (indexDataSize == 1)
 	{
-		posIndices.push_back(stoi(indexData[0]));
+		//posIndices.push_back(stoi(indexData[0]));
+		posIndices[*counter] = stoi(indexData[0]);
 	}
 	else if (indexDataSize == 2)
 	{
@@ -107,31 +123,55 @@ void ObjModelLoader::parseIndices(const string & metadata)
 		{
 			if (metadata[i] == '/' && (i < metadata.size() && metadata[i + 1] == '/'))
 			{
-				normalIndices.push_back(stoi(indexData[1]));
+				//normalIndices.push_back(stoi(indexData[1]));
+				normalIndices[*counter] = stoi(indexData[1]);
 			}
 			else
 			{
-				texIndices.push_back(stoi(indexData[1]));
+				//texIndices.push_back(stoi(indexData[1]));
+				texIndices[*counter] = stoi(indexData[1]);
 			}
 		}
 	}
 	else if (indexDataSize == 3)
 	{
-		posIndices.push_back(stoi(indexData[0]));
+		/*posIndices.push_back(stoi(indexData[0]));
 		texIndices.push_back(stoi(indexData[1]));
-		normalIndices.push_back(stoi(indexData[2]));
+		normalIndices.push_back(stoi(indexData[2]));*/
+		posIndices[*counter] = stoi(indexData[0]);
+		texIndices[*counter] = stoi(indexData[1]);
+		normalIndices[*counter] = stoi(indexData[2]);
 	}
 	else
 	{
 		throw exception("The count of element per index is wrong: Should be 1,2 or 3 not %d", indexDataSize);
 	}
+
+	*counter += 1;
 }
 
-void ObjModelLoader::parseIndices(const string & metadata1, const string & metadata2, const string & metadata3)
+void ObjModelLoader::parseIndices(const string & metadata1, const string & metadata2, const string & metadata3, int* counter)
 {
-	parseIndices(metadata1);
-	parseIndices(metadata2);
-	parseIndices(metadata3);
+	parseIndices(metadata1, counter);
+	parseIndices(metadata2, counter);
+	parseIndices(metadata3, counter);
+}
+
+void ObjModelLoader::counter(const string& modelFile)
+{
+	ifstream inputStream(modelFile, std::ios::out);
+	string line;
+
+	while (std::getline(inputStream, line))
+	{
+		vector<string> vecPtr;
+		split(line, ' ', &vecPtr);
+
+		if (vecPtr[0] == "v") { vertexCount += 1; }
+		else if (vecPtr[0] == "vt") { texCoordCount += 1; }
+		else if (vecPtr[0] == "f") { indicesCount += 3; }
+	}
+	inputStream.close();
 }
 
 ObjModelLoader::~ObjModelLoader()

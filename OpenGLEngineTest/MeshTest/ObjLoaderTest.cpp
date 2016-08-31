@@ -7,5 +7,6 @@ int main()
 
 	loader.LoadModel("C:/Study_SSD/Graphics/OpenGLTemplate/Resources/model/sphere.obj", &mesh);
 
+	delete mesh;
 	return 0;
 }

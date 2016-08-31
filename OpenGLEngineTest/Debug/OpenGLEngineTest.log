@@ -1,2 +1,4 @@
-﻿  OpenGLEngineTest.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\Debug\OpenGLEngineTest.exe
+﻿  ObjLoaderTest.cpp
+c:\study_ssd\graphics\opengltemplate\bin\lib\openglengine\include\math\vector3.h(134): warning C4102: 'Default': unreferenced label
+  OpenGLEngineTest.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\Debug\OpenGLEngineTest.exe
   OpenGLEngineTest.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\Debug\OpenGLEngineTest.pdb (Partial PDB)

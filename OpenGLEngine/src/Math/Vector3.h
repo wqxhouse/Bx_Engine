@@ -31,6 +31,13 @@ namespace Math
 			return vec3Ptr;
 		}
 
+		void setData(float x, float y, float z)
+		{
+			X = x;
+			Y = y;
+			Z = z;
+		}
+
 		float dot(const Vector3 &v)
 		{
 			return X * v.X + Y * v.Y + Z * v.Z;

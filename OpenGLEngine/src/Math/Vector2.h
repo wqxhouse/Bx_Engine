@@ -9,6 +9,12 @@ namespace Math
 			:X(x), Y(y)
 		{}
 
+		void setData(float x, float y)
+		{
+			X = x;
+			Y = y;
+		}
+
 		~Vector2()
 		{}
 

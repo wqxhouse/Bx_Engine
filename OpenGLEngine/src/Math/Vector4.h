@@ -24,6 +24,14 @@ namespace Math
 			return newVec4Ptr;
 		}
 
+		void setData(float x, float y, float z, float w)
+		{
+			X = x;
+			Y = y;
+			Z = z;
+			W = w;
+		}
+
 		float dot(const Vector4 &v) { return X * v.X + Y * v.Y + Z * v.Z + W * v.W; }
 
 		void crossProduct(Vector4Ptr v)
