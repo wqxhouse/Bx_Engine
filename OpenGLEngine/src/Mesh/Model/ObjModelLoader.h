@@ -17,6 +17,7 @@ private:
 	
 	void parseIndices(const string& metadata, int* counter);
 	void parseIndices(const string& metadata1, const string& metadata2, const string& metadata3, int* counter);
+	void parseIndices(const vector<string> metadata, int* counter);
 
 	void counter(const string& modelFile);
 	uint32_t vertexCount;

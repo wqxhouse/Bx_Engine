@@ -21,6 +21,21 @@ public:
 			setData(position, normal, texCoords);
 		}
 
+		void setPositionData(const Math::Vector3& position)
+		{
+			this->position = position;
+		}
+
+		void setNormalData(const Math::Vector3& normal)
+		{
+			this->normal = normal;
+		}
+
+		void setTexCoords(const Math::Vector2& texCoords)
+		{
+			this->texCoords = texCoords;
+		}
+
 		void setData(const Math::Vector3& position, const Math::Vector3& normal, const Math::Vector2& texCoords)
 		{
 			this->position = position;

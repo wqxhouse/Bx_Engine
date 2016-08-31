@@ -8,7 +8,7 @@
 #include "ObjModelLoader.h"
 
 ObjModelLoader::ObjModelLoader()
-	:vertexCount(1), texCoordCount(1), indicesCount(0)
+	:vertexCount(0), texCoordCount(0), indicesCount(0)
 {}
 
 void ObjModelLoader::LoadModel(const string& modelFile)
@@ -26,14 +26,14 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 		texIndices.assign(indicesCount, 0);
 
 		std::string modelFileLine;
-		int counter[4] = { 0,0,0,0 };//pos, normal, uv, index
+		int counter[4] = { 1, 1, 1, 0 };//pos, normal, uv, index
 
 		while (std::getline(inputStream, modelFileLine))
 		{
 			vector<string> vecPtr;
 			split(modelFileLine, ' ', &vecPtr);
 
-			if (vecPtr.size() > 2 && vecPtr.size() < 5)
+			if (vecPtr.size() > 2)
 			{
 				if (vecPtr[0] == "v")
 				{
@@ -71,7 +71,12 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 				{
 					try
 					{
-						parseIndices(vecPtr[1], vecPtr[2], vecPtr[3], &(counter[3]));
+						//parseIndices(vecPtr[1], vecPtr[2], vecPtr[3], &(counter[3]));
+						size_t size= vecPtr.size();
+						for (int i = 1; i < size; ++i)
+						{
+							parseIndices(vecPtr[i], &(counter[3]));
+						}
 					}
 					catch (exception e)
 					{
@@ -81,7 +86,7 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 				}
 				else
 				{
-					throw exception("Invalid obj model format\n");
+					//throw exception("Invalid obj model format\n");
 				}
 			}
 		}
@@ -115,23 +120,27 @@ void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 	{
 		//posIndices.push_back(stoi(indexData[0]));
 		posIndices[*counter] = stoi(indexData[0]);
+
+		*counter += 1;
 	}
 	else if (indexDataSize == 2)
 	{
 		posIndices.push_back(stoi(indexData[0]));
-		for (int i = 0; i < metadata.size(); ++i)
-		{
-			if (metadata[i] == '/' && (i < metadata.size() && metadata[i + 1] == '/'))
-			{
-				//normalIndices.push_back(stoi(indexData[1]));
-				normalIndices[*counter] = stoi(indexData[1]);
-			}
-			else
-			{
-				//texIndices.push_back(stoi(indexData[1]));
-				texIndices[*counter] = stoi(indexData[1]);
-			}
-		}
+		texIndices[*counter] = stoi(indexData[1]);
+
+		*counter += 1;
+		//for (int i = 0; i < metadata.size(); ++i)
+		//{
+		//	if (metadata[i] == '/' && (i < metadata.size() && metadata[i + 1] == '/'))
+		//	{
+		//		//normalIndices.push_back(stoi(indexData[1]));
+		//		normalIndices[*counter] = stoi(indexData[1]);
+		//	}
+		//	else
+		//	{
+		//		//texIndices.push_back(stoi(indexData[1]));
+		//	}
+		//}
 	}
 	else if (indexDataSize == 3)
 	{
@@ -139,15 +148,23 @@ void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 		texIndices.push_back(stoi(indexData[1]));
 		normalIndices.push_back(stoi(indexData[2]));*/
 		posIndices[*counter] = stoi(indexData[0]);
-		texIndices[*counter] = stoi(indexData[1]);
-		normalIndices[*counter] = stoi(indexData[2]);
+
+		if (indexData[1] != "")
+		{
+			texIndices[*counter] = stoi(indexData[1]);
+		}
+
+		if (indexData[2] != "")
+		{
+			normalIndices[*counter] = stoi(indexData[2]);
+		}
+
+		*counter += 1;
 	}
 	else
 	{
-		throw exception("The count of element per index is wrong: Should be 1,2 or 3 not %d", indexDataSize);
+		//throw exception("The count of element per index is wrong: Should be 1,2 or 3 not %d", indexDataSize);
 	}
-
-	*counter += 1;
 }
 
 void ObjModelLoader::parseIndices(const string & metadata1, const string & metadata2, const string & metadata3, int* counter)
@@ -155,6 +172,14 @@ void ObjModelLoader::parseIndices(const string & metadata1, const string & metad
 	parseIndices(metadata1, counter);
 	parseIndices(metadata2, counter);
 	parseIndices(metadata3, counter);
+}
+
+void ObjModelLoader::parseIndices(const vector<string> metadata, int* counter)
+{
+	for(string s : metadata)
+	{
+		parseIndices(s, counter);
+	}
 }
 
 void ObjModelLoader::counter(const string& modelFile)
@@ -166,10 +191,36 @@ void ObjModelLoader::counter(const string& modelFile)
 	{
 		vector<string> vecPtr;
 		split(line, ' ', &vecPtr);
-
-		if (vecPtr[0] == "v") { vertexCount += 1; }
-		else if (vecPtr[0] == "vt") { texCoordCount += 1; }
-		else if (vecPtr[0] == "f") { indicesCount += 3; }
+		if (vecPtr.size() > 2)
+		{
+			if (vecPtr[0] == "v") 
+			{ 
+				if (vertexCount == 0)
+				{
+					vertexCount = 1;
+				}
+				vertexCount += 1; 
+			}
+			else if (vecPtr[0] == "vt") 
+			{ 
+				if (texCoordCount == 0)
+				{
+					texCoordCount = 1;
+				}
+				texCoordCount += 1; 
+			}
+			else if (vecPtr[0] == "f") 
+			{ 
+				for (int i = 1; i < vecPtr.size(); ++i)
+				{
+					size_t findCount = vecPtr[i].find('/');
+					if (findCount != string::npos)
+					{
+						indicesCount += 1;
+					}
+				}
+			}
+		}
 	}
 	inputStream.close();
 }

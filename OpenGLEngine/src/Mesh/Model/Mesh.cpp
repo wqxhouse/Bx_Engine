@@ -61,7 +61,22 @@ void Mesh::combineVertexData(
 		int normalIndex = normalIndices[i];
 		int uvIndex = texCoordIndices[i];
 
-		vertexBuffer[posIndex].setData(posBuf[posIndex], normalBuf[normalIndex], texCoords[uvIndex]);
+		if (posIndices.size() == 0)
+		{
+			throw std::exception("Can't load the mesh without vertexes.\n");
+		}
+
+		vertexBuffer[posIndex].setPositionData(posBuf[posIndex]);
+
+		if (normalIndices.size() != 0)
+		{
+			vertexBuffer[posIndex].setNormalData(normalBuf[normalIndex]);
+		}
+
+		if (texCoords.size() != 0)
+		{
+			vertexBuffer[posIndex].setTexCoords(texCoords[uvIndex]);
+		}
 	}
 
 	this->indexBuffer = posIndices;
