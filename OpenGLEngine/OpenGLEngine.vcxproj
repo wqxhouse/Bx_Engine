@@ -147,7 +147,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\Memory\MemoryPool.h" />
     <ClInclude Include="include\Mesh\Buffer.h" />
     <ClInclude Include="include\Mesh\IndexBuffer.h" />
     <ClInclude Include="include\Mesh\VertexBuffer.h" />
@@ -160,6 +159,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
+    <ClInclude Include="src\Memory\MemoryPool.h" />
     <ClInclude Include="src\Mesh\Model\Mesh.h" />
     <ClInclude Include="src\Mesh\Model\ModelLoaderBase.h" />
     <ClInclude Include="src\Mesh\Model\ObjModelLoader.h" />

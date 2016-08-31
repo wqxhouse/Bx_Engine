@@ -30,9 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Memory\MemoryPool.h">
-      <Filter>src\Memory</Filter>
-    </ClInclude>
     <ClInclude Include="include\Mesh\Buffer.h">
       <Filter>src\Mesh\Buffer</Filter>
     </ClInclude>
@@ -77,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="src\Mesh\Model\Mesh.h">
       <Filter>src\Mesh\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryPool.h">
+      <Filter>src\Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -39,7 +39,7 @@ namespace Memory
 			{
 				std::unordered_set<void*>* typeTMemoryPool = memoryPoolIterator->second;
 				auto typeTMemoryPoolIterator = typeTMemoryPool->find(ptr);
-				if (typeTMemoryPoolIterator != dynamicMemorySet.end())
+				if (typeTMemoryPoolIterator != typeTMemoryPool->end())
 				{
 					try
 					{
