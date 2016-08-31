@@ -9,7 +9,7 @@ class ObjModelLoader : ModelLoaderBase
 {
 public:
 	ObjModelLoader();
-	void LoadModel(const string& modelFile, OUT Mesh* meshPtr);
+	void LoadModel(const string& modelFile, OUT Mesh** meshPtr);
 	~ObjModelLoader();
 private:
 	void LoadModel(const string& modelFile);

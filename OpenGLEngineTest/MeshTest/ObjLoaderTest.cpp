@@ -3,7 +3,9 @@
 int main()
 {
 	ObjModelLoader loader;
-	loader.LoadModel("C:/Study_SSD/Graphics/OpenGLTemplate/Resources/model/sphere.obj");
+	Mesh *mesh;
+
+	loader.LoadModel("C:/Study_SSD/Graphics/OpenGLTemplate/Resources/model/sphere.obj", &mesh);
 
 	return 0;
 }

@@ -3,18 +3,7 @@ C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.target
 cl : Command line warning D9025: overriding '/sdl' with '/GS-'
   Mesh.cpp
 c:\study_ssd\graphics\opengltemplate\openglengine\src\math\vector3.h(127): warning C4102: 'Default': unreferenced label
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  ObjModelLoader.cpp
-  ModelLoaderBase.cpp
-  MemoryPool.cpp
 OpenGLPCH.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
   OpenGLEngine.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\Debug\OpenGLEngine_d.lib
           1 file(s) copied.
-  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Math\Vector3.h
-  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Math\Vector4.h
-  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Memory\MemoryPool.h
-  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Mesh\Model\Mesh.h
-  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Mesh\Model\ModelLoaderBase.h
-  C:\Study_SSD\Graphics\OpenGLTemplate\OpenGLEngine\src\Mesh\Model\ObjModelLoader.h
-  6 File(s) copied
+  0 File(s) copied

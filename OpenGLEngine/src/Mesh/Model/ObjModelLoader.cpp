@@ -8,15 +8,19 @@
 #include "ObjModelLoader.h"
 
 ObjModelLoader::ObjModelLoader()
-{}
+{
+	posBuffer.push_back(Math::Vector3());
+	normalBuffer.push_back(Math::Vector3());
+	texCoords.push_back(Math::Vector2());
+}
 
 void ObjModelLoader::LoadModel(const string& modelFile)
 {
-	std::string modelFileLine;
 	std::ifstream inputStream(modelFile, std::ios::out);
 
 	if (inputStream.is_open())
 	{
+		std::string modelFileLine;
 		while(std::getline(inputStream, modelFileLine))
 		{
 			vector<string> vecPtr;
@@ -69,6 +73,8 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 				}
 			}
 		}
+
+		inputStream.close();
 	}
 }
 
@@ -77,11 +83,10 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
 	LoadModel(modelFile);
 }
 
-void ObjModelLoader::LoadModel(const string & modelFile, OUT Mesh* meshPtr)
+void ObjModelLoader::LoadModel(const string & modelFile, OUT Mesh** meshPtr)
 {
 	LoadModel(modelFile);
-	meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
-
+	*meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
 }
 
 //TODO: Optimize the parse method, no need to check count each time
@@ -93,28 +98,28 @@ void ObjModelLoader::parseIndices(const string & metadata)
 
 	if (indexDataSize == 1)
 	{
-		posIndices.push_back(stof(indexData[0]));
+		posIndices.push_back(stoi(indexData[0]));
 	}
 	else if (indexDataSize == 2)
 	{
-		posIndices.push_back(stof(indexData[0]));
+		posIndices.push_back(stoi(indexData[0]));
 		for (int i = 0; i < metadata.size(); ++i)
 		{
 			if (metadata[i] == '/' && (i < metadata.size() && metadata[i + 1] == '/'))
 			{
-				normalIndices.push_back(stof(indexData[1]));
+				normalIndices.push_back(stoi(indexData[1]));
 			}
 			else
 			{
-				texIndices.push_back(stof(indexData[1]));
+				texIndices.push_back(stoi(indexData[1]));
 			}
 		}
 	}
 	else if (indexDataSize == 3)
 	{
 		posIndices.push_back(stoi(indexData[0]));
-		normalIndices.push_back(stoi(indexData[1]));
-		texIndices.push_back(stoi(indexData[2]));
+		texIndices.push_back(stoi(indexData[1]));
+		normalIndices.push_back(stoi(indexData[2]));
 	}
 	else
 	{

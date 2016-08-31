@@ -13,7 +13,15 @@ public:
 		Math::Vector3 normal;
 		Math::Vector2 texCoords;
 
+		Vertex()
+		{}
+
 		Vertex(const Math::Vector3& position, const Math::Vector3& normal, const Math::Vector2& texCoords)
+		{
+			setData(position, normal, texCoords);
+		}
+
+		void setData(const Math::Vector3& position, const Math::Vector3& normal, const Math::Vector2& texCoords)
 		{
 			this->position = position;
 			this->normal = normal;
