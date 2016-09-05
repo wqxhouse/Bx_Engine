@@ -5,7 +5,7 @@
 
 */
 
-#include "../header/OpenGLPCH.h"
+#include "Core/OpenGLPCH.h"
 #include "../header/FirstTriangle.h"
 
 const int width = 800;
@@ -74,6 +74,7 @@ int main()
 	if (initialize() != 0)
 	{
 		printf("Fail to initialize OpenGL.\n");
+		system("pause");
 		return -1;
 	}
 
@@ -89,7 +90,6 @@ int main()
 		glfwSwapBuffers(window);
 	}
 
-	mFirstTriangle.~FirstTriangle();
 	glfwTerminate();
 	return 0;
 }
