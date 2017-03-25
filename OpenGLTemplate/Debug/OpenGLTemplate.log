@@ -1,9 +1,7 @@
 ﻿  main.cpp
-  Generating Code...
-  Compiling...
   FirstTriangle.cpp
-c:\study_ssd\graphics\opengltemplate\opengltemplate\src\firsttriangle.cpp(75): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-c:\study_ssd\graphics\opengltemplate\opengltemplate\src\firsttriangle.cpp(76): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\study\graphics\opengl_framework\opengltemplate\src\firsttriangle.cpp(75): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\study\graphics\opengl_framework\opengltemplate\src\firsttriangle.cpp(76): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
   Generating Code...
-  OpenGLTemplate.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\bin\Debug\OpenGLTemplate.exe
-  OpenGLTemplate.vcxproj -> C:\Study_SSD\Graphics\OpenGLTemplate\bin\Debug\OpenGLTemplate.pdb (Partial PDB)
+  OpenGLTemplate.vcxproj -> D:\study\graphics\OpenGL_Framework\bin\Debug\OpenGLTemplate.exe
+  OpenGLTemplate.vcxproj -> D:\study\graphics\OpenGL_Framework\bin\Debug\OpenGLTemplate.pdb (Partial PDB)
