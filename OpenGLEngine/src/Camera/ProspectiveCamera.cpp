@@ -10,7 +10,7 @@ ProspectiveCamera::ProspectiveCamera(glm::vec3 pos, glm::vec3 front, glm::vec3 u
 void ProspectiveCamera::translate(glm::vec3 translate)
 {
 	//glm::translate(view, trans);
-	glm::normalize(trans);
+	glm::normalize(translate);
 	trans.pos += translate * speed;
 	view = trans.getViewMat();
 }

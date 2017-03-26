@@ -1,2 +1,2 @@
-﻿  ObjLoaderTest.cpp
-d:\study\graphics\opengl_framework\bin\lib\openglengine\include\core\openglpch.h(13): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+﻿  OpenGLEngineTest.vcxproj -> D:\study\graphics\OpenGL_Framework\Debug\OpenGLEngineTest.exe
+  OpenGLEngineTest.vcxproj -> D:\study\graphics\OpenGL_Framework\Debug\OpenGLEngineTest.pdb (Partial PDB)

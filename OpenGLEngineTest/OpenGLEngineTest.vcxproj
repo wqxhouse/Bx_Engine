@@ -74,10 +74,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\bin\lib\glfw3\include;..\bin\dll\glew-1.13.0\include;..\bin\lib\OpenGLEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\bin\lib\OpenGLEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\bin\lib\glfw3\Debug;..\bin\dll\glew-1.13.0\vc14\Debug;..\bin\lib\OpenGLEngine\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\Debug;..\extern\glew-2.0.0\lib\Debug\Win32;..\OpenGLEngine\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

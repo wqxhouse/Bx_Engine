@@ -154,6 +154,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Math\Transform\Transform.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
@@ -165,8 +166,10 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
     <ClInclude Include="src\Model\Model.h" />
+    <ClInclude Include="src\OpenGLEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera\Camera.cpp" />
     <ClCompile Include="src\Camera\ProspectiveCamera.cpp" />
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
