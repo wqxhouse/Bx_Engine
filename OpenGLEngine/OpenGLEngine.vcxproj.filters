@@ -10,14 +10,8 @@
     <Filter Include="src\Memory">
       <UniqueIdentifier>{0b698246-b82d-4a92-8d3b-61e85bc02e42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Mesh">
-      <UniqueIdentifier>{235ac7bc-c617-4e6a-ba69-e985776775af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Compiler">
       <UniqueIdentifier>{515659af-0b54-4b73-ae6a-c1cfedba0c2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Mesh\Buffer">
-      <UniqueIdentifier>{ffa17c06-23ae-4eb3-ac42-0fc7caa2b65c}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Core">
       <UniqueIdentifier>{bc9d3e7d-74fd-4a72-a759-3158faa8e9c9}</UniqueIdentifier>
@@ -25,20 +19,17 @@
     <Filter Include="src\Camera">
       <UniqueIdentifier>{d562ed20-a8b2-4ad4-929c-cfda51fe7061}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Mesh\Model">
-      <UniqueIdentifier>{1951c36e-a407-4290-89c8-b6b7db35305e}</UniqueIdentifier>
+    <Filter Include="src\Model">
+      <UniqueIdentifier>{810747c3-8c22-4744-9a40-5a43192d5106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Model\Buffer">
+      <UniqueIdentifier>{3f17f754-2b68-43a0-aaee-e5f8a098c9a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Model\Mesh">
+      <UniqueIdentifier>{7ccf0682-191e-4b5a-9851-1ac16b3635b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Mesh\Buffer.h">
-      <Filter>src\Mesh\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Mesh\IndexBuffer.h">
-      <Filter>src\Mesh\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Mesh\VertexBuffer.h">
-      <Filter>src\Mesh\Buffer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Compiler\ShaderCompiler.h">
       <Filter>src\Compiler</Filter>
     </ClInclude>
@@ -60,29 +51,41 @@
     <ClInclude Include="src\Core\PointerTypes.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Mesh\Model\ModelLoaderBase.h">
-      <Filter>src\Mesh\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Mesh\Model\ObjModelLoader.h">
-      <Filter>src\Mesh\Model</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\OpenGLPCH.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Helper.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Mesh\Model\Mesh.h">
-      <Filter>src\Mesh\Model</Filter>
-    </ClInclude>
     <ClInclude Include="src\Memory\MemoryPool.h">
       <Filter>src\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="src\Camera\Camera.h">
+      <Filter>src\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\ObjModelLoader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Model.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Buffer\Buffer.h">
+      <Filter>src\Model\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Buffer\IndexBuffer.h">
+      <Filter>src\Model\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Buffer\VertexBuffer.h">
+      <Filter>src\Model\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\Mesh.h">
+      <Filter>src\Model\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp">
-      <Filter>src\Mesh\Buffer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
       <Filter>src\Compiler</Filter>
     </ClCompile>
@@ -92,14 +95,23 @@
     <ClCompile Include="src\Core\OpenGLPCH.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh\Model\ModelLoaderBase.cpp">
-      <Filter>src\Mesh\Model</Filter>
+    <ClCompile Include="src\Camera\ProspectiveCamera.cpp">
+      <Filter>src\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp">
-      <Filter>src\Mesh\Model</Filter>
+    <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh\Model\Mesh.cpp">
-      <Filter>src\Mesh\Model</Filter>
+    <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp">
+      <Filter>src\Model\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\Mesh.cpp">
+      <Filter>src\Model\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

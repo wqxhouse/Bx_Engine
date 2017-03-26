@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\bin\lib\OpenGLEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\bin\lib\OpenGLEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>OpenGLPCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -129,6 +129,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\FirstTriangle.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\SingleTriangle.frag" />
+    <None Include="src\shaders\SingleTriangle.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

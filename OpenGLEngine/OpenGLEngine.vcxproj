@@ -81,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <PostBuildEvent>
@@ -147,9 +147,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\Mesh\Buffer.h" />
-    <ClInclude Include="include\Mesh\IndexBuffer.h" />
-    <ClInclude Include="include\Mesh\VertexBuffer.h" />
+    <ClInclude Include="src\Camera\Camera.h" />
     <ClInclude Include="src\Compiler\ShaderCompiler.h" />
     <ClInclude Include="src\Core\Helper.h" />
     <ClInclude Include="src\Core\OpenGLPCH.h" />
@@ -160,18 +158,24 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\Memory\MemoryPool.h" />
-    <ClInclude Include="src\Mesh\Model\Mesh.h" />
-    <ClInclude Include="src\Mesh\Model\ModelLoaderBase.h" />
-    <ClInclude Include="src\Mesh\Model\ObjModelLoader.h" />
+    <ClInclude Include="src\Model\Buffer\Buffer.h" />
+    <ClInclude Include="src\Model\Buffer\IndexBuffer.h" />
+    <ClInclude Include="src\Model\Buffer\VertexBuffer.h" />
+    <ClInclude Include="src\Model\Mesh\Mesh.h" />
+    <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
+    <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
+    <ClInclude Include="src\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera\ProspectiveCamera.cpp" />
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
-    <ClCompile Include="src\Mesh\Buffer\VertexBuffer.cpp" />
-    <ClCompile Include="src\Mesh\Model\Mesh.cpp" />
-    <ClCompile Include="src\Mesh\Model\ModelLoaderBase.cpp" />
-    <ClCompile Include="src\Mesh\Model\ObjModelLoader.cpp" />
+    <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Model\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
+    <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
+    <ClCompile Include="src\Model\Model.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

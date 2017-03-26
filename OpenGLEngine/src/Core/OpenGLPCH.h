@@ -15,6 +15,11 @@
 //Include GLFW Library
 #include <GLFW/glfw3.h>
 
+//Include GLM Libarary
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+
 #define IN
 #define OUT
 

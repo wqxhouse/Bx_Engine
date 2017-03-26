@@ -16,6 +16,9 @@
     <Filter Include="Source Files\src">
       <UniqueIdentifier>{0c6c8762-ebd1-41cd-a3e1-e74252c908de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\shaders">
+      <UniqueIdentifier>{3f03b442-e859-469c-9491-243ebf7f0da3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -29,5 +32,13 @@
     <ClInclude Include="Header\FirstTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\SingleTriangle.frag">
+      <Filter>Source Files\src\shaders</Filter>
+    </None>
+    <None Include="src\shaders\SingleTriangle.vert">
+      <Filter>Source Files\src\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
