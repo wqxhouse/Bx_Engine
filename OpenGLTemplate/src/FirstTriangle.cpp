@@ -1,6 +1,4 @@
 #include "../header/FirstTriangle.h"
-#include <cmath>
-#include <cstdio>
 #include "Mesh/Model/ObjModelLoader.h"
 
 FirstTriangle::FirstTriangle()
@@ -81,7 +79,7 @@ void FirstTriangle::draw()
 	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
 
 	glm::mat4 transform;
-	//transform = glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 1));
+	transform = glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 1));
 	transform = glm::scale(transform, glm::vec3(.5f, .5f, .5f));
 
 	GLint glWorldMatrixLocation = glGetUniformLocation(shaderProgram, "world");

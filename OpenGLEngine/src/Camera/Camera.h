@@ -15,8 +15,8 @@ public:
 	glm::mat4 getViewMatrix();
 	Transform getTrans();
 
-	void updateKeyboardMotion(int key, bool motionValue);
-	void updateMouseMotion(double delta_x, double delta_y);
+	//void updateKeyboardMotion(CallbackInfo* key, bool motionValue);
+	//void updateMouseMotion(double delta_x, double delta_y);
 	virtual void update(float deltaTime);
 	virtual void draw() {}
 protected:
@@ -25,10 +25,10 @@ protected:
 	glm::mat4 view;
 	float speed;
 
-	int translationKey[1024];
-	float delta_x;
-	float delta_y;
-
+	//CallbackInfo* callbackInfo;
+	//int translationKey[1024];
+	//float delta_x;
+	//float delta_y;
 	glm::vec3 worldUp;
 };
 

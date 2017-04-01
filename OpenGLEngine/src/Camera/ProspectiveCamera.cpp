@@ -37,7 +37,8 @@ void ProspectiveCamera::rotate(float pitch, float yaw)
 
 void ProspectiveCamera::update(float deltaTime)
 {
-	rotate(-delta_y * CAMERA_SENSATIVE, delta_x * CAMERA_SENSATIVE);
+	rotate(-callbackInfo.cursorPosCallBack.delta_y * CAMERA_SENSATIVE, 
+		callbackInfo.cursorPosCallBack.delta_x * CAMERA_SENSATIVE);
 	Camera::update(deltaTime);
 }
 

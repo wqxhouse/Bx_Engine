@@ -124,11 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\FirstTriangle.cpp" />
     <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Header\FirstTriangle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\shaders\SingleTriangle.frag" />

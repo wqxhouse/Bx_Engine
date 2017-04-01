@@ -53,3 +53,6 @@ inline void SafeRelease(void* ptr, AllocateMode allocateMode)
 		}
 	}
 }
+
+#include "Utility.h"
+extern CallbackInfo callbackInfo;

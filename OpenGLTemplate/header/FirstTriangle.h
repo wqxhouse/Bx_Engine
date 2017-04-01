@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/OpenGLPCH.h"
 #include "Compiler/ShaderCompiler.h"
 #include "Mesh/Model/Mesh.h"
 #include "Camera/Camera.h"

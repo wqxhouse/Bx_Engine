@@ -83,6 +83,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName)_d.lib"
@@ -109,6 +110,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -150,10 +152,12 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Camera\Camera.h" />
     <ClInclude Include="src\Compiler\ShaderCompiler.h" />
     <ClInclude Include="src\Context\OpenGLContext.h" />
+    <ClInclude Include="src\Context\Scene.h" />
     <ClInclude Include="src\Context\Setting.h" />
     <ClInclude Include="src\Core\Helper.h" />
     <ClInclude Include="src\Core\OpenGLPCH.h" />
     <ClInclude Include="src\Core\PointerTypes.h" />
+    <ClInclude Include="src\Core\Utility.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
     <ClInclude Include="src\Math\Transform\Transform.h" />
@@ -174,7 +178,9 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Camera\ProspectiveCamera.cpp" />
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
     <ClCompile Include="src\Context\OpenGLContext.cpp" />
+    <ClCompile Include="src\Context\Scene.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
+    <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Model\Mesh\Mesh.cpp" />

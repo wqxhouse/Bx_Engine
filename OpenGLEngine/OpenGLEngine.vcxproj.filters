@@ -31,7 +31,7 @@
     <Filter Include="src\Math\Transform">
       <UniqueIdentifier>{e01bf716-0ebe-497a-bb61-4e93b98be97c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Context">
+    <Filter Include="src\Context">
       <UniqueIdentifier>{ef3e1f4f-c3cc-4d22-aa4e-72b7087bd286}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -94,10 +94,16 @@
       <Filter>src\Model</Filter>
     </ClInclude>
     <ClInclude Include="src\Context\Setting.h">
-      <Filter>Context</Filter>
+      <Filter>src\Context</Filter>
     </ClInclude>
     <ClInclude Include="src\Context\OpenGLContext.h">
-      <Filter>Context</Filter>
+      <Filter>src\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Context\Scene.h">
+      <Filter>src\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Utility.h">
+      <Filter>src\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,7 +138,13 @@
       <Filter>src\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Context\OpenGLContext.cpp">
-      <Filter>Context</Filter>
+      <Filter>src\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Context\Scene.cpp">
+      <Filter>src\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Utility.cpp">
+      <Filter>src\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

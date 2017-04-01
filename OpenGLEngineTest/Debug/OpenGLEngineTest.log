@@ -1,10 +1,2 @@
-﻿  VectorTest.cpp
-d:\study\graphics\opengl_framework\bin\lib\openglengine\include\math\matrix3x3.h(39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-d:\study\graphics\opengl_framework\bin\lib\openglengine\include\math\matrix3x3.h(44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-d:\study\graphics\opengl_framework\bin\lib\openglengine\include\math\matrix3x3.h(45): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-d:\study\graphics\opengl_framework\bin\lib\openglengine\include\math\matrix3x3.h(46): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  ObjLoaderTest.cpp
-  MemoryTest.cpp
-  Generating Code...
-  OpenGLEngineTest.vcxproj -> D:\study\graphics\OpenGL_Framework\Debug\OpenGLEngineTest.exe
+﻿  OpenGLEngineTest.vcxproj -> D:\study\graphics\OpenGL_Framework\Debug\OpenGLEngineTest.exe
   OpenGLEngineTest.vcxproj -> D:\study\graphics\OpenGL_Framework\Debug\OpenGLEngineTest.pdb (Partial PDB)
