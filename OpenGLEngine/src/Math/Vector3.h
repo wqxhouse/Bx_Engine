@@ -131,7 +131,7 @@ namespace Math
 				return Y;
 			case 2:
 				return Z;
-			Default:
+			default:
 				throw std::exception("Index out of range of vector3.(Should be between 0-2)\n");
 			}
 		}

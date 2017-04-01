@@ -7,6 +7,11 @@ VertexBuffer<T>::VertexBuffer()
 	
 }
 
+template<typename T>
+void VertexBuffer<T>::getBuffer(VertexElement vertexElement)
+{
+}
+
 template <typename T>
 VertexBuffer<T>::~VertexBuffer()
 {

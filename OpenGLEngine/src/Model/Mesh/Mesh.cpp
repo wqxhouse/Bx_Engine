@@ -41,7 +41,7 @@ Mesh::Mesh(
 
 Mesh::~Mesh()
 {
-	Memory::MemoryPool::release<Mesh>(this);
+	//Memory::MemoryPool::release<Mesh>(this);
 }
 
 void Mesh::combineVertexData(

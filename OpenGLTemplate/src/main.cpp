@@ -8,14 +8,17 @@
 #include "Core/OpenGLPCH.h"
 #include "../header/FirstTriangle.h"
 
-const int width = 800;
-const int height = 600;
+const int width = 1280;
+const int height = 720;
+const int halfWidth = (width >> 1);
+const int halfHeight = (height >> 1);
 
 GLFWwindow* window;
 
 FirstTriangle mFirstTriangle;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
 int initialize()
 {
@@ -35,6 +38,7 @@ int initialize()
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	//Initialize the GLEW
 	glewExperimental = GL_TRUE;
@@ -44,8 +48,11 @@ int initialize()
 		glfwTerminate();
 		return -1;
 	}
-
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 	//glfwGetFramebufferSize(window, width, height);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glViewport(0, 0, width, height);
 
@@ -63,10 +70,41 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	// When a user presses the escape key, we set the WindowShouldClose property to true, 
 	// closing the application
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	if (action == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(window, GL_TRUE);
+		if (key == GLFW_KEY_ESCAPE)
+		{
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+		else
+		{
+			mFirstTriangle.m_proj_camera.updateKeyboardMotion(key, 1);
+		}
 	}
+	else if(action == GLFW_RELEASE)
+	{
+		mFirstTriangle.m_proj_camera.updateKeyboardMotion(key, 0);
+	}
+}
+
+void mouse_callback(GLFWwindow * window, double x_pos, double y_pos)
+{
+	static bool firstMouseCall = false;
+	static double prevPosX = 0.0;
+	static double prevPosY = 0.0;
+
+	if (!firstMouseCall)
+	{
+		firstMouseCall = true;
+		prevPosX = x_pos;
+		prevPosY = y_pos;
+		mFirstTriangle.m_proj_camera.updateMouseMotion(0.0, 0.0);
+	}
+	else
+	{
+		mFirstTriangle.m_proj_camera.updateMouseMotion(x_pos - prevPosX, y_pos - prevPosY);
+	}
+	//mFirstTriangle.m_proj_camera.updateMouseMotion(halfWidth - x_pos, halfHeight - y_pos);
 }
 
 int main()
@@ -78,14 +116,22 @@ int main()
 		return -1;
 	}
 
+	GLfloat prevTime = 0.0f;
+	GLfloat deltaTime = 0.0f;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		GLfloat curTime = (GLfloat)glfwGetTime();
+		deltaTime = curTime - prevTime;
+		prevTime = curTime;
+
 		glfwPollEvents();
+
+		mFirstTriangle.update(deltaTime);
 
 		//Start Rendering
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		mFirstTriangle.Draw();
+		mFirstTriangle.draw();
 
 		glfwSwapBuffers(window);
 	}

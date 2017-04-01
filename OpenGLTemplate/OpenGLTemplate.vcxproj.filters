@@ -34,10 +34,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\SingleTriangle.frag">
+    <None Include="..\Resources\shaders\SingleTriangle.frag">
       <Filter>Source Files\src\shaders</Filter>
     </None>
-    <None Include="src\shaders\SingleTriangle.vert">
+    <None Include="..\Resources\shaders\SingleTriangle.vert">
       <Filter>Source Files\src\shaders</Filter>
     </None>
   </ItemGroup>

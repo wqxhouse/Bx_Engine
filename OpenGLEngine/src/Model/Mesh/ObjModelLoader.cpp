@@ -73,7 +73,7 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 					{
 						//parseIndices(vecPtr[1], vecPtr[2], vecPtr[3], &(counter[3]));
 						size_t size= vecPtr.size();
-						for (int i = 1; i < size; ++i)
+						for (size_t i = 1; i < size; ++i)
 						{
 							parseIndices(vecPtr[i], &(counter[3]));
 						}
@@ -211,7 +211,7 @@ void ObjModelLoader::counter(const string& modelFile)
 			}
 			else if (vecPtr[0] == "f") 
 			{ 
-				for (int i = 1; i < vecPtr.size(); ++i)
+				for (size_t i = 1; i < vecPtr.size(); ++i)
 				{
 					size_t findCount = vecPtr[i].find('/');
 					if (findCount != string::npos)

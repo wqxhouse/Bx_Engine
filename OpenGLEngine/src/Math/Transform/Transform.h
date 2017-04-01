@@ -5,11 +5,12 @@
 class Transform
 {
 public:
-	Transform(glm::vec3 pos, glm::vec3 front, glm::vec3 up)
+	Transform(glm::vec3 pos, glm::vec3 center, glm::vec3 up)
 	{
 		this->pos = pos;
-		this->front = front;
-		this->up = up;
+		this->front = glm::normalize(center - pos);
+		this->up = glm::normalize(up);
+		this->right = glm::normalize(glm::cross(front, up));
 	}
 
 	glm::mat4 getViewMat()
@@ -20,4 +21,5 @@ public:
 	glm::vec3 pos;
 	glm::vec3 front;
 	glm::vec3 up;
+	glm::vec3 right;
 };

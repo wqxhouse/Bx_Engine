@@ -17,6 +17,7 @@
 
 //Include GLM Libarary
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
 
@@ -26,6 +27,10 @@
 #define DEBUG
 
 #define DEFAULT_SHADER_PATH "../Resources/shaders/"
+
+#define CLAMP(v, l, r) \
+	((v) = (((v) < (l)) ? (l) : (v))); \
+	((v) = (((v) > (r)) ? (r) : (v))); \
 
 enum AllocateMode
 {

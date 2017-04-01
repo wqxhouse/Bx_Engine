@@ -24,7 +24,11 @@ void ModelLoaderBase::split(const string & str, char delim, vector<string>* spli
 {
 	stringstream m_stringstream(str);
 	string item;
-	while (getline(m_stringstream, item, delim)) {
-		splitedStrings->push_back(item);
+	while (getline(m_stringstream, item, delim)) 
+	{
+		if (item.length() > 0)
+		{
+			splitedStrings->push_back(item);
+		}
 	}
 }

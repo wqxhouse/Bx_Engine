@@ -12,6 +12,14 @@ public:
 	void LoadModel(const string& modelFile, OUT Mesh** meshPtr);
 	void LoadModel(const string& modelFile, const string& materialFile, OUT Mesh** meshPtr);
 	~ObjModelLoader();
+
+	vector<Math::Vector3> posBuffer;
+	vector<Math::Vector3> normalBuffer;
+	vector<Math::Vector2> texCoords;
+
+	vector<GLuint> posIndices;
+	vector<GLuint> normalIndices;
+	vector<GLuint> texIndices;
 private:
 	void LoadModel(const string& modelFile);
 	
@@ -23,12 +31,4 @@ private:
 	uint32_t vertexCount;
 	uint32_t texCoordCount;
 	uint32_t indicesCount;
-
-	vector<Math::Vector3> posBuffer;
-	vector<Math::Vector3> normalBuffer;
-	vector<Math::Vector2> texCoords;
-
-	vector<GLuint> posIndices;
-	vector<GLuint> normalIndices;
-	vector<GLuint> texIndices;
 };

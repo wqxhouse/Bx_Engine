@@ -31,6 +31,9 @@
     <Filter Include="src\Math\Transform">
       <UniqueIdentifier>{e01bf716-0ebe-497a-bb61-4e93b98be97c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Context">
+      <UniqueIdentifier>{ef3e1f4f-c3cc-4d22-aa4e-72b7087bd286}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Compiler\ShaderCompiler.h">
@@ -90,8 +93,11 @@
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h">
       <Filter>src\Model</Filter>
     </ClInclude>
-    <ClInclude Include="src\OpenGLEngine.h">
-      <Filter>src</Filter>
+    <ClInclude Include="src\Context\Setting.h">
+      <Filter>Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Context\OpenGLContext.h">
+      <Filter>Context</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp">
       <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Context\OpenGLContext.cpp">
+      <Filter>Context</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

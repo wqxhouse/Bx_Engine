@@ -131,8 +131,8 @@
     <ClInclude Include="Header\FirstTriangle.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\SingleTriangle.frag" />
-    <None Include="src\shaders\SingleTriangle.vert" />
+    <None Include="..\Resources\shaders\SingleTriangle.frag" />
+    <None Include="..\Resources\shaders\SingleTriangle.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
