@@ -102,9 +102,6 @@
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
       <Filter>src\Model</Filter>
     </ClInclude>
-    <ClInclude Include="src\Model\Mesh\vboindexer.hpp">
-      <Filter>src\Model\Mesh</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -145,9 +142,6 @@
     </ClCompile>
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
       <Filter>src\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model\Mesh\vboindexer.cpp">
-      <Filter>src\Model\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

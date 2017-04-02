@@ -15,7 +15,7 @@ int Scene::initialize()
 {
 	//Load model and texture
 	ObjModelLoader objLoader;
-	objLoader.LoadModel("../Resources/models/sphere/sphere.obj", &mesh);
+	objLoader.LoadModel("../Resources/models/cube/cube.obj", &mesh);
 
 	//Create vertex buffer and vertex array
 	glGenVertexArrays(1, &vertexArrayObject);
@@ -70,7 +70,7 @@ int Scene::initialize()
 
 	int texWidth, texHeight, texChannels;
 	stbi_uc* imgData = stbi_load("../Resources/textures/cube/test.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	stbi_image_free(imgData);
@@ -78,8 +78,8 @@ int Scene::initialize()
 	
 	//Compile shaders
 	ShaderCompiler m_shaderCompiler;
-	const char* vertexShaderFile = "SingleTriangle.vert";
-	const char* fragmentShaderFile = "SingleTriangle.frag";
+	const char* vertexShaderFile = "SimpleTexture.vert";
+	const char* fragmentShaderFile = "SimpleTexture.frag";
 	int hs = m_shaderCompiler.compileShader(vertexShaderFile, fragmentShaderFile, &shaderProgram);
 
 	if (hs != 0)

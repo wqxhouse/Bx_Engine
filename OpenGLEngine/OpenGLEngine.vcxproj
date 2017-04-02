@@ -170,7 +170,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Model\Mesh\Mesh.h" />
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
-    <ClInclude Include="src\Model\Mesh\vboindexer.hpp" />
     <ClInclude Include="src\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
@@ -186,7 +185,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Model\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
-    <ClCompile Include="src\Model\Mesh\vboindexer.cpp" />
     <ClCompile Include="src\Model\Model.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
