@@ -22,9 +22,9 @@ private:
 
 	GLuint indexBufferObject;
 
+	GLuint textureBinder;
+
 	GLuint shaderProgram;
-	GLuint vertexShader;
-	GLuint fragShader;
 
 	GLint success;
 	GLchar compileLog[512];

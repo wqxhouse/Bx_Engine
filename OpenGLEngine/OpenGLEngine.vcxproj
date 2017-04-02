@@ -81,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -108,7 +108,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -154,7 +154,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Context\OpenGLContext.h" />
     <ClInclude Include="src\Context\Scene.h" />
     <ClInclude Include="src\Context\Setting.h" />
-    <ClInclude Include="src\Core\Helper.h" />
     <ClInclude Include="src\Core\OpenGLPCH.h" />
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\Utility.h" />
@@ -171,6 +170,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Model\Mesh\Mesh.h" />
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
+    <ClInclude Include="src\Model\Mesh\vboindexer.hpp" />
     <ClInclude Include="src\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +186,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Model\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
+    <ClCompile Include="src\Model\Mesh\vboindexer.cpp" />
     <ClCompile Include="src\Model\Model.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -9,10 +9,15 @@ uniform mat4 view;
 uniform mat4 proj;
 
 out vec3 fragColor;
+out vec3 fragNormal;
+out vec2 fragTexCoord;
 
 void main()
 {
+	fragColor = vec3(1.0f, 0.0f, 0.0f);//vertexColor;
+	fragNormal = normal;
+	fragTexCoord = texCoord;
+	
 	mat4 mvp = proj * view * world;
     gl_Position = mvp * vec4(position, 1.0f);
-	fragColor = vec3(1.0f, 0.0f, 0.0f);//vertexColor;
 }

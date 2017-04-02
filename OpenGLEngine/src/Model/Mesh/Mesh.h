@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "../../Core/OpenGLPCH.h"
 #include "../../Math/Vector2.h"
 #include "../../Math/Vector3.h"
@@ -42,6 +44,11 @@ public:
 			this->normal = normal;
 			this->texCoords = texCoords;
 		}
+
+		bool operator<(const Vertex vertex) const
+		{
+			return memcmp((void*)this, (void*)(&vertex), sizeof(Vertex)) < 0;
+		}
 	};
 
 	struct Texture
@@ -78,7 +85,8 @@ public:
 
 	~Mesh();
 
-	std::vector<Vertex> vertexBuffer;
+	//std::vector<Vertex> vertexBuffer;
+	std::vector<GLfloat> vertexBuffer;
 	std::vector<GLuint> indexBuffer;
 	std::vector<Texture> textures;
 private:
@@ -89,4 +97,5 @@ private:
 		const std::vector<GLuint>& posIndices,
 		const std::vector<GLuint>& normalIndices,
 		const std::vector<GLuint>& texCoordIndices);
+	bool findSimilarVertex(const std::map<Vertex, GLuint>& map, const Vertex& vertex, GLuint* index);
 };

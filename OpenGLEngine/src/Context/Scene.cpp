@@ -1,6 +1,10 @@
 #include "Scene.h"
 #include "../Model/Mesh/ObjModelLoader.h"
 
+//Image loader
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 Scene::Scene(const Setting & setting)
 	:m_proj_camera(glm::vec3(-5, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height)
 {
@@ -9,7 +13,7 @@ Scene::Scene(const Setting & setting)
 
 int Scene::initialize()
 {
-	//Load Model
+	//Load model and texture
 	ObjModelLoader objLoader;
 	objLoader.LoadModel("../Resources/models/sphere/sphere.obj", &mesh);
 
@@ -21,7 +25,7 @@ int Scene::initialize()
 	glGenBuffers(1, &vertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, mesh->vertexBuffer.size() * sizeof(Mesh::Vertex), mesh->vertexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mesh->vertexBuffer.size() * sizeof(GLfloat), mesh->vertexBuffer.data(), GL_STATIC_DRAW);
 
 	//Create index buffer data and bind to VAO
 	glGenBuffers(1, &indexBufferObject);
@@ -45,13 +49,33 @@ int Scene::initialize()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)(offsetof(Mesh::Vertex, Mesh::Vertex::normal)));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)(offsetof(Mesh::Vertex, Mesh::Vertex::texCoords)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)(offsetof(Mesh::Vertex, Mesh::Vertex::texCoords)));
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
 
+	//Create texture and set sampler
+	glGenTextures(1, &textureBinder);
+	glBindTexture(GL_TEXTURE_2D, textureBinder);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	int texWidth, texHeight, texChannels;
+	stbi_uc* imgData = stbi_load("../Resources/textures/cube/test.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(imgData);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
 	//Compile shaders
 	ShaderCompiler m_shaderCompiler;
 	const char* vertexShaderFile = "SingleTriangle.vert";
@@ -82,7 +106,7 @@ void Scene::draw()
 	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
 
 	glm::mat4 transform;
-	transform = glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 1));
+	//transform = glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 1));
 	transform = glm::scale(transform, glm::vec3(.5f, .5f, .5f));
 
 	GLint glWorldMatrixLocation = glGetUniformLocation(shaderProgram, "world");
@@ -93,14 +117,14 @@ void Scene::draw()
 
 	GLint glProjectionLocation = glGetUniformLocation(shaderProgram, "proj");
 	glUniformMatrix4fv(glProjectionLocation, 1, GL_FALSE, glm::value_ptr(m_proj_camera.getProjectionMatrix()));
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureBinder);
+	glUniform1i(glGetUniformLocation(shaderProgram, "sampler"), 0);
 
 	glBindVertexArray(vertexArrayObject);
-
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
-	//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glDrawElements(GL_TRIANGLES, mesh->indexBuffer.size(), GL_UNSIGNED_INT, 0);
-
-	//glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
 
@@ -108,6 +132,7 @@ Scene::~Scene()
 {
 	glDeleteBuffers(1, &vertexArrayObject);
 	glDeleteBuffers(1, &indexBufferObject);
+	glDeleteTextures(1, &textureBinder);
 	glDeleteVertexArrays(1, &vertexBufferObject);
 	glDeleteProgram(shaderProgram);
 	delete(mesh);

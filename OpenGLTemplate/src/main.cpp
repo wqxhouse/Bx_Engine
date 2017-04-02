@@ -11,5 +11,6 @@ int main()
 	Setting setting;
 	OpenGLContext m_context(setting);
 	m_context.run();
+
 	return 0;
 }

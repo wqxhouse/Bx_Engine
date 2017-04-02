@@ -60,9 +60,6 @@
     <ClInclude Include="src\Core\OpenGLPCH.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Helper.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Memory\MemoryPool.h">
       <Filter>src\Memory</Filter>
     </ClInclude>
@@ -87,12 +84,6 @@
     <ClInclude Include="src\Model\Model.h">
       <Filter>src\Model</Filter>
     </ClInclude>
-    <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
-      <Filter>src\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Model\Mesh\ObjModelLoader.h">
-      <Filter>src\Model</Filter>
-    </ClInclude>
     <ClInclude Include="src\Context\Setting.h">
       <Filter>src\Context</Filter>
     </ClInclude>
@@ -104,6 +95,15 @@
     </ClInclude>
     <ClInclude Include="src\Core\Utility.h">
       <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\ObjModelLoader.h">
+      <Filter>src\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
+      <Filter>src\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\vboindexer.hpp">
+      <Filter>src\Model\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,12 +131,6 @@
     <ClCompile Include="src\Model\Model.cpp">
       <Filter>src\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
-      <Filter>src\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp">
-      <Filter>src\Model</Filter>
-    </ClCompile>
     <ClCompile Include="src\Context\OpenGLContext.cpp">
       <Filter>src\Context</Filter>
     </ClCompile>
@@ -145,6 +139,15 @@
     </ClCompile>
     <ClCompile Include="src\Core\Utility.cpp">
       <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp">
+      <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
+      <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\vboindexer.cpp">
+      <Filter>src\Model\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
