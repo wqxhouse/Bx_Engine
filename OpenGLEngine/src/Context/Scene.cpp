@@ -6,7 +6,7 @@
 #include "stb_image.h"
 
 Scene::Scene(const Setting & setting)
-	:m_proj_camera(glm::vec3(-5, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height)
+	:m_proj_camera(glm::vec3(-20, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height)
 {
 	this->setting = setting;
 }
@@ -15,7 +15,7 @@ int Scene::initialize()
 {
 	//Load model and texture
 	ObjModelLoader objLoader;
-	objLoader.LoadModel("../Resources/models/cube/cube.obj", &mesh);
+	objLoader.LoadModel("../Resources/models/teaport/teaport.obj", &mesh);
 
 	//Create vertex buffer and vertex array
 	glGenVertexArrays(1, &vertexArrayObject);

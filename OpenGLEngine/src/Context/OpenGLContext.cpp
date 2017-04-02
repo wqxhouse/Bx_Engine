@@ -19,6 +19,7 @@ void OpenGLContext::initialize()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_SAMPLES, 4);// 4x MSAA
 
 	window = glfwCreateWindow(setting.width, setting.height, "OpenGL Template", nullptr, nullptr);
 	if (window == nullptr)
@@ -37,9 +38,22 @@ void OpenGLContext::initialize()
 		printf("Fail to initialize GLEW.\n");
 		glfwTerminate();
 	}
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+
+	glEnable(GL_MULTISAMPLE);//Enable anti-alasing
+
+	glEnable(GL_CULL_FACE);//Enable face culling
+	glCullFace(GL_BACK);// Back face culling
 	glFrontFace(GL_CCW);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+
+	glEnable(GL_STENCIL_TEST);
+	//glStencilFunc(GL_EQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	glStencilMask(0xFF);
+
 	//glfwGetFramebufferSize(window, width, height);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -75,7 +89,7 @@ void OpenGLContext::run()
 		m_scene->update(deltaTime);
 
 		//Start Rendering
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		m_scene->draw();
 
 		glfwSwapBuffers(window);

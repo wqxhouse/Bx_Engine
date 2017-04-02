@@ -29,6 +29,7 @@ private:
 
 	void counter(const string& modelFile);
 	uint32_t vertexCount;
+	uint32_t normalCount;
 	uint32_t texCoordCount;
 	uint32_t indicesCount;
 };

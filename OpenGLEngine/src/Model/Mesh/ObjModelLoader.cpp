@@ -8,7 +8,7 @@
 #include "ObjModelLoader.h"
 
 ObjModelLoader::ObjModelLoader()
-	:vertexCount(0), texCoordCount(0), indicesCount(0)
+	:vertexCount(0), normalCount(0), texCoordCount(0), indicesCount(0)
 {}
 
 void ObjModelLoader::LoadModel(const string& modelFile)
@@ -18,7 +18,7 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 	if (inputStream.is_open())
 	{
 		posBuffer.assign(vertexCount, Math::Vector3());
-		normalBuffer.assign(vertexCount, Math::Vector3());
+		normalBuffer.assign(normalCount, Math::Vector3());
 		texCoords.assign(texCoordCount, Math::Vector2());
 
 		posIndices.assign(indicesCount, 0);
@@ -112,6 +112,7 @@ void ObjModelLoader::LoadModel(const string & modelFile, OUT Mesh** meshPtr)
 //TODO: Optimize the parse method, no need to check count each time
 void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 {
+	//TODO: parse poly surface indices
 	vector<string> indexData;
 	split(metadata, '/', &indexData);
 	int indexDataSize = indexData.size();
@@ -200,6 +201,14 @@ void ObjModelLoader::counter(const string& modelFile)
 					vertexCount = 1;
 				}
 				vertexCount += 1; 
+			}
+			else if (vecPtr[0] == "vn")
+			{
+				if (normalCount == 0)
+				{
+					normalCount = 1;
+				}
+				normalCount += 1;
 			}
 			else if (vecPtr[0] == "vt") 
 			{ 

@@ -41,6 +41,16 @@ void Camera::update(float deltaTime)
 	{
 		translate(-trans.up * deltaTime);
 	}
+
+	static float originSpeed = speed;
+	if (callbackInfo.keyboardCallBack[GLFW_KEY_LEFT_SHIFT] == 1)
+	{
+		speed = originSpeed * 4;
+	}
+	else
+	{
+		speed = originSpeed;
+	}
 }
 
 glm::mat4 Camera::getViewMatrix()
