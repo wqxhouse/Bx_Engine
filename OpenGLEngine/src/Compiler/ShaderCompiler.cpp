@@ -4,9 +4,9 @@ ShaderCompiler::ShaderCompiler()
 {
 	shaderPath = (char*)malloc(512 * sizeof(char));
 #if _DEBUG
-	char defaultPath[] = "../Resources/shaders/\0";
+	char defaultPath[] = "../resources/shaders/\0";
 #else
-	this->shaderPath = "../../Resources/shaders/\0";
+	this->shaderPath = "../../resources/shaders/\0";
 #endif
 	memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 }
@@ -24,15 +24,6 @@ void ShaderCompiler::combileShaderPathAndFile(const char * path, const char * fi
 	strcat((char*)filePath, file);
 	strcat((char*)filePath, "\0");
 }
-
-
-//void ShaderCompiler::parseShaderFile(const char * path, const char * file, unsigned int sourceSize, OUT char * shaderSource)
-//{
-//	const char* filePath = nullptr;
-//	memcpy((char*)(this->shaderPath), path, strlen(path));
-//	parseShaderFile(filePath, sourceSize, shaderSource);
-//}
-
 
 void ShaderCompiler::parseShaderFile(const char * file, unsigned int sourceSize, OUT char * shaderSource)
 {
@@ -92,6 +83,14 @@ void ShaderCompiler::parseShaderFile(const char * file, unsigned int sourceSize,
 	SafeRelease((void*)filePath, MALLOC);
 }
 
+void ShaderCompiler::parseShaderFile(const char * path, const char * file, unsigned int sourceSize, OUT char * shaderSource)
+{
+	SafeRelease((char*)shaderPath, MALLOC);
+	shaderPath = (char*)malloc(512 * sizeof(char));
+	memcpy(this->shaderPath, path, sizeof(path));
+	parseShaderFile(file, sourceSize, shaderSource);
+}
+
 
 void ShaderCompiler::setDefaultShaderPath(const char* path)
 {
@@ -107,7 +106,6 @@ const char* ShaderCompiler::getDefaultPath()
 }
 
 
-//TODO: Crash when using customized shader file path
 int ShaderCompiler::compileShader(const char * vertexShaderPath, const char * vertexShaderFile, 
 	const char * fragmentShaderPath, const char * fragmentShaderFile, OUT GLuint* shaderProgram,
 	unsigned int vertexShaderSourceSize, unsigned int fragmentShaderSourceSize)
@@ -118,7 +116,7 @@ int ShaderCompiler::compileShader(const char * vertexShaderPath, const char * ve
 	combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile, fragmentShaderFilePath);
 	setDefaultShaderPath(vertexShaderPath);
 	
-	int hs = compileShader(vertexShaderFilePath, fragmentShaderFilePath, shaderProgram, 
+	int hs = compileShader(vertexShaderFile, fragmentShaderFile, shaderProgram,
 		vertexShaderSourceSize, fragmentShaderSourceSize);
 
 	return hs;

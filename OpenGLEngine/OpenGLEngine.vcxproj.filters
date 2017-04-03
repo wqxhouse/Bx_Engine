@@ -34,6 +34,9 @@
     <Filter Include="src\Context">
       <UniqueIdentifier>{ef3e1f4f-c3cc-4d22-aa4e-72b7087bd286}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Light">
+      <UniqueIdentifier>{7b45e552-66ea-49c5-b73e-df25400f1af1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Compiler\ShaderCompiler.h">
@@ -102,6 +105,9 @@
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
       <Filter>src\Model</Filter>
     </ClInclude>
+    <ClInclude Include="src\Light\LightBase.h">
+      <Filter>src\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -142,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
       <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light\LightBase.cpp">
+      <Filter>src\Light</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

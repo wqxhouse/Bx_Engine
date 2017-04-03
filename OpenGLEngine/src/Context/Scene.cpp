@@ -15,7 +15,7 @@ int Scene::initialize()
 {
 	//Load model and texture
 	ObjModelLoader objLoader;
-	objLoader.LoadModel("../Resources/models/teaport/teaport.obj", &mesh);
+	objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &mesh);
 
 	//Create vertex buffer and vertex array
 	glGenVertexArrays(1, &vertexArrayObject);
@@ -69,7 +69,7 @@ int Scene::initialize()
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	int texWidth, texHeight, texChannels;
-	stbi_uc* imgData = stbi_load("../Resources/textures/cube/test.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	stbi_uc* imgData = stbi_load("../resources/textures/cube/wall.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -80,6 +80,7 @@ int Scene::initialize()
 	ShaderCompiler m_shaderCompiler;
 	const char* vertexShaderFile = "SimpleTexture.vert";
 	const char* fragmentShaderFile = "SimpleTexture.frag";
+	//int hs = m_shaderCompiler.compileShader("../resources/shaders/", vertexShaderFile, "../resources/shaders/", fragmentShaderFile, &shaderProgram);
 	int hs = m_shaderCompiler.compileShader(vertexShaderFile, fragmentShaderFile, &shaderProgram);
 
 	if (hs != 0)

@@ -157,6 +157,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Core\OpenGLPCH.h" />
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Light\LightBase.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
     <ClInclude Include="src\Math\Transform\Transform.h" />
@@ -180,6 +181,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Context\Scene.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
+    <ClCompile Include="src\Light\LightBase.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Model\Mesh\Mesh.cpp" />
