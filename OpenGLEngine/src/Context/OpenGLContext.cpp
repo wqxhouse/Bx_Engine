@@ -19,7 +19,8 @@ void OpenGLContext::initialize()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_SAMPLES, 4);// 4x MSAA
+
+	glfwWindowHint(GLFW_SAMPLES, setting.m_graphicsSetting.antialasing);// 4x MSAA
 
 	window = glfwCreateWindow(setting.width, setting.height, "OpenGL Template", nullptr, nullptr);
 	if (window == nullptr)
@@ -105,8 +106,7 @@ OpenGLContext::~OpenGLContext()
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	// When a user presses the escape key, we set the WindowShouldClose property to true, 
-	// closing the application
+	// When a user presses the escape key, we set the WindowShouldClose property to true, closing the application
 	if (action == GLFW_PRESS)
 	{
 		if (key == GLFW_KEY_ESCAPE)

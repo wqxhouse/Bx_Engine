@@ -56,7 +56,7 @@ void Mesh::combineVertexData(
 	int indicesBufferIndex = 0;
 	int vertexBufferSize = 0;
 
-	for (int i = 0; i < posIndices.size(); ++i)
+	for (size_t i = 0; i < posIndices.size(); ++i)
 	{
 		int posIndex = 0;// = posIndices[i];
 		int normalIndex = 0;// = normalIndices[i];

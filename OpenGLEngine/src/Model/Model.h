@@ -6,6 +6,9 @@
 class Model
 {
 public:
-	Mesh mesh;
-	Transform trans;
+	Model(const std::string & modelFile, Transform* modelTrans);
+	~Model();
+
+	Mesh* mesh;
+	Transform* trans;
 };

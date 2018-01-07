@@ -16,9 +16,9 @@ public:
 	//Compile vertex and fragment shader, then link them
 	int compileShader(const char* vertexShaderPath, const char* vertexShaderFile,
 		const char* fragmentShaderPath, const char* fragmentShaderFile, OUT GLuint* shaderProgram,
-		unsigned int vertexShaderSourceSize = 1024, unsigned int fragShaderSourceSize = 1024);
+		unsigned int vertexShaderSourceSize = 2048, unsigned int fragShaderSourceSize = 2048);
 	int compileShader(const char* vertexShaderFile, const char* fragmentShaderFile, OUT GLuint* shaderProgram,
-		unsigned int vertexShaderSourceSize = 1024, unsigned int fragShaderSourceSize = 1024);
+		unsigned int vertexShaderSourceSize = 2048, unsigned int fragShaderSourceSize = 2048);
 private:
 	char* shaderPath;
 

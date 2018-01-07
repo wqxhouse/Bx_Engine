@@ -105,7 +105,7 @@
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
       <Filter>src\Model</Filter>
     </ClInclude>
-    <ClInclude Include="src\Light\LightBase.h">
+    <ClInclude Include="src\Light\Light.h">
       <Filter>src\Light</Filter>
     </ClInclude>
   </ItemGroup>
@@ -149,8 +149,14 @@
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
       <Filter>src\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Light\LightBase.cpp">
+    <ClCompile Include="src\Light\Light.cpp">
       <Filter>src\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light\DirectionalLight.cpp">
+      <Filter>src\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Context\Setting.cpp">
+      <Filter>src\Context</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

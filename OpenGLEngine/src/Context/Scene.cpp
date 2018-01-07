@@ -13,11 +13,15 @@ Scene::Scene(const Setting & setting)
 
 int Scene::initialize()
 {
-	//Load model and texture
-	ObjModelLoader objLoader;
-	objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &mesh);
+	////Load model and texture(Hardcode here)
+	//ObjModelLoader objLoader;
+	//objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &(pModel->mesh));
+	Transform* pTrans = new Transform(glm::vec3(), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
+	addModel("../resources/models/farmhouse/farmhouse_tri.obj", pTrans);
+
 
 	//Create vertex buffer and vertex array
+
 	glGenVertexArrays(1, &vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
 
@@ -25,23 +29,23 @@ int Scene::initialize()
 	glGenBuffers(1, &vertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, mesh->vertexBuffer.size() * sizeof(GLfloat), mesh->vertexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sceneModelsPtr[0]->mesh->vertexBuffer.size() * sizeof(GLfloat), sceneModelsPtr[0]->mesh->vertexBuffer.data(), GL_STATIC_DRAW);
 
 	//Create index buffer data and bind to VAO
 	glGenBuffers(1, &indexBufferObject);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer.size() * sizeof(GLuint), mesh->indexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sceneModelsPtr[0]->mesh->indexBuffer.size() * sizeof(GLuint), sceneModelsPtr[0]->mesh->indexBuffer.data(), GL_STATIC_DRAW);
 
 	//Bind vertex buffer attributes to VAO
 	/*
-	glVertexAttribPointer:
-	1. index in vertex shader,
-	2. counts of every element,
-	3. elements type,
-	4. if need to be normalized to 0-1,
-	5. space between attribute sets,
-	6. offset in every stride
+		glVertexAttribPointer:
+			1. index in vertex shader,
+			2. counts of every element,
+			3. elements type,
+			4. if need to be normalized to 0-1,
+			5. space between attribute sets,
+			6. offset in every stride
 	*/
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)(offsetof(Mesh::Vertex, Mesh::Vertex::position)));
 	glEnableVertexAttribArray(0);
@@ -80,8 +84,8 @@ int Scene::initialize()
 	ShaderCompiler m_shaderCompiler;
 	const char* vertexShaderFile = "SimpleTexture.vert";
 	const char* fragmentShaderFile = "SimpleTexture.frag";
-	//int hs = m_shaderCompiler.compileShader("../resources/shaders/", vertexShaderFile, "../resources/shaders/", fragmentShaderFile, &shaderProgram);
 	int hs = m_shaderCompiler.compileShader(vertexShaderFile, fragmentShaderFile, &shaderProgram);
+	//int hs = m_shaderCompiler.compileShader("../resources/shaders/", vertexShaderFile, "../resources/shaders/", fragmentShaderFile, &shaderProgram);
 
 	if (hs != 0)
 	{
@@ -107,7 +111,8 @@ void Scene::draw()
 	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
 
 	glm::mat4 transform;
-	//transform = glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 1));
+	//transform = glm::translate(transform, glm::vec3(10.0f, 10.0f, 10.0f));
+	//transform = glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 0));
 	transform = glm::scale(transform, glm::vec3(.5f, .5f, .5f));
 
 	GLint glWorldMatrixLocation = glGetUniformLocation(shaderProgram, "world");
@@ -125,7 +130,8 @@ void Scene::draw()
 
 	glBindVertexArray(vertexArrayObject);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
-	glDrawElements(GL_TRIANGLES, mesh->indexBuffer.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, sceneModelsPtr[0]->mesh->indexBuffer.size(), GL_UNSIGNED_INT, 0);
+
 	glBindVertexArray(0);
 }
 
@@ -136,5 +142,17 @@ Scene::~Scene()
 	glDeleteTextures(1, &textureBinder);
 	glDeleteVertexArrays(1, &vertexBufferObject);
 	glDeleteProgram(shaderProgram);
-	delete(mesh);
+
+	for (Model* model : sceneModelsPtr)
+	{
+		delete(model);
+	}
+	sceneModelsPtr.clear();
+	//delete(pModel);
+}
+
+void Scene::addModel(const std::string & modelFile, Transform * modelTrans)
+{
+	Model* pModel = new Model(modelFile, modelTrans);
+	sceneModelsPtr.push_back(pModel);
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Compiler/ShaderCompiler.h"
-#include "../Model/Mesh/Mesh.h"
+#include "../Model/Model.h"
 #include "../Camera/Camera.h"
 #include "Setting.h"
 
@@ -13,6 +13,8 @@ public:
 	void update(float deltaTime);
 	void draw();
 	~Scene();
+
+	void addModel(const std::string & modelFile, Transform* modelTrans);
 
 	ProspectiveCamera m_proj_camera;
 private:
@@ -31,5 +33,7 @@ private:
 
 	Setting setting;
 
-	Mesh *mesh;
+	//Mesh* mesh;
+	//Model* pModel;
+	std::vector<Model*> sceneModelsPtr;
 };
