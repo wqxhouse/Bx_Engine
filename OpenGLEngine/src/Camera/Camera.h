@@ -30,6 +30,8 @@ protected:
 	//float delta_x;
 	//float delta_y;
 	glm::vec3 worldUp;
+
+	glm::vec3 curFront;
 };
 
 class ProspectiveCamera : public Camera

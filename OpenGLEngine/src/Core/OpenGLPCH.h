@@ -54,5 +54,21 @@ inline void SafeRelease(void* ptr, AllocateMode allocateMode)
 	}
 }
 
+inline void SafeFree(void* ptr)
+{
+	if (ptr != nullptr)
+	{
+		free(ptr);
+	}
+}
+
+inline void SafeDelete(void* ptr)
+{
+	if (ptr != nullptr)
+	{
+		delete ptr;
+	}
+}
+
 #include "Utility.h"
 extern CallbackInfo callbackInfo;

@@ -126,7 +126,8 @@ void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 	}
 	else if (indexDataSize == 2)
 	{
-		posIndices.push_back(stoi(indexData[0]));
+		//posIndices.push_back(stoi(indexData[0]));
+		posIndices[*counter] = stoi(indexData[0]);
 		texIndices[*counter] = stoi(indexData[1]);
 
 		*counter += 1;

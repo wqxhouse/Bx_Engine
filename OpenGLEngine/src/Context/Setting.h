@@ -5,7 +5,10 @@ struct GraphicsSetting
 public:
 	enum Antialasing
 	{
-		NONE = 0, LOW = 2, HIGH = 4, ELTRA = 8
+		NONE	=	0x00000000,
+		LOW		=	0x00000002,
+		HIGH	=	0x00000004,
+		ELTRA	=	0x00000008,
 	}antialasing = Antialasing::HIGH;
 };
 
@@ -17,10 +20,11 @@ public:
 
 	float fov = 45.0f;
 
-	GraphicsSetting m_graphicsSetting;
+	enum PolyMode
+	{
+		WIREFRAME = 0x00000000,
+		TRIANGLE = 0x00000001,
+	}polyMode = PolyMode::TRIANGLE;
 
-	unsigned int getPolyMode();
-	void setPolyMode();
-private:
-	unsigned int polyMode = 0;
+	GraphicsSetting m_graphicsSetting;
 };

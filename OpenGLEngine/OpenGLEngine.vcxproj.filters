@@ -158,5 +158,11 @@
     <ClCompile Include="src\Context\Setting.cpp">
       <Filter>src\Context</Filter>
     </ClCompile>
+    <ClCompile Include="src\Light\PointLight.cpp">
+      <Filter>src\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light\SpotLight.cpp">
+      <Filter>src\Light</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

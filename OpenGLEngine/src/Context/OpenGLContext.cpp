@@ -55,7 +55,7 @@ void OpenGLContext::initialize()
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	glStencilMask(0xFF);
 
-	//glfwGetFramebufferSize(window, width, height);
+	glfwGetFramebufferSize(window, (int*)(&fbWidth), (int*)(&fbHeight));
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glViewport(0, 0, setting.width, setting.height);

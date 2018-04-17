@@ -3,6 +3,7 @@
 #include "../Compiler/ShaderCompiler.h"
 #include "../Model/Model.h"
 #include "../Camera/Camera.h"
+#include "../Light/Light.h"
 #include "Setting.h"
 
 class Scene
@@ -17,14 +18,17 @@ public:
 	void addModel(const std::string & modelFile, Transform* modelTrans);
 
 	ProspectiveCamera m_proj_camera;
+
+	DirectionalLight m_directionalLight;
 private:
 
-	GLuint vertexArrayObject;
-	GLuint vertexBufferObject;
+	GLuint vertexArrayObject[2];
+	
+	GLuint vertexBufferObject[2];
 
-	GLuint indexBufferObject;
+	GLuint indexBufferObject[2];
 
-	GLuint textureBinder;
+	GLuint textureHandle[2];
 
 	GLuint shaderProgram;
 
@@ -32,6 +36,24 @@ private:
 	GLchar compileLog[512];
 
 	Setting setting;
+
+	GLuint transformHandle;
+	GLuint transformBuffer;
+	const GLchar* transformMembers[3] = { "world", "view", "proj" };
+	GLint transformBufferSize;
+	GLubyte* transformBufferData;
+
+	GLuint normalTransformHandle;
+	GLuint normalTransformBuffer;
+	const GLchar* normalTransformMembers = { "rot" };
+	GLint normalTransformBufferSize;
+	GLubyte* normalTransformBufferData;
+	
+	GLuint lightParagHandle;
+	GLuint lightParagBuffer;
+	const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
+	GLint lightStructSize;
+	GLubyte* lightDataBuffer;
 
 	//Mesh* mesh;
 	//Model* pModel;

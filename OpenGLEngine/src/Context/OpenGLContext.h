@@ -23,5 +23,8 @@ private:
 	GLfloat prevTime = 0.0f;
 	GLfloat deltaTime = 0.0f;
 
+	unsigned int fbWidth = 0u;
+	unsigned int fbHeight = 0u;
+
 	CallbackInfo callbackInfo;
 };

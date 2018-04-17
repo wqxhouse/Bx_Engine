@@ -1,13 +1,12 @@
 #include "Camera.h"
 
 Camera::Camera(glm::vec3 pos, glm::vec3 center, glm::vec3 up, float speed)
-	:trans(pos, center, up)
+	:trans(pos, center, up), curFront(glm::normalize(center - pos)), worldUp(up)
 {
 	this->speed = speed;
+
 	view = glm::lookAt(pos, center, up);
 	//memset(translationKey, 0, 1024 * sizeof(int));
-
-	worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
 Transform Camera::getTrans()

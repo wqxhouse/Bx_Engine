@@ -15,7 +15,7 @@ public:
 
 	glm::mat4 getViewMat()
 	{
-		return glm::lookAt(pos, pos + front, up);;
+		return glm::lookAt(pos, pos + front, up);
 	}
 
 	glm::vec3 pos;

@@ -1,9 +1,9 @@
 #include "Light.h"
 
-DirectionalLight::DirectionalLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color)
-	:Light(position, direction, color)
+DirectionalLight::DirectionalLight(const glm::vec3 & direction, const glm::vec3 & color)
+	:Light(color)
 {
-
+	m_direction = glm::normalize(direction);
 }
 
 DirectionalLight::~DirectionalLight()
