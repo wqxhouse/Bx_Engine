@@ -32,6 +32,7 @@ protected:
 	glm::vec3 worldUp;
 
 	glm::vec3 curFront;
+	glm::vec3 curRight;
 };
 
 class ProspectiveCamera : public Camera

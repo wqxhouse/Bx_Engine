@@ -4,6 +4,7 @@ Camera::Camera(glm::vec3 pos, glm::vec3 center, glm::vec3 up, float speed)
 	:trans(pos, center, up), curFront(glm::normalize(center - pos)), worldUp(up)
 {
 	this->speed = speed;
+	this->curRight = trans.right;
 
 	view = glm::lookAt(pos, center, up);
 	//memset(translationKey, 0, 1024 * sizeof(int));

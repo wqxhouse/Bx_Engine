@@ -6,7 +6,7 @@
 #include "stb_image.h"
 
 Scene::Scene(const Setting & setting)
-	: m_proj_camera(glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3(0, 0, 0), 
+	: m_proj_camera(glm::vec3(-5.0f, 0.0f, 0.0f), glm::vec3(0, 0, 0), 
 		            glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height),
 	  m_directionalLight(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))
 {
@@ -19,11 +19,11 @@ int Scene::initialize()
 	//ObjModelLoader objLoader;
 	//objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &(pModel->mesh));
 	Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-	//addModel("../resources/models/cornellbox/CornellBox-Sphere.obj", pTrans);
-	addModel("../resources/models/sphere/sphere.obj", pTrans);
+	addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj", pTrans);
+	//addModel("../resources/models/sphere/sphere.obj", pTrans);
 
 	Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-	addModel("../resources/models/sphere/sphere.obj", pTrans2);
+	addModel("../../resources/models/sphere/sphere.obj", pTrans2);
 
 	//Create vertex buffer and vertex array
 

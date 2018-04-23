@@ -11,6 +11,11 @@ struct CallbackInfo
 		double delta_x;
 		double delta_y;
 		MousePosCallback() : delta_x(0), delta_y(0) {}
+		inline void reset()
+		{
+			delta_x = 0.0;
+			delta_y = 0.0;
+		}
 	}cursorPosCallBack;
 
 	CallbackInfo()

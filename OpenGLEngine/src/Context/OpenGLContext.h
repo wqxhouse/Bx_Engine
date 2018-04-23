@@ -18,7 +18,7 @@ private:
 	Setting setting;
 
 	//TODO: Multiple Scenes
-	Scene *m_scene;
+	Scene m_scene;
 
 	GLfloat prevTime = 0.0f;
 	GLfloat deltaTime = 0.0f;

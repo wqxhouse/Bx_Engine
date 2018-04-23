@@ -5,10 +5,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
 OpenGLContext::OpenGLContext(const Setting & setting)
-	:callbackInfo()
+	:callbackInfo(), m_scene(setting)
 {
 	this->setting = setting;
-	this->m_scene = new Scene(setting);
 }
 
 void OpenGLContext::initialize()
@@ -66,7 +65,7 @@ void OpenGLContext::initialize()
 	printf("Success initialize OpenGL.\n");
 #endif
 	
-	assert(m_scene->initialize() == 0);
+	assert(m_scene.initialize() == 0);
 
 #if _DEBUG
 	printf("Success initialize render scene.\n");
@@ -87,11 +86,11 @@ void OpenGLContext::run()
 
 		glfwPollEvents();
 
-		m_scene->update(deltaTime);
+		m_scene.update(deltaTime);
 
 		//Start Rendering
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		m_scene->draw();
+		m_scene.draw();
 
 		glfwSwapBuffers(window);
 	}
@@ -101,7 +100,6 @@ void OpenGLContext::run()
 
 OpenGLContext::~OpenGLContext()
 {
-	delete(m_scene);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -142,7 +140,11 @@ void mouse_callback(GLFWwindow * window, double x_pos, double y_pos)
 	{
 		callbackInfo.cursorPosCallBack.delta_x = x_pos - prevPosX;
 		callbackInfo.cursorPosCallBack.delta_y = y_pos - prevPosY;
+
+		//prevPosX = x_pos;
+		//prevPosY = y_pos;
 		//m_proj_camera.updateMouseMotion(x_pos - prevPosX, y_pos - prevPosY);
 	}
+	//printf("Callback: %lf, %lf, %lf, %lf\n", prevPosX, x_pos, prevPosY, y_pos);
 	//m_context.m_proj_camera.updateMouseMotion(halfWidth - x_pos, halfHeight - y_pos);
 }
