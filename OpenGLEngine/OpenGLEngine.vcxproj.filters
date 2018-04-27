@@ -37,6 +37,9 @@
     <Filter Include="src\Light">
       <UniqueIdentifier>{7b45e552-66ea-49c5-b73e-df25400f1af1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Model\Material">
+      <UniqueIdentifier>{564bf2ba-11bf-4741-8e34-e878f3d4471e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Compiler\ShaderCompiler.h">
@@ -84,9 +87,6 @@
     <ClInclude Include="src\Math\Transform\Transform.h">
       <Filter>src\Math\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="src\Model\Model.h">
-      <Filter>src\Model</Filter>
-    </ClInclude>
     <ClInclude Include="src\Context\Setting.h">
       <Filter>src\Context</Filter>
     </ClInclude>
@@ -107,6 +107,18 @@
     </ClInclude>
     <ClInclude Include="src\Light\Light.h">
       <Filter>src\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Model.h">
+      <Filter>src\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material\Material.h">
+      <Filter>src\Model\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Quaternion.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Math.h">
+      <Filter>src\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -130,9 +142,6 @@
     </ClCompile>
     <ClCompile Include="src\Camera\Camera.cpp">
       <Filter>src\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model\Model.cpp">
-      <Filter>src\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Context\OpenGLContext.cpp">
       <Filter>src\Context</Filter>
@@ -163,6 +172,15 @@
     </ClCompile>
     <ClCompile Include="src\Light\SpotLight.cpp">
       <Filter>src\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Model.cpp">
+      <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material\Material.cpp">
+      <Filter>src\Model\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Math.cpp">
+      <Filter>src\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -158,8 +158,11 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\Utility.h" />
     <ClInclude Include="src\Light\Light.h" />
+    <ClInclude Include="src\Material\Material.h" />
+    <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Math\Quaternion.h" />
     <ClInclude Include="src\Math\Transform\Transform.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
@@ -186,6 +189,8 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Light\Light.cpp" />
     <ClCompile Include="src\Light\PointLight.cpp" />
     <ClCompile Include="src\Light\SpotLight.cpp" />
+    <ClCompile Include="src\Material\Material.cpp" />
+    <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Model\Mesh\Mesh.cpp" />

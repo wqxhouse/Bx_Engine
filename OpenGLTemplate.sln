@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLTemplate", "OpenGLTemplate\OpenGLTemplate.vcxproj", "{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,58 +17,44 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLEngineTest", "OpenGLE
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|Win32.Build.0 = Debug|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|x64.ActiveCfg = Debug|x64
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|x64.Build.0 = Debug|x64
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|x86.ActiveCfg = Debug|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|x86.Build.0 = Debug|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|Win32.ActiveCfg = Release|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|Win32.Build.0 = Release|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|x64.ActiveCfg = Release|x64
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|x64.Build.0 = Release|x64
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|x86.ActiveCfg = Release|Win32
 		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|x86.Build.0 = Release|Win32
-		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|Win32.ActiveCfg = Debug|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|Win32.Build.0 = Debug|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|x64.ActiveCfg = Debug|x64
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|x64.Build.0 = Debug|x64
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|x86.ActiveCfg = Debug|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|x86.Build.0 = Debug|Win32
-		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|Win32.ActiveCfg = Release|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|Win32.Build.0 = Release|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|x64.ActiveCfg = Release|x64
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|x64.Build.0 = Release|x64
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|x86.ActiveCfg = Release|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|x86.Build.0 = Release|Win32
-		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|Win32.ActiveCfg = Debug|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|Win32.Build.0 = Debug|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x64.ActiveCfg = Debug|x64
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x64.Build.0 = Debug|x64
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x86.ActiveCfg = Debug|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x86.Build.0 = Debug|Win32
-		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Release|Win32.ActiveCfg = Release|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Release|Win32.Build.0 = Release|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Release|x64.ActiveCfg = Release|x64

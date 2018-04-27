@@ -6,6 +6,8 @@
 
 #include "MathTestBase.h"
 
+#define PI 3.1415926f
+
 void Vector3Test()
 {
 	Vector3 vec1;
@@ -25,9 +27,8 @@ void Vector3Test()
 	vec1.crossProduct(vec2);
 	cout << "Cross Product: " << vec1 << endl;
 
-	Vector3Ptr vec4 = Vector3::crossProduct(vec3, vec2);
+	Vector3 vec4 = Vector3::crossProduct(vec3, vec2);
 	cout << "Cross Product2: " << Vector3::crossProduct(vec3, vec2) << endl;
-	delete vec4;
 
 	vec1 += Vector3(1, 1, 1);
 	cout << "Add: " << vec1 << endl;
@@ -43,7 +44,6 @@ void Vector3Test()
 
 	vec4 = vec1 + vec2;
 	cout << "V1 + V2: " << vec4 << endl;
-	delete vec4;
 }
 
 void Vector4Test()
@@ -54,20 +54,30 @@ void Vector4Test()
 	cout << vec1 << endl;
 	cout << vec2 << endl;
 
-	vec1.crossProduct(&vec2);
+	vec1.crossProduct(vec2);
 	cout << vec1 << endl;
 
-	Vector4Ptr vec3 = Vector4::crossProduct(vec1, vec2);
+	Vector4 vec3 = Vector4::crossProduct(vec1, vec2);
 	cout << vec3 << endl;
 }
 
-//int main()
-//{
-//	cout << "Vector3 Test" << endl;
-//	Vector3Test();
-//
-//	cout << "Vector4 Test" << endl;
-//	Vector4Test();
-//
-//	system("pause");
-//}
+void QuaternionTest()
+{
+	Vector3 v(1.0f, 0.0f, 0.0f);
+	float degree = -90.0f * 0.01745329f;
+	Vector3 res = rotate(v, Vector3(0.0f, 1.0f, 0.0f), degree);
+
+	cout << res << endl;
+}
+
+void RunVectorTest()
+{
+	cout << "Vector3 Test" << endl;
+	Vector3Test();
+
+	cout << "Vector4 Test" << endl;
+	Vector4Test();
+
+	cout << "Quaternion Test" << endl;
+	QuaternionTest();
+}

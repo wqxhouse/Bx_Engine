@@ -3,16 +3,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <math.h>
 
-#include <Math/Vector3.h>
-#include <Math/Vector4.h>
+#include <Math/Math.h>
 #include <Math/Matrix3x3.h>
 
 using namespace std;
 using namespace Math;
 
-class MathTestBase
-{
-	MathTestBase();
-	~MathTestBase();
-};
+void RunVectorTest();

@@ -1,4 +1,7 @@
 #include "Camera.h"
+#include "../Math/Math.h"
+
+using namespace Math;
 
 ProspectiveCamera::ProspectiveCamera(
 	glm::vec3 pos, glm::vec3 center, glm::vec3 up, float speed,
@@ -23,7 +26,6 @@ void ProspectiveCamera::rotate(float pitch, float yaw)
 {
 	//pitch += pitch_offset * CAMERA_SENSATIVE, yaw += yaw_offset * CAMERA_SENSATIVE;
 	CLAMP(pitch, -89.0f, 89.0f);
-	//CLAMP(yaw, -89.0f, 89.0f);
 
 	glm::mat4 rotationX;
 	glm::mat4 rotationY;
@@ -33,7 +35,10 @@ void ProspectiveCamera::rotate(float pitch, float yaw)
 
 	rotationX = glm::rotate(rotationX, glm::radians(pitch), rotationAxis);
 
-	trans.front = glm::normalize(rotationX * glm::vec4(rotationXFront, 1.0f));	
+	Vector3 m_front_0 = Math::rotate(Vector3(curFront.x, curFront.y, curFront.z), Vector3(0.0f, 1.0f, 0.0f), glm::radians(-yaw));
+	Vector3 m_front = Math::rotate(m_front_0, Vector3(rotationAxis.x, rotationAxis.y, rotationAxis.z), glm::radians(pitch));
+	
+	trans.front = glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z)); //m_front;//glm::normalize(rotationX * glm::vec4(rotationXFront, 1.0f));
 	trans.right = glm::normalize(rotationY * glm::vec4(curRight, 1.0f));
 	trans.up    = glm::normalize(glm::cross(trans.right, trans.front));
 
@@ -61,6 +66,7 @@ void ProspectiveCamera::rotate(float pitch, float yaw)
 	//trans.up = glm::normalize(glm::cross(trans.right, trans.front));
 
 	printf("front: (%f, %f, %f)\n", trans.front.x, trans.front.y, trans.front.z);
+	printf("front(Quaternion): (%f, %f, %f)\n", m_front.x, m_front.y, m_front.z);
 	printf("right: (%f, %f, %f)\n", trans.right.x, trans.right.y, trans.right.z);
 	printf("up: (%f, %f, %f)\n", trans.up.x, trans.up.y, trans.up.z);
 	view = trans.getViewMat();
