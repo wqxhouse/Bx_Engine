@@ -57,3 +57,14 @@ bin/*
 
 #Texture files
 *.dds
+
+#Debug
+./OpenGLEngine/Debug/*
+./OpenGLEngine/Release/*
+./OpenGLEngine/x64/*
+./OpenGLEngineTest/Debug/*
+./OpenGLEngineTest/Release/*
+./OpenGLEngineTest/x64/*
+./OpenGLTemplate/Debug/*
+./OpenGLTemplate/Release/*
+./OpenGLTemplate/x64/*
