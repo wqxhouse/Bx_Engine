@@ -63,44 +63,44 @@ namespace Math
 		}
 
 
-		static Vector3Ptr crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
+		static Vector3 crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
 		{
-			Vector3Ptr resultVector = Vector3::New();
-			resultVector->X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
-			resultVector->Y = leftVec3.Z * rightVec3.X - leftVec3.X * rightVec3.Z;
-			resultVector->Z = leftVec3.X * rightVec3.Y - leftVec3.Y * rightVec3.X;
+			Vector3 resultVector;
+			resultVector.X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
+			resultVector.Y = leftVec3.Z * rightVec3.X - leftVec3.X * rightVec3.Z;
+			resultVector.Z = leftVec3.X * rightVec3.Y - leftVec3.Y * rightVec3.X;
 
 			return resultVector;
 		}
 
-		static Vector3Ptr crossProduct(const Vector3Ptr leftVec3, const Vector3Ptr rightVec3)
+		static Vector3 crossProduct(const Vector3Ptr leftVec3, const Vector3Ptr rightVec3)
 		{
-			Vector3Ptr resultVector = Vector3::New();
-			resultVector->X = leftVec3->Y * rightVec3->Z - leftVec3->Z * rightVec3->Y;
-			resultVector->Y = leftVec3->Z * rightVec3->X - leftVec3->X * rightVec3->Z;
-			resultVector->Z = leftVec3->X * rightVec3->Y - leftVec3->Y * rightVec3->X;
+			Vector3 resultVector;
+			resultVector.X = leftVec3->Y * rightVec3->Z - leftVec3->Z * rightVec3->Y;
+			resultVector.Y = leftVec3->Z * rightVec3->X - leftVec3->X * rightVec3->Z;
+			resultVector.Z = leftVec3->X * rightVec3->Y - leftVec3->Y * rightVec3->X;
 
 			return resultVector;
 		}
 		
-		Vector3Ptr operator+(const Vector3 &v)
+		Vector3 operator+(const Vector3 &v)
 		{
-			return Vector3::New(X + v.X, Y + v.Y, Z + v.Z);
+			return Vector3(X + v.X, Y + v.Y, Z + v.Z);
 		}
 
-		Vector3Ptr operator-(const Vector3 &v)
+		Vector3 operator-(const Vector3 &v)
 		{
-			return Vector3::New(X - v.X, Y - v.Y, Z - v.Z);
+			return Vector3(X - v.X, Y - v.Y, Z - v.Z);
 		}
 
-		Vector3Ptr operator*(const Vector3 &v)
+		Vector3 operator*(const Vector3 &v)
 		{
-			return Vector3::New(X * v.X, Y * v.Y, Z * v.Z);
+			return Vector3(X * v.X, Y * v.Y, Z * v.Z);
 		}
 
-		Vector3Ptr operator/(const Vector3 &v)
+		Vector3 operator/(const Vector3 &v)
 		{
-			return Vector3::New(X / v.X, Y / v.Y, Z / v.Z);
+			return Vector3(X / v.X, Y / v.Y, Z / v.Z);
 		}
 
 		void operator+=(float f) { X += f; Y += f; Z += f; }
@@ -121,6 +121,26 @@ namespace Math
 			Z = v.Z;
 		}
 
+		Vector3 operator-()
+		{
+			Vector3 result;
+			result.x = -x;
+			result.y = -y;
+			result.z = -z;
+
+			return result;
+		}
+
+		Vector3 operator*(const float f)
+		{
+			Vector3 result;
+			result.X = X * f;
+			result.Y = Y * f;
+			result.Z = Z * f;
+
+			return result;
+		}
+
 		float operator[](int index)
 		{
 			switch (index)
@@ -136,12 +156,33 @@ namespace Math
 			}
 		}
 
-		float X;
-		float Y;
-		float Z;
-	private:
-		
+		union
+		{
+			struct
+			{
+				float X;
+				float Y;
+				float Z;
+			};
+
+			struct
+			{
+				float x;
+				float y;
+				float z;
+			};
+		};
 	};
+
+	inline Vector3 operator*(const float f, const Vector3& v)
+	{
+		Vector3 result;
+		result.X = f * v.X;
+		result.Y = f * v.Y;
+		result.Z = f * v.Z;
+
+		return result;
+	}
 
 	inline std::ostream& operator<<(std::ostream& out, const Vector3 &v)
 	{

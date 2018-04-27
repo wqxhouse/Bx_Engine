@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Core/OpenGLPCH.h"
+#include "../Quaternion.h"
 
 class Transform
 {

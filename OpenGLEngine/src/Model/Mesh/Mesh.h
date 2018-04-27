@@ -5,6 +5,7 @@
 #include "../../Core/OpenGLPCH.h"
 #include "../../Math/Vector2.h"
 #include "../../Math/Vector3.h"
+#include "../../Material/Material.h"
 
 class Mesh
 {
@@ -89,6 +90,8 @@ public:
 	std::vector<GLfloat> vertexBuffer;
 	std::vector<GLuint> indexBuffer;
 	std::vector<Texture> textures;
+
+	Material* m_material;
 private:
 	void combineVertexData(
 		const std::vector<Math::Vector3>& posBuf,

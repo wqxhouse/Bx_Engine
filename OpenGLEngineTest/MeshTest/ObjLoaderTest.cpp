@@ -1,6 +1,8 @@
-#include "Mesh\Model\ObjModelLoader.h"
+#include <Mesh\Model\ObjModelLoader.h>
 
-int main()
+#include "ObjLoaderTest.h"
+
+void RunObjLoaderTest()
 {
 	ObjModelLoader loader;
 	Mesh *mesh;
@@ -11,5 +13,4 @@ int main()
 	loader.LoadModel(objPath, &mesh);
 
 	delete mesh;
-	return 0;
 }

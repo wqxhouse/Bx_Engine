@@ -28,10 +28,16 @@
     <ClCompile Include="MeshTest\ObjLoaderTest.cpp">
       <Filter>Source Files\MeshTest</Filter>
     </ClCompile>
+    <ClCompile Include="TestMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MathTestBase.h">
       <Filter>Source Files\MathTest</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshTest\ObjLoaderTest.h">
+      <Filter>Source Files\MeshTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

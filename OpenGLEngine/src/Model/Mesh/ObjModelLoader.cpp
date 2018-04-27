@@ -84,6 +84,14 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 						throw;
 					}
 				}
+				else if (vecPtr[0] == "g")
+				{
+
+				}
+				else if (vecPtr[0] == "usemtl")
+				{
+
+				}
 				else
 				{
 					//throw exception("Invalid obj model format\n");
@@ -98,6 +106,7 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFile, OUT Mesh** meshPtr)
 {
 	counter(modelFile);
+
 	LoadModel(modelFile);
 	*meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
 }
