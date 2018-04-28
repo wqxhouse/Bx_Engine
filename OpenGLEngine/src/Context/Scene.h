@@ -17,7 +17,8 @@ public:
 
 	void addModel(const std::string & modelFile, Transform* modelTrans);
 
-	ProspectiveCamera m_proj_camera;
+	std::vector<Camera*> m_pCameraList;
+	UINT m_activeCamera;
 
 	DirectionalLight m_directionalLight;
 private:

@@ -32,6 +32,8 @@
 	((v) = (((v) < (l)) ? (l) : (v))); \
 	((v) = (((v) > (r)) ? (r) : (v))); \
 
+#define UINT uint32_t
+
 enum AllocateMode
 {
 	MALLOC, NEW, NEW_ARRAY

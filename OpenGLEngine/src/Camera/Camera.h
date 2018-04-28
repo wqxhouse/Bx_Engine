@@ -8,7 +8,12 @@
 class Camera
 {
 public:
-	Camera(glm::vec3 pos, glm::vec3 center, glm::vec3 up, float speed);
+	enum CameraType
+	{
+		PROJECT_CAM, ORTHO_CAM
+	}m_type;
+
+	Camera(CameraType type, glm::vec3 pos, glm::vec3 center, glm::vec3 up, float speed);
 	virtual void translate(glm::vec3 trans) {}
 	virtual void rotate(float degree) {}
 

@@ -141,8 +141,8 @@ void mouse_callback(GLFWwindow * window, double x_pos, double y_pos)
 		callbackInfo.cursorPosCallBack.delta_x = x_pos - prevPosX;
 		callbackInfo.cursorPosCallBack.delta_y = y_pos - prevPosY;
 
-		//prevPosX = x_pos;
-		//prevPosY = y_pos;
+		prevPosX = x_pos;
+		prevPosY = y_pos;
 		//m_proj_camera.updateMouseMotion(x_pos - prevPosX, y_pos - prevPosY);
 	}
 	//printf("Callback: %lf, %lf, %lf, %lf\n", prevPosX, x_pos, prevPosY, y_pos);
