@@ -1,3 +1,4 @@
+#include "../Core/Utility.h"
 #include "Scene.h"
 #include "../Model/Mesh/ObjModelLoader.h"
 
@@ -6,15 +7,22 @@
 #include "stb_image.h"
 
 Scene::Scene(const Setting & setting)
-	: m_proj_camera(glm::vec3(5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0), 
-		            glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height),
-	  m_directionalLight(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))
+	: m_directionalLight(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)),
+	  m_activeCamera(0)
 {
 	this->setting = setting;
 }
 
 int Scene::initialize()
 {
+	m_pCameraList.push_back(
+		new ProspectiveCamera(glm::vec3(5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
+		glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height));
+
+	m_pCameraList.push_back(
+		new ProspectiveCamera(glm::vec3(-5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
+			glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height));
+
 	////Load model and texture(Hardcode here)
 	//ObjModelLoader objLoader;
 	//objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &(pModel->mesh));
@@ -176,7 +184,24 @@ int Scene::initialize()
 
 void Scene::update(float deltaTime)
 {
-	m_proj_camera.update(deltaTime);
+	UINT cameraCount = m_pCameraList.size();
+
+	assert(cameraCount > 0);
+
+	if (callbackInfo.keyboardCallBack[GLFW_KEY_1] == 1)
+	{
+		m_activeCamera = 0;
+	}
+	else if (callbackInfo.keyboardCallBack[GLFW_KEY_2] == 1)
+	{
+		m_activeCamera = (1 < cameraCount) ? 1 : m_activeCamera;
+	}
+	else if (callbackInfo.keyboardCallBack[GLFW_KEY_3] == 1)
+	{
+		m_activeCamera = (2 < cameraCount) ? 2 : m_activeCamera;
+	}
+
+	m_pCameraList[m_activeCamera]->update(deltaTime);
 }
 
 void Scene::draw()
@@ -187,6 +212,8 @@ void Scene::draw()
 	GLfloat colorValue = 1.0f;// (GLfloat)(sin(timeValue) / 2) + 0.5;
 	GLint glVertexColorLocation = glGetUniformLocation(shaderProgram, "uniformColor");
 	glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
+
+	ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
 
 	for (size_t i = 0; i < 1; ++i)
 	{
@@ -206,13 +233,13 @@ void Scene::draw()
 
 		//glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0, 1, 0));
 		GLint glViewMatrixLocation = glGetUniformLocation(shaderProgram, "view");
-		glUniformMatrix4fv(glViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(m_proj_camera.getViewMatrix()/*view*/));
+		glUniformMatrix4fv(glViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->getViewMatrix()/*view*/));
 
 		GLint glProjectionLocation = glGetUniformLocation(shaderProgram, "proj");
-		glUniformMatrix4fv(glProjectionLocation, 1, GL_FALSE, glm::value_ptr(m_proj_camera.getProjectionMatrix()));
+		glUniformMatrix4fv(glProjectionLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->getProjectionMatrix()));
 
 		GLint glEyeHandle = glGetUniformLocation(shaderProgram, "eye");
-		glUniformMatrix3fv(glEyeHandle, 1, GL_FALSE, glm::value_ptr(m_proj_camera.getTrans().front));
+		glUniformMatrix3fv(glEyeHandle, 1, GL_FALSE, glm::value_ptr(activeCamPtr->getTrans().front));
 
 		glActiveTexture(GL_TEXTURE0);
 
@@ -255,6 +282,21 @@ Scene::~Scene()
 		delete(model);
 	}
 	sceneModelsPtr.clear();
+
+	for (Camera* pCamera : m_pCameraList)
+	{
+		switch (pCamera->m_type)
+		{
+		case Camera::CameraType::PROJECT_CAM:
+			delete static_cast<ProspectiveCamera*>(pCamera);
+			break;
+		case Camera::CameraType::ORTHO_CAM:
+			delete static_cast<OrthographicCamera*>(pCamera);
+			break;
+		default:
+			break;
+		}
+	}
 	//delete(pModel);
 }
 
