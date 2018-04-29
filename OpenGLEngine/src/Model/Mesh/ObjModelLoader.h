@@ -2,15 +2,14 @@
 
 #include <vector>
 
-#include "Mesh.h"
+#include "../Model.h"
 #include "ModelLoaderBase.h"
 
 class ObjModelLoader : ModelLoaderBase
 {
 public:
 	ObjModelLoader();
-	void LoadModel(const string& modelFile, OUT Mesh** meshPtr);
-	void LoadModel(const string& modelFile, const string& materialFile, OUT Mesh** meshPtr);
+	void LoadModel(const string& modelFile, OUT Model* modelPtr);
 	~ObjModelLoader();
 
 	vector<Math::Vector3> posBuffer;
@@ -32,4 +31,7 @@ private:
 	uint32_t normalCount;
 	uint32_t texCoordCount;
 	uint32_t indicesCount;
+
+	std::string tempMeshName;
+	std::string tempMaterialName;
 };

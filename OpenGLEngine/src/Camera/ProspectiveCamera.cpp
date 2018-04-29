@@ -79,7 +79,7 @@ void ProspectiveCamera::rotate(float pitch, float yaw)
 
 void ProspectiveCamera::update(float deltaTime)
 {
-	printf("delta: (%lf, %lf)\n", callbackInfo.cursorPosCallBack.delta_x, callbackInfo.cursorPosCallBack.delta_y);
+	//printf("delta: (%lf, %lf)\n", callbackInfo.cursorPosCallBack.delta_x, callbackInfo.cursorPosCallBack.delta_y);
 	rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE, 
 		   static_cast<float>( callbackInfo.cursorPosCallBack.delta_x) * CAMERA_SENSATIVE);
 

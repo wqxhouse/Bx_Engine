@@ -5,18 +5,16 @@ Model::Model(const std::string & modelFile, Transform * modelTrans)
 	:trans(modelTrans)
 {
 	ObjModelLoader objLoader;
-	objLoader.LoadModel(modelFile, &mesh);
-}
-
-Model::Model(const std::string & modelFile, const std::string& materialFile, Transform* modelTrans)
-	:trans(modelTrans)
-{
-	ObjModelLoader objLoader;
-	objLoader.LoadModel(modelFile, materialFile, &mesh);
+	objLoader.LoadModel(modelFile, this);
 }
 
 Model::~Model()
 {
-	delete(mesh);
+	for (Mesh* pMesh : m_pMeshList)
+	{
+		delete(pMesh);
+	}
+	m_pMeshList.clear();
+
 	delete(trans);
 }

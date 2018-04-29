@@ -7,10 +7,9 @@ class Model
 {
 public:
 	Model(const std::string & modelFile, Transform* modelTrans);
-	Model(const std::string & modelFile, const std::string& materialFile, Transform* modelTrans);
 	~Model();
 
-	Mesh* mesh;
+	std::vector<Mesh*> m_pMeshList;
 
 	Transform* trans;
 };

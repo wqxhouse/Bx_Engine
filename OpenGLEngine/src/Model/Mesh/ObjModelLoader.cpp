@@ -86,11 +86,11 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 				}
 				else if (vecPtr[0] == "g")
 				{
-
+					tempMeshName = vecPtr[1];
 				}
 				else if (vecPtr[0] == "usemtl")
 				{
-
+					tempMaterialName = vecPtr[1];
 				}
 				else
 				{
@@ -103,19 +103,14 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 	}
 }
 
-void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFile, OUT Mesh** meshPtr)
-{
-	counter(modelFile);
-
-	LoadModel(modelFile);
-	*meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
-}
-
-void ObjModelLoader::LoadModel(const string & modelFile, OUT Mesh** meshPtr)
+void ObjModelLoader::LoadModel(const string & modelFile, OUT Model* modelPtr)
 {
 	counter(modelFile);
 	LoadModel(modelFile);
-	*meshPtr = new Mesh(posBuffer, normalBuffer, texCoords, posIndices, normalIndices, texIndices);
+	modelPtr->m_pMeshList.push_back(
+		new Mesh(tempMeshName, tempMaterialName,
+			     posBuffer, normalBuffer, texCoords,
+			     posIndices, normalIndices, texIndices));
 }
 
 //TODO: Optimize the parse method, no need to check count each time

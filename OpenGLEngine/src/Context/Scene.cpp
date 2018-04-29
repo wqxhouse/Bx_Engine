@@ -47,14 +47,14 @@ int Scene::initialize()
 	//Set vertex buffer data
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject[0]);
 	//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sceneModelsPtr[0]->mesh->vertexBuffer.size() * sizeof(GLfloat),
-		         sceneModelsPtr[0]->mesh->vertexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sceneModelsPtr[0]->m_pMeshList[0]->vertexBuffer.size() * sizeof(GLfloat),
+		         sceneModelsPtr[0]->m_pMeshList[0]->vertexBuffer.data(), GL_STATIC_DRAW);
 
 	//Create index buffer data and bind to VAO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject[0]);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sceneModelsPtr[0]->mesh->indexBuffer.size() * sizeof(GLuint),
-		         sceneModelsPtr[0]->mesh->indexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sceneModelsPtr[0]->m_pMeshList[0]->indexBuffer.size() * sizeof(GLuint),
+		         sceneModelsPtr[0]->m_pMeshList[0]->indexBuffer.data(), GL_STATIC_DRAW);
 
 	//Bind vertex buffer attributes to VAO
 	/*
@@ -83,12 +83,12 @@ int Scene::initialize()
 	glBindVertexArray(vertexArrayObject[1]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject[1]);
-	glBufferData(GL_ARRAY_BUFFER, sceneModelsPtr[1]->mesh->vertexBuffer.size() * sizeof(GLfloat),
-		         sceneModelsPtr[1]->mesh->vertexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sceneModelsPtr[1]->m_pMeshList[0]->vertexBuffer.size() * sizeof(GLfloat),
+		         sceneModelsPtr[1]->m_pMeshList[0]->vertexBuffer.data(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sceneModelsPtr[1]->mesh->indexBuffer.size() * sizeof(GLuint),
-		         sceneModelsPtr[1]->mesh->indexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sceneModelsPtr[1]->m_pMeshList[0]->indexBuffer.size() * sizeof(GLuint),
+		         sceneModelsPtr[1]->m_pMeshList[0]->indexBuffer.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex),
 		                 (GLvoid*)(offsetof(Mesh::Vertex, Mesh::Vertex::position)));
@@ -200,6 +200,10 @@ void Scene::update(float deltaTime)
 	{
 		m_activeCamera = ((2 < cameraCount) ? 2 : m_activeCamera);
 	}
+	else if (callbackInfo.keyboardCallBack[GLFW_KEY_4] == 1)
+	{
+		m_activeCamera = ((3 < cameraCount) ? 3 : m_activeCamera);
+	}
 
 	m_pCameraList[m_activeCamera]->update(deltaTime);
 }
@@ -251,12 +255,12 @@ void Scene::draw()
 		if (setting.polyMode == setting.PolyMode::WIREFRAME)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
-			glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->mesh->indexBuffer.size(), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->m_pMeshList[0]->indexBuffer.size(), GL_UNSIGNED_INT, 0);
 		}
 		else if (setting.polyMode == setting.PolyMode::TRIANGLE)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_TRIANGLES);
-			glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->mesh->indexBuffer.size(), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->m_pMeshList[0]->indexBuffer.size(), GL_UNSIGNED_INT, 0);
 		}
 	}
 	glBindVertexArray(0);

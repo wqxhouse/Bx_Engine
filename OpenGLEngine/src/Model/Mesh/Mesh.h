@@ -58,33 +58,48 @@ public:
 		std::string type;
 	};
 	
-	Mesh(const std::vector<Math::Vector3>& posBuf,
+	Mesh(
+		const std::string& name,
+		const std::string& materialFile,
+		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
 		const std::vector<GLuint>& indices);
 
-	Mesh(const std::vector<Math::Vector3>& posBuf,
+	Mesh(
+		const std::string& name,
+		const std::string& materialFile,
+		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
 		const std::vector<GLuint>& indices,
 		const std::vector<Texture>& textures);
 
-	Mesh(const std::vector<Math::Vector3>& posBuf,
+	Mesh(
+		const std::string& name,
+		const std::string& materialFile,
+		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
 		const std::vector<GLuint>& posIndices,
 		const std::vector<GLuint>& normalIndices,
 		const std::vector<GLuint>& texCoordIndices);
 
-	Mesh(const std::vector<Math::Vector3>& posBuf, 
-		 const std::vector<Math::Vector3>& normalBuf, 
-		 const std::vector<Math::Vector2>& texCoords,
+	Mesh(
+		const std::string& name,
+		const std::string& materialFile,
+		const std::vector<Math::Vector3>& posBuf, 
+		const std::vector<Math::Vector3>& normalBuf, 
+		const std::vector<Math::Vector2>& texCoords,
 		const std::vector<GLuint>& posIndices,
 		const std::vector<GLuint>& normalIndices,
 		const std::vector<GLuint>& texCoordIndices,
-		 const std::vector<Texture>& textures);
+		const std::vector<Texture>& textures);
 
 	~Mesh();
+
+	std::string name;
+	std::string materialName;
 
 	//std::vector<Vertex> vertexBuffer;
 	std::vector<GLfloat> vertexBuffer;
