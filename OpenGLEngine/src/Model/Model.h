@@ -6,7 +6,7 @@
 class Model
 {
 public:
-	Model(const std::string & modelFile, Transform* modelTrans);
+	Model(const std::string & modelFile, const std::string& materialFile, Transform* modelTrans);
 	~Model();
 
 	std::vector<Mesh*> m_pMeshList;

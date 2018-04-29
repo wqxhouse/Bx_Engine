@@ -27,11 +27,11 @@ int Scene::initialize()
 	//ObjModelLoader objLoader;
 	//objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &(pModel->mesh));
 	Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-	addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj", pTrans);
+	addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj", "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);
 	//addModel("../resources/models/sphere/sphere.obj", pTrans);
 
 	Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-	addModel("../../resources/models/sphere/sphere.obj", pTrans2);
+	addModel("../../resources/models/sphere/sphere.obj", "", pTrans2);
 
 	//Create vertex buffer and vertex array
 
@@ -304,8 +304,8 @@ Scene::~Scene()
 	//delete(pModel);
 }
 
-void Scene::addModel(const std::string & modelFile, Transform * modelTrans)
+void Scene::addModel(const std::string & modelFile, const std::string & materialFile, Transform * modelTrans)
 {
-	Model* pModel = new Model(modelFile, modelTrans);
+	Model* pModel = new Model(modelFile, materialFile, modelTrans);
 	sceneModelsPtr.push_back(pModel);
 }

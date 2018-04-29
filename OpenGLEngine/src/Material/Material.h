@@ -22,10 +22,12 @@ enum ShadingMethod
 class Material
 {
 public:
-	Material(float refraction, float alpha, bool transparency);
+	Material(const std::string& materialName, float refraction, float alpha, bool transparency);
 
 	void setShadingMethod(const ShadingMethod shadingMethod);
 	virtual ~Material() {}
+
+	std::string m_materialName;
 
 	MaterialType materialType;
 	ShadingMethod shadingMethod;
@@ -38,11 +40,17 @@ public:
 class SpecularMaterial : public Material
 {
 public:
-	SpecularMaterial(const Vector3& ks, const Vector3& kd, float refraction,
-		             float alpha, bool transparency);
+	SpecularMaterial(const std::string& materialName);
+	SpecularMaterial(const std::string& materialName,
+		             const Vector3& ka, const Vector3& kd, const Vector3& ks, float ns);
+	SpecularMaterial(const std::string& materialName,
+		             const Vector3& ka, const Vector3& kd, const Vector3& ks,
+					 float ns, float refraction, float alpha, bool transparency);
 
 	~SpecularMaterial() {}
 
+	Vector3 ka;
 	Vector3 ks;
 	Vector3 kd;
+	float ns;
 };

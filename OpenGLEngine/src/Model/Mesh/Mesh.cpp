@@ -4,40 +4,47 @@
 Mesh::Mesh(
 	const std::string& name,
 	const std::string& materialFile,
+	const int counter[],
 	const std::vector<Math::Vector3>& posBuf, 
 	const std::vector<Math::Vector3>& normalBuf,
 	const std::vector<Math::Vector2>& texCoords, 
 	const std::vector<GLuint>& indices)
+	: m_name(name), m_materialName(materialFile)
 {
 }
 
 Mesh::Mesh(
 	const std::string& name,
 	const std::string& materialFile,
+	const int counter[],
 	const std::vector<Math::Vector3>& posBuf, 
 	const std::vector<Math::Vector3>& normalBuf,
 	const std::vector<Math::Vector2>& texCoords, 
 	const std::vector<GLuint>& indices, 
 	const std::vector<Texture>& textures)
+	: m_name(name), m_materialName(materialFile)
 {
 }
 
 Mesh::Mesh(
 	const std::string& name,
 	const std::string& materialFile,
+	const int counter[],
 	const std::vector<Math::Vector3>& posBuf,
 	const std::vector<Math::Vector3>& normalBuf,
 	const std::vector<Math::Vector2>& texCoords,
 	const std::vector<GLuint>& posIndices,
 	const std::vector<GLuint>& normalIndices,
 	const std::vector<GLuint>& texCoordIndices)
+	: m_name(name), m_materialName(materialFile)
 {
-	combineVertexData(posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
+	combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
 }
 
 Mesh::Mesh(
 	const std::string& name,
 	const std::string& materialFile,
+	const int counter[],
 	const std::vector<Math::Vector3>& posBuf,
 	const std::vector<Math::Vector3>& normalBuf,
 	const std::vector<Math::Vector2>& texCoords,
@@ -45,20 +52,26 @@ Mesh::Mesh(
 	const std::vector<GLuint>& normalIndices,
 	const std::vector<GLuint>& texCoordIndices,
 	const std::vector<Texture>& textures)
+	: m_name(name), m_materialName(materialFile)
 {
 	//TODO: Safely register the memory
 	Memory::MemoryPool::registerMemory<Mesh>(this);
 
-	combineVertexData(posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
+	combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
 	this->textures = textures;
 }
 
 Mesh::~Mesh()
 {
 	//Memory::MemoryPool::release<Mesh>(this);
+	if (m_pMaterial != nullptr)
+	{
+		delete m_pMaterial;
+	}
 }
 
 void Mesh::combineVertexData(
+	const int counter[],
 	const std::vector<Math::Vector3>& posBuf,
 	const std::vector<Math::Vector3>& normalBuf,
 	const std::vector<Math::Vector2>& texCoords,
@@ -71,7 +84,7 @@ void Mesh::combineVertexData(
 	int indicesBufferIndex = 0;
 	int vertexBufferSize = 0;
 
-	for (size_t i = 0; i < posIndices.size(); ++i)
+	for (int i = 0; i < counter[3]; ++i)
 	{
 		int posIndex = 0;// = posIndices[i];
 		int normalIndex = 0;// = normalIndices[i];

@@ -15,7 +15,7 @@ public:
 	void draw();
 	~Scene();
 
-	void addModel(const std::string & modelFile, Transform* modelTrans);
+	void addModel(const std::string & modelFile, const std::string & materialFile, Transform* modelTrans);
 
 	std::vector<Camera*> m_pCameraList;
 	UINT m_activeCamera;
