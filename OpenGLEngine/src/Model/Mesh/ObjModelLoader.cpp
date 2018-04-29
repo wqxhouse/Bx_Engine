@@ -11,8 +11,10 @@ ObjModelLoader::ObjModelLoader()
 	:vertexCount(0), normalCount(0), texCoordCount(0), indicesCount(0)
 {}
 
-void ObjModelLoader::LoadModel(const string& modelFile)
+void ObjModelLoader::LoadModel(const string& modelFile, Model* modelPtr)
 {
+	counter(modelFile);
+
 	ifstream inputStream(modelFile, std::ios::out);
 
 	if (inputStream.is_open())
@@ -30,8 +32,7 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 
 		while (std::getline(inputStream, modelFileLine))
 		{
-			vector<string> vecPtr;
-			split(modelFileLine, ' ', &vecPtr);
+			vector<string> vecPtr = split(modelFileLine, ' ');
 
 			if (vecPtr.size() > 2)
 			{
@@ -84,41 +85,57 @@ void ObjModelLoader::LoadModel(const string& modelFile)
 						throw;
 					}
 				}
-				else if (vecPtr[0] == "g")
+				else if (vecPtr[1] == "Object")
 				{
-					tempMeshName = vecPtr[1];
-				}
-				else if (vecPtr[0] == "usemtl")
-				{
-					tempMaterialName = vecPtr[1];
+					if (tempMeshName == "")
+					{
+						tempMeshName = vecPtr[2];
+					}
+					else
+					{
+						Mesh* meshPtr = new Mesh(tempMeshName, tempMaterialName, counter,
+												 posBuffer, normalBuffer, texCoords,
+												 posIndices, normalIndices, texIndices);
+						meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
+						modelPtr->m_pMeshList.push_back(meshPtr);
+
+						counter[3] = 0;
+
+						tempMeshName = vecPtr[2];
+					}
 				}
 				else
 				{
 					//throw exception("Invalid obj model format\n");
 				}
 			}
+			else if (vecPtr.size() == 2)
+			{
+				if (vecPtr[0] == "usemtl")
+				{
+					tempMaterialName = vecPtr[1];
+				}
+			}
+
+		}
+		
+		if (counter[3] > 0)
+		{
+			modelPtr->m_pMeshList.push_back(
+				new Mesh(tempMeshName, tempMaterialName, counter,
+					posBuffer, normalBuffer, texCoords,
+					posIndices, normalIndices, texIndices));
 		}
 
 		inputStream.close();
 	}
 }
 
-void ObjModelLoader::LoadModel(const string & modelFile, OUT Model* modelPtr)
-{
-	counter(modelFile);
-	LoadModel(modelFile);
-	modelPtr->m_pMeshList.push_back(
-		new Mesh(tempMeshName, tempMaterialName,
-			     posBuffer, normalBuffer, texCoords,
-			     posIndices, normalIndices, texIndices));
-}
-
 //TODO: Optimize the parse method, no need to check count each time
 void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 {
 	//TODO: parse poly surface indices
-	vector<string> indexData;
-	split(metadata, '/', &indexData);
+	vector<string> indexData = split(metadata, '/');
 	int indexDataSize = indexData.size();
 
 	if (indexDataSize == 1)
@@ -195,8 +212,7 @@ void ObjModelLoader::counter(const string& modelFile)
 
 	while (std::getline(inputStream, line))
 	{
-		vector<string> vecPtr;
-		split(line, ' ', &vecPtr);
+		vector<string> vecPtr = split(line, ' ');
 		if (vecPtr.size() > 2)
 		{
 			if (vecPtr[0] == "v") 
@@ -237,6 +253,69 @@ void ObjModelLoader::counter(const string& modelFile)
 		}
 	}
 	inputStream.close();
+}
+
+void ObjModelLoader::loadMaterial(const string & materialFile, Mesh * meshPtr)
+{
+	ifstream inputStream(materialFile, std::ios::out);
+
+	if (inputStream.is_open())
+	{
+		string line;
+
+		while (std::getline(inputStream, line))
+		{
+			vector<string> materialStrs = split(line, ' ');
+			size_t strLength = materialStrs.size();
+
+			if (strLength > 2)
+			{
+				if (materialStrs[0] == "Ka")
+				{
+					m_materialMap[tempMaterialName]->
+						ka.setData(stof(materialStrs[1]), 
+						           stof(materialStrs[2]), 
+						           stof(materialStrs[3]));
+				}
+				else if (materialStrs[0] == "Kd")
+				{
+					m_materialMap[tempMaterialName]->
+						kd.setData(stof(materialStrs[1]),
+						           stof(materialStrs[2]),
+								   stof(materialStrs[3]));
+				}
+				else if (materialStrs[0] == "Ks")
+				{
+					m_materialMap[tempMaterialName]->
+						ks.setData(stof(materialStrs[1]),
+						           stof(materialStrs[2]),
+								   stof(materialStrs[3]));
+				}
+			}
+			else if (strLength == 2)
+			{
+				if (materialStrs[0] == "newmtl")
+				{
+					tempMaterialName = materialStrs[1];
+					m_materialMap[materialStrs[1]] = new SpecularMaterial(tempMaterialName);
+				}
+				else if (materialStrs[0] == "Ns") // Specular exponent
+				{
+					m_materialMap[tempMaterialName]->ns = stof(materialStrs[2]);
+				}
+				else if (materialStrs[0] == "Ni")
+				{
+					// TODO
+				}
+				else if (materialStrs[0] == "illum")
+				{
+					// TODO
+				}
+			}
+		}
+
+		inputStream.close();
+	}
 }
 
 ObjModelLoader::~ObjModelLoader()

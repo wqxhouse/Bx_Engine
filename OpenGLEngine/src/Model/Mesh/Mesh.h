@@ -61,6 +61,7 @@ public:
 	Mesh(
 		const std::string& name,
 		const std::string& materialFile,
+		const int counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
@@ -69,6 +70,7 @@ public:
 	Mesh(
 		const std::string& name,
 		const std::string& materialFile,
+		const int counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
@@ -78,6 +80,7 @@ public:
 	Mesh(
 		const std::string& name,
 		const std::string& materialFile,
+		const int counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
@@ -88,6 +91,7 @@ public:
 	Mesh(
 		const std::string& name,
 		const std::string& materialFile,
+		const int counter[],
 		const std::vector<Math::Vector3>& posBuf, 
 		const std::vector<Math::Vector3>& normalBuf, 
 		const std::vector<Math::Vector2>& texCoords,
@@ -98,17 +102,18 @@ public:
 
 	~Mesh();
 
-	std::string name;
-	std::string materialName;
+	std::string m_name;
+	std::string m_materialName;
 
 	//std::vector<Vertex> vertexBuffer;
 	std::vector<GLfloat> vertexBuffer;
 	std::vector<GLuint> indexBuffer;
 	std::vector<Texture> textures;
 
-	Material* m_material;
+	Material* m_pMaterial;
 private:
 	void combineVertexData(
+		const int counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
