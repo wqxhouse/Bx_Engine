@@ -50,7 +50,6 @@ Global
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|x86.ActiveCfg = Release|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Release|x86.Build.0 = Release|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|Win32.ActiveCfg = Debug|Win32
-		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|Win32.Build.0 = Debug|Win32
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x64.ActiveCfg = Debug|x64
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x64.Build.0 = Debug|x64
 		{00FBBDB7-52F5-4DC8-BB28-988D159296D1}.Debug|x86.ActiveCfg = Debug|Win32
@@ -64,5 +63,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00985B4A-1E51-4170-B103-DEA5E2EBE44A}
 	EndGlobalSection
 EndGlobal

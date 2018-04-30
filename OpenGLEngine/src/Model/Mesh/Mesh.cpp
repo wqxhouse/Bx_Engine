@@ -66,7 +66,8 @@ Mesh::~Mesh()
 	//Memory::MemoryPool::release<Mesh>(this);
 	if (m_pMaterial != nullptr)
 	{
-		delete m_pMaterial;
+		//TODO: Release issue
+		delete (SpecularMaterial*)m_pMaterial;
 	}
 }
 
