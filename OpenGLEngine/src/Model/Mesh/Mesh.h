@@ -2,6 +2,8 @@
 
 #include <map>
 
+#include "../../Context/Setting.h"
+
 #include "../../Core/OpenGLPCH.h"
 #include "../../Math/Vector2.h"
 #include "../../Math/Vector3.h"
@@ -100,6 +102,8 @@ public:
 		const std::vector<GLuint>& texCoordIndices,
 		const std::vector<Texture>& textures);
 
+	void draw();
+
 	~Mesh();
 
 	std::string m_name;
@@ -110,8 +114,10 @@ public:
 	std::vector<GLuint> indexBuffer;
 	std::vector<Texture> textures;
 
-	Material* m_pMaterial;
+	Material* m_pMaterial = nullptr;
 private:
+	void initialize();
+
 	void combineVertexData(
 		const int counter[],
 		const std::vector<Math::Vector3>& posBuf,
@@ -120,5 +126,12 @@ private:
 		const std::vector<GLuint>& posIndices,
 		const std::vector<GLuint>& normalIndices,
 		const std::vector<GLuint>& texCoordIndices);
+
 	bool findSimilarVertex(const std::map<Vertex, GLuint>& map, const Vertex& vertex, GLuint* index);
+
+	PolyMode m_polyMode = TRIANGLE;
+
+	GLuint m_vertexArrayObj; // VAO
+	GLuint m_vertexBufferObj; // VBO
+	GLuint m_indexBufferObj;
 };

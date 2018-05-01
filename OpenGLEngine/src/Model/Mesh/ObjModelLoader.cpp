@@ -97,7 +97,12 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
 						Mesh* meshPtr = new Mesh(tempMeshName, tempMaterialName, counter,
 												 posBuffer, normalBuffer, texCoords,
 												 posIndices, normalIndices, texIndices);
-						meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
+
+						if (m_materialMap.find(tempMaterialName) != m_materialMap.end())
+						{
+							meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
+						}
+
 						modelPtr->m_pMeshList.push_back(meshPtr);
 
 						counter[3] = 0;
@@ -122,10 +127,16 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
 		
 		if (counter[3] > 0)
 		{
-			modelPtr->m_pMeshList.push_back(
-				new Mesh(tempMeshName, tempMaterialName, counter,
-					posBuffer, normalBuffer, texCoords,
-					posIndices, normalIndices, texIndices));
+			Mesh* meshPtr = new Mesh(tempMeshName, tempMaterialName, counter,
+				posBuffer, normalBuffer, texCoords,
+				posIndices, normalIndices, texIndices);
+
+			if (m_materialMap.find(tempMaterialName) != m_materialMap.end())
+			{
+				meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
+			}
+
+			modelPtr->m_pMeshList.push_back(meshPtr);
 		}
 
 		inputStream.close();
@@ -141,36 +152,19 @@ void ObjModelLoader::parseIndices(const string & metadata, int* counter)
 
 	if (indexDataSize == 1)
 	{
-		//posIndices.push_back(stoi(indexData[0]));
 		posIndices[*counter] = stoi(indexData[0]);
 
 		*counter += 1;
 	}
 	else if (indexDataSize == 2)
 	{
-		//posIndices.push_back(stoi(indexData[0]));
 		posIndices[*counter] = stoi(indexData[0]);
 		texIndices[*counter] = stoi(indexData[1]);
 
 		*counter += 1;
-		//for (int i = 0; i < metadata.size(); ++i)
-		//{
-		//	if (metadata[i] == '/' && (i < metadata.size() && metadata[i + 1] == '/'))
-		//	{
-		//		//normalIndices.push_back(stoi(indexData[1]));
-		//		normalIndices[*counter] = stoi(indexData[1]);
-		//	}
-		//	else
-		//	{
-		//		//texIndices.push_back(stoi(indexData[1]));
-		//	}
-		//}
 	}
 	else if (indexDataSize == 3)
 	{
-		/*posIndices.push_back(stoi(indexData[0]));
-		texIndices.push_back(stoi(indexData[1]));
-		normalIndices.push_back(stoi(indexData[2]));*/
 		posIndices[*counter] = stoi(indexData[0]);
 
 		if (indexData[1] != "")
