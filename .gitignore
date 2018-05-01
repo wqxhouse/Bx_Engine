@@ -51,10 +51,6 @@ iphc/*
 .vs/*
 bin/*
 
-#Model files
-*.obj
-*.fbx
-
 #Texture files
 *.dds
 
@@ -74,3 +70,6 @@ OpenGLTemplate/x64/*
 
 *.log
 *.tlog
+
+extern/glew-2.0.0/build/*
+extern/glfw-3.2.1/bin/*
