@@ -1,5 +1,11 @@
 #pragma once
 
+enum PolyMode
+{
+	WIREFRAME = 0x00000000,
+	TRIANGLE = 0x00000001,
+};
+
 struct GraphicsSetting
 {
 public:
@@ -20,11 +26,7 @@ public:
 
 	float fov = 45.0f;
 
-	enum PolyMode
-	{
-		WIREFRAME = 0x00000000,
-		TRIANGLE = 0x00000001,
-	}polyMode = PolyMode::TRIANGLE;
+	PolyMode polyMode = PolyMode::TRIANGLE;
 
 	GraphicsSetting m_graphicsSetting;
 };

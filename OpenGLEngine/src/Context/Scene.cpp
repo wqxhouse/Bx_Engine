@@ -2,10 +2,6 @@
 #include "Scene.h"
 #include "../Model/Mesh/ObjModelLoader.h"
 
-//Image loader
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 Scene::Scene(const Setting & setting)
 	: m_directionalLight(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)),
 	  m_activeCamera(0)
@@ -115,7 +111,7 @@ int Scene::initialize()
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-	int texWidth, texHeight, texChannels;
+	/*int texWidth, texHeight, texChannels;
 	stbi_uc* imgData = stbi_load("../resources/textures/teaport/wall.jpg", 
 		                         &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
@@ -134,7 +130,7 @@ int Scene::initialize()
 
 	imgData = stbi_load("../resources/textures/sphere/wall.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	glGenerateMipmap(GL_TEXTURE_2D);*/
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
@@ -251,19 +247,17 @@ void Scene::draw()
 		glUniform1i(glGetUniformLocation(shaderProgram, "sampler"), 0);
 
 		glBindVertexArray(vertexArrayObject[i]);
-
-		if (setting.polyMode == setting.PolyMode::WIREFRAME)
+		if (setting.polyMode == PolyMode::WIREFRAME)
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//Wireframe mode
-			glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->m_pMeshList[0]->indexBuffer.size(), GL_UNSIGNED_INT, 0);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
-		else if (setting.polyMode == setting.PolyMode::TRIANGLE)
+		else if (setting.polyMode == PolyMode::TRIANGLE)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_TRIANGLES);
-			glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->m_pMeshList[0]->indexBuffer.size(), GL_UNSIGNED_INT, 0);
 		}
+		glDrawElements(GL_TRIANGLES, sceneModelsPtr[i]->m_pMeshList[0]->indexBuffer.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 	}
-	glBindVertexArray(0);
 }
 
 Scene::~Scene()

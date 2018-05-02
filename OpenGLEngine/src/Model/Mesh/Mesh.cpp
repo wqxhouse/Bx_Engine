@@ -11,6 +11,7 @@ Mesh::Mesh(
 	const std::vector<GLuint>& indices)
 	: m_name(name), m_materialName(materialFile)
 {
+	initialize();
 }
 
 Mesh::Mesh(
@@ -24,6 +25,7 @@ Mesh::Mesh(
 	const std::vector<Texture>& textures)
 	: m_name(name), m_materialName(materialFile)
 {
+	initialize();
 }
 
 Mesh::Mesh(
@@ -39,6 +41,8 @@ Mesh::Mesh(
 	: m_name(name), m_materialName(materialFile)
 {
 	combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
+
+	initialize();
 }
 
 Mesh::Mesh(
@@ -59,15 +63,67 @@ Mesh::Mesh(
 
 	combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
 	this->textures = textures;
+
+	initialize();
+}
+
+void Mesh::initialize()
+{
+	glGenVertexArrays(1, &m_vertexArrayObj);
+	glGenBuffers(1, &m_vertexBufferObj);
+	glGenBuffers(1, &m_indexBufferObj);
+
+	glBindVertexArray(m_vertexArrayObj);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
+
+	glBufferData(GL_ARRAY_BUFFER, vertexBuffer.size() * sizeof(GLfloat),
+		         vertexBuffer.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObj);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+		                  sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::position)));
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+		                  sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::normal)));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
+		                  sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::texCoords)));
+	glEnableVertexAttribArray(2);
+
+	// Unbind buffers/arrays
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+void Mesh::draw()
+{
 }
 
 Mesh::~Mesh()
 {
+	glDeleteBuffers(1, &m_vertexBufferObj);
+	glDeleteBuffers(1, &m_vertexArrayObj);
+	glDeleteBuffers(1, &m_indexBufferObj);
+
 	//Memory::MemoryPool::release<Mesh>(this);
 	if (m_pMaterial != nullptr)
 	{
-		//TODO: Release issue
-		delete (SpecularMaterial*)m_pMaterial;
+		switch (m_pMaterial->materialType)
+		{
+		case SPECULAR:
+			delete (SpecularMaterial*)m_pMaterial;
+			break;
+		case ALBEDO:
+			// TODO: Release PBR materials
+			break;
+		default:
+			delete m_pMaterial;
+			break;
+		}
 	}
 }
 
