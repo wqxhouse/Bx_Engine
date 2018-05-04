@@ -40,6 +40,9 @@
     <Filter Include="src\Model\Material">
       <UniqueIdentifier>{564bf2ba-11bf-4741-8e34-e878f3d4471e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Texture">
+      <UniqueIdentifier>{2bbfd79d-4a6d-4d7e-b021-60feb88cb363}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Compiler\ShaderCompiler.h">
@@ -120,6 +123,9 @@
     <ClInclude Include="src\Math\Math.h">
       <Filter>src\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Texture\Texture.h">
+      <Filter>src\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -181,6 +187,12 @@
     </ClCompile>
     <ClCompile Include="src\Math\Math.cpp">
       <Filter>src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\Texture2D.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\Texture.cpp">
+      <Filter>src\Texture</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

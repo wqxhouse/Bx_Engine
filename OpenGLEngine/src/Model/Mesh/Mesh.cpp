@@ -76,11 +76,12 @@ void Mesh::initialize()
 	glBindVertexArray(m_vertexArrayObj);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
-
 	glBufferData(GL_ARRAY_BUFFER, vertexBuffer.size() * sizeof(GLfloat),
 		         vertexBuffer.data(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObj);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.size() * sizeof(GLuint),
+                 indexBuffer.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 		                  sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::position)));
@@ -94,13 +95,29 @@ void Mesh::initialize()
 		                  sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::texCoords)));
 	glEnableVertexAttribArray(2);
 
-	// Unbind buffers/arrays
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// Unbind VBO/VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
 void Mesh::draw()
 {
+    glBindVertexArray(m_vertexArrayObj);
+
+    switch(m_polyMode)
+    {
+    case WIREFRAME:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        break;
+    case TRIANGLE:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_TRIANGLES);
+        break;
+    default:
+        break;
+    }
+
+    glDrawElements(GL_TRIANGLES, indexBuffer.size(), GL_UNSIGNED_INT, 0);
 }
 
 Mesh::~Mesh()

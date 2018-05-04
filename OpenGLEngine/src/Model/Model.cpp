@@ -18,3 +18,12 @@ Model::~Model()
 
 	delete(trans);
 }
+
+void Model::draw()
+{
+    for (Mesh* pMesh : m_pMeshList)
+    {
+        pMesh->draw();
+    }
+    glBindVertexArray(0);
+}

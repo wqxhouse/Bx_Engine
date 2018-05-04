@@ -4,6 +4,7 @@
 #include "../Model/Model.h"
 #include "../Camera/Camera.h"
 #include "../Light/Light.h"
+#include "../Texture/Texture.h"
 #include "Setting.h"
 
 class Scene
@@ -58,5 +59,7 @@ private:
 
 	//Mesh* mesh;
 	//Model* pModel;
-	std::vector<Model*> sceneModelsPtr;
+	std::vector<Model*> m_pSceneModels;
+	
+	Texture2D* m_pTexture2D;
 };
