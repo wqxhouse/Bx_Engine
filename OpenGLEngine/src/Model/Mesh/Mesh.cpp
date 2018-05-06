@@ -22,7 +22,7 @@ Mesh::Mesh(
 	const std::vector<Math::Vector3>& normalBuf,
 	const std::vector<Math::Vector2>& texCoords, 
 	const std::vector<GLuint>& indices, 
-	const std::vector<Texture>& textures)
+	const std::vector<Texture*>& textures)
 	: m_name(name), m_materialName(materialFile)
 {
 	initialize();
@@ -55,14 +55,14 @@ Mesh::Mesh(
 	const std::vector<GLuint>& posIndices,
 	const std::vector<GLuint>& normalIndices,
 	const std::vector<GLuint>& texCoordIndices,
-	const std::vector<Texture>& textures)
+	const std::vector<Texture*>& textures)
 	: m_name(name), m_materialName(materialFile)
 {
 	//TODO: Safely register the memory
-	Memory::MemoryPool::registerMemory<Mesh>(this);
+	//Memory::MemoryPool::registerMemory<Mesh>(this);
 
 	combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
-	this->textures = textures;
+	this->m_textureList = textures;
 
 	initialize();
 }
@@ -76,13 +76,21 @@ void Mesh::initialize()
 	glBindVertexArray(m_vertexArrayObj);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
-	glBufferData(GL_ARRAY_BUFFER, vertexBuffer.size() * sizeof(GLfloat),
-		         vertexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_vertexBuffer.size() * sizeof(GLfloat),
+		         m_vertexBuffer.data(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.size() * sizeof(GLuint),
-                 indexBuffer.data(), GL_STATIC_DRAW);
-
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * sizeof(GLuint),
+                 m_indexBuffer.data(), GL_STATIC_DRAW);
+    /*
+        glVertexAttribPointer:
+        1. index in vertex shader,
+        2. counts of every element,
+        3. elements type,
+        4. if need to be normalized to 0-1,
+        5. space between attribute sets,
+        6. offset in every stride
+    */
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 		                  sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::position)));
 	glEnableVertexAttribArray(0);
@@ -97,7 +105,6 @@ void Mesh::initialize()
 
 	// Unbind VBO/VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
@@ -117,7 +124,7 @@ void Mesh::draw()
         break;
     }
 
-    glDrawElements(GL_TRIANGLES, indexBuffer.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
 }
 
 Mesh::~Mesh()
@@ -156,7 +163,7 @@ void Mesh::combineVertexData(
 	std::map<Vertex, GLuint> vertexIndexKey;
 
 	int indicesBufferIndex = 0;
-	int vertexBufferSize = 0;
+	int m_vertexBufferSize = 0;
 
 	for (int i = 0; i < counter[3]; ++i)
 	{
@@ -185,50 +192,50 @@ void Mesh::combineVertexData(
 		if (!findSimilarVertex(vertexIndexKey, vertex, &index))
 		{
 			//int indexBase = indicesBufferIndex * 8;
-			//vertexBuffer[indexBase] = pos.X;
-			//vertexBuffer[indexBase + 1] = pos.Y;
-			//vertexBuffer[indexBase + 2] = pos.Z;
+			//m_vertexBuffer[indexBase] = pos.X;
+			//m_vertexBuffer[indexBase + 1] = pos.Y;
+			//m_vertexBuffer[indexBase + 2] = pos.Z;
 
-			//vertexBuffer[indexBase + 3] = normal.X;
-			//vertexBuffer[indexBase + 4] = normal.Y;
-			//vertexBuffer[indexBase + 5] = normal.Z;
+			//m_vertexBuffer[indexBase + 3] = normal.X;
+			//m_vertexBuffer[indexBase + 4] = normal.Y;
+			//m_vertexBuffer[indexBase + 5] = normal.Z;
 
-			//vertexBuffer[indexBase + 6] = texCoord.X;
-			//vertexBuffer[indexBase + 7] = texCoord.Y;
-			vertexBuffer.push_back(pos.X);
-			vertexBuffer.push_back(pos.Y);
-			vertexBuffer.push_back(pos.Z);
-			vertexBuffer.push_back(normal.X);
-			vertexBuffer.push_back(normal.Y);
-			vertexBuffer.push_back(normal.Z);
-			vertexBuffer.push_back(texCoord.X);
-			vertexBuffer.push_back(texCoord.Y);
+			//m_vertexBuffer[indexBase + 6] = texCoord.X;
+			//m_vertexBuffer[indexBase + 7] = texCoord.Y;
+			m_vertexBuffer.push_back(pos.X);
+			m_vertexBuffer.push_back(pos.Y);
+			m_vertexBuffer.push_back(pos.Z);
+			m_vertexBuffer.push_back(normal.X);
+			m_vertexBuffer.push_back(normal.Y);
+			m_vertexBuffer.push_back(normal.Z);
+			m_vertexBuffer.push_back(texCoord.X);
+			m_vertexBuffer.push_back(texCoord.Y);
 
-			indexBuffer.push_back(indicesBufferIndex);
+			m_indexBuffer.push_back(indicesBufferIndex);
 			vertexIndexKey[vertex] = indicesBufferIndex;
 
 			++indicesBufferIndex;
 		}
 		else
 		{
-			indexBuffer.push_back(index);
+			m_indexBuffer.push_back(index);
 		}
-		/*vertexBuffer[posIndex].setPositionData(posBuf[posIndex]);
+		/*m_vertexBuffer[posIndex].setPositionData(posBuf[posIndex]);
 
 		if (normalIndices.size() != 0)
 		{
-			vertexBuffer[posIndex].setNormalData(normalBuf[normalIndex]);
+			m_vertexBuffer[posIndex].setNormalData(normalBuf[normalIndex]);
 		}
 
 		if (texCoords.size() != 0)
 		{
-			vertexBuffer[posIndex].setTexCoords(texCoords[uvIndex]);
+			m_vertexBuffer[posIndex].setTexCoords(texCoords[uvIndex]);
 		}
 		
 		indicesSet.insert(posBuf[posIndex]);*/
 	}
 
-	//this->indexBuffer = posIndices;
+	//this->m_indexBuffer = posIndices;
 }
 
 bool Mesh::findSimilarVertex(const std::map<Vertex, GLuint>& map, const Vertex & vertex, GLuint * index)
@@ -244,4 +251,3 @@ bool Mesh::findSimilarVertex(const std::map<Vertex, GLuint>& map, const Vertex &
 		return true;
 	}
 }
-

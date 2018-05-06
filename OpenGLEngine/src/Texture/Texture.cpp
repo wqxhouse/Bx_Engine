@@ -1,7 +1,8 @@
 #include "Texture.h"
 
-Texture::Texture(const std::string& textureFile, GLenum format, GLenum type, GLboolean mipmap)
+Texture::Texture(TextureType textureType)
 {
+    m_textureType = textureType;
 	glGenTextures(1, &m_textureHandler);
 }
 

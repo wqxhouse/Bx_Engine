@@ -23,16 +23,7 @@ public:
 
 	DirectionalLight m_directionalLight;
 private:
-
-	GLuint vertexArrayObject[2];
-	
-	GLuint vertexBufferObject[2];
-
-	GLuint indexBufferObject[2];
-
-	GLuint textureHandle[2];
-
-	GLuint shaderProgram;
+	GLuint simpleTextureProgram;
 
 	GLint success;
 	GLchar compileLog[512];
@@ -53,13 +44,9 @@ private:
 	
 	GLuint lightParagHandle;
 	GLuint lightParagBuffer;
-	const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
 	GLint lightStructSize;
 	GLubyte* lightDataBuffer;
 
-	//Mesh* mesh;
-	//Model* pModel;
-	std::vector<Model*> m_pSceneModels;
-	
-	Texture2D* m_pTexture2D;
+	std::vector<Model*> m_pSceneModelList;
+	std::vector<Texture*> m_pTextureList;
 };

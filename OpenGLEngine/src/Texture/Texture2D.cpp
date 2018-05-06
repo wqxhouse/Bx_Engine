@@ -5,7 +5,7 @@
 #include "stb_image.h"
 
 Texture2D::Texture2D(const std::string & textureFile, GLenum format, GLenum type, GLenum wrapMethod, GLboolean mipmap)
-    : Texture(textureFile, format, type, mipmap)
+    : Texture(TEXTURE_2D)
 {
     glBindTexture(GL_TEXTURE_2D, m_textureHandler);
     m_textureData = stbi_load(textureFile.data(),

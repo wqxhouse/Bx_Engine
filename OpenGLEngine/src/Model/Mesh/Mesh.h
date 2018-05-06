@@ -8,6 +8,7 @@
 #include "../../Math/Vector2.h"
 #include "../../Math/Vector3.h"
 #include "../../Material/Material.h"
+#include "../../Texture/Texture.h"
 
 class Mesh
 {
@@ -48,16 +49,10 @@ public:
 			this->texCoords = texCoords;
 		}
 
-		bool operator<(const Vertex vertex) const
+		bool operator<(const Vertex& vertex) const
 		{
 			return memcmp((void*)this, (void*)(&vertex), sizeof(Vertex)) < 0;
 		}
-	};
-
-	struct Texture
-	{
-		GLuint id;
-		std::string type;
 	};
 	
 	Mesh(
@@ -77,7 +72,7 @@ public:
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
 		const std::vector<GLuint>& indices,
-		const std::vector<Texture>& textures);
+		const std::vector<Texture*>& textures);
 
 	Mesh(
 		const std::string& name,
@@ -100,7 +95,7 @@ public:
 		const std::vector<GLuint>& posIndices,
 		const std::vector<GLuint>& normalIndices,
 		const std::vector<GLuint>& texCoordIndices,
-		const std::vector<Texture>& textures);
+		const std::vector<Texture*>& textures);
 
 	void draw();
 
@@ -110,9 +105,9 @@ public:
 	std::string m_materialName;
 
 	//std::vector<Vertex> vertexBuffer;
-	std::vector<GLfloat> vertexBuffer;
-	std::vector<GLuint> indexBuffer;
-	std::vector<Texture> textures;
+	std::vector<GLfloat>  m_vertexBuffer;
+	std::vector<GLuint>   m_indexBuffer;
+	std::vector<Texture*> m_textureList;
 
 	Material* m_pMaterial = nullptr;
 private:
@@ -127,7 +122,8 @@ private:
 		const std::vector<GLuint>& normalIndices,
 		const std::vector<GLuint>& texCoordIndices);
 
-	bool findSimilarVertex(const std::map<Vertex, GLuint>& map, const Vertex& vertex, GLuint* index);
+	bool findSimilarVertex(const std::map<Vertex, GLuint>& map,
+                           const Vertex& vertex, GLuint* index);
 
 	PolyMode m_polyMode = TRIANGLE;
 

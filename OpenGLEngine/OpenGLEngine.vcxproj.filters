@@ -194,5 +194,11 @@
     <ClCompile Include="src\Texture\Texture.cpp">
       <Filter>src\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture\Texture3D.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\TextureCube.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

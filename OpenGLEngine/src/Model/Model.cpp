@@ -25,5 +25,6 @@ void Model::draw()
     {
         pMesh->draw();
     }
+    //m_pMeshList[0]->draw();
     glBindVertexArray(0);
 }

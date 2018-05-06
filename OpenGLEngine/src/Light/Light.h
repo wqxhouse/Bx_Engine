@@ -2,18 +2,20 @@
 
 #include "../Core/OpenGLPCH.h"
 
+enum LightType
+{
+    DIRECTIONAL_LIGHT, POINT_LIGHT, SPOT_LIGHT
+};
+
 class Light
 {
 public:
-	Light(const glm::vec3& color);
+	Light(const LightType lightType, const glm::vec3& color);
 	~Light();
 
 	inline glm::vec3 getLightColor() { return m_color; }
 
-	enum LightType
-	{
-		DIRECTIONAL_LIGHT, POINT_LIGHT, SPOT_LIGHT
-	}m_lightType;
+    LightType m_lightType;
 
 private:
 	glm::vec3 m_color; // Light color

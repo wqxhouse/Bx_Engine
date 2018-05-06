@@ -2,13 +2,15 @@
 
 #include "../Core/OpenGLPCH.h"
 
+enum TextureType
+{
+    TEXTURE_2D, TEXTURE_3D, TEXTURE_CUBEBOX
+};
+
 class Texture
 {
 public:
-    Texture(const std::string& textureFile,
-            GLenum format = GL_RGBA,
-            GLenum type = GL_UNSIGNED_BYTE,
-            GLboolean mipmap = GL_FALSE);
+    Texture(TextureType textureType);
     
     virtual void bindTexture(const GLenum textureIndex,
                              const GLuint shaderProgram,
@@ -18,6 +20,8 @@ public:
     virtual void unbindTexture() = 0;
 
     virtual ~Texture();
+
+    TextureType m_textureType;
 
 protected:
     GLuint m_textureHandler;
@@ -43,7 +47,7 @@ public:
     
     inline void* getTextureData();
 
-    virtual ~Texture2D();
+    ~Texture2D();
 
 private:
     UINT  m_textureHeight;
@@ -51,4 +55,26 @@ private:
     UINT  m_textureType;
 
     void* m_textureData;
+};
+
+class Texture3D : public Texture
+{
+public:
+    Texture3D(const std::string& textureFile,
+              GLenum format = GL_RGBA,
+              GLenum type = GL_UNSIGNED_BYTE,
+              GLenum wrapMethod = GL_REPEAT,
+              GLboolean mipmap = GL_FALSE);
+    ~Texture3D();
+};
+
+class TextureCube : public Texture
+{
+public:
+    TextureCube(const std::string& textureFile,
+                GLenum format = GL_RGBA,
+                GLenum type = GL_UNSIGNED_BYTE,
+                GLenum wrapMethod = GL_REPEAT,
+                GLboolean mipmap = GL_FALSE);
+    ~TextureCube();
 };
