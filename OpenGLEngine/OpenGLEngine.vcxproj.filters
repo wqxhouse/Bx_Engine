@@ -22,9 +22,6 @@
     <Filter Include="src\Model">
       <UniqueIdentifier>{810747c3-8c22-4744-9a40-5a43192d5106}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Model\Buffer">
-      <UniqueIdentifier>{3f17f754-2b68-43a0-aaee-e5f8a098c9a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Model\Mesh">
       <UniqueIdentifier>{7ccf0682-191e-4b5a-9851-1ac16b3635b5}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="src\Texture">
       <UniqueIdentifier>{2bbfd79d-4a6d-4d7e-b021-60feb88cb363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Buffer">
+      <UniqueIdentifier>{3f17f754-2b68-43a0-aaee-e5f8a098c9a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -74,15 +74,6 @@
     </ClInclude>
     <ClInclude Include="src\Camera\Camera.h">
       <Filter>src\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Model\Buffer\Buffer.h">
-      <Filter>src\Model\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Model\Buffer\IndexBuffer.h">
-      <Filter>src\Model\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Model\Buffer\VertexBuffer.h">
-      <Filter>src\Model\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Model\Mesh\Mesh.h">
       <Filter>src\Model\Mesh</Filter>
@@ -126,6 +117,18 @@
     <ClInclude Include="src\Texture\Texture.h">
       <Filter>src\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\VertexBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\Buffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\IndexBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\UniformBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -139,9 +142,6 @@
     </ClCompile>
     <ClCompile Include="src\Camera\ProspectiveCamera.cpp">
       <Filter>src\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp">
-      <Filter>src\Model\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Model\Mesh\Mesh.cpp">
       <Filter>src\Model\Mesh</Filter>
@@ -199,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="src\Texture\TextureCube.cpp">
       <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\VertexBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\UniformBuffer.cpp">
+      <Filter>src\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

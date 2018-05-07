@@ -41,7 +41,10 @@ private:
 	const GLchar* normalTransformMembers = { "rot" };
 	GLint normalTransformBufferSize;
 	GLubyte* normalTransformBufferData;
-	
+
+    const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
+    GLuint indices[2];
+    GLint offsets[2];
 	GLuint lightParagHandle;
 	GLuint lightParagBuffer;
 	GLint lightStructSize;

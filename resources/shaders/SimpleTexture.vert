@@ -16,15 +16,17 @@ uniform mat4 proj;
 
 uniform mat4 rot;
 
-out vec3 fragNormal;
+out vec3 posWorld;
+out vec3 normalWorld;
 out vec2 fragTexCoord;
 
 void main()
 {
-	mat4 mvp = proj * view * world;
-	
+    mat4 mvp = proj * view * world;
+
+	posWorld     = (world * vec4(position, 1.0f)).xyz;
+	normalWorld  = (world * vec4(normal, 1.0f)).xyz;
 	fragTexCoord = texCoord;
-	fragNormal = normalize(rot * vec4(normal, 1.0f)).xyz;
 	
-    gl_Position = mvp * vec4(position, 1.0f);
+    gl_Position  = mvp * vec4(position, 1.0f);
 }

@@ -149,6 +149,10 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Buffer\Buffer.h" />
+    <ClInclude Include="src\Buffer\IndexBuffer.h" />
+    <ClInclude Include="src\Buffer\UniformBuffer.h" />
+    <ClInclude Include="src\Buffer\VertexBuffer.h" />
     <ClInclude Include="src\Camera\Camera.h" />
     <ClInclude Include="src\Compiler\ShaderCompiler.h" />
     <ClInclude Include="src\Context\OpenGLContext.h" />
@@ -168,9 +172,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\Memory\MemoryPool.h" />
-    <ClInclude Include="src\Model\Buffer\Buffer.h" />
-    <ClInclude Include="src\Model\Buffer\IndexBuffer.h" />
-    <ClInclude Include="src\Model\Buffer\VertexBuffer.h" />
     <ClInclude Include="src\Model\Mesh\Mesh.h" />
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
@@ -178,6 +179,8 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Buffer\UniformBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Camera\Camera.cpp" />
     <ClCompile Include="src\Camera\ProspectiveCamera.cpp" />
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
@@ -193,7 +196,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Material\Material.cpp" />
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
-    <ClCompile Include="src\Model\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Model\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />

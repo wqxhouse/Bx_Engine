@@ -1,12 +1,11 @@
 #version 440 core
 
-in vec3 fragNormal;
+in vec3 posWorld;
+in vec3 normalWorld;
 in vec2 fragTexCoord;
 
 uniform vec3 uniformColor;
 uniform sampler2D sampler;
-
-uniform vec3 eye;
 
 uniform light
 {
@@ -14,20 +13,36 @@ uniform light
 	vec3 lightColor;
 };
 
+uniform material
+{
+	vec3 ka;
+	vec3 kd;
+	vec3 ks;
+	float ns;
+};
+
+uniform vec3 eyePos;
+
 out vec4 outColor;
 
 void main()
 {
-	float spec = 50.0f;
+	vec3 kd = vec3(0.4f, 0.4f, 0.4f);
+	vec3 ks = vec3(0.6f, 0.6f, 0.6f);
 	
-	float NoR = clamp(dot(eye, lightDir), 0.0f, 1.0f);
-	vec3 reflection = 2 * NoR * (-lightDir) + lightDir;
-	float VoR = clamp(dot(-eye, reflection), 0.0f, 1.0f);
-	float phongCoefficient = pow(VoR, spec);
+	float spec = 10.0f;
+	vec3 view = normalize(eyePos - posWorld);	
 	
-	float NoL = clamp(dot(fragNormal, -lightDir), 0.0f, 1.0f);
+	float NoL = clamp(dot(normalWorld, -lightDir), 0.0f, 1.0f);
+	vec3 reflection = normalize(2 * NoL * normalWorld + lightDir);
+	
+	float VoR = dot(view, reflection);
+	if(VoR < 0.0f) VoR = 0.0f;
+	float specularCoefficient = pow(VoR, spec);
 
-	vec3 color3 = texture(sampler, fragTexCoord).xyz * (NoL + phongCoefficient) * lightColor;//fragColor * uniformColor;
-	outColor = vec4(color3.xyz, 1.0f);//texture(sampler, fragTexCoord);
-	//outColor = vec4(fragNormal.xyz, 1.0f);
+	vec4 texColor = texture(sampler, fragTexCoord);
+	vec3 diffuseColor = NoL * kd * lightColor;//fragColor * uniformColor;
+	vec3 specColor = specularCoefficient * ks * lightColor;
+	outColor = vec4((specColor + diffuseColor) * texColor.xyz, 1.0f);
+	//outColor = vec4(normalWorld.xyz, 1.0f);
 }
