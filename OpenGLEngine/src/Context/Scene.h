@@ -5,6 +5,7 @@
 #include "../Camera/Camera.h"
 #include "../Light/Light.h"
 #include "../Texture/Texture.h"
+#include "../Buffer/UniformBuffer.h"
 #include "Setting.h"
 
 class Scene
@@ -42,13 +43,15 @@ private:
 	GLint normalTransformBufferSize;
 	GLubyte* normalTransformBufferData;
 
-    const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
+    /*const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
     GLuint indices[2];
-    GLint offsets[2];
+    GLint  offsets[2];
 	GLuint lightParagHandle;
 	GLuint lightParagBuffer;
-	GLint lightStructSize;
-	GLubyte* lightDataBuffer;
+	GLint  lightStructSize;
+	GLubyte* lightDataBuffer;*/
+    UniformBlockMemberData lightData[2];
+    UniformBuffer* m_lightBuffer;
 
 	std::vector<Model*> m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;

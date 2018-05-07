@@ -34,7 +34,7 @@ int Scene::initialize()
     //Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     //addModel("../../resources/models/sphere/sphere.obj", "", pTrans);
 
-    glGenBuffers(1, &lightParagBuffer);
+    //glGenBuffers(1, &lightParagBuffer);
     glGenBuffers(1, &transformHandle);
     
     //Create texture and set sampler
@@ -63,22 +63,10 @@ int Scene::initialize()
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
 
-    lightParagHandle = glGetUniformBlockIndex(simpleTextureProgram, "light");
-    glGetActiveUniformBlockiv(simpleTextureProgram, lightParagHandle, GL_UNIFORM_BLOCK_DATA_SIZE, &lightStructSize);
+    lightData[0] = { "lightDir",   sizeof(glm::vec3), static_cast<void*>(&(m_directionalLight.getDir())) };
+    lightData[1] = { "lightColor", sizeof(glm::vec3), static_cast<void*>(&(m_directionalLight.getLightColor())) };
 
-    lightDataBuffer = (GLubyte*)malloc(lightStructSize);
-
-    glGetUniformIndices(simpleTextureProgram, 2, lightMembers, indices);
-    glGetActiveUniformsiv(simpleTextureProgram, 2, indices, GL_UNIFORM_OFFSET, offsets);
-
-    memcpy(lightDataBuffer + offsets[0], &(m_directionalLight.getDir()), sizeof(glm::vec3));
-    memcpy(lightDataBuffer + offsets[1], &(m_directionalLight.getLightColor()), sizeof(glm::vec3));
-
-    glBindBuffer(GL_UNIFORM_BUFFER, lightParagBuffer);
-    glBufferData(GL_UNIFORM_BUFFER, lightStructSize, lightDataBuffer, GL_STATIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, lightParagHandle, lightParagBuffer);
-
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);    
+    m_lightBuffer = new UniformBuffer(simpleTextureProgram, "light", 2, lightData, GL_DYNAMIC_DRAW);
 
     return 0;
 }
@@ -120,20 +108,12 @@ void Scene::draw()
 
     ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
 
-    for (size_t i = 0; i < 1; ++i)
+    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
-        lightParagHandle = glGetUniformBlockIndex(simpleTextureProgram, "light");
-        glGetActiveUniformBlockiv(simpleTextureProgram, lightParagHandle, GL_UNIFORM_BLOCK_DATA_SIZE, &lightStructSize);
-
-        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
-        memcpy(lightDataBuffer + offsets[0], &(m_directionalLight.getDir()), sizeof(glm::vec3));
-        memcpy(lightDataBuffer + offsets[1], &(m_directionalLight.getLightColor()), sizeof(glm::vec3));
-
-        glBindBuffer(GL_UNIFORM_BUFFER, lightParagBuffer);
-        glBufferData(GL_UNIFORM_BUFFER, lightStructSize, lightDataBuffer, GL_STATIC_DRAW);
-        glBindBufferBase(GL_UNIFORM_BUFFER, lightParagHandle, lightParagBuffer);
-
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
+        lightData[0].data = static_cast<void*>(&(m_directionalLight.getDir()));
+        lightData[1].data = static_cast<void*>(&(m_directionalLight.getLightColor()));
+        m_lightBuffer->update(lightData);
 
         glm::mat4 rotation;
         //rotation = glm::rotate(rotation, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 0));
@@ -170,11 +150,13 @@ Scene::~Scene()
 {
     glDeleteBuffers(1, &transformBuffer);
     glDeleteBuffers(1, &normalTransformBuffer);
-    glDeleteBuffers(1, &lightParagBuffer);
+    //glDeleteBuffers(1, &lightParagBuffer);
     glDeleteProgram(simpleTextureProgram);
 
-    SafeFree(lightDataBuffer);
-    /*SafeFree(transformBufferData);
+    SafeDelete(m_lightBuffer);
+
+    /*SafeFree(lightDataBuffer);
+    SafeFree(transformBufferData);
     SafeFree(normalTransformBufferData);*/
 
     for (Model* model : m_pSceneModelList)

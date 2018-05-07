@@ -13,25 +13,34 @@ class UniformBuffer
 {
 public:
     UniformBuffer(const GLuint                   program,
-                  const GLchar*                  uniformBlockName,
+                  GLchar*                        uniformBlockName,
                   const UINT                     memberCount,
-                  const UniformBlockMemberData*  uniformBlockMembers);
+                  const UniformBlockMemberData*  uniformBlockMembers,
+                  const GLenum                   usage
+    );
 
     ~UniformBuffer();
 
     void update(const UniformBlockMemberData* uniformBlockMembers);
     void update(const GLuint                   program,
-                const GLchar*                  uniformBlockName,
+                GLchar*                        uniformBlockName,
                 const UINT                     memberCount,
-                const UniformBlockMemberData*  uniformBlockMembers);
+                const UniformBlockMemberData*  uniformBlockMembers,
+                const GLenum                   usage
+    );
 
 private:
+    GLuint        m_uniformBufferIndex;
     GLuint        m_uniformBufferHandle;
     GLubyte*      m_uniformDataBuffer;
-    UINT          m_uniformDataBufferSize;
+    GLint         m_uniformDataBufferSize;
 
     GLuint        m_program;
     GLchar*       m_uniformBlockName;
+    GLchar**      m_memberNames;
     UINT          m_memberCount;
+
+    GLuint*       m_indices;
+    GLint*        m_offsets;
 };
 

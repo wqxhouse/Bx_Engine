@@ -72,5 +72,13 @@ inline void SafeDelete(void* ptr)
 	}
 }
 
+inline void SafeDeleteArray(void *ptr)
+{
+    if (ptr != nullptr)
+    {
+        delete[] ptr;
+    }
+}
+
 #include "Utility.h"
 extern CallbackInfo callbackInfo;
