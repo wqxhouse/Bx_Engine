@@ -63,15 +63,12 @@ int Scene::initialize()
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
 
-    const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
     lightParagHandle = glGetUniformBlockIndex(simpleTextureProgram, "light");
     glGetActiveUniformBlockiv(simpleTextureProgram, lightParagHandle, GL_UNIFORM_BLOCK_DATA_SIZE, &lightStructSize);
+
     lightDataBuffer = (GLubyte*)malloc(lightStructSize);
 
-    GLuint indices[2];
     glGetUniformIndices(simpleTextureProgram, 2, lightMembers, indices);
-
-    GLint offsets[2];
     glGetActiveUniformsiv(simpleTextureProgram, 2, indices, GL_UNIFORM_OFFSET, offsets);
 
     memcpy(lightDataBuffer + offsets[0], &(m_directionalLight.getDir()), sizeof(glm::vec3));
@@ -81,7 +78,7 @@ int Scene::initialize()
     glBufferData(GL_UNIFORM_BUFFER, lightStructSize, lightDataBuffer, GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, lightParagHandle, lightParagBuffer);
 
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);    
 
     return 0;
 }
@@ -125,6 +122,19 @@ void Scene::draw()
 
     for (size_t i = 0; i < 1; ++i)
     {
+        lightParagHandle = glGetUniformBlockIndex(simpleTextureProgram, "light");
+        glGetActiveUniformBlockiv(simpleTextureProgram, lightParagHandle, GL_UNIFORM_BLOCK_DATA_SIZE, &lightStructSize);
+
+        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
+        memcpy(lightDataBuffer + offsets[0], &(m_directionalLight.getDir()), sizeof(glm::vec3));
+        memcpy(lightDataBuffer + offsets[1], &(m_directionalLight.getLightColor()), sizeof(glm::vec3));
+
+        glBindBuffer(GL_UNIFORM_BUFFER, lightParagBuffer);
+        glBufferData(GL_UNIFORM_BUFFER, lightStructSize, lightDataBuffer, GL_STATIC_DRAW);
+        glBindBufferBase(GL_UNIFORM_BUFFER, lightParagHandle, lightParagBuffer);
+
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
         glm::mat4 rotation;
         //rotation = glm::rotate(rotation, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 0));
 

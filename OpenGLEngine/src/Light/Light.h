@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/OpenGLPCH.h"
+#include "../Math/Math.h"
 
 enum LightType
 {
@@ -27,6 +28,7 @@ public:
 	DirectionalLight(const glm::vec3& direction, const glm::vec3& color);
 	~DirectionalLight();
 
+    void rotate(const Math::Vector3& axis, const float angle);
 	inline glm::vec3 getDir() { return m_direction;  }
 private:
 	glm::vec3 m_direction; // Light direction
