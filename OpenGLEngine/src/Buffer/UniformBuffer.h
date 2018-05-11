@@ -12,22 +12,32 @@ struct UniformBlockMemberData
 class UniformBuffer
 {
 public:
-    UniformBuffer(const GLuint                   program,
-                  GLchar*                        uniformBlockName,
-                  const UINT                     memberCount,
-                  const UniformBlockMemberData*  uniformBlockMembers,
-                  const GLenum                   usage
-    );
+    UniformBuffer(
+        const GLuint                   program,
+        GLchar*                        uniformBlockName,
+        const GLsizei                  dataSize,
+        const GLvoid*                  data,
+        const GLenum                   usage,
+        const GLuint                   parag);
+
+    UniformBuffer(
+        const GLuint                   program,
+        GLchar*                        uniformBlockName,
+        const UINT                     memberCount,
+        const UniformBlockMemberData*  uniformBlockMembers,
+        const GLenum                   usage);
 
     ~UniformBuffer();
 
-    void update(const UniformBlockMemberData* uniformBlockMembers);
-    void update(const GLuint                   program,
-                GLchar*                        uniformBlockName,
-                const UINT                     memberCount,
-                const UniformBlockMemberData*  uniformBlockMembers,
-                const GLenum                   usage
-    );
+    void update(const GLvoid* data);
+    void update(const GLsizei dataSize, const GLvoid* data);
+    void update(const UniformBlockMemberData*  uniformBlockMembers);
+    void update(
+        const GLuint                   program,
+        GLchar*                        uniformBlockName,
+        const UINT                     memberCount,
+        const UniformBlockMemberData*  uniformBlockMembers,
+        const GLenum                   usage);
 
 private:
     GLuint        m_uniformBufferIndex;
@@ -43,4 +53,3 @@ private:
     GLuint*       m_indices;
     GLint*        m_offsets;
 };
-

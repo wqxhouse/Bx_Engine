@@ -11,14 +11,20 @@ namespace Math
 	{
 	public:
 		Vector4(float x = 0, float y = 0, float z = 0, float w = 0)
-			:X(x), Y(y), Z(z), W(w)
+			: X(x), Y(y), Z(z), W(w)
 		{
 			//"Warning: Uncontrolled memory block.(Ignore if you assign memory on stack)
 		}
 
 		Vector4(const Vector3& v, float w)
-			:m_v3(v), W(w)
+			: m_v3(v), W(w)
 		{}
+
+        Vector4(const Vector3& v)
+            : m_v3(v)
+        {
+            W = 1.0f;
+        }
 
 		static Vector4Ptr New(float x = 0, float y = 0, float z = 0, float w = 0)
 		{

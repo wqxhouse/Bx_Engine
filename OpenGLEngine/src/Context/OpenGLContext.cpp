@@ -78,6 +78,11 @@ void OpenGLContext::run()
 	GLfloat prevTime = 0.0f;
 	GLfloat deltaTime = 0.0f;
 
+    GLboolean param;
+    glGetBooleanv(GL_CLIP_ORIGIN, &param);
+    glClipControl(GL_UPPER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
+    glGetBooleanv(GL_CLIP_ORIGIN, &param);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat curTime = (GLfloat)glfwGetTime();

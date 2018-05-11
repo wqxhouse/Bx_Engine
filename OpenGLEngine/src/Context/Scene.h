@@ -8,6 +8,12 @@
 #include "../Buffer/UniformBuffer.h"
 #include "Setting.h"
 
+struct SimpleDirectionalLight
+{
+    Vector4 lightDir;
+    Vector4 ligthColor;
+};
+
 class Scene
 {
 public:
@@ -43,15 +49,14 @@ private:
 	GLint normalTransformBufferSize;
 	GLubyte* normalTransformBufferData;
 
-    /*const GLchar* lightMembers[2] = { "lightDir", "lightColor" };
-    GLuint indices[2];
-    GLint  offsets[2];
-	GLuint lightParagHandle;
-	GLuint lightParagBuffer;
-	GLint  lightStructSize;
-	GLubyte* lightDataBuffer;*/
-    UniformBlockMemberData lightData[2];
+    UniformBlockMemberData m_lightData[2];
     UniformBuffer* m_lightBuffer;
+
+    UniformBlockMemberData m_lightData2[2];
+    UniformBuffer* m_lightBuffer2;
+
+    UniformBlockMemberData m_materialData[4];
+    UniformBuffer* m_materialBuffer;
 
 	std::vector<Model*> m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;

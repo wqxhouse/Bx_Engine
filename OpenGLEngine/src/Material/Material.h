@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/Vector3.h"
+#include "../Math/Vector4.h"
 
 using namespace Math;
 
@@ -17,6 +17,14 @@ enum ShadingMethod
 	Blin_Phong,
 	PBR_LAMBERT,
 	PBR_COOK_TORRANCE
+};
+
+struct SimpleSpecularMaterial
+{
+    Vector4 ka;
+    Vector4 ks;
+    Vector4 kd;
+    Vector4 ns;
 };
 
 class Material
