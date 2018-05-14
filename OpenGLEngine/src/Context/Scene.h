@@ -5,7 +5,7 @@
 #include "../Camera/Camera.h"
 #include "../Light/Light.h"
 #include "../Texture/Texture.h"
-#include "../Buffer/UniformBuffer.h"
+#include "../Buffer/UniformBufferMgr.h"
 #include "Setting.h"
 
 struct SimpleDirectionalLight
@@ -49,14 +49,20 @@ private:
 	GLint normalTransformBufferSize;
 	GLubyte* normalTransformBufferData;
 
+    UniformBufferMgr m_uniformBufferMgr;
+
+    GLuint m_lightUniformBufferIndex;
     UniformBlockMemberData m_lightData[2];
-    UniformBuffer* m_lightBuffer;
+
+    GLuint m_materialBufferIndex;
+    UniformBlockMemberData m_materialData[4];
+
+    /*UniformBuffer* m_lightBuffer;
 
     UniformBlockMemberData m_lightData2[2];
     UniformBuffer* m_lightBuffer2;
 
-    UniformBlockMemberData m_materialData[4];
-    UniformBuffer* m_materialBuffer;
+    UniformBuffer* m_materialBuffer;*/
 
 	std::vector<Model*> m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;

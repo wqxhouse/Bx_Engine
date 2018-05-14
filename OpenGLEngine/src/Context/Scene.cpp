@@ -8,7 +8,7 @@
 
 Scene::Scene(const Setting & setting)
     : m_directionalLight(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)),
-      m_activeCamera(0)
+      m_activeCamera(0), m_uniformBufferMgr(128)
 {
     this->setting = setting;
 }
@@ -23,9 +23,7 @@ int Scene::initialize()
         new ProspectiveCamera(glm::vec3(-5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
             glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height));
 
-    ////Load model and texture(Hardcode here)
-    //ObjModelLoader objLoader;
-    //objLoader.LoadModel("../resources/models/farmhouse/farmhouse_tri.obj", &(pModel->mesh));
+    //Load model and texture(Hardcode here)
     Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj",
              "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);
@@ -34,7 +32,6 @@ int Scene::initialize()
     //Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     //addModel("../../resources/models/sphere/sphere.obj", "", pTrans);
 
-    //glGenBuffers(1, &lightParagBuffer);
     glGenBuffers(1, &transformHandle);
     
     //Create texture and set sampler
@@ -53,32 +50,25 @@ int Scene::initialize()
         return -1;
     }
 
-    /*m_lightData[0] = { "lightDir",   sizeof(glm::vec3), static_cast<void*>(&(m_directionalLight.getDir())) };
-    m_lightData[1] = { "lightColor", sizeof(glm::vec3), static_cast<void*>(&(m_directionalLight.getLightColor())) };
-    m_lightBuffer = new UniformBuffer(simpleTextureProgram, "light", 2, m_lightData, GL_DYNAMIC_DRAW);*/
     glm::vec3 dir = m_directionalLight.getDir();
     glm::vec3 color = m_directionalLight.getLightColor();
 
-    /*SimpleDirectionalLight simpleDirLight = { Vector4(dir.x, dir.y, dir.z, 1.0f),
-                                              Vector4(color.x, color.y, color.z, 1.0f) };
-    m_lightBuffer = new UniformBuffer(simpleTextureProgram, "light", sizeof(simpleDirLight), &simpleDirLight, GL_DYNAMIC_DRAW, 0);*/
+    SimpleDirectionalLight simpleDirLight = { 
+        Vector4(dir.x, dir.y, dir.z, 1.0f),
+        Vector4(color.x, color.y, color.z, 1.0f) };
 
-    SimpleDirectionalLight simpleDirLight2 = { Vector4(dir.x, dir.y, dir.z, 1.0f),
-                                               Vector4(color.x, color.y, color.z, 1.0f) };
-    m_lightBuffer2 = new UniformBuffer(simpleTextureProgram, "light2", sizeof(simpleDirLight2), &simpleDirLight2, GL_DYNAMIC_DRAW, 0);
+    m_lightUniformBufferIndex = 
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(simpleDirLight), &simpleDirLight);
+
+    m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, simpleTextureProgram, "light");
 
     SpecularMaterial* pMaterial = (SpecularMaterial*)(m_pSceneModelList[0]->m_pMeshList[0]->m_pMaterial);
-    SimpleSpecularMaterial simpleMaterial = { pMaterial->ka, pMaterial->kd,
-                                              pMaterial->ks, Vector4(0.0f, 0.0f, 0.0f, pMaterial->ns) };
-    m_materialBuffer = new UniformBuffer(simpleTextureProgram, "material", sizeof(simpleMaterial),
-        &simpleMaterial, GL_DYNAMIC_DRAW, 0);/**/
+    SimpleSpecularMaterial simpleMaterial = { pMaterial->ka,  Vector4(0.6f, 0.6f, 0.6f, 0.0f),
+        Vector4(0.4f, 0.4f, 0.4f, 0.0f), Vector4(0.0f, 0.0f, 0.0f, 50.0f) };
 
-    /*SpecularMaterial* pMaterial = (SpecularMaterial*)(m_pSceneModelList[0]->m_pMeshList[0]->m_pMaterial);
-    m_materialData[0] = { "ka", sizeof(Vector3), static_cast<void*>(&(pMaterial->ka)) };
-    m_materialData[1] = { "kd", sizeof(Vector3), static_cast<void*>(&(pMaterial->kd)) };
-    m_materialData[2] = { "ks", sizeof(Vector3), static_cast<void*>(&(pMaterial->ks)) };
-    m_materialData[3] = { "ns", sizeof(float),     static_cast<void*>(&(pMaterial->ns)) };
-    m_materialBuffer = new UniformBuffer(simpleTextureProgram, "material", 4, m_materialData, GL_DYNAMIC_DRAW); */
+    m_materialBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(simpleMaterial), &simpleMaterial);
+    m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, simpleTextureProgram, "material");
 
     return 0;
 }
@@ -123,30 +113,13 @@ void Scene::draw()
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
         //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
-        /*m_lightData[0].data = static_cast<void*>(&(m_directionalLight.getDir()));
-        m_lightData[1].data = static_cast<void*>(&(m_directionalLight.getLightColor()));
-        m_lightBuffer->update(m_lightData);
         glm::vec3 dir = m_directionalLight.getDir();
-        glm::vec3 color = m_directionalLight.getLightColor();*/
+        glm::vec3 color = m_directionalLight.getLightColor();
+        SimpleDirectionalLight simpleDirLight = {
+            Vector4(dir.x, dir.y, dir.z, 1.0f),
+            Vector4(color.x, color.y, color.z, 1.0f) };
 
-        /*SimpleDirectionalLight simpleDirLight = { Vector4(dir.x, dir.y, dir.z, 1.0f),
-                                                  Vector4(color.x, color.y, color.z, 1.0f) };
-        m_lightBuffer->update(&simpleDirLight);*/
-        /*SpecularMaterial* pMaterial = (SpecularMaterial*)(m_pSceneModelList[i]->m_pMeshList[0]->m_pMaterial);
-        m_materialData[0].data = static_cast<void*>(&(pMaterial->ka));
-        m_materialData[1].data = static_cast<void*>(&(pMaterial->kd));
-        m_materialData[2].data = static_cast<void*>(&(pMaterial->ks));
-        m_materialData[3].data = static_cast<void*>(&(pMaterial->ns));
-        m_materialBuffer->update(m_materialData);
-        SimpleSpecularMaterial simpleMaterial = { pMaterial->ka, pMaterial->kd,
-            pMaterial->ks, Vector4(0.0f, 0.0f, 0.0f, pMaterial->ns) };
-        m_materialBuffer->update(&simpleMaterial);
-
-        SimpleDirectionalLight simpleDirLight2 = { Vector4(dir.x, dir.y, dir.z, 1.0f),
-                                                   Vector4(color.x, color.y, color.z, 1.0f) };
-        m_lightBuffer2->update(&simpleDirLight2);*/
-
-        
+        m_uniformBufferMgr.updateUniformBufferData(m_lightUniformBufferIndex, sizeof(simpleDirLight), &simpleDirLight);
 
         glm::mat4 rotation;
         //rotation = glm::rotate(rotation, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 0));
@@ -183,15 +156,7 @@ Scene::~Scene()
 {
     glDeleteBuffers(1, &transformBuffer);
     glDeleteBuffers(1, &normalTransformBuffer);
-    //glDeleteBuffers(1, &lightParagBuffer);
     glDeleteProgram(simpleTextureProgram);
-
-    SafeDelete(m_lightBuffer);
-    SafeDelete(m_materialBuffer);
-
-    /*SafeFree(lightDataBuffer);
-    SafeFree(transformBufferData);
-    SafeFree(normalTransformBufferData);*/
 
     for (Model* model : m_pSceneModelList)
     {

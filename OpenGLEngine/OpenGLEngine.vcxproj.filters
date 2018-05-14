@@ -129,6 +129,9 @@
     <ClInclude Include="src\Buffer\UniformBuffer.h">
       <Filter>src\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\UniformBufferMgr.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -204,6 +207,9 @@
       <Filter>src\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buffer\UniformBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\UniformBufferMgr.cpp">
       <Filter>src\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
