@@ -57,21 +57,29 @@ int Scene::initialize()
     glm::vec3 dir = m_directionalLight.getDir();
     glm::vec3 color = m_directionalLight.getLightColor();
 
-    SimpleDirectionalLight simpleDirLight = { 
+    Vector4 directionalLightData[2] =
+    {
         Vector4(dir.x, dir.y, dir.z, 1.0f),
-        Vector4(color.x, color.y, color.z, 1.0f) };
+        Vector4(color.x, color.y, color.z, 1.0f) 
+    };
 
     m_lightUniformBufferIndex = 
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(simpleDirLight), &simpleDirLight);
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
+                                               sizeof(directionalLightData),
+                                               &directionalLightData);
 
     m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, simpleTextureProgram, "light");
 
-    SpecularMaterial* pMaterial = (SpecularMaterial*)(m_pSceneModelList[0]->m_pMeshList[0]->m_pMaterial);
-    SimpleSpecularMaterial simpleMaterial = { pMaterial->ka,  Vector4(0.6f, 0.6f, 0.6f, 0.0f),
-        Vector4(0.4f, 0.4f, 0.4f, 0.0f), Vector4(0.0f, 0.0f, 0.0f, 50.0f) };
+    SpecularMaterial* pMaterial = static_cast<SpecularMaterial*>(m_pSceneModelList[0]->m_pMeshList[1]->m_pMaterial);
+    /*pMaterial->kd = Vector3(0.95f, 0.95f, 0.95f);
+    pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
+    pMaterial->ns = 50.0f;*/
 
     m_materialBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(simpleMaterial), &simpleMaterial);
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
+                                               sizeof(pMaterial->m_materialData),
+                                               &(pMaterial->m_materialData));
+
     m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, simpleTextureProgram, "material");
 
     return 0;
@@ -119,11 +127,16 @@ void Scene::draw()
         //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
         glm::vec3 dir = m_directionalLight.getDir();
         glm::vec3 color = m_directionalLight.getLightColor();
-        SimpleDirectionalLight simpleDirLight = {
-            Vector4(dir.x, dir.y, dir.z, 1.0f),
-            Vector4(color.x, color.y, color.z, 1.0f) };
 
-        m_uniformBufferMgr.updateUniformBufferData(m_lightUniformBufferIndex, sizeof(simpleDirLight), &simpleDirLight);
+        Vector4 directionalLightData[2] =
+        {
+            Vector4(dir.x, dir.y, dir.z, 1.0f),
+            Vector4(color.x, color.y, color.z, 1.0f)
+        };
+
+        m_uniformBufferMgr.updateUniformBufferData(m_lightUniformBufferIndex,
+                                                   sizeof(directionalLightData),
+                                                   &directionalLightData);
 
         glm::mat4 transMatrixs[4] =
         {

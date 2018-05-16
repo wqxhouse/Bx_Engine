@@ -36,14 +36,28 @@ namespace Math
 
 		void setMember(float f)
 		{
-			memset(m, f, sizeof(m));
+            for (size_t i = 0; i < 3; ++i)
+            {
+                for (size_t j = 0; j < 3; ++j)
+                {
+                    m[i][j] = f;
+                }
+            }
 		}
 
 		void setMember(float r0, float r1, float r2)
 		{
-			memset(m[0], r0, sizeof(m[0]));
-			memset(m[1], r1, sizeof(m[1]));
-			memset(m[2], r2, sizeof(m[2]));
+            m[0][0] = r0;
+            m[0][1] = r0;
+            m[0][2] = r0;
+
+            m[1][0] = r1;
+            m[1][1] = r1;
+            m[1][2] = r1;
+
+            m[2][0] = r2;
+            m[2][1] = r2;
+            m[2][2] = r2;
 		}
 
 		void setMember(

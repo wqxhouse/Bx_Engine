@@ -9,13 +9,15 @@ void Material::setShadingMethod(const ShadingMethod shadingMethod)
 }
 
 SpecularMaterial::SpecularMaterial(const std::string & materialName)
-	: Material(materialName, 1.0f, 1.0f, false)
+	: Material(materialName, 1.0f, 1.0f, false),
+      m_materialData(0.0f)
 {
 }
 
 SpecularMaterial::SpecularMaterial(const std::string & materialName,
 	                               const Vector3 & ka, const Vector3 & kd, const Vector3 & ks, float ns)
-	: Material(materialName, 1.0f, 1.0f, false)
+	: Material(materialName, 1.0f, 1.0f, false),
+      m_materialData(0.0f)
 {
 	this->ka = ka;
 	this->kd = kd;

@@ -38,15 +38,36 @@ namespace Math
 
 		void setMember(float f)
 		{
-			memset(m, f, sizeof(m));
+            for (size_t i = 0; i < 4; ++i)
+            {
+                for (size_t j = 0; j < 4; ++j)
+                {
+                    m[i][j] = f;
+                }
+            }
 		}
 
 		void setMember(float r0, float r1, float r2, float r3)
 		{
-			memset(m[0], r0, sizeof(m[0]));
-			memset(m[1], r1, sizeof(m[1]));
-			memset(m[2], r2, sizeof(m[2]));
-			memset(m[3], r3, sizeof(m[3]));
+            m[0][0] = r0;
+            m[0][1] = r0;
+            m[0][2] = r0;
+            m[0][3] = r0;
+
+            m[1][0] = r1;
+            m[1][1] = r1;
+            m[1][2] = r1;
+            m[1][3] = r1;
+
+            m[2][0] = r2;
+            m[2][1] = r2;
+            m[2][2] = r2;
+            m[2][3] = r2;
+
+            m[3][0] = r3;
+            m[3][1] = r3;
+            m[3][2] = r3;
+            m[3][3] = r3;
 		}
 
 		void setMember(
@@ -132,4 +153,6 @@ namespace Math
 	private:
 		float m[4][4];
 	};
+
+    typedef Matrix4x4 Mat4;
 }

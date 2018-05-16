@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/Vector4.h"
+#include "../Math/Matrix4x4.h"
 
 using namespace Math;
 
@@ -17,14 +17,6 @@ enum ShadingMethod
 	Blin_Phong,
 	PBR_LAMBERT,
 	PBR_COOK_TORRANCE
-};
-
-struct SimpleSpecularMaterial
-{
-    Vector4 ka;
-    Vector4 ks;
-    Vector4 kd;
-    Vector4 ns;
 };
 
 class Material
@@ -57,8 +49,15 @@ public:
 
 	~SpecularMaterial() {}
 
-	Vector3 ka;
-	Vector3 ks;
-	Vector3 kd;
-	float ns;
+    union
+    {
+        struct
+        {
+            Vector3 ka; float ka_padding;
+            Vector3 kd; float kd_padding;
+            Vector3 ks; float ks_padding;
+            Vector3 ns_padding; float ns;
+        };
+        Mat4 m_materialData;
+    };
 };

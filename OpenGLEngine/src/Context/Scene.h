@@ -8,12 +8,6 @@
 #include "../Buffer/UniformBufferMgr.h"
 #include "Setting.h"
 
-struct SimpleDirectionalLight
-{
-    Vector4 lightDir;
-    Vector4 ligthColor;
-};
-
 class Scene
 {
 public:
@@ -53,13 +47,8 @@ private:
     UniformBufferMgr m_uniformBufferMgr;
 
     GLuint m_transUniformbufferIndex;
-    UniformBlockMemberData m_transData[3];
-
     GLuint m_lightUniformBufferIndex;
-    UniformBlockMemberData m_lightData[2];
-
     GLuint m_materialBufferIndex;
-    UniformBlockMemberData m_materialData[4];
 
     /*UniformBuffer* m_lightBuffer;
 

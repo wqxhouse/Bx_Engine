@@ -54,7 +54,10 @@ void OpenGLContext::initialize()
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     glStencilMask(0xFF);
 
-    glfwGetFramebufferSize(window, (int*)(&fbWidth), (int*)(&fbHeight));
+    glfwGetFramebufferSize(window,
+                           reinterpret_cast<int*>(&fbWidth),
+                           reinterpret_cast<int*>(&fbHeight));
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glViewport(0, 0, setting.width, setting.height);
@@ -141,8 +144,5 @@ void mouse_callback(GLFWwindow * window, double x_pos, double y_pos)
 
         prevPosX = x_pos;
         prevPosY = y_pos;
-        //m_proj_camera.updateMouseMotion(x_pos - prevPosX, y_pos - prevPosY);
     }
-    //printf("Callback: %lf, %lf, %lf, %lf\n", prevPosX, x_pos, prevPosY, y_pos);
-    //m_context.m_proj_camera.updateMouseMotion(halfWidth - x_pos, halfHeight - y_pos);
 }
