@@ -11,7 +11,11 @@ UniformBuffer::UniformBuffer(
         m_uniformDataBufferSize = dataSize;
 
         m_uniformDataBuffer = (GLubyte*)malloc(m_uniformDataBufferSize);
-        memcpy(m_uniformDataBuffer, data, m_uniformDataBufferSize);
+
+        if (data != NULL)
+        {
+            memcpy(m_uniformDataBuffer, data, m_uniformDataBufferSize);
+        }
 
         glGenBuffers(1, &m_uniformBufferHandle);
         glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferHandle);
@@ -92,6 +96,8 @@ UniformBuffer::~UniformBuffer()
 
 void UniformBuffer::update(const GLvoid * data)
 {
+    assert(data != NULL);
+
     memcpy(m_uniformDataBuffer, data, m_uniformDataBufferSize);
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferHandle);
@@ -101,6 +107,8 @@ void UniformBuffer::update(const GLvoid * data)
 
 void UniformBuffer::update(const GLsizei dataSize, const GLvoid * data)
 {
+    assert(data != NULL);
+
     m_uniformDataBufferSize = dataSize;
     memcpy(m_uniformDataBuffer, data, dataSize);
 

@@ -50,6 +50,10 @@ int Scene::initialize()
         return -1;
     }
 
+    m_transUniformbufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(glm::mat4x4) * 4, nullptr);
+    m_uniformBufferMgr.bindUniformBuffer(m_transUniformbufferIndex, simpleTextureProgram, "trans");
+
     glm::vec3 dir = m_directionalLight.getDir();
     glm::vec3 color = m_directionalLight.getLightColor();
 
@@ -104,7 +108,7 @@ void Scene::draw()
     glUseProgram(simpleTextureProgram);
 
     GLfloat timeValue = (GLfloat)glfwGetTime();
-    GLfloat colorValue = 1.0f;// (GLfloat)(sin(timeValue) / 2) + 0.5;
+    GLfloat colorValue = 1.0f;
     GLint glVertexColorLocation = glGetUniformLocation(simpleTextureProgram, "uniformColor");
     glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
 
@@ -121,28 +125,17 @@ void Scene::draw()
 
         m_uniformBufferMgr.updateUniformBufferData(m_lightUniformBufferIndex, sizeof(simpleDirLight), &simpleDirLight);
 
-        glm::mat4 rotation;
-        //rotation = glm::rotate(rotation, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 0));
+        glm::mat4 transMatrixs[4] =
+        {
+            glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos),
+            activeCamPtr->getViewMatrix(),
+            activeCamPtr->getProjectionMatrix(),
+            glm::mat4()
+        };
+        transMatrixs[3] = transMatrixs[2] * transMatrixs[1] * transMatrixs[0];
 
-        GLint glRotationMatHandle = glGetUniformLocation(simpleTextureProgram, "rot");
-        glUniformMatrix4fv(glRotationMatHandle, 1, GL_FALSE, glm::value_ptr(rotation));
-
-        glm::mat4 transform;
-        transform = glm::translate(transform, m_pSceneModelList[i]->trans->pos/*glm::vec3(10.0f, 10.0f, 10.0f)*/);
-        //transform *= rotation; //glm::rotate(transform, glm::radians(180.0f) * timeValue, glm::vec3(0, 1, 0));
-        //transform = glm::scale(transform, glm::vec3(.5f, .5f, .5f));
-
-        GLint glWorldMatrixLocation = glGetUniformLocation(simpleTextureProgram, "world");
-        glUniformMatrix4fv(glWorldMatrixLocation, 1, GL_FALSE, glm::value_ptr(transform));
-
-        //glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0, 1, 0));
-        GLint glViewMatrixLocation = glGetUniformLocation(simpleTextureProgram, "view");
-        glUniformMatrix4fv(glViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->getViewMatrix()/*view*/));
-
-        GLint glProjectionLocation = glGetUniformLocation(simpleTextureProgram, "proj");
-        glUniformMatrix4fv(glProjectionLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->getProjectionMatrix()));
-
-       // printf("%f %f %f\n", activeCamPtr->getTrans().pos.x, activeCamPtr->getTrans().pos.y, activeCamPtr->getTrans().pos.z);
+        m_uniformBufferMgr.updateUniformBufferData(m_transUniformbufferIndex, sizeof(transMatrixs), &(transMatrixs[0]));
+        
         GLint glEyeHandle = glGetUniformLocation(simpleTextureProgram, "eyePos");
         glUniform3fv(glEyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().pos));
 
@@ -169,10 +162,10 @@ Scene::~Scene()
         switch (pCamera->m_type)
         {
         case Camera::CameraType::PROJECT_CAM:
-            delete static_cast<ProspectiveCamera*>(pCamera);
+            SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
             break;
         case Camera::CameraType::ORTHO_CAM:
-            delete static_cast<OrthographicCamera*>(pCamera);
+            SafeDelete(static_cast<OrthographicCamera*>(pCamera));
             break;
         default:
             break;

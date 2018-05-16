@@ -20,13 +20,13 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
 
     if (inputStream.is_open())
     {
-        posBuffer.assign(vertexCount, Math::Vector3());
-        normalBuffer.assign(normalCount, Math::Vector3());
-        texCoords.assign(texCoordCount, Math::Vector2());
+        posBuffer.resize(vertexCount);
+        normalBuffer.resize(normalCount);
+        texCoords.resize(texCoordCount);
 
-        posIndices.assign(indicesCount, 0);
-        normalIndices.assign(indicesCount, 0);
-        texIndices.assign(indicesCount, 0);
+        posIndices.resize(indicesCount);
+        normalIndices.resize(indicesCount);
+        texIndices.resize(indicesCount);
 
         std::string modelFileLine;
         int counter[4] = { 1, 1, 1, 0 };//pos, normal, uv, index

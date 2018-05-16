@@ -49,7 +49,11 @@ private:
 	GLint normalTransformBufferSize;
 	GLubyte* normalTransformBufferData;
 
+    // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
+
+    GLuint m_transUniformbufferIndex;
+    UniformBlockMemberData m_transData[3];
 
     GLuint m_lightUniformBufferIndex;
     UniformBlockMemberData m_lightData[2];

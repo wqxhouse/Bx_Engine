@@ -103,16 +103,7 @@ void Mesh::initialize()
                           sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::texCoords)));
     glEnableVertexAttribArray(2);
 
-    // Unbind VBO/VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
-
-void Mesh::draw()
-{
-    glBindVertexArray(m_vertexArrayObj);
-
-    switch(m_polyMode)
+    switch (m_polyMode)
     {
     case WIREFRAME:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -124,7 +115,16 @@ void Mesh::draw()
         break;
     }
 
+    // Unbind VBO/VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Mesh::draw()
+{
+    glBindVertexArray(m_vertexArrayObj);
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 Mesh::~Mesh()
