@@ -130,6 +130,15 @@ namespace Math
 		~Matrix3x3()
 		{}
 	private:
-		float m[3][3];
+        union
+        {
+            struct
+            {
+                Vector3 r1;
+                Vector3 r2;
+                Vector3 r3;
+            };
+            float m[3][3];
+        };
 	};
 }

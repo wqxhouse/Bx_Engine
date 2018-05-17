@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <typeinfo>
+#include <glm/glm.hpp>
 
 #include "../Memory/MemoryPool.h"
 
@@ -22,6 +23,13 @@ namespace Math
 		{
 			//"Warning: Uncontrolled memory block.(Ignore if you assign memory on stack)
 		}
+
+        Vector3(const glm::vec3& v)
+        {
+            x = v.x;
+            y = v.y;
+            z = v.z;
+        }
 
 		static Vector3Ptr New(float x = 0.0f, float y = 0.0f, float z = 0.0f)
 		{
@@ -43,12 +51,15 @@ namespace Math
 			return X * v.X + Y * v.Y + Z * v.Z;
 		}
 
-		void crossProduct(const Vector3 &v)
+		Vector3 crossProduct(const Vector3 &v)
 		{
 			Vector3 tempVector = *this;
+
 			X = tempVector.Y * v.Z - tempVector.Z * v.Y;
 			Y = tempVector.Z * v.X - tempVector.X * v.Z;
 			Z = tempVector.X * v.Y - tempVector.Y * v.X;
+
+            return tempVector;
 		}
 
 		~Vector3(){}
@@ -62,25 +73,36 @@ namespace Math
 			return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
 		}
 
+        static Vector3 Normalize(const Vector3& v)
+        {
+            Vector3 result;
+
+            float lengthInv = 1.0f / (v.x * v.x + v.y * v.y + v.z * v.z);
+            result.x = v.x * lengthInv;
+            result.y = v.y * lengthInv;
+            result.z = v.z * lengthInv;
+
+            return result;
+        }
 
 		static Vector3 crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
 		{
-			Vector3 resultVector;
-			resultVector.X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
-			resultVector.Y = leftVec3.Z * rightVec3.X - leftVec3.X * rightVec3.Z;
-			resultVector.Z = leftVec3.X * rightVec3.Y - leftVec3.Y * rightVec3.X;
+			Vector3 result;
+            result.X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
+            result.Y = leftVec3.Z * rightVec3.X - leftVec3.X * rightVec3.Z;
+            result.Z = leftVec3.X * rightVec3.Y - leftVec3.Y * rightVec3.X;
 
-			return resultVector;
+			return result;
 		}
 
 		static Vector3 crossProduct(const Vector3Ptr leftVec3, const Vector3Ptr rightVec3)
 		{
-			Vector3 resultVector;
-			resultVector.X = leftVec3->Y * rightVec3->Z - leftVec3->Z * rightVec3->Y;
-			resultVector.Y = leftVec3->Z * rightVec3->X - leftVec3->X * rightVec3->Z;
-			resultVector.Z = leftVec3->X * rightVec3->Y - leftVec3->Y * rightVec3->X;
+			Vector3 result;
+            result.X = leftVec3->Y * rightVec3->Z - leftVec3->Z * rightVec3->Y;
+            result.Y = leftVec3->Z * rightVec3->X - leftVec3->X * rightVec3->Z;
+            result.Z = leftVec3->X * rightVec3->Y - leftVec3->Y * rightVec3->X;
 
-			return resultVector;
+			return result;
 		}
 		
 		Vector3 operator+(const Vector3 &v)
@@ -114,12 +136,19 @@ namespace Math
 		void operator/=(const Vector3 &v) { X /= v.X; Y /= v.Y; Z /= v.Z; }
 
 		//float operator*(const Vector3 &v){ return dot(v); }
-		void operator=(const Vector3 &v)
+		void operator=(const Vector3& v)
 		{
-			X = v.X;
-			Y = v.Y;
-			Z = v.Z;
+			x = v.x;
+			y = v.y;
+			z = v.z;
 		}
+
+        void operator=(const glm::vec3& v)
+        {
+            x = v.x;
+            y = v.y;
+            z = v.z;
+        }
 
 		Vector3 operator-()
 		{

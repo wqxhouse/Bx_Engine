@@ -11,50 +11,55 @@ enum LightType
 class Light
 {
 public:
-	Light(const LightType lightType, const glm::vec3& color);
+	Light(const LightType lightType, const Math::Vector3& color);
 	~Light();
 
-	inline glm::vec3 getLightColor() { return m_color; }
+	inline Math::Vector3 getLightColor() const { return m_color; }
 
     LightType m_lightType;
 
 private:
-	glm::vec3 m_color; // Light color
+    Math::Vector3 m_color; // Light color
 };
 
 class DirectionalLight : public Light
 {
 public:
-	DirectionalLight(const glm::vec3& direction, const glm::vec3& color);
+	DirectionalLight(const Math::Vector3& direction, const Math::Vector3& color);
 	~DirectionalLight();
 
     void rotate(const Math::Vector3& axis, const float angle);
-	inline glm::vec3 getDir() { return m_direction;  }
+	inline Math::Vector3 getDir() { return m_direction;  }
 private:
-	glm::vec3 m_direction; // Light direction
+    Math::Vector3 m_direction; // Light direction
 };
 
 class PointLight : public Light
 {
 public:
-	PointLight(const glm::vec3& position, const glm::vec3& color, float radius);
+	PointLight(const Math::Vector3& position, const Math::Vector3& color, float radius);
 	~PointLight();
 
-	inline glm::vec3 getPos() { return m_position; }
+	inline Math::Vector3 getPos() { return m_position; }
 private:
-	glm::vec3 m_position; // Light position
+    Math::Vector3 m_position; // Light position
 	float m_radius;
 };
 
 class SpotLight : public Light
 {
 public:
-	SpotLight(const glm::vec3 position, const glm::vec3& color, float radius_in, float raidus_out);
+	SpotLight(
+        const Math::Vector3& position,
+        const Math::Vector3& color,
+        float radius_in,
+        float raidus_out);
+
 	~SpotLight();
 
-	inline glm::vec3 getPos() { return m_position; }
+	inline Math::Vector3 getPos() const { return m_position; }
 private:
-	glm::vec3 m_position; // Light position
+	Math::Vector3 m_position; // Light position
 	float m_radius_in;
 	float m_radius_out;
 };

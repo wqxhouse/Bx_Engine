@@ -1,6 +1,11 @@
 #include "Camera.h"
 
-Camera::Camera(CameraType type, glm::vec3 pos, glm::vec3 center, glm::vec3 up, float speed)
+Camera::Camera(
+    CameraType type,
+    const glm::vec3& pos,
+    const glm::vec3& center,
+    const glm::vec3& up,
+    const float speed)
 	: m_type(type), trans(pos, center, up), curFront(glm::normalize(center - pos)), worldUp(up)
 {
 	this->speed = speed;

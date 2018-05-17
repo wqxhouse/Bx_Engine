@@ -1,6 +1,9 @@
 #include "Light.h"
 
-PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float radius)
+PointLight::PointLight(
+    const Math::Vector3& position,
+    const Math::Vector3& color,
+    float radius)
 	:Light(POINT_LIGHT, color)
 {
 	m_position = position;

@@ -1,6 +1,10 @@
 #include "Light.h"
 
-SpotLight::SpotLight(const glm::vec3 position, const glm::vec3& color, float radius_in, float raidus_out)
+SpotLight::SpotLight(
+    const Math::Vector3& position,
+    const Math::Vector3& color,
+    float radius_in,
+    float raidus_out)
 	:Light(SPOT_LIGHT, color)
 {
 	m_position   = position;

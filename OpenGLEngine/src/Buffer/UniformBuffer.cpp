@@ -81,7 +81,6 @@ UniformBuffer::~UniformBuffer()
 {
     glDeleteBuffers(1, &m_uniformBufferHandle);
 
-    //SafeDelete(m_uniformBlockName);
     SafeDeleteArray(m_indices);
     SafeDeleteArray(m_offsets);
     SafeDeleteArray(m_memberNames);
@@ -105,7 +104,9 @@ void UniformBuffer::update(const GLvoid * data)
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void UniformBuffer::update(const GLsizei dataSize, const GLvoid * data)
+void UniformBuffer::update(
+    const GLsizei dataSize,
+    const GLvoid * data)
 {
     assert(data != NULL);
 
@@ -117,7 +118,8 @@ void UniformBuffer::update(const GLsizei dataSize, const GLvoid * data)
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void UniformBuffer::update(const UniformBlockMemberData * uniformBlockMembers)
+void UniformBuffer::update(
+    const UniformBlockMemberData* uniformBlockMembers)
 {
     for (UINT i = 0; i < m_memberCount; ++i)
     {

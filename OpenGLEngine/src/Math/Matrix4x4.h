@@ -151,7 +151,17 @@ namespace Math
 		{}
 
 	private:
-		float m[4][4];
+        union
+        {
+            struct
+            {
+                Vector4 r1;
+                Vector4 r2;
+                Vector4 r3;
+                Vector4 r4;
+            };
+            float m[4][4];
+        };
 	};
 
     typedef Matrix4x4 Mat4;
