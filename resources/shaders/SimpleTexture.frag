@@ -9,8 +9,8 @@ uniform sampler2D sampler;
 
 layout (std140) uniform light
 {
-	vec3 lightDir;
 	vec3 lightColor;
+	vec3 lightDir;
 };
 
 uniform material

@@ -54,16 +54,10 @@ int Scene::initialize()
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
     m_uniformBufferMgr.bindUniformBuffer(m_transUniformbufferIndex, simpleTextureProgram, "trans");
 
-    Vector4 directionalLightData[2] =
-    {
-        Vector4(m_directionalLight.getDir(), 1.0f),
-        Vector4(m_directionalLight.getLightColor(), 1.0f)
-    };
-
     m_lightUniformBufferIndex = 
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-                                               sizeof(directionalLightData),
-                                               &directionalLightData);
+                                               m_directionalLight.getDataSize(),
+                                               m_directionalLight.getDataPtr());
 
     m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, simpleTextureProgram, "light");
 
@@ -122,17 +116,11 @@ void Scene::draw()
 
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
-        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
-
-        Vector4 directionalLightData[2] =
-        {
-            Vector4(m_directionalLight.getDir(), 1.0f),
-            Vector4(m_directionalLight.getLightColor(), 1.0f)
-        };
+        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
 
         m_uniformBufferMgr.updateUniformBufferData(m_lightUniformBufferIndex,
-                                                   sizeof(directionalLightData),
-                                                   &directionalLightData);
+                                                   m_directionalLight.getDataSize(),
+                                                   m_directionalLight.getDataPtr());
 
         glm::mat4 transMatrixs[4] =
         {
