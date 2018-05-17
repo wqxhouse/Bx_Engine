@@ -1,7 +1,10 @@
 #include "Model.h"
 #include "Mesh/ObjModelLoader.h"
 
-Model::Model(const std::string & modelFile, const std::string& materialFile, Transform * modelTrans)
+Model::Model(
+    const std::string& modelFile,
+    const std::string& materialFile,
+    Transform* modelTrans)
 	:trans(modelTrans)
 {
 	ObjModelLoader objLoader;
