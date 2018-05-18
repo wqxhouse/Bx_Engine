@@ -63,14 +63,14 @@ int Scene::initialize()
 
     SpecularMaterial* pMaterial =
         static_cast<SpecularMaterial*>(m_pSceneModelList[0]->m_pMeshList[1]->m_pMaterial);
-    pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
+    /*pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
     pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
-    pMaterial->ns = 50.0f;/**/
+    pMaterial->ns = 50.0f;*/
 
     m_materialBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                sizeof(pMaterial->m_materialData),
-                                               &(pMaterial->m_materialData));
+                                               NULL);
 
     m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, simpleTextureProgram, "material");
 
@@ -116,12 +116,6 @@ void Scene::draw()
 
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
-        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
-
-        m_uniformBufferMgr.updateUniformBufferData(m_lightUniformBufferIndex,
-                                                   m_directionalLight.getDataSize(),
-                                                   m_directionalLight.getDataPtr());
-
         glm::mat4 transMatrixs[4] =
         {
             glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos),
@@ -131,13 +125,23 @@ void Scene::draw()
         };
         transMatrixs[3] = transMatrixs[2] * transMatrixs[1] * transMatrixs[0];
 
-        m_uniformBufferMgr.updateUniformBufferData(m_transUniformbufferIndex, sizeof(transMatrixs), &(transMatrixs[0]));
+        m_uniformBufferMgr.updateUniformBufferData(
+            m_transUniformbufferIndex, sizeof(transMatrixs), &(transMatrixs[0]));
         
+        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
+
+        m_uniformBufferMgr.
+            updateUniformBufferData(
+                m_lightUniformBufferIndex,
+                m_directionalLight.getDataSize(),
+                m_directionalLight.getDataPtr());
+
         GLint glEyeHandle = glGetUniformLocation(simpleTextureProgram, "eyePos");
         glUniform3fv(glEyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().pos));
 
         m_pTextureList[0]->bindTexture(GL_TEXTURE0, simpleTextureProgram, "sampler", 0);
 
+        m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
         m_pSceneModelList[i]->draw();
     }
 }

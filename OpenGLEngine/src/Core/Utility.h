@@ -1,7 +1,9 @@
 #pragma once
 
 #include <stdio.h>
-#include <string.h>
+#include <string>
+#include <sstream>
+#include <vector>
 
 struct CallbackInfo
 {
@@ -24,3 +26,7 @@ struct CallbackInfo
 		memset(keyboardCallBack, 0, 1024 * sizeof(int));
 	}
 };
+
+void stringReplace(std::string* pStr, char src, char dst = ' ');
+
+std::vector<std::string> split(const std::string& str, char delim);

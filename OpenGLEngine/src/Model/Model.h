@@ -11,6 +11,15 @@ public:
 
     void draw();
 
+    void updateMaterial(
+        UniformBufferMgr* pUniformBufferMgr,
+        const GLuint      materialBufferIndex);
+
+    void updateMaterial(
+        UniformBufferMgr* pUniformBufferMgr,
+        const GLuint      materialBufferIndex,
+        const UINT        meshIndex);
+
 	std::vector<Mesh*> m_pMeshList;
 
 	Transform* trans;

@@ -9,6 +9,7 @@
 #include "../../Math/Vector3.h"
 #include "../../Material/Material.h"
 #include "../../Texture/Texture.h"
+#include "../../Buffer/UniformBufferMgr.h"
 
 class Mesh
 {
@@ -98,6 +99,9 @@ public:
 		const std::vector<Texture*>& textures);
 
 	void draw();
+    void updateMaterial(
+        UniformBufferMgr* pUniformBufferMgr,
+        const GLuint      materialBufferIndex);
 
 	~Mesh();
 
@@ -130,4 +134,7 @@ private:
 	GLuint m_vertexArrayObj; // VAO
 	GLuint m_vertexBufferObj; // VBO
 	GLuint m_indexBufferObj;
+
+    UniformBufferMgr* m_pUniformBufferMgr;
+    GLuint            m_materialBufferIndex;
 };

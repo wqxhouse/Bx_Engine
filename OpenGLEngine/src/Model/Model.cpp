@@ -31,3 +31,22 @@ void Model::draw()
 
     glBindVertexArray(0);
 }
+
+void Model::updateMaterial(
+    UniformBufferMgr* pUniformBufferMgr,
+    const GLuint      materialBufferIndex)
+{
+    for (Mesh* pMesh : m_pMeshList)
+    {
+        pMesh->updateMaterial(pUniformBufferMgr, materialBufferIndex);
+    }
+}
+
+void Model::updateMaterial(
+    UniformBufferMgr* pUniformBufferMgr,
+    const GLuint      materialBufferIndex,
+    const UINT        meshIndex) 
+{
+    m_pMeshList[meshIndex]->
+        updateMaterial(pUniformBufferMgr, materialBufferIndex);
+}

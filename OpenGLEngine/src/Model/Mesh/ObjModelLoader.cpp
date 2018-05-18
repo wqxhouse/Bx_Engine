@@ -144,7 +144,9 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
 }
 
 //TODO: Optimize the parse method, no need to check count each time
-void ObjModelLoader::parseIndices(const string & str, int* counter)
+void ObjModelLoader::parseIndices(
+    const string& str,
+    int* counter)
 {
     //TODO: parse poly surface indices
     vector<string> indexData = split(str, '/');
@@ -195,14 +197,20 @@ void ObjModelLoader::parseIndices(const string & str, int* counter)
     }
 }
 
-void ObjModelLoader::parseIndices(const string & metadata1, const string & metadata2, const string & metadata3, int* counter)
+void ObjModelLoader::parseIndices(
+    const string & metadata1,
+    const string & metadata2,
+    const string & metadata3,
+    int* counter)
 {
     parseIndices(metadata1, counter);
     parseIndices(metadata2, counter);
     parseIndices(metadata3, counter);
 }
 
-void ObjModelLoader::parseIndices(const vector<string> metadata, int* counter)
+void ObjModelLoader::parseIndices(
+    const vector<string> metadata,
+    int* counter)
 {
     for(string s : metadata)
     {
@@ -217,6 +225,8 @@ void ObjModelLoader::counter(const string& modelFile)
 
     while (std::getline(inputStream, line))
     {
+        stringReplace(&line, '\t');
+
         vector<string> vecPtr = split(line, ' ');
         if (vecPtr.size() > 2)
         {
@@ -270,6 +280,8 @@ void ObjModelLoader::loadMaterial(const string & materialFile)
 
         while (std::getline(inputStream, line))
         {
+            stringReplace(&line, '\t');
+
             vector<string> materialStrs = split(line, ' ');
             size_t strLength = materialStrs.size();
 

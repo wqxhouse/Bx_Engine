@@ -16,7 +16,5 @@ public:
 	ModelLoaderBase();
 	void virtual LoadModel(const string &fileName);
 	~ModelLoaderBase();
-protected:
-	vector<string> split(const string &str, char delim);
 };
 

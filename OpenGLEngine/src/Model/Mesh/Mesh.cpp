@@ -122,9 +122,36 @@ void Mesh::initialize()
 
 void Mesh::draw()
 {
+    if (m_pUniformBufferMgr != NULL && m_pMaterial != NULL)
+    {
+        SpecularMaterial* pMaterial =
+            static_cast<SpecularMaterial*>(m_pMaterial);
+        /*pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
+        pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
+        pMaterial->ns = 50.0f;*/
+
+        m_pUniformBufferMgr->
+            updateUniformBufferData(
+                m_materialBufferIndex,
+                sizeof(pMaterial->m_materialData),
+                &(pMaterial->m_materialData));
+    }
+    else
+    {
+        assert("The material pointer is NULL!");
+    }
+
     glBindVertexArray(m_vertexArrayObj);
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void Mesh::updateMaterial(
+    UniformBufferMgr* pUniformBufferMgr,
+    const GLuint      materialBufferIndex)
+{
+    m_pUniformBufferMgr   = pUniformBufferMgr;
+    m_materialBufferIndex = materialBufferIndex;
 }
 
 Mesh::~Mesh()
@@ -134,7 +161,7 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &m_indexBufferObj);
 
     //Memory::MemoryPool::release<Mesh>(this);
-    if (m_pMaterial != nullptr)
+    if (m_pMaterial != NULL)
     {
         switch (m_pMaterial->materialType)
         {
