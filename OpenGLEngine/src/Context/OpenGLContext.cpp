@@ -62,8 +62,6 @@ void OpenGLContext::initialize()
 
     glViewport(0, 0, setting.width, setting.height);
 
-    glClearColor(0.0f, 0.0f, 0.6f, 1.0f);
-
 #if _DEBUG
     printf("Success initialize OpenGL.\n");
 #endif

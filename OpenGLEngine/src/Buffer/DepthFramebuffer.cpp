@@ -1,14 +1,23 @@
 #include "Framebuffer.h"
 
-DepthFramebuffer::DepthFramebuffer(
+DepthFramebuffer::DepthFramebuffer()
+    : Framebuffer()
+{ }
+
+DepthFramebuffer::~DepthFramebuffer()
+{ }
+
+void DepthFramebuffer::createFramebuffer(
     const UINT depthTexWidth,
     const UINT depthTexHeight)
 {
+    glGenFramebuffers(1, &m_framebufferHandle); 
+    
     createFramebufferTexture2D(GL_TEXTURE0,
-                               GL_DEPTH_ATTACHMENT,
-                               depthTexWidth, depthTexHeight,
-                               GL_DEPTH_COMPONENT,
-                               GL_FLOAT);
+        GL_DEPTH_ATTACHMENT,
+        depthTexWidth, depthTexHeight,
+        GL_DEPTH_COMPONENT,
+        GL_FLOAT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, getFramebufferHandle());
 
@@ -16,8 +25,4 @@ DepthFramebuffer::DepthFramebuffer(
     glReadBuffer(GL_NONE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-DepthFramebuffer::~DepthFramebuffer()
-{
 }

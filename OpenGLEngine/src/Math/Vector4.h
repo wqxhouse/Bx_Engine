@@ -172,6 +172,22 @@ namespace Math
 				float Z;
 				float W;
 			};
+
+            struct
+            {
+                float x;
+                float y;
+                float z;
+                float w;
+            };
+
+            struct
+            {
+                float r;
+                float g;
+                float b;
+                float a;
+            };
 		};
 	};
 	

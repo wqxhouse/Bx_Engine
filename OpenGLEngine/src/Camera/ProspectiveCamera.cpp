@@ -32,9 +32,9 @@ void ProspectiveCamera::rotate(float pitch, float yaw)
 
 	Vector3 m_front = Vector3::Normalize(
                                 Math::rotate(
-                                            Vector3(curFront),
-                                            Vector3(0.0f, 1.0f, 0.0f),
-                                            glm::radians(-yaw)));
+                                             Vector3(curFront),
+                                             Vector3(0.0f, 1.0f, 0.0f),
+                                             glm::radians(-yaw)));
 
 	m_front = Math::rotate(m_front, Vector3(-m_front.z, 0.0f, m_front.x), glm::radians(pitch));
 

@@ -9,6 +9,8 @@ public:
     Framebuffer(const UINT attachTexCount = 1);
     virtual ~Framebuffer();
 
+    virtual void createFramebuffer();
+
     void createFramebufferTexture2D(
         const GLenum texUnit,
         const GLenum attachmentType,
@@ -29,10 +31,11 @@ public:
 
     inline GLuint getFramebufferHandle() const { return m_framebufferHandle; }
 
+protected:
+    GLuint m_framebufferHandle;
+
 private:
     BOOL checkFramebufferStatus() const;
-
-    GLuint m_framebufferHandle;
 
     std::vector<Texture*> m_pAttachedTextures;
 };
@@ -40,6 +43,10 @@ private:
 class DepthFramebuffer : public Framebuffer
 {
 public:
-    DepthFramebuffer(const UINT depthTexWidth, const UINT depthTexHeight);
+    DepthFramebuffer();
     ~DepthFramebuffer();
+
+    void createFramebuffer(
+        const UINT depthTexWidth,
+        const UINT depthTexHeight);
 };

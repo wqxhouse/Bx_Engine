@@ -7,7 +7,8 @@
 #include "stb_image.h"
 
 Scene::Scene(const Setting & setting)
-    : m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+    : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
+      m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_activeCamera(0), m_uniformBufferMgr(128)
 {
     this->setting = setting;
@@ -15,6 +16,8 @@ Scene::Scene(const Setting & setting)
 
 BOOL Scene::initialize()
 {
+    m_shadowMap.createFramebuffer(setting.width, setting.height);
+
     glGenBuffers(1, &transformHandle);
 
     addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
@@ -98,6 +101,7 @@ void Scene::update(float deltaTime)
 
 void Scene::draw()
 {
+    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     glUseProgram(simpleTextureProgram);
@@ -195,7 +199,10 @@ Scene::~Scene()
     m_pTextureList.clear();
 }
 
-void Scene::addModel(const std::string & modelFile, const std::string & materialFile, Transform * modelTrans)
+void Scene::addModel(
+    const std::string& modelFile,
+    const std::string& materialFile,
+    Transform*         modelTrans)
 {
     Model* pModel = new Model(modelFile, materialFile, modelTrans);
     m_pSceneModelList.push_back(pModel);

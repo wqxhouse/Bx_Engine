@@ -6,6 +6,8 @@
 #include "../Light/Light.h"
 #include "../Texture/Texture.h"
 #include "../Buffer/UniformBufferMgr.h"
+#include "../Buffer/Framebuffer.h"
+
 #include "Setting.h"
 
 class Scene
@@ -30,6 +32,10 @@ public:
         float fov      = 45.0f);
 
     inline void SetActiveCamera(const UINT activeCameraIndex) { m_activeCamera = activeCameraIndex; }
+    inline void SetBackGroundColor(const Vector4& backgroundColor)
+    {
+        m_backgroundColor = backgroundColor;
+    }
 
 private:
 	GLuint simpleTextureProgram;
@@ -38,6 +44,8 @@ private:
 	GLchar compileLog[512];
 
 	Setting setting;
+
+    Vector4 m_backgroundColor;
 
 	GLuint transformHandle;
 	GLuint transformBuffer;
@@ -65,4 +73,6 @@ private:
     std::vector<Camera*> m_pCameraList;
 	std::vector<Model*> m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;
+
+    DepthFramebuffer m_shadowMap;
 };
