@@ -10,9 +10,6 @@
     <Filter Include="src\Memory">
       <UniqueIdentifier>{0b698246-b82d-4a92-8d3b-61e85bc02e42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Compiler">
-      <UniqueIdentifier>{515659af-0b54-4b73-ae6a-c1cfedba0c2d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Core">
       <UniqueIdentifier>{bc9d3e7d-74fd-4a72-a759-3158faa8e9c9}</UniqueIdentifier>
     </Filter>
@@ -43,11 +40,11 @@
     <Filter Include="src\Buffer">
       <UniqueIdentifier>{3f17f754-2b68-43a0-aaee-e5f8a098c9a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Shader">
+      <UniqueIdentifier>{515659af-0b54-4b73-ae6a-c1cfedba0c2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Compiler\ShaderCompiler.h">
-      <Filter>src\Compiler</Filter>
-    </ClInclude>
     <ClInclude Include="src\Math\Vector3.h">
       <Filter>src\Math</Filter>
     </ClInclude>
@@ -138,11 +135,14 @@
     <ClInclude Include="src\Core\TypeDef.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Shader\ShaderCompiler.h">
+      <Filter>src\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader\Shader.h">
+      <Filter>src\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
-      <Filter>src\Compiler</Filter>
-    </ClCompile>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
       <Filter>src\Memory</Filter>
     </ClCompile>
@@ -224,5 +224,9 @@
     <ClCompile Include="src\Buffer\DepthFramebuffer.cpp">
       <Filter>src\Buffer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Shader\ShaderCompiler.cpp">
+      <Filter>src\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader\Shader.cpp" />
   </ItemGroup>
 </Project>

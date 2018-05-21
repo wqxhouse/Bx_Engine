@@ -22,6 +22,16 @@ Model::~Model()
 	delete(trans);
 }
 
+void Model::drawModelPos()
+{
+    for (Mesh* pMesh : m_pMeshList)
+    {
+        pMesh->drawMeshPos();
+    }
+
+    glBindVertexArray(0);
+}
+
 void Model::draw()
 {
     for (Mesh* pMesh : m_pMeshList)

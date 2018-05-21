@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Compiler/ShaderCompiler.h"
+#include "../Shader/Shader.h"
 #include "../Model/Model.h"
 #include "../Camera/Camera.h"
 #include "../Light/Light.h"
@@ -19,7 +19,11 @@ public:
 	void draw();
 	~Scene();
 
-	void addModel(const std::string & modelFile, const std::string & materialFile, Transform* modelTrans);
+	void addModel(
+        const std::string& modelFile,
+        const std::string& materialFile,
+        Transform* modelTrans);
+
     void addCamera(
         const CameraType type,
         const glm::vec3& pos,
@@ -31,6 +35,10 @@ public:
         float farClip  = 100.0f,
         float fov      = 45.0f);
 
+    void setSceneShader(
+        char* const vertexShaderFile,
+        char* const fragmentShaderFile);
+
     inline void SetActiveCamera(const UINT activeCameraIndex) { m_activeCamera = activeCameraIndex; }
     inline void SetBackGroundColor(const Vector4& backgroundColor)
     {
@@ -38,26 +46,23 @@ public:
     }
 
 private:
-	GLuint simpleTextureProgram;
+    void shadowPass();
 
-	GLint success;
-	GLchar compileLog[512];
+    void drawPass();
 
 	Setting setting;
 
     Vector4 m_backgroundColor;
 
-	GLuint transformHandle;
-	GLuint transformBuffer;
-	const GLchar* transformMembers[3] = { "world", "view", "proj" };
-	GLint transformBufferSize;
-	GLubyte* transformBufferData;
+    DirectionalLight m_directionalLight;
 
-	GLuint normalTransformHandle;
-	GLuint normalTransformBuffer;
-	const GLchar* normalTransformMembers = { "rot" };
-	GLint normalTransformBufferSize;
-	GLubyte* normalTransformBufferData;
+    std::vector<Camera*> m_pCameraList;
+    UINT m_activeCamera;
+
+	std::vector<Model*> m_pSceneModelList;
+	std::vector<Texture*> m_pTextureList;
+
+    Shader m_sceneShader;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
@@ -66,13 +71,11 @@ private:
     GLuint m_lightUniformBufferIndex;
     GLuint m_materialBufferIndex;
 
-    UINT m_activeCamera;
+    GLint success;
+    GLchar compileLog[512];
 
-    DirectionalLight m_directionalLight;
-
-    std::vector<Camera*> m_pCameraList;
-	std::vector<Model*> m_pSceneModelList;
-	std::vector<Texture*> m_pTextureList;
-
+    // Shadow map test
+    Shader m_shadowMapShader;
     DepthFramebuffer m_shadowMap;
+
 };

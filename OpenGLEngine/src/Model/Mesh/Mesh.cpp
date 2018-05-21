@@ -76,7 +76,7 @@ void Mesh::initialize()
     glBindVertexArray(m_vertexArrayObj);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
-    glBufferData(GL_ARRAY_BUFFER, m_vertexBuffer.size() * sizeof(GLfloat),
+    glBufferData(GL_ARRAY_BUFFER, m_vertexBuffer.size() * sizeof(Vertex),
                  m_vertexBuffer.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObj);
@@ -93,15 +93,12 @@ void Mesh::initialize()
     */
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
                           sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::position)));
-    glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
                           sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::normal)));
-    glEnableVertexAttribArray(1);
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
                           sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::texCoords)));
-    glEnableVertexAttribArray(2);
 
     switch (m_polyMode)
     {
@@ -117,6 +114,20 @@ void Mesh::initialize()
 
     // Unbind VBO/VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Mesh::drawMeshPos()
+{
+    glBindVertexArray(m_vertexArrayObj);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    //glDisableVertexAttribArray(1);
+    //glDisableVertexAttribArray(2);
+
+    glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
@@ -142,6 +153,11 @@ void Mesh::draw()
     }
 
     glBindVertexArray(m_vertexArrayObj);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
@@ -229,14 +245,15 @@ void Mesh::combineVertexData(
 
             //m_vertexBuffer[indexBase + 6] = texCoord.X;
             //m_vertexBuffer[indexBase + 7] = texCoord.Y;
-            m_vertexBuffer.push_back(pos.X);
+            /*m_vertexBuffer.push_back(pos.X);
             m_vertexBuffer.push_back(pos.Y);
             m_vertexBuffer.push_back(pos.Z);
             m_vertexBuffer.push_back(normal.X);
             m_vertexBuffer.push_back(normal.Y);
             m_vertexBuffer.push_back(normal.Z);
             m_vertexBuffer.push_back(texCoord.X);
-            m_vertexBuffer.push_back(texCoord.Y);
+            m_vertexBuffer.push_back(texCoord.Y);*/
+            m_vertexBuffer.push_back(Vertex(pos, normal, texCoord));
 
             m_indexBuffer.push_back(indicesBufferIndex);
             vertexIndexKey[vertex] = indicesBufferIndex;

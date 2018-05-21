@@ -26,6 +26,8 @@ public:
         const GLenum texUnit,
         const GLenum texType);
 
+    virtual void finishDrawFramebuffer();
+
     UINT getTextureIndex(const GLenum texUnit) const;
     Texture* getTexturePtr(const GLenum texUnit) const;
 
@@ -49,4 +51,6 @@ public:
     void createFramebuffer(
         const UINT depthTexWidth,
         const UINT depthTexHeight);
+
+    void finishDrawFramebuffer();
 };

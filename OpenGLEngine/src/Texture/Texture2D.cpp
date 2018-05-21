@@ -16,8 +16,9 @@ Texture2D::Texture2D(
     m_textureWidth  = texWidth;
     m_textureHeight = texHeight;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureWidth, m_textureHeight,
-                 0, GL_RGBA, type, 0);
+    glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight,
+                 0, format, type, 0);
 
     if (mipmap == TRUE)
     {
@@ -53,8 +54,8 @@ Texture2D::Texture2D(
                               reinterpret_cast<int*>(&m_textureType),
                               STBI_rgb_alpha);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureWidth, m_textureHeight,
-                 0, GL_RGBA, type, m_textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight,
+                 0, format, type, m_textureData);
 
     if (mipmap == TRUE)
     {

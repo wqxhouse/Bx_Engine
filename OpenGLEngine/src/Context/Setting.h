@@ -21,8 +21,8 @@ public:
 struct Setting
 {
 public:
-	UINT width = 1280;
-    UINT height = 720;
+	unsigned int width = 1280;
+    unsigned int height = 720;
 
 	float fov = 45.0f;
 

@@ -59,6 +59,11 @@ void Framebuffer::readFramebuffer(
     glBindTexture(texType, pTexture->GetTextureHandle());
 }
 
+void Framebuffer::finishDrawFramebuffer()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 UINT Framebuffer::getTextureIndex(const GLenum texUnit) const
 {
     assert(texUnit >= GL_TEXTURE0 && texUnit <= GL_MAX_TEXTURE_UNITS);

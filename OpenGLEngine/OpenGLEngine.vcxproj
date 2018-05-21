@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -156,7 +156,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Buffer\UniformBufferMgr.h" />
     <ClInclude Include="src\Buffer\VertexBuffer.h" />
     <ClInclude Include="src\Camera\Camera.h" />
-    <ClInclude Include="src\Compiler\ShaderCompiler.h" />
     <ClInclude Include="src\Context\OpenGLContext.h" />
     <ClInclude Include="src\Context\Scene.h" />
     <ClInclude Include="src\Context\Setting.h" />
@@ -179,6 +178,8 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
     <ClInclude Include="src\Model\Model.h" />
+    <ClInclude Include="src\Shader\Shader.h" />
+    <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,7 +190,6 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Camera\Camera.cpp" />
     <ClCompile Include="src\Camera\ProspectiveCamera.cpp" />
-    <ClCompile Include="src\Compiler\ShaderCompiler.cpp" />
     <ClCompile Include="src\Context\OpenGLContext.cpp" />
     <ClCompile Include="src\Context\Scene.cpp" />
     <ClCompile Include="src\Context\Setting.cpp" />
@@ -206,6 +206,8 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
     <ClCompile Include="src\Model\Model.cpp" />
+    <ClCompile Include="src\Shader\Shader.cpp" />
+    <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Texture\Texture.cpp" />
     <ClCompile Include="src\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Texture\Texture3D.cpp" />

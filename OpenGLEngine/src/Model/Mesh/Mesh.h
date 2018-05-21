@@ -98,18 +98,19 @@ public:
 		const std::vector<GLuint>& texCoordIndices,
 		const std::vector<Texture*>& textures);
 
-	void draw();
+    ~Mesh();
+
     void updateMaterial(
         UniformBufferMgr* pUniformBufferMgr,
         const GLuint      materialBufferIndex);
 
-	~Mesh();
+    void drawMeshPos();
+    void draw();
 
 	std::string m_name;
 	std::string m_materialName;
 
-	//std::vector<Vertex> vertexBuffer;
-	std::vector<GLfloat>  m_vertexBuffer;
+	std::vector<Vertex>   m_vertexBuffer;
 	std::vector<GLuint>   m_indexBuffer;
 	std::vector<Texture*> m_textureList;
 
@@ -131,8 +132,9 @@ private:
 
 	PolyMode m_polyMode = TRIANGLE;
 
-	GLuint m_vertexArrayObj; // VAO
+	GLuint m_vertexArrayObj;  // VAO
 	GLuint m_vertexBufferObj; // VBO
+
 	GLuint m_indexBufferObj;
 
     UniformBufferMgr* m_pUniformBufferMgr;

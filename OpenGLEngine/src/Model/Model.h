@@ -9,6 +9,7 @@ public:
 	Model(const std::string & modelFile, const std::string& materialFile, Transform* modelTrans);
 	~Model();
 
+    void drawModelPos();
     void draw();
 
     void updateMaterial(

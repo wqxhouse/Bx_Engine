@@ -39,6 +39,6 @@ void main()
 	vec4 texColor = texture(sampler, fragTexCoord);
 	vec3 diffuseColor = NoL * kd.xyz * lightColor;//fragColor * uniformColor;
 	vec3 specColor = specularCoefficient * ks.xyz * lightColor;
-	outColor = vec4((specColor + diffuseColor), 1.0f)/* * texColor*/;
+	outColor = ka + vec4((specColor + diffuseColor), 1.0f)/* * texColor*/;
 	//outColor = vec4(normalWorld.xyz, 1.0f);
 }

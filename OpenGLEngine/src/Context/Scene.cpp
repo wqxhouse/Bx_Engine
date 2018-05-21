@@ -6,7 +6,7 @@
 //Image loader
 #include "stb_image.h"
 
-Scene::Scene(const Setting & setting)
+Scene::Scene(const Setting& setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_activeCamera(0), m_uniformBufferMgr(128)
@@ -16,10 +16,6 @@ Scene::Scene(const Setting & setting)
 
 BOOL Scene::initialize()
 {
-    m_shadowMap.createFramebuffer(setting.width, setting.height);
-
-    glGenBuffers(1, &transformHandle);
-
     addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
               glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
@@ -41,12 +37,10 @@ BOOL Scene::initialize()
                              GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE));
 
     //Compile shaders
-    ShaderCompiler m_shaderCompiler;
-    const char* vertexShaderFile   = "SimpleTexture.vert";
-    const char* fragmentShaderFile = "SimpleTexture.frag";
-    int hs = m_shaderCompiler.compileShader(vertexShaderFile, fragmentShaderFile, &simpleTextureProgram);
+    m_sceneShader.setShaderFiles("MainScene.vert", "MainScene.frag");
+    BOOL hs = m_sceneShader.linkProgram();
 
-    if (hs != 0)
+    if (hs == FALSE)
     {
         assert("Fail to compile shaders.\n");
         return FALSE;
@@ -54,13 +48,13 @@ BOOL Scene::initialize()
 
     m_transUniformbufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
-    m_uniformBufferMgr.bindUniformBuffer(m_transUniformbufferIndex, simpleTextureProgram, "trans");
+    m_uniformBufferMgr.bindUniformBuffer(m_transUniformbufferIndex, m_sceneShader.GetShaderProgram(), "trans");
 
     m_lightUniformBufferIndex = 
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                m_directionalLight.getDataSize(),
                                                m_directionalLight.getDataPtr());
-    m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, simpleTextureProgram, "light");
+    m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, m_sceneShader.GetShaderProgram(), "light");
 
     SpecularMaterial* pMaterial =
         static_cast<SpecularMaterial*>(m_pSceneModelList[0]->m_pMeshList[1]->m_pMaterial);
@@ -68,7 +62,18 @@ BOOL Scene::initialize()
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                sizeof(pMaterial->m_materialData),
                                                NULL);
-    m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, simpleTextureProgram, "material");
+    m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
+
+    // Shadow map test
+    m_shadowMap.createFramebuffer(setting.width, setting.height);
+
+    m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
+    hs = m_shadowMapShader.linkProgram();
+    if (hs == FALSE)
+    {
+        assert("Fail to compile shadow map shaders.\n");
+        return FALSE;
+    }
 
     return TRUE;
 }
@@ -101,56 +106,15 @@ void Scene::update(float deltaTime)
 
 void Scene::draw()
 {
-    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
 
-    glUseProgram(simpleTextureProgram);
+    shadowPass();
 
-    GLfloat timeValue = (GLfloat)glfwGetTime();
-    GLfloat colorValue = 1.0f;
-    GLint glVertexColorLocation = glGetUniformLocation(simpleTextureProgram, "uniformColor");
-    glUniform3f(glVertexColorLocation, colorValue, colorValue, colorValue);
-
-    ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
-
-    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
-    {
-        glm::mat4 transMatrixs[4] =
-        {
-            glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos),
-            activeCamPtr->getViewMatrix(),
-            activeCamPtr->getProjectionMatrix(),
-            glm::mat4()
-        };
-        transMatrixs[3] = transMatrixs[2] * transMatrixs[1] * transMatrixs[0];
-
-        m_uniformBufferMgr.updateUniformBufferData(
-            m_transUniformbufferIndex, sizeof(transMatrixs), &(transMatrixs[0]));
-        
-        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
-
-        m_uniformBufferMgr.
-            updateUniformBufferData(
-                m_lightUniformBufferIndex,
-                m_directionalLight.getDataSize(),
-                m_directionalLight.getDataPtr());
-
-        GLint glEyeHandle = glGetUniformLocation(simpleTextureProgram, "eyePos");
-        glUniform3fv(glEyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().pos));
-
-        m_pTextureList[0]->bindTexture(GL_TEXTURE0, simpleTextureProgram, "sampler", 0);
-
-        m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
-        m_pSceneModelList[i]->draw();
-    }
+    drawPass();
 }
 
 Scene::~Scene()
 {
-    glDeleteBuffers(1, &transformBuffer);
-    glDeleteBuffers(1, &normalTransformBuffer);
-    glDeleteProgram(simpleTextureProgram);
-
     for (Model* model : m_pSceneModelList)
     {
         SafeDelete(model);
@@ -197,6 +161,81 @@ Scene::~Scene()
         }
     }
     m_pTextureList.clear();
+}
+
+void Scene::setSceneShader(
+    char* const vertexShaderFile,
+    char* const fragmentShaderFile)
+{
+    m_sceneShader.setShaderFiles(vertexShaderFile, fragmentShaderFile);
+}
+
+void Scene::shadowPass()
+{
+    ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
+
+    m_shadowMapShader.useProgram();
+    m_shadowMap.drawFramebuffer();
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+    {
+        glm::mat4 worldMatrix    =  glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos);
+        glm::mat4 viewMatrix     = activeCamPtr->getViewMatrix();
+        glm::mat4 prospectMatrix = activeCamPtr->getProjectionMatrix();
+
+        glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
+
+        GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
+        glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+
+        m_pSceneModelList[i]->drawModelPos();
+    }
+
+    m_shadowMap.finishDrawFramebuffer();
+}
+
+void Scene::drawPass()
+{
+    m_sceneShader.useProgram();
+
+    ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
+
+    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    m_uniformBufferMgr.
+        updateUniformBufferData(
+            m_lightUniformBufferIndex,
+            m_directionalLight.getDataSize(),
+            m_directionalLight.getDataPtr());
+
+    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+    {
+        glm::mat4 transMatrixs[4] =
+        {
+            glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos),
+            activeCamPtr->getViewMatrix(),
+            activeCamPtr->getProjectionMatrix(),
+            glm::mat4()
+        };
+        transMatrixs[3] = transMatrixs[2] * transMatrixs[1] * transMatrixs[0];
+
+        m_uniformBufferMgr.updateUniformBufferData(
+            m_transUniformbufferIndex, sizeof(transMatrixs), &(transMatrixs[0]));
+
+        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
+
+        GLint glEyeHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "eyePos");
+        glUniform3fv(glEyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().pos));
+
+        m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
+
+        //m_shadowMap.getTexturePtr(GL_TEXTURE0)->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
+
+        m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
+        m_pSceneModelList[i]->draw();
+    }
 }
 
 void Scene::addModel(
