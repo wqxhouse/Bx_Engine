@@ -132,6 +132,12 @@
     <ClInclude Include="src\Buffer\UniformBufferMgr.h">
       <Filter>src\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\Framebuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\TypeDef.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Compiler\ShaderCompiler.cpp">
@@ -210,6 +216,12 @@
       <Filter>src\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buffer\UniformBufferMgr.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\Framebuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\DepthFramebuffer.cpp">
       <Filter>src\Buffer</Filter>
     </ClCompile>
   </ItemGroup>

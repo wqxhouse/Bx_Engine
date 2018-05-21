@@ -3,10 +3,10 @@
 Texture::Texture(TextureType textureType)
 {
     m_textureType = textureType;
-	glGenTextures(1, &m_textureHandler);
+	glGenTextures(1, &m_textureHandle);
 }
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_textureHandler);
+	glDeleteTextures(1, &m_textureHandle);
 }

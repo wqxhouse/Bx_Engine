@@ -1,3 +1,9 @@
+/*
+    Author: bxs3514
+    Date:   05/18/2018
+    Reference: http://mathworld.wolfram.com/Quaternion.html
+*/
+
 #pragma once
 
 #include "Vector4.h"

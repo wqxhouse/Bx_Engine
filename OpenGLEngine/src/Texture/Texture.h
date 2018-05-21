@@ -21,30 +21,47 @@ public:
 
     virtual ~Texture();
 
-    TextureType m_textureType;
+    inline TextureType GetTextureType()   const { return m_textureType; }
+    inline GLuint      GetTextureHandle() const { return m_textureHandle; }
 
 protected:
-    GLuint m_textureHandler;
+    GLuint m_textureHandle;
+
+private:
+    TextureType m_textureType;
+
 };
 
 class Texture2D : public Texture
 {
 public:
-    Texture2D(const std::string& textureFile,
-              GLenum format     = GL_RGBA,
-              GLenum type       = GL_UNSIGNED_BYTE,
-              GLenum wrapMethod = GL_REPEAT,
-              GLboolean mipmap  = GL_FALSE);
+    // Create empty 2D texture
+    Texture2D(
+        const UINT   texWidth,
+        const UINT   texHeight,
+        const GLenum format     = GL_RGBA,
+        const GLenum type       = GL_UNSIGNED_BYTE,
+        const GLenum wrapMethod = GL_REPEAT,
+        const BOOL   mipmap     = GL_FALSE);
+
+    // Create 2D texture from texture file
+    Texture2D(
+        const std::string& textureFile,
+        const GLenum format     = GL_RGBA,
+        const GLenum type       = GL_UNSIGNED_BYTE,
+        const GLenum wrapMethod = GL_REPEAT,
+        const BOOL   mipmap     = GL_FALSE);
 
     void setBoarderColor(GLfloat borderColor[4]);
 
-    void bindTexture(const GLenum textureIndex,
-                     const GLuint shaderProgram,
-                     const std::string& samplerName,
-                     const int samplerIndex);
+    void bindTexture(
+        const GLenum textureIndex,
+        const GLuint shaderProgram,
+        const std::string& samplerName,
+        const int samplerIndex);
 
     inline void unbindTexture();
-    
+
     inline void* getTextureData();
 
     ~Texture2D();
@@ -60,21 +77,25 @@ private:
 class Texture3D : public Texture
 {
 public:
-    Texture3D(const std::string& textureFile,
-              GLenum format = GL_RGBA,
-              GLenum type = GL_UNSIGNED_BYTE,
-              GLenum wrapMethod = GL_REPEAT,
-              GLboolean mipmap = GL_FALSE);
+    Texture3D(
+        const std::string& textureFile,
+        const GLenum format     = GL_RGBA,
+        const GLenum type       = GL_UNSIGNED_BYTE,
+        const GLenum wrapMethod = GL_REPEAT,
+        const BOOL mipmap       = GL_FALSE);
+
     ~Texture3D();
 };
 
 class TextureCube : public Texture
 {
 public:
-    TextureCube(const std::string& textureFile,
-                GLenum format = GL_RGBA,
-                GLenum type = GL_UNSIGNED_BYTE,
-                GLenum wrapMethod = GL_REPEAT,
-                GLboolean mipmap = GL_FALSE);
+    TextureCube(
+        const std::string& textureFile,
+        const GLenum format     = GL_RGBA,
+        const GLenum type       = GL_UNSIGNED_BYTE,
+        const GLenum wrapMethod = GL_REPEAT,
+        const BOOL mipmap       = GL_FALSE);
+
     ~TextureCube();
 };

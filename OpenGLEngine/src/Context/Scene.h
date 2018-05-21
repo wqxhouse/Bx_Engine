@@ -12,17 +12,25 @@ class Scene
 {
 public:
 	Scene(const Setting & setting);
-	int initialize();
+    BOOL initialize();
 	void update(float deltaTime);
 	void draw();
 	~Scene();
 
 	void addModel(const std::string & modelFile, const std::string & materialFile, Transform* modelTrans);
+    void addCamera(
+        const CameraType type,
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up,
+        float speed,
+        float aspectRatio,
+        float nearClip = 0.1f,
+        float farClip  = 100.0f,
+        float fov      = 45.0f);
 
-	std::vector<Camera*> m_pCameraList;
-	UINT m_activeCamera;
+    inline void SetActiveCamera(const UINT activeCameraIndex) { m_activeCamera = activeCameraIndex; }
 
-	DirectionalLight m_directionalLight;
 private:
 	GLuint simpleTextureProgram;
 
@@ -50,13 +58,11 @@ private:
     GLuint m_lightUniformBufferIndex;
     GLuint m_materialBufferIndex;
 
-    /*UniformBuffer* m_lightBuffer;
+    UINT m_activeCamera;
 
-    UniformBlockMemberData m_lightData2[2];
-    UniformBuffer* m_lightBuffer2;
+    DirectionalLight m_directionalLight;
 
-    UniformBuffer* m_materialBuffer;*/
-
+    std::vector<Camera*> m_pCameraList;
 	std::vector<Model*> m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;
 };

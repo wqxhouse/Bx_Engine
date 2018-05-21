@@ -150,6 +150,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Buffer\Buffer.h" />
+    <ClInclude Include="src\Buffer\Framebuffer.h" />
     <ClInclude Include="src\Buffer\IndexBuffer.h" />
     <ClInclude Include="src\Buffer\UniformBuffer.h" />
     <ClInclude Include="src\Buffer\UniformBufferMgr.h" />
@@ -161,6 +162,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Context\Setting.h" />
     <ClInclude Include="src\Core\OpenGLPCH.h" />
     <ClInclude Include="src\Core\PointerTypes.h" />
+    <ClInclude Include="src\Core\TypeDef.h" />
     <ClInclude Include="src\Core\Utility.h" />
     <ClInclude Include="src\Light\Light.h" />
     <ClInclude Include="src\Material\Material.h" />
@@ -180,6 +182,8 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Buffer\DepthFramebuffer.cpp" />
+    <ClCompile Include="src\Buffer\Framebuffer.cpp" />
     <ClCompile Include="src\Buffer\UniformBuffer.cpp" />
     <ClCompile Include="src\Buffer\UniformBufferMgr.cpp" />
     <ClCompile Include="src\Buffer\VertexBuffer.cpp" />

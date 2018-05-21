@@ -6,8 +6,12 @@ class OpenGLContext
 {
 public:
 	OpenGLContext(const Setting& setting);
-	void run();
 	~OpenGLContext();
+
+    void run();
+
+    inline Scene getScene() const { return m_scene; }
+
 private:
 	void initialize();
 #if _DEBUG

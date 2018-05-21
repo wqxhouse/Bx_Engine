@@ -68,7 +68,7 @@ void OpenGLContext::initialize()
     printf("Success initialize OpenGL.\n");
 #endif
     
-    assert(m_scene.initialize() == 0);
+    assert(m_scene.initialize() == TRUE);
 
 #if _DEBUG
     printf("Success initialize render scene.\n");
@@ -92,7 +92,6 @@ void OpenGLContext::run()
         m_scene.update(deltaTime);
 
         //Start Rendering
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         m_scene.draw();
 
         glfwSwapBuffers(window);

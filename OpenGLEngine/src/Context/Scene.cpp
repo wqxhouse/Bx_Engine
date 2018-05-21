@@ -13,15 +13,15 @@ Scene::Scene(const Setting & setting)
     this->setting = setting;
 }
 
-int Scene::initialize()
+BOOL Scene::initialize()
 {
-    m_pCameraList.push_back(
-        new ProspectiveCamera(glm::vec3(5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height));
+    glGenBuffers(1, &transformHandle);
 
-    m_pCameraList.push_back(
-        new ProspectiveCamera(glm::vec3(-5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
-            glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height));
+    addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
+              glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
+
+    addCamera(CameraType::PROJECT_CAM, glm::vec3(-5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
+              glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
     //Load model and texture(Hardcode here)
     Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -32,7 +32,6 @@ int Scene::initialize()
     //Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     //addModel("../../resources/models/sphere/sphere.obj", "", pTrans);
 
-    glGenBuffers(1, &transformHandle);
     
     //Create texture and set sampler
     m_pTextureList.push_back(new Texture2D("../resources/textures/teaport/wall.jpg", 
@@ -47,7 +46,7 @@ int Scene::initialize()
     if (hs != 0)
     {
         assert("Fail to compile shaders.\n");
-        return -1;
+        return FALSE;
     }
 
     m_transUniformbufferIndex =
@@ -58,23 +57,17 @@ int Scene::initialize()
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                m_directionalLight.getDataSize(),
                                                m_directionalLight.getDataPtr());
-
     m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, simpleTextureProgram, "light");
 
     SpecularMaterial* pMaterial =
         static_cast<SpecularMaterial*>(m_pSceneModelList[0]->m_pMeshList[1]->m_pMaterial);
-    /*pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
-    pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
-    pMaterial->ns = 50.0f;*/
-
     m_materialBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                sizeof(pMaterial->m_materialData),
                                                NULL);
-
     m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, simpleTextureProgram, "material");
 
-    return 0;
+    return TRUE;
 }
 
 void Scene::update(float deltaTime)
@@ -105,6 +98,8 @@ void Scene::update(float deltaTime)
 
 void Scene::draw()
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
     glUseProgram(simpleTextureProgram);
 
     GLfloat timeValue = (GLfloat)glfwGetTime();
@@ -154,28 +149,85 @@ Scene::~Scene()
 
     for (Model* model : m_pSceneModelList)
     {
-        delete(model);
+        SafeDelete(model);
     }
     m_pSceneModelList.clear();
 
     for (Camera* pCamera : m_pCameraList)
     {
-        switch (pCamera->m_type)
+        switch (pCamera->GetCameraType())
         {
-        case Camera::CameraType::PROJECT_CAM:
+        case CameraType::PROJECT_CAM:
             SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
             break;
-        case Camera::CameraType::ORTHO_CAM:
+        case CameraType::ORTHO_CAM:
             SafeDelete(static_cast<OrthographicCamera*>(pCamera));
             break;
         default:
+            assert("Invalid camera type");
+
+            SafeDelete(pCamera);
             break;
         }
     }
+    m_pCameraList.clear();
+
+    for (Texture* pTexture : m_pTextureList)
+    {
+        switch (pTexture->GetTextureType())
+        {
+        case TextureType::TEXTURE_2D:
+            SafeDelete(static_cast<Texture2D*>(pTexture));
+            break;
+        case TextureType::TEXTURE_3D:
+            SafeDelete(static_cast<Texture3D*>(pTexture));
+            break;
+        case TextureType::TEXTURE_CUBEBOX:
+            SafeDelete(static_cast<TextureCube*>(pTexture));
+            break;
+        default:
+            assert("Invalid texture type");
+
+            SafeDelete(pTexture);
+            break;
+        }
+    }
+    m_pTextureList.clear();
 }
 
 void Scene::addModel(const std::string & modelFile, const std::string & materialFile, Transform * modelTrans)
 {
     Model* pModel = new Model(modelFile, materialFile, modelTrans);
     m_pSceneModelList.push_back(pModel);
+}
+
+void Scene::addCamera(
+    const CameraType type,
+    const glm::vec3& pos,
+    const glm::vec3& center,
+    const glm::vec3& up,
+    float speed,
+    float aspectRatio,
+    float nearClip,
+    float farClip,
+    float fov)
+{
+    switch (type)
+    {
+    case CameraType::PROJECT_CAM:
+    {
+        ProspectiveCamera * pProspectiveCamera =
+            new ProspectiveCamera(pos, center, up, speed, aspectRatio, nearClip, farClip, fov);
+
+        m_pCameraList.push_back(pProspectiveCamera);
+
+        break;
+    }
+    case CameraType::ORTHO_CAM:
+        // TODO
+        break;
+    default:
+        assert("Invalid camera type!");
+        break;
+    }
 }
