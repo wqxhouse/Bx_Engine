@@ -6,13 +6,12 @@ Camera::Camera(
     const glm::vec3& center,
     const glm::vec3& up,
     const float speed)
-	: m_type(type), trans(pos, center, up), curFront(glm::normalize(center - pos)), worldUp(up)
+	: m_cameraType(type), trans(pos, center, up), curFront(glm::normalize(center - pos)), worldUp(up)
 {
 	this->speed = speed;
 	this->curRight = trans.right;
 
 	view = glm::lookAt(pos, center, up);
-	//memset(translationKey, 0, 1024 * sizeof(int));
 }
 
 Transform Camera::getTrans()

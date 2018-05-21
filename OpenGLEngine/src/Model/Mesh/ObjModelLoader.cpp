@@ -39,29 +39,16 @@ void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFi
             {
                 if (vecPtr[0] == "v")
                 {
-                    //pos.X = stof(vecPtr[1]);
-                    //pos.Y = stof(vecPtr[2]);
-                    //pos.Z = stof(vecPtr[3]);
-                    //posBuffer.push_back(pos);
                     posBuffer[counter[0]].setData(stof(vecPtr[1]), stof(vecPtr[2]), stof(vecPtr[3]));
                     counter[0] += 1;
                 }
                 else if (vecPtr[0] == "vn")
                 {
-                    /*Math::Vector3 normal;
-                    normal.X = stof(vecPtr[1]);
-                    normal.Y = stof(vecPtr[2]);
-                    normal.Z = stof(vecPtr[3]);
-                    normalBuffer.push_back(normal);*/
                     normalBuffer[counter[1]].setData(stof(vecPtr[1]), stof(vecPtr[2]), stof(vecPtr[3]));
                     counter[1] += 1;
                 }
                 else if (vecPtr[0] == "vt")
                 {
-                    /*Math::Vector2 tex;
-                    tex.X = stof(vecPtr[1]);
-                    tex.Y = stof(vecPtr[2]);
-                    texCoords.push_back(tex);*/
                     texCoords[counter[2]].setData(stof(vecPtr[1]), stof(vecPtr[2]));
                     counter[2] += 1;
                 }

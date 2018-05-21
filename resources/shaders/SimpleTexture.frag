@@ -32,8 +32,8 @@ void main()
 	float NoL = clamp(dot(normalWorld, -lightDir), 0.0f, 1.0f);
 	vec3 reflection = normalize(2 * NoL * normalWorld + lightDir);
 	
-	float VoR = dot(view, reflection);
-	if(VoR < 0.0f) VoR = 0.0f;
+	float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
+	
 	float specularCoefficient = pow(VoR, ns.w);
 
 	vec4 texColor = texture(sampler, fragTexCoord);

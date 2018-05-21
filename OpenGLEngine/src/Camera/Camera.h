@@ -6,14 +6,14 @@
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI 1.57079632f
 
+enum CameraType
+{
+    PROJECT_CAM, ORTHO_CAM
+};
+
 class Camera
 {
 public:
-	enum CameraType
-	{
-		PROJECT_CAM, ORTHO_CAM
-	}m_type;
-
 	Camera(
         CameraType type,
         const glm::vec3& pos,
@@ -29,7 +29,11 @@ public:
 
 	virtual void update(float deltaTime);
 	virtual void draw() {}
+
+    inline CameraType GetCameraType() const { return m_cameraType; }
+
 protected:
+
 	Transform trans;
 
     glm::mat4 view;
@@ -39,6 +43,10 @@ protected:
 
 	glm::vec3 curFront;
 	glm::vec3 curRight;
+
+private:
+    CameraType m_cameraType;
+
 };
 
 class ProspectiveCamera : public Camera

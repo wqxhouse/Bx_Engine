@@ -1,6 +1,6 @@
 #pragma once
 
-//General C++ Library
+// General C++ Library
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -8,18 +8,21 @@
 #include <vector>
 #include <ctime>
 
-//Include GLEW Library
+// Include GLEW Library
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-//Include GLFW Library
+// Include GLFW Library
 #include <GLFW/glfw3.h>
 
-//Include GLM Libarary
+// Include GLM Libarary
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
+
+// Include define types
+#include "TypeDef.h"
 
 #define IN
 #define OUT
@@ -31,8 +34,6 @@
 #define CLAMP(v, l, r) \
 	((v) = (((v) < (l)) ? (l) : (v))); \
 	((v) = (((v) > (r)) ? (r) : (v))); \
-
-#define UINT uint32_t
 
 enum AllocateMode
 {
