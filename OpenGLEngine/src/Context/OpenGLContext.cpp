@@ -67,7 +67,7 @@ void OpenGLContext::initialize()
 #if _DEBUG
     printf("Success initialize OpenGL.\n");
 #endif
-    
+
     assert(m_scene.initialize() == TRUE);
 
 #if _DEBUG
