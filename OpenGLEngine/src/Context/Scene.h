@@ -59,6 +59,8 @@ private:
     std::vector<Camera*> m_pCameraList;
     UINT m_activeCamera;
 
+    ProspectiveCamera* m_pLightCamera;
+
 	std::vector<Model*> m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;
 

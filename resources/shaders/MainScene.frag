@@ -4,8 +4,10 @@ in vec3 posWorld;
 in vec3 normalWorld;
 in vec2 fragTexCoord;
 
-uniform vec3 uniformColor;
+in vec3 posLightProj;
+
 uniform sampler2D sampler;
+uniform sampler2D shadowMapSampler;
 
 layout (std140) uniform light
 {
@@ -36,9 +38,18 @@ void main()
 	
 	float specularCoefficient = pow(VoR, ns.w);
 
-	vec4 texColor = texture(sampler, fragTexCoord);
-	vec3 diffuseColor = NoL * kd.xyz * lightColor;//fragColor * uniformColor;
-	vec3 specColor = specularCoefficient * ks.xyz * lightColor;
-	outColor = ka + vec4((specColor + diffuseColor), 1.0f) * texColor;
+	float depth = texture(shadowMapSampler, posLightProj.xy).x;
+	
+	if (depth > gl_FragCoord.z - 0.00001f)
+	{
+		vec4 texColor = texture(sampler, fragTexCoord);
+		vec3 diffuseColor = NoL * kd.xyz * lightColor;
+		vec3 specColor = specularCoefficient * ks.xyz * lightColor;
+		outColor = ka + vec4((specColor + diffuseColor), 1.0f) * texColor;
+	}
+	else
+	{
+		outColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 	//outColor = vec4(normalWorld.xyz, 1.0f);
 }

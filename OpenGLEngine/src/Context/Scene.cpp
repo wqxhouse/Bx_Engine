@@ -22,11 +22,18 @@ BOOL Scene::initialize()
     addCamera(CameraType::PROJECT_CAM, glm::vec3(-5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
               glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
+    Vector3 lightDir = m_directionalLight.getDir();
+
+    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
+    glm::vec3 lightPos = glm::vec3(0.0f, 2.5f, 0.0f);
+    m_pLightCamera = new ProspectiveCamera(
+        lightPos, lightPos + glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, (float)setting.width / (float)setting.height);
+
     //Load model and texture(Hardcode here)
     Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj",
-             "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);
-    //addModel("../resources/models/sphere/sphere.obj", pTrans);
+             "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);/**/
+    //addModel("../resources/models/sphere/sphere.obj", "", pTrans);
 
     //Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     //addModel("../../resources/models/sphere/sphere.obj", "", pTrans);
@@ -56,12 +63,8 @@ BOOL Scene::initialize()
                                                m_directionalLight.getDataPtr());
     m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, m_sceneShader.GetShaderProgram(), "light");
 
-    SpecularMaterial* pMaterial =
-        static_cast<SpecularMaterial*>(m_pSceneModelList[0]->m_pMeshList[1]->m_pMaterial);
     m_materialBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-                                               sizeof(pMaterial->m_materialData),
-                                               NULL);
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);
     m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map test
@@ -172,27 +175,32 @@ void Scene::setSceneShader(
 
 void Scene::shadowPass()
 {
-    ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
-
-    m_shadowMapShader.useProgram();
-    m_shadowMap.drawFramebuffer();
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+    if (m_pLightCamera != NULL)
     {
-        glm::mat4 worldMatrix    =  glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos);
-        glm::mat4 viewMatrix     = activeCamPtr->getViewMatrix();
-        glm::mat4 prospectMatrix = activeCamPtr->getProjectionMatrix();
+        m_shadowMapShader.useProgram();
+        m_shadowMap.drawFramebuffer();
+        glClear(GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
+        for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+        {
+            glm::mat4 worldMatrix    = glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos);
+            glm::mat4 viewMatrix     = m_pLightCamera->getViewMatrix();
+            glm::mat4 prospectMatrix = m_pLightCamera->getProjectionMatrix();
 
-        GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
-        glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+            glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
 
-        m_pSceneModelList[i]->drawModelPos();
+            GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
+            glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+
+            m_pSceneModelList[i]->drawModelPos();
+        }
+
+        m_shadowMap.finishDrawFramebuffer();
     }
-
-    m_shadowMap.finishDrawFramebuffer();
+    else
+    {
+        assert("No light camera, can't cast shadow.");
+    }
 }
 
 void Scene::drawPass()
@@ -200,6 +208,11 @@ void Scene::drawPass()
     m_sceneShader.useProgram();
 
     ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
+
+#if 0
+    Vector3 camPos = activeCamPtr->getTrans().pos;
+    printf("%f %f %f\n", camPos.x, camPos.y, camPos.z);
+#endif
 
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -212,26 +225,35 @@ void Scene::drawPass()
 
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
-        glm::mat4 transMatrixs[4] =
+        glm::mat4 transMatrix[4] =
         {
             glm::translate(glm::mat4(), m_pSceneModelList[i]->trans->pos),
             activeCamPtr->getViewMatrix(),
             activeCamPtr->getProjectionMatrix(),
             glm::mat4()
         };
-        transMatrixs[3] = transMatrixs[2] * transMatrixs[1] * transMatrixs[0];
+        transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
 
         m_uniformBufferMgr.updateUniformBufferData(
-            m_transUniformbufferIndex, sizeof(transMatrixs), &(transMatrixs[0]));
+            m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
 
         //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
 
-        GLint glEyeHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "eyePos");
-        glUniform3fv(glEyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().pos));
+        GLint eyeHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "eyePos");
+        glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().pos));
 
         m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
 
-        //m_shadowMap.getTexturePtr(GL_TEXTURE0)->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
+        glm::mat4 lightTranslate = glm::translate(glm::mat4(), m_pLightCamera->getTrans().pos);
+        glm::mat4 lightTransWVP  = m_pLightCamera->getProjectionMatrix() *
+                                   m_pLightCamera->getViewMatrix()       *
+                                   lightTranslate;
+
+        GLint lightTransHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "lightTransWVP");
+        glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
+
+        m_shadowMap.getTexturePtr(GL_TEXTURE0)->
+            bindTexture(GL_TEXTURE1, m_sceneShader.GetShaderProgram(), "shadowMapSampler", 1);
 
         m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
         m_pSceneModelList[i]->draw();

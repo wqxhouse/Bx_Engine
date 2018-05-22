@@ -88,9 +88,14 @@ void Texture2D::bindTexture(const GLenum textureIndex,
                             const std::string & samplerName,
                             const int samplerIndex)
 {
-    glActiveTexture(textureIndex);
-    glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    glUniform1i(glGetUniformLocation(shaderProgram, samplerName.data()), samplerIndex);
+    GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
+
+    if (textureLocation >= 0)
+    {
+        glActiveTexture(textureIndex);
+        glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+        glUniform1i(textureLocation, samplerIndex);
+    }
 }
 
 void Texture2D::unbindTexture()

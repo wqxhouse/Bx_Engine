@@ -22,8 +22,8 @@ void DepthFramebuffer::createFramebuffer(
 
     glBindFramebuffer(GL_FRAMEBUFFER, getFramebufferHandle());
 
-    //glDrawBuffer(GL_NONE);
-    //glReadBuffer(GL_NONE);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -32,6 +32,6 @@ void DepthFramebuffer::finishDrawFramebuffer()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    //glDrawBuffer(GL_FRONT);
-    //glReadBuffer(GL_FRONT);
+    glDrawBuffer(GL_FRONT);
+    glReadBuffer(GL_FRONT);
 }
