@@ -62,7 +62,7 @@ BOOL Scene::initialize()
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                m_directionalLight.getDataSize(),
                                                m_directionalLight.getDataPtr());
-    m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, m_sceneShader.GetShaderProgram(), "light");
+    m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, m_sceneShader.GetShaderProgram(), "lightUniformBlock");
 
     m_materialBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);

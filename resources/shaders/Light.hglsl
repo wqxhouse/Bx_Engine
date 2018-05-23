@@ -2,14 +2,14 @@
 
 struct LightBase
 {
-	vec4 color;
+	vec3 color;
 };
 
 struct DirectLight
 {
 	LightBase lightBase;
 	
-	vec4 dir;
+	vec3 dir;
 };
 
 struct pointLight
