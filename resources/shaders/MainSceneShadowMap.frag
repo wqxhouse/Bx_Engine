@@ -60,10 +60,12 @@ void main()
 	float shadowAttenuation = 1.0f; castingShadow();
 
 	vec4 texColor = texture(sampler, fragTexCoord);
+    
 	vec3 diffuseColor = NoL * kd * light.lightBase.color;
 	vec3 specColor = specularCoefficient * ks * light.lightBase.color;
 	outColor = (vec4((/*ka + */diffuseColor + specColor), 1.0f)) * texColor;
-	
+    
+    // Shadow casting
 	outColor *= shadowAttenuation;
 	//outColor = vec4(normalWorld.xyz, 1.0f);
 }
