@@ -31,20 +31,21 @@ BOOL Scene::initialize()
 
     //Load model and texture(Hardcode here)
     Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-    addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj",
-             "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);/**/
+    addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl", pTrans);
+
+    /*addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj",
+             "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);*/
     //addModel("../resources/models/sphere/sphere.obj", "", pTrans);
 
     //Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
     //addModel("../../resources/models/sphere/sphere.obj", "", pTrans);
-
-    
+        
     //Create texture and set sampler
     m_pTextureList.push_back(new Texture2D("../resources/textures/teaport/wall.jpg", 
                              GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE));
 
     //Compile shaders
-    m_sceneShader.setShaderFiles("MainScene.vert", "MainScene.frag");
+    m_sceneShader.setShaderFiles("MainSceneShadowMap.vert", "MainSceneShadowMap.frag");
     BOOL hs = m_sceneShader.linkProgram();
 
     if (hs == FALSE)

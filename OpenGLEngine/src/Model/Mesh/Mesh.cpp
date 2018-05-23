@@ -122,10 +122,8 @@ void Mesh::drawMeshPos()
     glBindVertexArray(m_vertexArrayObj);
 
     glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    //glDisableVertexAttribArray(1);
-    //glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
 
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -234,25 +232,6 @@ void Mesh::combineVertexData(
         GLuint index = -1;
         if (!findSimilarVertex(vertexIndexKey, vertex, &index))
         {
-            //int indexBase = indicesBufferIndex * 8;
-            //m_vertexBuffer[indexBase] = pos.X;
-            //m_vertexBuffer[indexBase + 1] = pos.Y;
-            //m_vertexBuffer[indexBase + 2] = pos.Z;
-
-            //m_vertexBuffer[indexBase + 3] = normal.X;
-            //m_vertexBuffer[indexBase + 4] = normal.Y;
-            //m_vertexBuffer[indexBase + 5] = normal.Z;
-
-            //m_vertexBuffer[indexBase + 6] = texCoord.X;
-            //m_vertexBuffer[indexBase + 7] = texCoord.Y;
-            /*m_vertexBuffer.push_back(pos.X);
-            m_vertexBuffer.push_back(pos.Y);
-            m_vertexBuffer.push_back(pos.Z);
-            m_vertexBuffer.push_back(normal.X);
-            m_vertexBuffer.push_back(normal.Y);
-            m_vertexBuffer.push_back(normal.Z);
-            m_vertexBuffer.push_back(texCoord.X);
-            m_vertexBuffer.push_back(texCoord.Y);*/
             m_vertexBuffer.push_back(Vertex(pos, normal, texCoord));
 
             m_indexBuffer.push_back(indicesBufferIndex);
@@ -264,22 +243,7 @@ void Mesh::combineVertexData(
         {
             m_indexBuffer.push_back(index);
         }
-        /*m_vertexBuffer[posIndex].setPositionData(posBuf[posIndex]);
-
-        if (normalIndices.size() != 0)
-        {
-            m_vertexBuffer[posIndex].setNormalData(normalBuf[normalIndex]);
-        }
-
-        if (texCoords.size() != 0)
-        {
-            m_vertexBuffer[posIndex].setTexCoords(texCoords[uvIndex]);
-        }
-        
-        indicesSet.insert(posBuf[posIndex]);*/
     }
-
-    //this->m_indexBuffer = posIndices;
 }
 
 bool Mesh::findSimilarVertex(

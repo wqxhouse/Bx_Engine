@@ -1,0 +1,34 @@
+// Light header file
+
+struct LightBase
+{
+	vec4 color;
+};
+
+struct DirectLight
+{
+	LightBase lightBase;
+	
+	vec4 dir;
+};
+
+struct pointLight
+{
+	LightBase lightBase;
+	
+	// vec4 pointLightData
+	vec3 pos;
+	float radius;
+};
+
+struct spotLight
+{
+    LightBase lightBase;
+    
+    vec4 pos;
+    
+    // vec4 radiusData
+    float innerRadius;
+    float outerRadius;
+    vec2  padding;
+};

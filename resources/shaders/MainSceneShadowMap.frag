@@ -4,8 +4,10 @@ in vec3 posWorld;
 in vec3 normalWorld;
 in vec2 fragTexCoord;
 
-uniform vec3 uniformColor;
+in vec4 posLightProj;
+
 uniform sampler2D sampler;
+uniform sampler2D shadowMapSampler;
 
 layout (std140) uniform light
 {
@@ -25,6 +27,24 @@ uniform vec3 eyePos;
 
 out vec4 outColor;
 
+float castingShadow()
+{
+	float shadowAttenuation = 1.0f;
+	
+	// Shadow casting
+	vec3 posLight = posLightProj.xyz / posLightProj.w;
+	vec2 depthUV = vec2(posLight.x * 0.5f + 0.5f, posLight.y * 0.5f + 0.5f);
+	
+	float depth = texture(shadowMapSampler, depthUV).x;
+	
+	if (depth < gl_FragCoord.z + 0.000001f)
+	{
+		shadowAttenuation = 0.0f;
+	}
+	
+	return shadowAttenuation;
+}
+
 void main()
 {
 	vec3 view = normalize(eyePos - posWorld);	
@@ -35,10 +55,14 @@ void main()
 	float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
 	
 	float specularCoefficient = pow(VoR, ns.w);
+	
+	float shadowAttenuation = 1.0f; castingShadow();
 
 	vec4 texColor = texture(sampler, fragTexCoord);
-	vec3 diffuseColor = NoL * kd.xyz * lightColor;//fragColor * uniformColor;
+	vec3 diffuseColor = NoL * kd.xyz * lightColor;
 	vec3 specColor = specularCoefficient * ks.xyz * lightColor;
-	outColor = ka + vec4((specColor + diffuseColor), 1.0f)/* * texColor*/;
+	outColor = (/*ka +*/ vec4((diffuseColor + specColor), 1.0f)) * texColor;
+	
+	outColor *= shadowAttenuation;
 	//outColor = vec4(normalWorld.xyz, 1.0f);
 }

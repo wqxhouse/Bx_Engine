@@ -46,7 +46,7 @@ void OpenGLContext::initialize()
     glFrontFace(GL_CCW);
 
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);
     glDepthMask(GL_TRUE);
 
     glEnable(GL_STENCIL_TEST);

@@ -1,5 +1,7 @@
 #version 440 core
 
+#include <Light.hglsl>
+
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoord;
@@ -12,15 +14,21 @@ uniform trans
 	mat4 wvp;
 };
 
+uniform mat4 lightTransWVP;
+
 out vec3 posWorld;
 out vec3 normalWorld;
 out vec2 fragTexCoord;
+
+out vec4 posLightProj;
 
 void main()
 {
 	posWorld     = (world * vec4(position, 1.0f)).xyz;
 	normalWorld  = (world * vec4(normal, 1.0f)).xyz;
 	fragTexCoord = texCoord;
+	
+	posLightProj = lightTransWVP * vec4(position, 1.0f);
 	
     gl_Position  = wvp * vec4(position, 1.0f);
 }

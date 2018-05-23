@@ -18,7 +18,7 @@ out vec3 posWorld;
 out vec3 normalWorld;
 out vec2 fragTexCoord;
 
-out vec3 posLightProj;
+out vec4 posLightProj;
 
 void main()
 {
@@ -26,7 +26,7 @@ void main()
 	normalWorld  = (world * vec4(normal, 1.0f)).xyz;
 	fragTexCoord = texCoord;
 	
-	posLightProj = (lightTransWVP * vec4(position, 1.0f)).xyz;
+	posLightProj = lightTransWVP * vec4(position, 1.0f);
 	
     gl_Position  = wvp * vec4(position, 1.0f);
 }

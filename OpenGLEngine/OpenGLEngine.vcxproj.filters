@@ -227,6 +227,8 @@
     <ClCompile Include="src\Shader\ShaderCompiler.cpp">
       <Filter>src\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shader\Shader.cpp" />
+    <ClCompile Include="src\Shader\Shader.cpp">
+      <Filter>src\Shader</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
