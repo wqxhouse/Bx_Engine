@@ -9,6 +9,7 @@
 Scene::Scene(const Setting& setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+      m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCamera(0), m_uniformBufferMgr(128)
 {
     this->setting = setting;
@@ -19,13 +20,13 @@ BOOL Scene::initialize()
     addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
               glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
-    addCamera(CameraType::PROJECT_CAM, glm::vec3(-5.0f, 2.0f, 2.0f), glm::vec3(0, 0, 0),
+    addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, -4, 0),
               glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
     Vector3 lightDir = m_directionalLight.getDir();
 
-    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
-    glm::vec3 lightPos = glm::vec3(0.0f, 2.5f, 0.0f);
+    glm::vec3 glmLightDir = glm::vec3(0.0f, -1.0f, 0.0f);//glm::vec3(lightDir.x, lightDir.y, lightDir.z);
+    glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.1f);
     m_pLightCamera = new ProspectiveCamera(
         lightPos, lightPos + glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, (float)setting.width / (float)setting.height);
 
@@ -56,17 +57,38 @@ BOOL Scene::initialize()
 
     m_transUniformbufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
-    m_uniformBufferMgr.bindUniformBuffer(m_transUniformbufferIndex, m_sceneShader.GetShaderProgram(), "trans");
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_transUniformbufferIndex,
+        m_sceneShader.GetShaderProgram(),
+        "trans");
 
-    m_lightUniformBufferIndex = 
+    // Directional light ubo
+    m_directionalLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                m_directionalLight.getDataSize(),
                                                m_directionalLight.getDataPtr());
-    m_uniformBufferMgr.bindUniformBuffer(m_lightUniformBufferIndex, m_sceneShader.GetShaderProgram(), "lightUniformBlock");
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_directionalLightUniformBufferIndex,
+        m_sceneShader.GetShaderProgram(),
+        "directionalLightUniformBlock");
 
+    // Point light ubo
+    m_pointLightUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
+            m_pointLight.getDataSize(),
+            m_pointLight.getDataPtr());
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pointLightUniformBufferIndex,
+        m_sceneShader.GetShaderProgram(),
+        "pointLightUniformBlock");
+
+    // Material ubo
     m_materialBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);
-    m_uniformBufferMgr.bindUniformBuffer(m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
+        m_uniformBufferMgr.createUniformBuffer(
+            GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map test
     m_shadowMap.createFramebuffer(setting.width, setting.height);
@@ -220,9 +242,15 @@ void Scene::drawPass()
 
     m_uniformBufferMgr.
         updateUniformBufferData(
-            m_lightUniformBufferIndex,
+            m_directionalLightUniformBufferIndex,
             m_directionalLight.getDataSize(),
             m_directionalLight.getDataPtr());
+
+    m_uniformBufferMgr.
+        updateUniformBufferData(
+            m_pointLightUniformBufferIndex,
+            m_pointLight.getDataSize(),
+            m_pointLight.getDataPtr());
 
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {

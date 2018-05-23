@@ -11,9 +11,14 @@ in vec4 posLightProj;
 uniform sampler2D sampler;
 uniform sampler2D shadowMapSampler;
 
-layout (std140) uniform lightUniformBlock
+layout (std140) uniform directionalLightUniformBlock
 {
-    DirectLight light;
+    DirectionalLight m_directionallight;
+};
+
+uniform pointLightUniformBlock
+{
+    PointLight m_pointLight;
 };
 
 layout (std140) uniform material
@@ -48,24 +53,42 @@ float castingShadow()
 
 void main()
 {
-	vec3 view = normalize(eyePos - posWorld);	
-	
-	float NoL = clamp(dot(normalWorld, -light.dir), 0.0f, 1.0f);
-	vec3 reflection = normalize(2 * NoL * normalWorld + light.dir);
-	
-	float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
-	
-	float specularCoefficient = pow(VoR, ns.w);
-	
-	float shadowAttenuation = 1.0f; castingShadow();
+    vec3  dis     = posWorld - m_pointLight.pos;
+    float dis2    = dot(dis, dis);
+    float radius2 = m_pointLight.radius * m_pointLight.radius;
+    
+    vec3 dir      = normalize(dis);
+    
+    if (dis2 <= radius2)
+    {
+        vec3 view = normalize(eyePos - posWorld);
 
-	vec4 texColor = texture(sampler, fragTexCoord);
-    
-	vec3 diffuseColor = NoL * kd * light.lightBase.color;
-	vec3 specColor = specularCoefficient * ks * light.lightBase.color;
-	outColor = (vec4((/*ka + */diffuseColor + specColor), 1.0f)) * texColor;
-    
-    // Shadow casting
-	outColor *= shadowAttenuation;
-	//outColor = vec4(normalWorld.xyz, 1.0f);
+        vec3 lightColor = m_pointLight.lightBase.color;
+        
+        //vec3 dir        = m_directionallight.dir;
+        //vec3 lightColor = m_directionallight.lightBase.color;
+        
+        float NoL = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
+        vec3 reflection = normalize(2 * NoL * normalWorld + dir);
+        
+        float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
+        
+        float specularCoefficient = pow(VoR, ns.w);
+        
+        float shadowAttenuation = castingShadow();
+
+        vec4 texColor = texture(sampler, fragTexCoord);
+        
+        vec3 diffuseColor = NoL * kd * lightColor;
+        vec3 specColor = specularCoefficient * ks * lightColor;
+        outColor = (vec4((/*ka + */diffuseColor + specColor), 1.0f)) * texColor;
+        
+        // Shadow casting
+        outColor *= shadowAttenuation;
+        //outColor = vec4(normalWorld.xyz, 1.0f);
+    }
+    else
+    {
+        outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    }
 }

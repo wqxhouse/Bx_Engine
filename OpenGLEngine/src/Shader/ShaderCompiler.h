@@ -20,15 +20,15 @@ public:
 		const char*  fragmentShaderPath,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = 2048,
-        unsigned int fragShaderSourceSize   = 2048);
+		unsigned int vertexShaderSourceSize = 4096,
+        unsigned int fragShaderSourceSize   = 4096);
 
 	int compileShader(
         const char*  vertexShaderFile,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = 2048,
-        unsigned int fragShaderSourceSize   = 2048);
+		unsigned int vertexShaderSourceSize = 4096,
+        unsigned int fragShaderSourceSize   = 4096);
 
 private:
 	char* shaderPath;
@@ -42,12 +42,14 @@ private:
     void writeToShaderSource(
         FILE*       pFile,
         const UINT  sourceSize,
+        UINT        writtenSize,
         OUT char*   shaderSource);
 
     // Preprocessing macros in shader
     void preprocessingShaderFile(
         const char* line,
         UINT        sourceSize,
+        UINT        writtenSize,
         OUT char*   shaderSource);
 
 	void parseShaderFile(

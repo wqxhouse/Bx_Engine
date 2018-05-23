@@ -5,14 +5,14 @@ struct LightBase
 	vec3 color;
 };
 
-struct DirectLight
+struct DirectionalLight
 {
 	LightBase lightBase;
 	
 	vec3 dir;
 };
 
-struct pointLight
+struct PointLight
 {
 	LightBase lightBase;
 	
@@ -21,7 +21,7 @@ struct pointLight
 	float radius;
 };
 
-struct spotLight
+struct SpotLight
 {
     LightBase lightBase;
     

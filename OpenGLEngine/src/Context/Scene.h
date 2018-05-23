@@ -55,6 +55,7 @@ private:
     Vector4 m_backgroundColor;
 
     DirectionalLight m_directionalLight;
+    PointLight       m_pointLight;
 
     std::vector<Camera*> m_pCameraList;
     UINT m_activeCamera;
@@ -70,7 +71,8 @@ private:
     UniformBufferMgr m_uniformBufferMgr;
 
     GLuint m_transUniformbufferIndex;
-    GLuint m_lightUniformBufferIndex;
+    GLuint m_directionalLightUniformBufferIndex;
+    GLuint m_pointLightUniformBufferIndex;
     GLuint m_materialBufferIndex;
 
     GLint success;
