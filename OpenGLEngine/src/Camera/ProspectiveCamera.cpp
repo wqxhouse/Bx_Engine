@@ -7,12 +7,12 @@ ProspectiveCamera::ProspectiveCamera(
     const glm::vec3& pos,
     const glm::vec3& center,
     const glm::vec3& up,
-    float speed,
-    float aspectRatio,
-    float nearClip,
-    float farClip,
-    float fov)
-	:Camera(CameraType::PROJECT_CAM, pos, center, up, speed)
+    const float speed,
+    const float aspectRatio,
+    const float nearClip,
+    const float farClip,
+    const float fov)
+	:Camera(CameraType::PROSPECTIVE_CAM, pos, center, up, speed)
 {
 	this->proj = glm::perspective(fov, aspectRatio, nearClip, farClip);
 	this->fov = fov;

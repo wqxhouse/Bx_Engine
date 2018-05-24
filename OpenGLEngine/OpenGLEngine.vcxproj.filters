@@ -230,5 +230,8 @@
     <ClCompile Include="src\Shader\Shader.cpp">
       <Filter>src\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="src\Camera\OrthographicCamera.cpp">
+      <Filter>src\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

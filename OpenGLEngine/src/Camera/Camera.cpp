@@ -14,6 +14,10 @@ Camera::Camera(
 	view = glm::lookAt(pos, center, up);
 }
 
+Camera::~Camera()
+{
+}
+
 Transform Camera::getTrans()
 {
 	return trans;

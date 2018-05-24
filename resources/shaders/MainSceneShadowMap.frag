@@ -43,7 +43,7 @@ float castingShadow()
 	
 	float depth = texture(shadowMapSampler, depthUV).x;
 	
-	if (depth < gl_FragCoord.z + 0.000001f)
+	if (depth < gl_FragCoord.z + 0.0001f)
 	{
 		shadowAttenuation = 0.0f;
 	}

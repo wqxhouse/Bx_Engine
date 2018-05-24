@@ -17,18 +17,19 @@ Scene::Scene(const Setting& setting)
 
 BOOL Scene::initialize()
 {
-    addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
+    addCamera(CameraType::PROSPECTIVE_CAM, glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
               glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
-    addCamera(CameraType::PROJECT_CAM, glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, -4, 0),
+    addCamera(CameraType::PROSPECTIVE_CAM, glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
               glm::vec3(0, 1, 0), 5.0f, (float)setting.width / (float)setting.height);
 
     Vector3 lightDir = m_directionalLight.getDir();
 
+    // TODO: Fixing shadow casting issue
     glm::vec3 glmLightDir = glm::vec3(0.0f, -1.0f, 0.0f);//glm::vec3(lightDir.x, lightDir.y, lightDir.z);
     glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.1f);
     m_pLightCamera = new ProspectiveCamera(
-        lightPos, lightPos + glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, (float)setting.width / (float)setting.height);
+        /*lightPos, lightPos + glmLightDir,*/ glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, (float)setting.width / (float)setting.height);
 
     //Load model and texture(Hardcode here)
     Transform* pTrans = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -151,10 +152,10 @@ Scene::~Scene()
     {
         switch (pCamera->GetCameraType())
         {
-        case CameraType::PROJECT_CAM:
+        case CameraType::PROSPECTIVE_CAM:
             SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
             break;
-        case CameraType::ORTHO_CAM:
+        case CameraType::ORTHOGRAPHIC_CAM:
             SafeDelete(static_cast<OrthographicCamera*>(pCamera));
             break;
         default:
@@ -311,7 +312,7 @@ void Scene::addCamera(
 {
     switch (type)
     {
-    case CameraType::PROJECT_CAM:
+    case CameraType::PROSPECTIVE_CAM:
     {
         ProspectiveCamera * pProspectiveCamera =
             new ProspectiveCamera(pos, center, up, speed, aspectRatio, nearClip, farClip, fov);
@@ -320,7 +321,7 @@ void Scene::addCamera(
 
         break;
     }
-    case CameraType::ORTHO_CAM:
+    case CameraType::ORTHOGRAPHIC_CAM:
         // TODO
         break;
     default:

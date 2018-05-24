@@ -8,7 +8,7 @@
 
 enum CameraType
 {
-    PROJECT_CAM, ORTHO_CAM
+    PROSPECTIVE_CAM, ORTHOGRAPHIC_CAM
 };
 
 class Camera
@@ -20,6 +20,8 @@ public:
         const glm::vec3& center,
         const glm::vec3& up,
         const float speed);
+
+    virtual ~Camera();
 
 	virtual void translate(glm::vec3 trans) {}
 	virtual void rotate(float degree) {}
@@ -33,7 +35,6 @@ public:
     inline CameraType GetCameraType() const { return m_cameraType; }
 
 protected:
-
 	Transform trans;
 
     glm::mat4 view;
@@ -56,11 +57,11 @@ public:
 		const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
-        float speed,
-		float aspectRatio,
-        float nearClip = 0.1f,
-        float farClip = 100.0f,
-        float fov = 45.0f);
+        const float speed,
+        const float aspectRatio,
+        const float nearClip = 0.1f,
+        const float farClip = 100.0f,
+        const float fov = 45.0f);
 
 	void translate(glm::vec3 translate);
 	void rotate(float pitch, float yaw);
@@ -78,5 +79,18 @@ private:
 
 class OrthographicCamera : public Camera
 {
+public:
+    OrthographicCamera(
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up,
+        const float speed,
+        const float left,
+        const float right,
+        const float nearClip = 0.1f,
+        const float farClip = 100.0f);
+    ~OrthographicCamera();
+
+private:
 
 };

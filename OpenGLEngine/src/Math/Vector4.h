@@ -60,9 +60,10 @@ namespace Math
 		Vector3 ToVector3() const
 		{
 			//TODO: Use other method to judge 0!
-			if (W != 0)
+			if (w != 0)
 			{
-				return Vector3(X / W, Y / W, Z / W);
+                float inv_w = 1.0f / w;
+				return Vector3(x * inv_w, y * inv_w, z * inv_w);
 			}
 			else
 			{
@@ -81,8 +82,8 @@ namespace Math
 		static Vector4 crossProduct(const Vector4 &v1, const Vector4 &v2)
 		{
 			//TODO: W = 0 ?
-			Vector3 v3_1 = Vector3(v1.X / v1.W, v1.Y / v1.W, v1.Z / v1.W);
-			Vector3 v3_2 = Vector3(v2.X / v2.W, v2.Y / v2.W, v2.Z / v2.W);
+			Vector3 v3_1 = v1.ToVector3();
+			Vector3 v3_2 = v2.ToVector3();
 
 			Vector3 res = Vector3::crossProduct(v3_1, v3_2);
 
@@ -114,7 +115,12 @@ namespace Math
 		void operator+=(float f) { X += f; Y += f; Z += f; W += f; }
 		void operator-=(float f) { X -= f; Y -= f; Z -= f; W -= f; }
 		void operator*=(float f) { X *= f; Y *= f; Z *= f; W *= f; }
-		void operator/=(float f) { X /= f; Y /= f; Z /= f; W /= f; }
+		void operator/=(float f) 
+        {
+            float inv_f = 1.0f / f;
+            m_v3       *= inv_f;
+            w          *= inv_f;
+        }
 
 		void operator+=(const Vector4 &v) { X += v.X; Y += v.Y; Z += v.Z; W += v.W; }
 		void operator-=(const Vector4 &v) { X -= v.X; Y -= v.Y; Z -= v.Z; W -= v.W; }
@@ -145,13 +151,13 @@ namespace Math
 			switch (index)
 			{
 			case 0:
-				return X;
+				return x;
 			case 1:
-				return Y;
+				return y;
 			case 2:
-				return Z;
+				return z;
 			case 3:
-				return W;
+				return w;
 			default:
 				throw std::exception("Index out of range of vector4.(Should be between 0-3)\n");
 			}
