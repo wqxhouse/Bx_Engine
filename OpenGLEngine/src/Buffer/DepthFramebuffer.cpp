@@ -11,7 +11,7 @@ void DepthFramebuffer::createFramebuffer(
     const UINT depthTexWidth,
     const UINT depthTexHeight)
 {
-    glGenFramebuffers(1, &m_framebufferHandle); 
+    glGenFramebuffers(1, &m_framebufferHandle);
     
     createFramebufferTexture2D(
         GL_TEXTURE0,

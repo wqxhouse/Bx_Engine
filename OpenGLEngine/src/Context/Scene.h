@@ -40,6 +40,7 @@ public:
         char* const fragmentShaderFile);
 
     inline void SetActiveCamera(const UINT activeCameraIndex) { m_activeCamera = activeCameraIndex; }
+
     inline void SetBackGroundColor(const Vector4& backgroundColor)
     {
         m_backgroundColor = backgroundColor;

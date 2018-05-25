@@ -14,36 +14,36 @@ enum CameraType
 class Camera
 {
 public:
-	Camera(
+    Camera(
         CameraType type,
         const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
-        const float speed);
+        const float      speed);
 
     virtual ~Camera();
 
-	virtual void translate(glm::vec3 trans) {}
-	virtual void rotate(float degree) {}
+    virtual void translate(glm::vec3 trans) {}
+    virtual void rotate(float degree) {}
 
     glm::mat4 getViewMatrix();
-	Transform getTrans();
+    Transform getTrans();
 
-	virtual void update(float deltaTime);
-	virtual void draw() {}
+    virtual void update(float deltaTime);
+    virtual void draw() {}
 
     inline CameraType GetCameraType() const { return m_cameraType; }
 
 protected:
-	Transform trans;
+    Transform trans;
 
     glm::mat4 view;
-	float speed;
+    float speed;
 
-	glm::vec3 worldUp;
+    glm::vec3 worldUp;
 
-	glm::vec3 curFront;
-	glm::vec3 curRight;
+    glm::vec3 curFront;
+    glm::vec3 curRight;
 
 private:
     CameraType m_cameraType;
@@ -53,8 +53,8 @@ private:
 class ProspectiveCamera : public Camera
 {
 public:
-	ProspectiveCamera(
-		const glm::vec3& pos,
+    ProspectiveCamera(
+        const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
         const float speed,
@@ -63,16 +63,16 @@ public:
         const float farClip = 100.0f,
         const float fov = 45.0f);
 
-	void translate(glm::vec3 translate);
-	void rotate(float pitch, float yaw);
+    void translate(glm::vec3 translate);
+    void rotate(float pitch, float yaw);
 
-	void update(float deltaTime);
+    void update(float deltaTime);
 
     glm::mat4 getProjectionMatrix();
 private:
-	float fov;
-	float nearClip;
-	float farClip;
+    float fov;
+    float nearClip;
+    float farClip;
 
     glm::mat4 proj;
 };

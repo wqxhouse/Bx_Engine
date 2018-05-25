@@ -2,18 +2,18 @@
 
 ShaderCompiler::ShaderCompiler()
 {
-	shaderPath = (char*)malloc(512 * sizeof(char));
+    shaderPath = (char*)malloc(512 * sizeof(char));
 #if _DEBUG
-	char defaultPath[] = "../resources/shaders/\0";
+    char defaultPath[] = "../resources/shaders/\0";
 #else
-	this->shaderPath = "../../resources/shaders/\0";
+    this->shaderPath = "../../resources/shaders/\0";
 #endif
-	memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
+    memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 }
 
 ShaderCompiler::ShaderCompiler(const char * shaderPath)
 {
-	memcpy((char*)(this->shaderPath), shaderPath, strlen(shaderPath) + 1);
+    memcpy((char*)(this->shaderPath), shaderPath, strlen(shaderPath) + 1);
 }
 
 void ShaderCompiler::combileShaderPathAndFile(
@@ -21,11 +21,11 @@ void ShaderCompiler::combileShaderPathAndFile(
     const char*     file, 
     OUT const char* filePath)
 {
-	//memset((char*)filePath, 0, strlen(filePath));
-	strcpy((char*)filePath, path);
-	strcat((char*)filePath, "/");
-	strcat((char*)filePath, file);
-	strcat((char*)filePath, "\0");
+    //memset((char*)filePath, 0, strlen(filePath));
+    strcpy((char*)filePath, path);
+    strcat((char*)filePath, "/");
+    strcat((char*)filePath, file);
+    strcat((char*)filePath, "\0");
 }
 
 void ShaderCompiler::writeToShaderSource(
@@ -132,8 +132,8 @@ void ShaderCompiler::parseShaderFile(
     UINT         sourceSize,
     OUT char*    shaderSource)
 {
-	const char* filePath = (const char*)malloc(256 * sizeof(char));
-	combileShaderPathAndFile(shaderPath, file, filePath);
+    const char* filePath = (const char*)malloc(256 * sizeof(char));
+    combileShaderPathAndFile(shaderPath, file, filePath);
 
     memset(shaderSource, 0, sourceSize);
 
@@ -196,8 +196,8 @@ void ShaderCompiler::parseShaderFile(
         assert("Can't find shader file!");
     }
 
-	//Release file path array
-	SafeRelease((void*)filePath, MALLOC);
+    //Release file path array
+    SafeRelease((void*)filePath, MALLOC);
 }
 
 void ShaderCompiler::parseShaderFile(
@@ -206,133 +206,133 @@ void ShaderCompiler::parseShaderFile(
     UINT         sourceSize,
     OUT char *   shaderSource)
 {
-	SafeRelease((char*)shaderPath, MALLOC);
-	shaderPath = (char*)malloc(512 * sizeof(char));
-	memcpy(this->shaderPath, path, sizeof(path));
+    SafeRelease((char*)shaderPath, MALLOC);
+    shaderPath = (char*)malloc(512 * sizeof(char));
+    memcpy(this->shaderPath, path, sizeof(path));
 
-	parseShaderFile(file, sourceSize, shaderSource);
+    parseShaderFile(file, sourceSize, shaderSource);
 }
 
 void ShaderCompiler::setDefaultShaderPath(const char* path)
 {
-	memset(this->shaderPath, 0, strlen(shaderPath));
-	memcpy(this->shaderPath, path, strlen(path));
-	strcat(this->shaderPath, "\0");
-	//memcpy((char*)(this->shaderPath), path, strlen(path) + 1);
+    memset(this->shaderPath, 0, strlen(shaderPath));
+    memcpy(this->shaderPath, path, strlen(path));
+    strcat(this->shaderPath, "\0");
+    //memcpy((char*)(this->shaderPath), path, strlen(path) + 1);
 }
 
 const char* ShaderCompiler::getDefaultPath()
 {
-	return shaderPath;
+    return shaderPath;
 }
 
 int ShaderCompiler::compileShader(
     const char*  vertexShaderPath,
     const char*  vertexShaderFile, 
-	const char*  fragmentShaderPath,
+    const char*  fragmentShaderPath,
     const char*  fragmentShaderFile,
     OUT GLuint*  shaderProgram,
-	unsigned int vertexShaderSourceSize,
+    unsigned int vertexShaderSourceSize,
     unsigned int fragmentShaderSourceSize)
 {
-	const char* vertexShaderFilePath = (const char*)malloc(256 * sizeof(char));
-	combileShaderPathAndFile(vertexShaderPath, vertexShaderFile, vertexShaderFilePath);
+    const char* vertexShaderFilePath = (const char*)malloc(256 * sizeof(char));
+    combileShaderPathAndFile(vertexShaderPath, vertexShaderFile, vertexShaderFilePath);
 
-	const char* fragmentShaderFilePath = (const char*)malloc(256 * sizeof(char));
-	combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile, fragmentShaderFilePath);
+    const char* fragmentShaderFilePath = (const char*)malloc(256 * sizeof(char));
+    combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile, fragmentShaderFilePath);
 
-	setDefaultShaderPath(vertexShaderPath);
-	
-	int hs = compileShader(vertexShaderFile, fragmentShaderFile, shaderProgram,
-		vertexShaderSourceSize, fragmentShaderSourceSize);
+    setDefaultShaderPath(vertexShaderPath);
+    
+    int hs = compileShader(vertexShaderFile, fragmentShaderFile, shaderProgram,
+        vertexShaderSourceSize, fragmentShaderSourceSize);
 
-	return hs;
+    return hs;
 }
 
 int ShaderCompiler::compileShader(
     const char* vertexShaderFile,
     const char* fragmentShaderFile, 
-	OUT GLuint* shaderProgram,
+    OUT GLuint* shaderProgram,
     unsigned int vertexShaderSourceSize,
     unsigned int fragmentShaderSourceSize)
 {
-	GLint success = true;//Indicator of compile result
-	char compileLog[512];
+    GLint success = true;//Indicator of compile result
+    char compileLog[512];
 
-	//Compile vertex shader
-	char* vertexShaderSource = (char*)malloc(vertexShaderSourceSize * sizeof(char));
-	parseShaderFile(vertexShaderFile, vertexShaderSourceSize, vertexShaderSource);
+    //Compile vertex shader
+    char* vertexShaderSource = (char*)malloc(vertexShaderSourceSize * sizeof(char));
+    parseShaderFile(vertexShaderFile, vertexShaderSourceSize, vertexShaderSource);
 
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
 
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (success)
-	{
-		printf("Vertex shader is successly compiled.\n");
-	}
-	else
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, compileLog);
-		printf("Fail to compile vertex shader.\n%s\n", compileLog);
-		return -1;
-	}
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (success)
+    {
+        printf("Vertex shader is successly compiled.\n");
+    }
+    else
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, compileLog);
+        printf("Fail to compile vertex shader.\n%s\n", compileLog);
+        return -1;
+    }
 
-	//Compile fragment(pixal) shader
-	char* fragmentShaderSource = (char*)malloc(vertexShaderSourceSize * sizeof(char));
-	parseShaderFile(fragmentShaderFile, fragmentShaderSourceSize, fragmentShaderSource);
+    //Compile fragment(pixal) shader
+    char* fragmentShaderSource = (char*)malloc(vertexShaderSourceSize * sizeof(char));
+    parseShaderFile(fragmentShaderFile, fragmentShaderSourceSize, fragmentShaderSource);
 
-	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragShader);
+    GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragShader);
 
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
-	if (success)
-	{
-		printf("Fragment shader is successly compiled.\n");
-	}
-	else
-	{
-		glGetShaderInfoLog(fragShader, 512, NULL, compileLog);
-		printf("Fail to compile fragment shader.\n%s\n", compileLog);
-		return -1;
-	}
+    glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
+    if (success)
+    {
+        printf("Fragment shader is successly compiled.\n");
+    }
+    else
+    {
+        glGetShaderInfoLog(fragShader, 512, NULL, compileLog);
+        printf("Fail to compile fragment shader.\n%s\n", compileLog);
+        return -1;
+    }
 
-	*shaderProgram = glCreateProgram();	
-	glAttachShader(*shaderProgram, vertexShader);
-	glAttachShader(*shaderProgram, fragShader);
-	glLinkProgram(*shaderProgram);
+    *shaderProgram = glCreateProgram();	
+    glAttachShader(*shaderProgram, vertexShader);
+    glAttachShader(*shaderProgram, fragShader);
+    glLinkProgram(*shaderProgram);
 
-	int InfoLogLength;
-	glGetProgramiv(*shaderProgram, GL_LINK_STATUS, &success);
-	glGetProgramiv(*shaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    int InfoLogLength;
+    glGetProgramiv(*shaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(*shaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
 
-	if (success)
-	{
-		printf("Shader program is successly linked.\n");
-	}
-	else
-	{
-		glGetShaderInfoLog(*shaderProgram, InfoLogLength, NULL, &compileLog[0]);
-		printf("Fail to link shaders in the program.\n");
+    if (success)
+    {
+        printf("Shader program is successly linked.\n");
+    }
+    else
+    {
+        glGetShaderInfoLog(*shaderProgram, InfoLogLength, NULL, &compileLog[0]);
+        printf("Fail to link shaders in the program.\n");
 
-		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
-		glGetProgramInfoLog(*shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		printf("%s\n", &ProgramErrorMessage[0]);
-		return -1;
-	}
+        std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+        glGetProgramInfoLog(*shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+        printf("%s\n", &ProgramErrorMessage[0]);
+        return -1;
+    }
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragShader);
 
-	SafeRelease(vertexShaderSource, MALLOC);
-	SafeRelease(fragmentShaderSource, MALLOC);
+    SafeRelease(vertexShaderSource, MALLOC);
+    SafeRelease(fragmentShaderSource, MALLOC);
 
-	return 0;
+    return 0;
 }
 
 ShaderCompiler::~ShaderCompiler()
 {
-	SafeRelease((char*)shaderPath, MALLOC);
+    SafeRelease((char*)shaderPath, MALLOC);
 }
