@@ -22,10 +22,9 @@ public:
 	void addModel(
         const std::string& modelFile,
         const std::string& materialFile,
-        Transform* modelTrans);
+        Trans* modelTrans);
 
-    void addCamera(
-        const CameraType type,
+    void addProspectiveCamera(
         const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
@@ -34,6 +33,15 @@ public:
         float nearClip = 0.1f,
         float farClip  = 100.0f,
         float fov      = 45.0f);
+
+    void addOrthographicCamera(
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up,
+        const float      speed,
+        const Rectangle  viewport,
+        const float      nearClip = 0.1f,
+        const float      farClip  = 100.0f);
 
     void setSceneShader(
         char* const vertexShaderFile,
@@ -47,9 +55,8 @@ public:
     }
 
 private:
-    void shadowPass();
-
-    void drawPass();
+    void defaultScene();
+    void drawScene();
 
 	Setting setting;
 
@@ -61,9 +68,7 @@ private:
     std::vector<Camera*> m_pCameraList;
     UINT m_activeCamera;
 
-    ProspectiveCamera* m_pLightCamera;
-
-	std::vector<Model*> m_pSceneModelList;
+	std::vector<Model*>   m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;
 
     Shader m_sceneShader;
@@ -76,11 +81,14 @@ private:
     GLuint m_pointLightUniformBufferIndex;
     GLuint m_materialBufferIndex;
 
-    GLint success;
+    GLint  success;
     GLchar compileLog[512];
 
     // Shadow map test
-    Shader m_shadowMapShader;
-    DepthFramebuffer m_shadowMap;
+    void shadowPass();
 
+    OrthographicCamera* m_pDirectionalLightCamera;
+    ProspectiveCamera*  m_pLightCamera;
+    Shader              m_shadowMapShader;
+    DepthFramebuffer    m_shadowMap;
 };

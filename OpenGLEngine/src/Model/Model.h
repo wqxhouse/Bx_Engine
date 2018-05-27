@@ -1,12 +1,16 @@
 #pragma once
 
 #include "Mesh/Mesh.h"
-#include "../Math/Transform/Transform.h"
+#include "../Math/Transform/Trans.h"
 
 class Model
 {
 public:
-	Model(const std::string & modelFile, const std::string& materialFile, Transform* modelTrans);
+	Model(
+        const std::string& modelFile,
+        const std::string& materialFile,
+        Trans* modelTrans);
+
 	~Model();
 
     void drawModelPos();
@@ -23,5 +27,5 @@ public:
 
 	std::vector<Mesh*> m_pMeshList;
 
-	Transform* trans;
+	Trans* m_pTrans;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Math/Transform/Transform.h"
-#include "../Math/Matrix4x4.h"
+#include "../Math/Transform/Trans.h"
+#include "../Math/Structures.h"
 
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI 1.57079632f
@@ -19,26 +19,31 @@ public:
         const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
-        const float      speed);
+        const float      speed,
+        const float      nearClip,
+        const float      farClip);
 
     virtual ~Camera();
 
-    virtual void translate(glm::vec3 trans) {}
-    virtual void rotate(float degree) {}
-
-    glm::mat4 getViewMatrix();
-    Transform getTrans();
+    void translate(glm::vec3 trans);
+    void rotate(float pitch, float yaw);
 
     virtual void update(float deltaTime);
-    virtual void draw() {}
+    //virtual void draw() {}
 
     inline CameraType GetCameraType() const { return m_cameraType; }
 
-protected:
-    Transform trans;
+    inline Trans getTrans() const { return m_trans; }
+    inline glm::mat4 GetViewMatrix() const { return m_viewMatrix; }
+    inline glm::mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
 
-    glm::mat4 view;
+protected:
+    Trans m_trans;
+
+    glm::mat4 m_viewMatrix;
     float speed;
+
+    glm::mat4 m_projectionMatrix;
 
     glm::vec3 worldUp;
 
@@ -48,6 +53,8 @@ protected:
 private:
     CameraType m_cameraType;
 
+    float m_nearClip;
+    float m_farClip;
 };
 
 class ProspectiveCamera : public Camera
@@ -63,18 +70,10 @@ public:
         const float farClip = 100.0f,
         const float fov = 45.0f);
 
-    void translate(glm::vec3 translate);
-    void rotate(float pitch, float yaw);
-
     void update(float deltaTime);
 
-    glm::mat4 getProjectionMatrix();
 private:
     float fov;
-    float nearClip;
-    float farClip;
-
-    glm::mat4 proj;
 };
 
 class OrthographicCamera : public Camera
@@ -84,13 +83,15 @@ public:
         const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
-        const float speed,
-        const float left,
-        const float right,
-        const float nearClip = 0.1f,
-        const float farClip = 100.0f);
+        const float      speed,
+        const Rectangle  viewport,
+        const float      nearClip = 0.1f,
+        const float      farClip = 100.0f);
     ~OrthographicCamera();
 
+    void update(float deltaTime);
+
 private:
+    Rectangle m_viewport;
 
 };

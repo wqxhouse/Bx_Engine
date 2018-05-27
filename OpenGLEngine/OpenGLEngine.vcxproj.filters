@@ -75,9 +75,6 @@
     <ClInclude Include="src\Model\Mesh\Mesh.h">
       <Filter>src\Model\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="src\Math\Transform\Transform.h">
-      <Filter>src\Math\Transform</Filter>
-    </ClInclude>
     <ClInclude Include="src\Context\Setting.h">
       <Filter>src\Context</Filter>
     </ClInclude>
@@ -140,6 +137,12 @@
     </ClInclude>
     <ClInclude Include="src\Shader\Shader.h">
       <Filter>src\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Structures.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Transform\Trans.h">
+      <Filter>src\Math\Transform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="src\Camera\OrthographicCamera.cpp">
       <Filter>src\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Transform\Trans.cpp">
+      <Filter>src\Math\Transform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

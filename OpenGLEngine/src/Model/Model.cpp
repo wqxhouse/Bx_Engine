@@ -4,8 +4,8 @@
 Model::Model(
     const std::string& modelFile,
     const std::string& materialFile,
-    Transform* modelTrans)
-	:trans(modelTrans)
+    Trans*             modelTrans)
+	: m_pTrans(modelTrans)
 {
 	ObjModelLoader objLoader;
 	objLoader.LoadModel(modelFile, materialFile, this);
@@ -15,11 +15,11 @@ Model::~Model()
 {
 	for (Mesh* pMesh : m_pMeshList)
 	{
-		delete(pMesh);
+		SafeDelete(pMesh);
 	}
 	m_pMeshList.clear();
 
-	delete(trans);
+    SafeDelete(m_pTrans);
 }
 
 void Model::drawModelPos()
