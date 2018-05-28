@@ -12,10 +12,10 @@ void Trans::initialize()
     // TODO: Rotation matrix
 }
 
-glm::mat4 Trans::GetTransMatrix()
+void Trans::update()
 {
     glm::mat4 translate = GetTranslateMatrix();
-    glm::mat4 scale     = GetScaleMatrix();
+    glm::mat4 scale = GetScaleMatrix();
 
     // TODO: Rotation matrix
 
@@ -24,6 +24,11 @@ glm::mat4 Trans::GetTransMatrix()
         transMatrix = translate * scale;
         m_transFlags.bits.transFlag = 0;
     }
+}
+
+glm::mat4 Trans::GetTransMatrix()
+{
+    update();
 
     return transMatrix;
 }

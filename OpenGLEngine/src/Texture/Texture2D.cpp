@@ -83,7 +83,7 @@ void Texture2D::setBoarderColor(GLfloat borderColor[4])
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture2D::bindTexture(const GLenum textureIndex,
+void Texture2D::bindTexture(const GLenum textureUnit,
                             const GLuint shaderProgram,
                             const std::string & samplerName,
                             const int samplerIndex)
@@ -92,7 +92,7 @@ void Texture2D::bindTexture(const GLenum textureIndex,
 
     if (textureLocation >= 0)
     {
-        glActiveTexture(textureIndex);
+        glActiveTexture(textureUnit);
         glBindTexture(GL_TEXTURE_2D, m_textureHandle);
         glUniform1i(textureLocation, samplerIndex);
     }

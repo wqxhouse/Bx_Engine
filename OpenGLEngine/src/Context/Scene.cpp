@@ -161,6 +161,9 @@ Scene::~Scene()
         }
     }
     m_pTextureList.clear();
+
+    SafeDelete(m_pLightCamera);
+    SafeDelete(m_pDirectionalLightCamera);
 }
 
 void Scene::setSceneShader(
@@ -172,7 +175,7 @@ void Scene::setSceneShader(
 
 void Scene::shadowPass()
 {
-    if (m_pLightCamera != NULL)
+    if (m_pDirectionalLightCamera != NULL)
     {
         m_shadowMapShader.useProgram();
         m_shadowMap.drawFramebuffer();
@@ -181,8 +184,8 @@ void Scene::shadowPass()
         for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
         {
             glm::mat4 worldMatrix    = m_pSceneModelList[i]->m_pTrans->GetTransMatrix();
-            glm::mat4 viewMatrix     = m_pLightCamera->GetViewMatrix();
-            glm::mat4 prospectMatrix = m_pLightCamera->GetProjectionMatrix();
+            glm::mat4 viewMatrix     = m_pDirectionalLightCamera->GetViewMatrix();
+            glm::mat4 prospectMatrix = m_pDirectionalLightCamera->GetProjectionMatrix();
 
             glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
 
@@ -200,51 +203,12 @@ void Scene::shadowPass()
     }
 }
 
-void Scene::defaultScene()
-{
-    /*addOrthographicCamera(glm::vec3(0.0f, 0.0f, 200.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, Rectangle(0.0f, 100.0f, 100.0f, 0.0f));*/
-
-    float aspectRadio = static_cast<float>(setting.width) / static_cast<float>(setting.height);
-
-    addProspectiveCamera(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio);
-
-    addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio);
-
-    Vector3 lightDir = m_directionalLight.getDir();
-
-    // TODO: Fixing shadow casting issue
-    glm::vec3 glmLightDir = glm::vec3(0.0f, -1.0f, 0.0f);//glm::vec3(lightDir.x, lightDir.y, lightDir.z);
-    glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.1f);
-    m_pLightCamera = new ProspectiveCamera(
-        /*lightPos, lightPos + glmLightDir,*/
-        glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0),
-        glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, aspectRadio);
-
-    //Load model and texture(Hardcode here)
-    Trans* pTrans = new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-    addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl", pTrans);
-
-    /*addModel("../../resources/models/cornellbox/CornellBox-Sphere.obj",
-    "../../resources/models/cornellbox/CornellBox-Sphere.mtl", pTrans);*/
-    //addModel("../resources/models/sphere/sphere.obj", "", pTrans);
-
-    //Transform* pTrans2 = new Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-    //addModel("../../resources/models/sphere/sphere.obj", "", pTrans);
-
-    //Create texture and set sampler
-    m_pTextureList.push_back(new Texture2D("../resources/textures/teaport/wall.jpg",
-        GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE));
-
-}
-
 void Scene::drawScene()
 {
     m_sceneShader.useProgram();
 
-    ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
+    //ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
+    Camera* activeCamPtr = m_pCameraList[m_activeCamera];
 
 #if 0
     Vector3 camPos = activeCamPtr->getTrans().pos;
@@ -287,10 +251,9 @@ void Scene::drawScene()
 
         m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
 
-        glm::mat4 lightTranslate = glm::translate(glm::mat4(), m_pLightCamera->getTrans().GetPos());
-        glm::mat4 lightTransWVP  = m_pLightCamera->GetProjectionMatrix() *
-                                   m_pLightCamera->GetViewMatrix()       *
-                                   lightTranslate;
+        glm::mat4 lightTransWVP  = m_pDirectionalLightCamera->GetProjectionMatrix() *
+                                   m_pDirectionalLightCamera->GetViewMatrix()       *
+                                   m_pSceneModelList[i]->m_pTrans->GetTransMatrix();
 
         GLint lightTransHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
@@ -337,4 +300,51 @@ void Scene::addOrthographicCamera(
 {
     m_pCameraList.push_back(
         new OrthographicCamera(pos, center, up, speed, viewport, nearClip, farClip));
+}
+
+void Scene::defaultScene()
+{
+    const float aspectRadio = static_cast<float>(setting.width) / static_cast<float>(setting.height);
+
+    float halfWidth = static_cast<float>(setting.width) * 0.01f;
+    float halfHeight = static_cast<float>(setting.height) * 0.01f;
+
+    Vector3 lightDir = m_directionalLight.getDir();
+    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
+    
+    /*addOrthographicCamera(-glmLightDir + glm::vec3(100.0f, 100.0f, 100.0f), glmLightDir,
+        glm::vec3(0, 1, 0), 5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);*/
+
+    addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
+
+    addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
+
+    // TODO: Fixing shadow casting issue
+    glm::vec3 lightPos = glm::vec3(100.0f, 100.0f, 100.0f);
+    m_pDirectionalLightCamera = new OrthographicCamera(
+        -glmLightDir + lightPos, glmLightDir, glm::vec3(0, 1, 0),
+        5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+
+    addOrthographicCamera(lightPos, lightPos + glmLightDir, glm::vec3(0, 1, 0),
+        5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+
+    //m_pLightCamera = new ProspectiveCamera(
+    //    /*lightPos, lightPos + glmLightDir,*/
+    //    glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0),
+    //    glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, aspectRadio, 0.1f, 1000.0f);    
+
+    //Load model and texture(Hardcode here)
+    addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+        new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+    //Create texture and set sampler
+    m_pTextureList.push_back(new Texture2D("../resources/textures/teaport/wall.jpg",
+        GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE));
+
 }

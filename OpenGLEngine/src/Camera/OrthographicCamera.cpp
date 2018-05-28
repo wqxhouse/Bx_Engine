@@ -12,7 +12,10 @@ OrthographicCamera::OrthographicCamera(
     : Camera(ORTHOGRAPHIC_CAM, pos, center, up, speed, nearClip, farClip),
       m_viewport(viewport)
 {
-    m_projectionMatrix = glm::ortho(viewport.left, viewport.right, viewport.bottom, viewport.top);
+    m_projectionMatrix = 
+        glm::ortho(viewport.left, viewport.right,
+                   viewport.bottom, viewport.top,
+                   nearClip, farClip);
 }
 
 OrthographicCamera::~OrthographicCamera()

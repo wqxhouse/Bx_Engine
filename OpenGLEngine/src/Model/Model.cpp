@@ -24,6 +24,8 @@ Model::~Model()
 
 void Model::drawModelPos()
 {
+    m_pTrans->update();
+
     for (Mesh* pMesh : m_pMeshList)
     {
         pMesh->drawMeshPos();
@@ -34,6 +36,8 @@ void Model::drawModelPos()
 
 void Model::draw()
 {
+    m_pTrans->update();
+
     for (Mesh* pMesh : m_pMeshList)
     {
         pMesh->draw();

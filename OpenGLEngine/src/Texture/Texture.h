@@ -55,7 +55,7 @@ public:
     void setBoarderColor(GLfloat borderColor[4]);
 
     void bindTexture(
-        const GLenum textureIndex,
+        const GLenum textureUnit,
         const GLuint shaderProgram,
         const std::string& samplerName,
         const int samplerIndex);

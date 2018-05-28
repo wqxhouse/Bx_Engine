@@ -40,6 +40,8 @@ public:
         initialize();
     }
 
+    void update();
+
     inline glm::vec3 GetPos() const
     {
         return pos;
@@ -65,7 +67,7 @@ public:
     {
         if (m_transFlags.bits.scaleFlag == 1)
         {
-            translationMatrix = glm::scale(glm::mat4(), scale);
+            scaleMatrix = glm::scale(glm::mat4(), scale);
             m_transFlags.bits.scaleFlag = 0;
         }
 

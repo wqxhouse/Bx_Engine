@@ -11,7 +11,10 @@ ObjModelLoader::ObjModelLoader()
     :vertexCount(0), normalCount(0), texCoordCount(0), indicesCount(0)
 {}
 
-void ObjModelLoader::LoadModel(const string& modelFile, const string& materialFile, Model* modelPtr)
+void ObjModelLoader::LoadModel(
+    const string& modelFile,
+    const string& materialFile,
+    Model* modelPtr)
 {
     loadMaterial(materialFile);
     counter(modelFile);

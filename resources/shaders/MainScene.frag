@@ -37,7 +37,7 @@ float castingShadow()
 	
 	float depth = texture(shadowMapSampler, depthUV).x;
 	
-	if (depth < gl_FragCoord.z + 0.000001f)
+	if (depth < gl_FragCoord.z + 0.01f)
 	{
 		shadowAttenuation = 0.0f;
 	}
@@ -63,6 +63,6 @@ void main()
 	vec3 specColor = specularCoefficient * ks.xyz * lightColor;
 	outColor = (/*ka +*/ vec4((diffuseColor + specColor), 1.0f)) * texColor;
 	
-	outColor *= shadowAttenuation;
+	//outColor *= shadowAttenuation;
 	//outColor = vec4(normalWorld.xyz, 1.0f);
 }

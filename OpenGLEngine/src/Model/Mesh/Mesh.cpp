@@ -40,7 +40,8 @@ Mesh::Mesh(
     const std::vector<GLuint>&        texCoordIndices)
     : m_name(name), m_materialName(materialFile)
 {
-    combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
+    combineVertexData(counter, posBuf, normalBuf, texCoords,
+                      posIndices, normalIndices, texCoordIndices);
 
     initialize();
 }
@@ -203,14 +204,18 @@ void Mesh::combineVertexData(
 {
     std::map<Vertex, GLuint> vertexIndexKey;
 
-    int indicesBufferIndex = 0;
-    int m_vertexBufferSize = 0;
+    UINT indicesBufferIndex = 0;
+
+    size_t normalBufferSize = normalBuf.size();
+    size_t texCoordsSize    = texCoords.size();
+
+    assert(normalBufferSize > 0 && texCoordsSize > 0);
 
     for (int i = 0; i < counter[3]; ++i)
     {
-        int posIndex    = 0;
-        int normalIndex = 0;
-        int uvIndex     = 0;
+        UINT posIndex    = 0;
+        UINT normalIndex = 0;
+        UINT uvIndex     = 0;
 
         if (posIndices.size() != 0)
         {
@@ -222,11 +227,17 @@ void Mesh::combineVertexData(
         }
 
         normalIndex = normalIndices.size()   == 0 ? -1 : normalIndices[i];
-        uvIndex     = texCoordIndices.size() == 0 ? -1 : texCoordIndices[i];
+        uvIndex     = texCoordIndices.size() == 0 ? -1 : texCoordIndices[i];    
 
         Math::Vector3 pos      = posBuf[posIndex];
-        Math::Vector3 normal   = normalIndex < 0 ? Math::Vector3() : normalBuf[normalIndex];
-        Math::Vector2 texCoord = uvIndex < 0 ? Math::Vector2() : texCoords[uvIndex];
+        Math::Vector3 normal   =
+            (((normalIndex < 0) || (normalBufferSize == 0)) ?
+            Math::Vector3() : normalBuf[normalIndex]);
+
+        Math::Vector2 texCoord =
+            (((uvIndex < 0) || (texCoordsSize == 0)) ?
+                Math::Vector2() : texCoords[uvIndex]);
+
         Vertex vertex          = Vertex(pos, normal, texCoord);
         
         GLuint index = -1;

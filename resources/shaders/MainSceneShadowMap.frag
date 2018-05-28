@@ -16,7 +16,7 @@ layout (std140) uniform directionalLightUniformBlock
     DirectionalLight m_directionallight;
 };
 
-uniform pointLightUniformBlock
+layout (std140) uniform pointLightUniformBlock
 {
     PointLight m_pointLight;
 };
@@ -39,11 +39,11 @@ float castingShadow()
 	
 	// Shadow casting
 	vec3 posLight = posLightProj.xyz / posLightProj.w;
-	vec2 depthUV = vec2(posLight.x * 0.5f + 0.5f, posLight.y * 0.5f + 0.5f);
+    posLight = posLight * 0.5f + 0.5f;
 	
-	float depth = texture(shadowMapSampler, depthUV).x;
+	float depth = texture(shadowMapSampler, posLight.xy).r;
 	
-	if (depth < gl_FragCoord.z + 0.0001f)
+	if (depth < posLight.z - 0.000001f)
 	{
 		shadowAttenuation = 0.0f;
 	}
@@ -53,20 +53,20 @@ float castingShadow()
 
 void main()
 {
-    vec3  dis     = posWorld - m_pointLight.pos;
-    float dis2    = dot(dis, dis);
-    float radius2 = m_pointLight.radius * m_pointLight.radius;
+    //vec3  dis     = posWorld - m_pointLight.pos;
+    //float dis2    = dot(dis, dis);
+    //float radius2 = m_pointLight.radius * m_pointLight.radius;
     
-    vec3 dir      = normalize(dis);
+    //vec3 dir      = normalize(dis);
     
-    if (dis2 <= radius2)
+    //if (dis2 <= radius2)
     {
         vec3 view = normalize(eyePos - posWorld);
 
-        vec3 lightColor = m_pointLight.lightBase.color;
+        //vec3 lightColor = m_pointLight.lightBase.color;
         
-        //vec3 dir        = m_directionallight.dir;
-        //vec3 lightColor = m_directionallight.lightBase.color;
+        vec3 dir        = m_directionallight.dir;
+        vec3 lightColor = m_directionallight.lightBase.color;
         
         float NoL = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
         vec3 reflection = normalize(2 * NoL * normalWorld + dir);
@@ -79,16 +79,18 @@ void main()
 
         vec4 texColor = texture(sampler, fragTexCoord);
         
-        vec3 diffuseColor = NoL * kd * lightColor;
-        vec3 specColor = specularCoefficient * ks * lightColor;
+        vec3 diffuseColor = clamp(NoL * kd * lightColor, 0.0f, 1.0f);
+        vec3 specColor    = clamp(specularCoefficient * ks * lightColor, 0.0f, 1.0f);
         outColor = (vec4((/*ka + */diffuseColor + specColor), 1.0f)) * texColor;
         
         // Shadow casting
         outColor *= shadowAttenuation;
-        //outColor = vec4(normalWorld.xyz, 1.0f);
+        
+        // outColor = vec4(normalWorld.xyz, 1.0f);
     }
-    else
+    //else
     {
-        outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        //outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
     }
+    //outColor = texture(sampler, fragTexCoord);
 }
