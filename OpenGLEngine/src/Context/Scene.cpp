@@ -65,7 +65,7 @@ BOOL Scene::initialize()
         m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map test
-    m_shadowMap.createFramebuffer(setting.width, setting.height);
+    m_shadowMap.createFramebuffer(setting.width, setting.height, setting.m_graphicsSetting.antialasing);
 
     m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
     hs = m_shadowMapShader.linkProgram();
@@ -175,6 +175,7 @@ void Scene::setSceneShader(
 
 void Scene::shadowPass()
 {
+    glCullFace(GL_FRONT);
     if (m_pDirectionalLightCamera != NULL)
     {
         m_shadowMapShader.useProgram();
@@ -201,6 +202,7 @@ void Scene::shadowPass()
     {
         assert("No light camera, can't cast shadow.");
     }
+    glCullFace(GL_BACK);
 }
 
 void Scene::drawScene()
@@ -306,8 +308,8 @@ void Scene::defaultScene()
 {
     const float aspectRadio = static_cast<float>(setting.width) / static_cast<float>(setting.height);
 
-    float halfWidth = static_cast<float>(setting.width) * 0.01f;
-    float halfHeight = static_cast<float>(setting.height) * 0.01f;
+    float halfWidth = static_cast<float>(setting.width) * 0.005f;
+    float halfHeight = static_cast<float>(setting.height) * 0.005f;
 
     Vector3 lightDir = m_directionalLight.getDir();
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
@@ -333,15 +335,18 @@ void Scene::defaultScene()
     //m_pLightCamera = new ProspectiveCamera(
     //    /*lightPos, lightPos + glmLightDir,*/
     //    glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0),
-    //    glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, aspectRadio, 0.1f, 1000.0f);    
+    //    glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, aspectRadio, 0.1f, 1000.0f);
 
     //Load model and texture(Hardcode here)
-    addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+    /*addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+    addModel("../resources/models/cornellbox/CornellBox-Sphere.obj",
+             "../resources/models/cornellbox/CornellBox-Sphere.mtl",
+             new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     //Create texture and set sampler
     m_pTextureList.push_back(new Texture2D("../resources/textures/teaport/wall.jpg",

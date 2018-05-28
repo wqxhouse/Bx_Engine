@@ -16,6 +16,7 @@ public:
         const GLenum attachmentType,
         const UINT   texWidth,
         const UINT   texHeight,
+        const UINT   samples,
         const GLenum format,
         const GLenum texDataType,
         const GLenum wrapMethod = GL_CLAMP,
@@ -50,7 +51,8 @@ public:
 
     void createFramebuffer(
         const UINT depthTexWidth,
-        const UINT depthTexHeight);
+        const UINT depthTexHeight,
+        const UINT samples);
 
     void finishDrawFramebuffer();
 };

@@ -9,7 +9,8 @@ in vec2 fragTexCoord;
 in vec4 posLightProj;
 
 uniform sampler2D sampler;
-uniform sampler2D shadowMapSampler;
+//uniform sampler2D shadowMapSampler;
+uniform sampler2DMS shadowMapSampler;
 
 layout (std140) uniform directionalLightUniformBlock
 {
@@ -41,11 +42,22 @@ float castingShadow()
 	vec3 posLight = posLightProj.xyz / posLightProj.w;
     posLight = posLight * 0.5f + 0.5f;
 	
-	float depth = texture(shadowMapSampler, posLight.xy).r;
+    // Multisampling, need integer coordinate
+    posLight.x = posLight.x * 1280.0f;
+    posLight.y = posLight.y * 720.0f;
+    
+	//float depth = texture(shadowMapSampler, posLight.xy).r;
+    float depth = 0.0f;
+    
+    for (int i = 0; i < 4; ++i)
+    {
+        depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+    }
+    depth *= 0.25f;
 	
-	if (depth < posLight.z - 0.000001f)
+	if (depth < posLight.z - 0.00001f)
 	{
-		shadowAttenuation = 0.0f;
+		shadowAttenuation = 0.5f;
 	}
 	
 	return shadowAttenuation;
@@ -81,12 +93,26 @@ void main()
         
         vec3 diffuseColor = clamp(NoL * kd * lightColor, 0.0f, 1.0f);
         vec3 specColor    = clamp(specularCoefficient * ks * lightColor, 0.0f, 1.0f);
-        outColor = (vec4((/*ka + */diffuseColor + specColor), 1.0f)) * texColor;
+        outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
         
         // Shadow casting
         outColor *= shadowAttenuation;
         
         // outColor = vec4(normalWorld.xyz, 1.0f);
+        vec3 posLight = posLightProj.xyz / posLightProj.w;
+        posLight = posLight * 0.5f + 0.5f;
+        posLight.x = posLight.x * 1280.0f;
+        posLight.y = posLight.y * 720.0f;
+        
+        float depth = 0.0f;
+    
+        for (int i = 0; i < 1; ++i)
+        {
+            depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+        }
+        //depth *= 0.25f;
+        
+        //outColor = vec4(depth, depth, depth, 1.0f);
     }
     //else
     {

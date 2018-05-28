@@ -7,36 +7,64 @@
 Texture2D::Texture2D(
     const UINT   texWidth,
     const UINT   texHeight,
+    const UINT   samples,
     const GLenum format,
     const GLenum type,
     const GLenum wrapMethod,
     const BOOL   mipmap)
-    : Texture(TEXTURE_2D)
+    : Texture(TEXTURE_2D), m_samples(samples)
 {
     m_textureWidth  = texWidth;
     m_textureHeight = texHeight;
 
-    glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight,
-                 0, format, type, 0);
-
-    if (mipmap == TRUE)
+    if (m_samples < 2)
     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight,
+            0, format, type, 0);
 
-        glGenerateMipmap(GL_TEXTURE_2D);
+        if (mipmap == TRUE)
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     else
     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_textureHandle);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+                                samples, format, m_textureWidth, m_textureHeight, GL_TRUE);
+
+        if (mipmap == TRUE)
+        {
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glGenerateMipmap(GL_TEXTURE_2D_MULTISAMPLE);
+        }
+        else
+        {
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, wrapMethod);
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, wrapMethod);
+
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     }
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture2D::Texture2D(
@@ -85,7 +113,7 @@ void Texture2D::setBoarderColor(GLfloat borderColor[4])
 
 void Texture2D::bindTexture(const GLenum textureUnit,
                             const GLuint shaderProgram,
-                            const std::string & samplerName,
+                            const std::string& samplerName,
                             const int samplerIndex)
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
@@ -93,7 +121,14 @@ void Texture2D::bindTexture(const GLenum textureUnit,
     if (textureLocation >= 0)
     {
         glActiveTexture(textureUnit);
-        glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+        if (m_samples < 2)
+        {
+            glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_textureHandle);
+        }
         glUniform1i(textureLocation, samplerIndex);
     }
 }

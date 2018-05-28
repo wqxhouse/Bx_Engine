@@ -39,10 +39,11 @@ public:
     Texture2D(
         const UINT   texWidth,
         const UINT   texHeight,
+        const UINT   samples    = 0,
         const GLenum format     = GL_RGBA,
         const GLenum type       = GL_UNSIGNED_BYTE,
         const GLenum wrapMethod = GL_REPEAT,
-        const BOOL   mipmap     = GL_FALSE);
+        const BOOL   mipmap     = FALSE);
 
     // Create 2D texture from texture file
     Texture2D(
@@ -69,6 +70,9 @@ public:
 private:
     UINT  m_textureHeight;
     UINT  m_textureWidth;
+
+    UINT  m_samples;
+
     UINT  m_textureType;
 
     void* m_textureData;

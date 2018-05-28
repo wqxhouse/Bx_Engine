@@ -25,21 +25,32 @@ void Framebuffer::createFramebufferTexture2D(
     const GLenum attachmentType,
     const UINT   texWidth,
     const UINT   texHeight,
+    const UINT   samples,
     const GLenum format,
     const GLenum texDataType,
     const GLenum wrapMethod,
     const BOOL   mipmap)
 {
     Texture2D* pTexture2D =
-        new Texture2D(texWidth, texHeight, format, texDataType, wrapMethod, mipmap);
+        new Texture2D(texWidth, texHeight, samples, format, texDataType, wrapMethod, mipmap);
 
     UINT texIndex = getTextureIndex(texUnit);
 
     m_pAttachedTextures[texIndex] = pTexture2D;
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
-    glFramebufferTexture2D(
-        GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture2D->GetTextureHandle(), 0);
+
+    if (samples < 2)
+    {
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture2D->GetTextureHandle(), 0);
+    }
+    else
+    {
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE,
+            pTexture2D->GetTextureHandle(), 0);
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
