@@ -87,16 +87,21 @@ void main()
         
         float specularCoefficient = pow(VoR, ns.w);
         
-        float shadowAttenuation = castingShadow();
+        float shadowDiffuseAttenuation = castingShadow();
+        float shadowSpecularAttenuation = ((shadowDiffuseAttenuation < 1.0f) ? 0.0f : 1.0f);
 
         vec4 texColor = texture(sampler, fragTexCoord);
         
         vec3 diffuseColor = clamp(NoL * kd * lightColor, 0.0f, 1.0f);
         vec3 specColor    = clamp(specularCoefficient * ks * lightColor, 0.0f, 1.0f);
+        
+        // Shadow casting(specular)
+        specColor *= shadowSpecularAttenuation;
+        
         outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
         
         // Shadow casting
-        outColor *= shadowAttenuation;
+        outColor *= shadowDiffuseAttenuation;
         
         // outColor = vec4(normalWorld.xyz, 1.0f);
         vec3 posLight = posLightProj.xyz / posLightProj.w;

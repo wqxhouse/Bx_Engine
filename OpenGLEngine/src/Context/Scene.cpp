@@ -8,7 +8,7 @@
 
 Scene::Scene(const Setting& setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+      m_directionalLight(Vector3(1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCamera(0), m_uniformBufferMgr(128)
 {
@@ -324,12 +324,9 @@ void Scene::defaultScene()
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
 
     // TODO: Fixing shadow casting issue
-    glm::vec3 lightPos = glm::vec3(100.0f, 100.0f, 100.0f);
+    float lightPosScale = 100.0f;
     m_pDirectionalLightCamera = new OrthographicCamera(
-        -glmLightDir + lightPos, glmLightDir, glm::vec3(0, 1, 0),
-        5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
-
-    addOrthographicCamera(lightPos, lightPos + glmLightDir, glm::vec3(0, 1, 0),
+        -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
         5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
 
     //m_pLightCamera = new ProspectiveCamera(
