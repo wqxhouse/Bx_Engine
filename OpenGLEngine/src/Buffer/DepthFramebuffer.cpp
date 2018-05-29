@@ -21,7 +21,12 @@ void DepthFramebuffer::createFramebuffer(
         depthTexHeight,
         samples,
         GL_DEPTH_COMPONENT,
-        GL_FLOAT);
+        GL_FLOAT,
+        GL_CLAMP_TO_BORDER,
+        FALSE);
+
+    GLfloat boarder[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    Texture2D* pDepthTexture = static_cast<Texture2D*>(getTexturePtr(GL_TEXTURE0));
 
     glBindFramebuffer(GL_FRAMEBUFFER, getFramebufferHandle());
 
