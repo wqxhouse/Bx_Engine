@@ -144,6 +144,9 @@
     <ClInclude Include="src\Math\Transform\Trans.h">
       <Filter>src\Math\Transform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\GBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="src\Math\Transform\Trans.cpp">
       <Filter>src\Math\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\GBuffer.cpp">
+      <Filter>src\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

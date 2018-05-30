@@ -10,15 +10,14 @@ Scene::Scene(const Setting& setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_directionalLight(Vector3(1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
-      m_activeCamera(0), m_uniformBufferMgr(128)
+      m_activeCamera(0),
+      m_uniformBufferMgr(128)
 {
     this->setting = setting;
 }
 
 BOOL Scene::initialize()
 {
-    defaultScene();
-
     //Compile shaders
     m_sceneShader.setShaderFiles("MainSceneShadowMap.vert", "MainSceneShadowMap.frag");
     BOOL hs = m_sceneShader.linkProgram();
@@ -65,6 +64,19 @@ BOOL Scene::initialize()
         m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map test
+    Vector3 lightDir = m_directionalLight.getDir();
+    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
+
+    float lightPosScale = 100.0f;
+
+    float halfWidth = static_cast<float>(setting.width) * 0.002f;
+    float halfHeight = static_cast<float>(setting.width) * 0.002f;
+
+    // TODO: Fixing shadow casting issue
+    m_pDirectionalLightCamera = new OrthographicCamera(
+        -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
+        5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+
     m_shadowMap.createFramebuffer(setting.width, setting.height, setting.m_graphicsSetting.antialasing);
 
     m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
@@ -73,6 +85,13 @@ BOOL Scene::initialize()
     {
         assert("Fail to compile shadow map shaders.\n");
         return FALSE;
+    }
+
+    // Deferred shading
+    if (setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
+    {
+        m_pGBuffer = new GBuffer(setting.width, setting.height);
+        m_pGBuffer->initialize();
     }
 
     return TRUE;
@@ -110,7 +129,15 @@ void Scene::draw()
 
     shadowPass();
 
-    drawScene();
+    if (setting.m_graphicsSetting.shadingMethod == RenderingMethod::FORWARD_RENDERING)
+    {
+        drawScene();
+    }
+    else
+    {
+        m_pGBuffer->draw(this);
+        deferredDrawScene();
+    }
 }
 
 Scene::~Scene()
@@ -197,6 +224,8 @@ void Scene::shadowPass()
         }
 
         m_shadowMap.finishDrawFramebuffer();
+
+        m_shadowMapShader.finishProgram();
     }
     else
     {
@@ -266,6 +295,12 @@ void Scene::drawScene()
         m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
         m_pSceneModelList[i]->draw();
     }
+
+    m_sceneShader.finishProgram();
+}
+
+void Scene::deferredDrawScene()
+{
 }
 
 void Scene::addModel(
@@ -304,49 +339,28 @@ void Scene::addOrthographicCamera(
         new OrthographicCamera(pos, center, up, speed, viewport, nearClip, farClip));
 }
 
-void Scene::defaultScene()
+void Scene::addTexture(
+    const std::string& textureFile,
+    const GLenum       textureType,
+    const GLenum       format,
+    const GLenum       type,
+    const GLenum       wrapMethod,
+    const BOOL         mipmap)
 {
-    const float aspectRadio = static_cast<float>(setting.width) / static_cast<float>(setting.height);
-
-    float halfWidth = static_cast<float>(setting.width) * 0.005f;
-    float halfHeight = static_cast<float>(setting.height) * 0.005f;
-
-    Vector3 lightDir = m_directionalLight.getDir();
-    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
-    
-    /*addOrthographicCamera(-glmLightDir + glm::vec3(100.0f, 100.0f, 100.0f), glmLightDir,
-        glm::vec3(0, 1, 0), 5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);*/
-
-    addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
-
-    addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
-
-    // TODO: Fixing shadow casting issue
-    float lightPosScale = 100.0f;
-    m_pDirectionalLightCamera = new OrthographicCamera(
-        -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
-        5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
-
-    //m_pLightCamera = new ProspectiveCamera(
-    //    /*lightPos, lightPos + glmLightDir,*/
-    //    glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0),
-    //    glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, aspectRadio, 0.1f, 1000.0f);
-
-    //Load model and texture(Hardcode here)
-    /*addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-    addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-        new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-    addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
-    addModel("../resources/models/cornellbox/CornellBox-Sphere.obj",
-             "../resources/models/cornellbox/CornellBox-Sphere.mtl",
-             new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-
-    //Create texture and set sampler
-    m_pTextureList.push_back(new Texture2D("../resources/textures/teaport/wall.jpg",
-        GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE));
-
+    switch (textureType)
+    {
+    case GL_TEXTURE_2D:
+        m_pTextureList.push_back(
+            new Texture2D(textureFile, format, type, wrapMethod, mipmap));
+        break;
+    case GL_TEXTURE_3D:
+        // TODO
+        break;
+    case GL_TEXTURE_CUBE_MAP:
+        // TODO
+        break;
+    default:
+        assert("Unsupport texture type!");
+        break;
+    }
 }

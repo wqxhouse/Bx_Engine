@@ -4,10 +4,12 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
-OpenGLContext::OpenGLContext(const Setting & setting)
+OpenGLContext::OpenGLContext(const Setting& setting)
     :callbackInfo(), m_scene(setting)
 {
     this->setting = setting;
+
+    initialize();
 }
 
 void OpenGLContext::initialize()
@@ -42,7 +44,7 @@ void OpenGLContext::initialize()
     glEnable(GL_MULTISAMPLE);//Enable anti-alasing
 
     glEnable(GL_CULL_FACE);//Enable face culling
-    glCullFace(GL_BACK);// Back face culling
+    glCullFace(GL_BACK);   //Back face culling
     glFrontFace(GL_CCW);
 
     glEnable(GL_DEPTH_TEST);
@@ -75,7 +77,6 @@ void OpenGLContext::initialize()
 
 void OpenGLContext::run()
 {
-    initialize();
     GLfloat prevTime = 0.0f;
     GLfloat deltaTime = 0.0f;
     

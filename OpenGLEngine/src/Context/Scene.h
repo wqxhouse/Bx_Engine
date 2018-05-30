@@ -6,7 +6,7 @@
 #include "../Light/Light.h"
 #include "../Texture/Texture.h"
 #include "../Buffer/UniformBufferMgr.h"
-#include "../Buffer/Framebuffer.h"
+#include "../Buffer/GBuffer.h"
 
 #include "Setting.h"
 
@@ -43,6 +43,17 @@ public:
         const float      nearClip = 0.1f,
         const float      farClip  = 100.0f);
 
+    void addTexture(
+        const std::string& textureFile,
+        const GLenum       textureType = GL_TEXTURE_2D,
+        const GLenum       format      = GL_RGBA,
+        const GLenum       type        = GL_UNSIGNED_BYTE,
+        const GLenum       wrapMethod  = GL_REPEAT,
+        const BOOL         mipmap      = GL_FALSE);
+
+    inline size_t GetModelSize()                const { return m_pSceneModelList.size(); }
+    inline Model* GetModelPtr(const UINT index) const { return m_pSceneModelList[index]; }
+
     void setSceneShader(
         char* const vertexShaderFile,
         char* const fragmentShaderFile);
@@ -52,8 +63,8 @@ public:
     inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
 
 private:
-    void defaultScene();
     void drawScene();
+    void deferredDrawScene();
 
 	Setting setting;
 
@@ -88,4 +99,7 @@ private:
     ProspectiveCamera*  m_pLightCamera;
     Shader              m_shadowMapShader;
     DepthFramebuffer    m_shadowMap;
+
+    // Deferred shading
+    GBuffer* m_pGBuffer;
 };

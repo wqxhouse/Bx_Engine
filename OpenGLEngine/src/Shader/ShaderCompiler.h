@@ -20,15 +20,15 @@ public:
 		const char*  fragmentShaderPath,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = 4096,
-        unsigned int fragShaderSourceSize   = 4096);
+		unsigned int vertexShaderSourceSize = 8192,
+        unsigned int fragShaderSourceSize   = 8192);
 
 	int compileShader(
         const char*  vertexShaderFile,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = 4096,
-        unsigned int fragShaderSourceSize   = 4096);
+		unsigned int vertexShaderSourceSize = 8192,
+        unsigned int fragShaderSourceSize   = 8192);
 
 private:
 	char* shaderPath;

@@ -4,13 +4,13 @@
 	@date: 07/20/2016
 */
 
-#include "Context/OpenGLContext.h"
+#include "OpenGLTemplate.h"
 
 int main()
 {
 	Setting setting;
-	OpenGLContext m_context(setting);
-	m_context.run();
+    OpenGLTemplate m_oglTemplate(setting);
+    m_oglTemplate.run();
 
 	return 0;
 }

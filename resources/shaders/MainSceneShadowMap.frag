@@ -49,9 +49,18 @@ float castingShadow()
 	//float depth = texture(shadowMapSampler, posLight.xy).r;
     float depth = 0.0f;
     
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 1; ++i)
     {
-        depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+        float pcfDepth = 0.0f;
+        for (int j = -1; j < 1; ++j)
+        {
+            for(int k = -1; k < 1; ++k)
+            {
+                float tempPcfDepth = texelFetch(shadowMapSampler, ivec2(posLight.xy) + ivec2(j, k), i).r;                
+                pcfDepth += ((tempPcfDepth < posLight.z - 0.00001f) ? 0.0f : tempPcfDepth);
+            }
+        }
+        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
     }
     depth *= 0.25f;
 	
@@ -96,13 +105,14 @@ void main()
         vec3 specColor    = clamp(specularCoefficient * ks * lightColor, 0.0f, 1.0f);
         
         // Shadow casting(specular)
-        specColor *= shadowSpecularAttenuation;
+        //specColor *= shadowSpecularAttenuation;
         
         outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
         
         // Shadow casting
         outColor *= shadowDiffuseAttenuation;
         
+        //outColor = vec4(shadowDiffuseAttenuation, shadowDiffuseAttenuation, shadowDiffuseAttenuation, 1.0f);
         // outColor = vec4(normalWorld.xyz, 1.0f);
         vec3 posLight = posLightProj.xyz / posLightProj.w;
         posLight = posLight * 0.5f + 0.5f;
@@ -113,9 +123,15 @@ void main()
     
         for (int i = 0; i < 1; ++i)
         {
-            depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+            for (int j = -1; j < 1; ++j)
+            {
+                for(int k = -1; k < 1; ++k)
+                {
+                    depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+                }
+            }
         }
-        //depth *= 0.25f;
+        depth *= 0.25f;
         
         //outColor = vec4(depth, depth, depth, 1.0f);
     }

@@ -151,6 +151,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
   <ItemGroup>
     <ClInclude Include="src\Buffer\Buffer.h" />
     <ClInclude Include="src\Buffer\Framebuffer.h" />
+    <ClInclude Include="src\Buffer\GBuffer.h" />
     <ClInclude Include="src\Buffer\IndexBuffer.h" />
     <ClInclude Include="src\Buffer\UniformBuffer.h" />
     <ClInclude Include="src\Buffer\UniformBufferMgr.h" />
@@ -186,6 +187,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
   <ItemGroup>
     <ClCompile Include="src\Buffer\DepthFramebuffer.cpp" />
     <ClCompile Include="src\Buffer\Framebuffer.cpp" />
+    <ClCompile Include="src\Buffer\GBuffer.cpp" />
     <ClCompile Include="src\Buffer\UniformBuffer.cpp" />
     <ClCompile Include="src\Buffer\UniformBufferMgr.cpp" />
     <ClCompile Include="src\Buffer\VertexBuffer.cpp" />

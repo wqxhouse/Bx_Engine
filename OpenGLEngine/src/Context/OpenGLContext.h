@@ -10,7 +10,7 @@ public:
 
     void run();
 
-    inline Scene getScene() const { return m_scene; }
+    inline Scene* GetScene() { return &m_scene; }
 
 private:
 	void initialize();

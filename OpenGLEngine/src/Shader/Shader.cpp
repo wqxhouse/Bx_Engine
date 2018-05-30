@@ -37,3 +37,8 @@ void Shader::useProgram()
 {
     glUseProgram(m_shaderProgram);
 }
+
+void Shader::finishProgram()
+{
+    glUseProgram(0);
+}
