@@ -43,6 +43,9 @@
     <Filter Include="src\Shader">
       <UniqueIdentifier>{515659af-0b54-4b73-ae6a-c1cfedba0c2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Shadow">
+      <UniqueIdentifier>{c3a76853-2458-4672-aef8-d2c3acb2d3b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector3.h">
@@ -147,6 +150,9 @@
     <ClInclude Include="src\Buffer\GBuffer.h">
       <Filter>src\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Shadow\ShadowMap.h">
+      <Filter>src\Shadow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -244,6 +250,9 @@
     </ClCompile>
     <ClCompile Include="src\Buffer\GBuffer.cpp">
       <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shadow\ShadowMap.cpp">
+      <Filter>src\Shadow</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

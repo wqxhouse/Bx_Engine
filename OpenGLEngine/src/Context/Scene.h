@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../Shader/Shader.h"
 #include "../Model/Model.h"
-#include "../Camera/Camera.h"
 #include "../Light/Light.h"
 #include "../Texture/Texture.h"
 #include "../Buffer/UniformBufferMgr.h"
+#include "../Shadow/ShadowMap.h"
 #include "../Buffer/GBuffer.h"
 
 #include "Setting.h"
@@ -64,7 +63,6 @@ public:
 
 private:
     void drawScene();
-    void deferredDrawScene();
 
 	Setting setting;
 
@@ -94,12 +92,14 @@ private:
 
     // Shadow map test
     void shadowPass();
+    ShadowMap* m_pShadowMap;
 
-    OrthographicCamera* m_pDirectionalLightCamera;
+    /*OrthographicCamera* m_pDirectionalLightCamera;
     ProspectiveCamera*  m_pLightCamera;
     Shader              m_shadowMapShader;
-    DepthFramebuffer    m_shadowMap;
+    DepthFramebuffer    m_shadowMap;*/
 
     // Deferred shading
+    void deferredDrawScene();
     GBuffer* m_pGBuffer;
 };

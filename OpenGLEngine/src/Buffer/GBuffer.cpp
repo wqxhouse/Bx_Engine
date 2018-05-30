@@ -59,19 +59,18 @@ BOOL GBuffer::initialize()
 
     if (hs == FALSE)
     {
-        assert("Fail to compile shaders.\n");
-        return FALSE;
+        assert("Fail to compile GBuffer shaders.\n");
     }
 
-    return TRUE;
+    return hs;
 }
 
-void GBuffer::draw(Scene* pScene)
+void GBuffer::drawGBuffer(Scene* pScene)
 {
     m_gShader.useProgram();
 
     size_t modelSize = pScene->GetModelSize();
-    for (UINT i = 0; i < modelSize; ++i)
+    for (size_t i = 0; i < modelSize; ++i)
     {
         pScene->GetModelPtr(i)->draw();
     }

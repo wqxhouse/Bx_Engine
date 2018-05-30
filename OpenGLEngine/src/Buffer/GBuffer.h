@@ -12,7 +12,7 @@ public:
     ~GBuffer();
 
     BOOL initialize();
-    void draw(Scene* pScene);
+    void drawGBuffer(Scene* pScene);
 
 private:
     Framebuffer m_gFramebuffer;

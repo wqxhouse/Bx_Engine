@@ -3,13 +3,13 @@
 #include "../Core/OpenGLPCH.h"
 #include "../Texture/Texture.h"
 
-class Framebuffer
+class Framebuffer final
 {
 public:
     Framebuffer(const UINT attachTexCount = 1);
-    virtual ~Framebuffer();
+    ~Framebuffer();
 
-    virtual void createFramebuffer();
+    void createFramebuffer();
 
     void createFramebufferTexture2D(
         const GLenum texUnit,
@@ -41,18 +41,4 @@ private:
     BOOL checkFramebufferStatus() const;
 
     std::vector<Texture*> m_pAttachedTextures;
-};
-
-class DepthFramebuffer : public Framebuffer
-{
-public:
-    DepthFramebuffer();
-    ~DepthFramebuffer();
-
-    void createFramebuffer(
-        const UINT depthTexWidth,
-        const UINT depthTexHeight,
-        const UINT samples);
-
-    void finishDrawFramebuffer();
 };

@@ -64,37 +64,18 @@ BOOL Scene::initialize()
         m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map test
-    Vector3 lightDir = m_directionalLight.getDir();
-    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
-
-    float lightPosScale = 100.0f;
-
-    float halfWidth = static_cast<float>(setting.width) * 0.002f;
-    float halfHeight = static_cast<float>(setting.width) * 0.002f;
-
-    // TODO: Fixing shadow casting issue
-    m_pDirectionalLightCamera = new OrthographicCamera(
-        -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
-        5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
-
-    m_shadowMap.createFramebuffer(setting.width, setting.height, setting.m_graphicsSetting.antialasing);
-
-    m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
-    hs = m_shadowMapShader.linkProgram();
-    if (hs == FALSE)
-    {
-        assert("Fail to compile shadow map shaders.\n");
-        return FALSE;
-    }
+    m_pShadowMap = new ShadowMap(
+       static_cast<Light*>(&m_directionalLight), setting.width, setting.height, setting.m_graphicsSetting.antialasing);
+    hs = m_pShadowMap->initialize();
 
     // Deferred shading
-    if (setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
+    if (hs == TRUE && setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
     {
         m_pGBuffer = new GBuffer(setting.width, setting.height);
-        m_pGBuffer->initialize();
+        hs = m_pGBuffer->initialize();
     }
 
-    return TRUE;
+    return hs;
 }
 
 void Scene::update(float deltaTime)
@@ -135,7 +116,7 @@ void Scene::draw()
     }
     else
     {
-        m_pGBuffer->draw(this);
+        m_pGBuffer->drawGBuffer(this);
         deferredDrawScene();
     }
 }
@@ -189,8 +170,11 @@ Scene::~Scene()
     }
     m_pTextureList.clear();
 
-    SafeDelete(m_pLightCamera);
-    SafeDelete(m_pDirectionalLightCamera);
+    //SafeDelete(m_pLightCamera);
+    //SafeDelete(m_pDirectionalLightCamera);
+
+    SafeDelete(m_pShadowMap);
+    SafeDelete(m_pGBuffer);
 }
 
 void Scene::setSceneShader(
@@ -203,34 +187,7 @@ void Scene::setSceneShader(
 void Scene::shadowPass()
 {
     glCullFace(GL_FRONT);
-    if (m_pDirectionalLightCamera != NULL)
-    {
-        m_shadowMapShader.useProgram();
-        m_shadowMap.drawFramebuffer();
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
-        {
-            glm::mat4 worldMatrix    = m_pSceneModelList[i]->m_pTrans->GetTransMatrix();
-            glm::mat4 viewMatrix     = m_pDirectionalLightCamera->GetViewMatrix();
-            glm::mat4 prospectMatrix = m_pDirectionalLightCamera->GetProjectionMatrix();
-
-            glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
-
-            GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
-            glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
-
-            m_pSceneModelList[i]->drawModelPos();
-        }
-
-        m_shadowMap.finishDrawFramebuffer();
-
-        m_shadowMapShader.finishProgram();
-    }
-    else
-    {
-        assert("No light camera, can't cast shadow.");
-    }
+    m_pShadowMap->drawShadowMap(this);
     glCullFace(GL_BACK);
 }
 
@@ -282,15 +239,13 @@ void Scene::drawScene()
 
         m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
 
-        glm::mat4 lightTransWVP  = m_pDirectionalLightCamera->GetProjectionMatrix() *
-                                   m_pDirectionalLightCamera->GetViewMatrix()       *
+        glm::mat4 lightTransWVP  = m_pShadowMap->GetLightTransVP() *
                                    m_pSceneModelList[i]->m_pTrans->GetTransMatrix();
 
         GLint lightTransHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
-        m_shadowMap.getTexturePtr(GL_TEXTURE0)->
-            bindTexture(GL_TEXTURE1, m_sceneShader.GetShaderProgram(), "shadowMapSampler", 1);
+        m_pShadowMap->readShadowMap(GL_TEXTURE1, m_sceneShader.GetShaderProgram(), "shadowMapSampler", 1);
 
         m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
         m_pSceneModelList[i]->draw();
