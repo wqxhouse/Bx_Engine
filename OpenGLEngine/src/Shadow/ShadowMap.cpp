@@ -9,7 +9,7 @@ ShadowMap::ShadowMap(
     const UINT samples)
     : m_pLight(pLight),
       m_shadowMapWidth(depthTexWidth),
-      m_shadowMapHeight(depthTexHeight),
+      m_shadowMapHeight(depthTexWidth),
       m_shadowMapSamples(samples)
 { }
 
@@ -29,8 +29,10 @@ BOOL ShadowMap::initialize()
                                                       GL_CLAMP_TO_BORDER,
                                                       FALSE);
 
-    GLfloat boarder[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    GLfloat boarder[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     Texture2D* pDepthTexture = static_cast<Texture2D*>(m_shadowMapFramebuffer.getTexturePtr(GL_TEXTURE0));
+
+    pDepthTexture->setBoarderColor(boarder);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMapFramebuffer.getFramebufferHandle());
 
@@ -52,6 +54,23 @@ BOOL ShadowMap::initialize()
     }
 
     return hs;
+}
+
+void ShadowMap::update(Light* pLight)
+{
+    m_pLight = pLight;
+
+    DirectionalLight* pDirectionalLight = static_cast<DirectionalLight*>(m_pLight);
+    Vector3 lightDir = pDirectionalLight->getDir();
+    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
+
+    float lightPosScale = 179.0f;
+    float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
+    float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
+
+    m_pLightCamera = new OrthographicCamera(
+        -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
+        0.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
 }
 
 void ShadowMap::drawShadowMap(Scene* pScene)
@@ -103,18 +122,7 @@ void ShadowMap::initializeLightCamera()
     {
     case LightType::DIRECTIONAL_LIGHT:
     {
-        // TODO: Fixing shadow casting issue
-        DirectionalLight* pDirectionalLight = static_cast<DirectionalLight*>(m_pLight);
-        Vector3 lightDir = pDirectionalLight->getDir();
-        glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
-
-        float lightPosScale = 100.0f;
-        float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.002f;
-        float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.002f;
-
-        m_pLightCamera = new OrthographicCamera(
-            -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
-            5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+        update(m_pLight);
 
         break;
     }

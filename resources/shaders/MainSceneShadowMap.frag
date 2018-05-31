@@ -57,14 +57,14 @@ float castingShadow()
             for(int k = -1; k < 1; ++k)
             {
                 float tempPcfDepth = texelFetch(shadowMapSampler, ivec2(posLight.xy) + ivec2(j, k), i).r;                
-                pcfDepth += ((tempPcfDepth < posLight.z - 0.00001f) ? 0.0f : tempPcfDepth);
+                pcfDepth += ((tempPcfDepth < posLight.z - 0.000001f) ? 0.0f : tempPcfDepth);
             }
         }
         depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
     }
     depth *= 0.25f;
 	
-	if (depth < posLight.z - 0.00001f)
+	if (depth < posLight.z - 0.000001f)
 	{
 		shadowAttenuation = 0.5f;
 	}
@@ -105,7 +105,7 @@ void main()
         vec3 specColor    = clamp(specularCoefficient * ks * lightColor, 0.0f, 1.0f);
         
         // Shadow casting(specular)
-        //specColor *= shadowSpecularAttenuation;
+        // specColor *= shadowSpecularAttenuation;
         
         outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
         

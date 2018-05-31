@@ -18,6 +18,7 @@ public:
     ~ShadowMap();
 
     BOOL initialize();
+    void update(Light* pLight);
     void drawShadowMap(Scene* pScene);
     void readShadowMap(
         const GLenum       texUnit,

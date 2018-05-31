@@ -8,7 +8,7 @@
 
 Scene::Scene(const Setting& setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      m_directionalLight(Vector3(1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+      m_directionalLight(Vector3(-0.8f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCamera(0),
       m_uniformBufferMgr(128)
@@ -65,7 +65,7 @@ BOOL Scene::initialize()
 
     // Shadow map test
     m_pShadowMap = new ShadowMap(
-       static_cast<Light*>(&m_directionalLight), setting.width, setting.height, setting.m_graphicsSetting.antialasing);
+       static_cast<Light*>(&m_directionalLight), setting.width * 2, setting.height * 2, setting.m_graphicsSetting.antialasing);
     hs = m_pShadowMap->initialize();
 
     // Deferred shading
@@ -102,6 +102,8 @@ void Scene::update(float deltaTime)
     }
 
     m_pCameraList[m_activeCamera]->update(deltaTime);
+    
+    //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
 }
 
 void Scene::draw()
@@ -186,9 +188,13 @@ void Scene::setSceneShader(
 
 void Scene::shadowPass()
 {
+    m_pShadowMap->update(&m_directionalLight);
+
     glCullFace(GL_FRONT);
+    //glDisable(GL_CULL_FACE);
     m_pShadowMap->drawShadowMap(this);
     glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
 }
 
 void Scene::drawScene()
@@ -231,8 +237,6 @@ void Scene::drawScene()
 
         m_uniformBufferMgr.updateUniformBufferData(
             m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
-
-        //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(10.0f));
 
         GLint eyeHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().GetPos()));
