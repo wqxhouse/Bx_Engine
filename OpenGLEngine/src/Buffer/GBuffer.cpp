@@ -57,11 +57,11 @@ BOOL GBuffer::initialize()
                                               FALSE);
 
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE4,
-                                              GL_COLOR_ATTACHMENT3,
+                                              GL_COLOR_ATTACHMENT4,
                                               m_width, 
                                               m_height,
                                               1,
-                                              GL_COLOR_ATTACHMENT3,
+                                              GL_COLOR_ATTACHMENT4,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -87,20 +87,25 @@ void GBuffer::drawGBuffer(Scene* pScene)
     for (size_t i = 0; i < modelSize; ++i)
     {
         Model* pModel = pScene->GetModelPtr(i);
+        Camera* pCam  = pScene->GetActivateCamera();
 
-        GLint worldMatrixLocation = glGetUniformBlockIndex(m_gShader.GetShaderProgram(), "worldMatrix");
+        glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
+        glm::mat4 wvp = pCam->GetProjectionMatrix() * pCam->GetViewMatrix() * worldTransMatrix;
 
-        if (worldMatrixLocation >= 0)
+        GLint worldMatrixLocation = glGetUniformLocation(m_gShader.GetShaderProgram(), "worldMatrix");
+        GLint wvpLocation         = glGetUniformLocation(m_gShader.GetShaderProgram(), "wvp");
+
+        if (worldMatrixLocation >= 0 && wvpLocation >= 0)
         {
-            glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE,
-                               glm::value_ptr(pModel->m_pTrans->GetTransMatrix()));
+            glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, glm::value_ptr(worldTransMatrix));
+            glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
             pModel->updateMaterial(pScene->GetUniformBufferMgr(), pScene->GetMaterialUniformBufferIndex());
             pModel->draw();
         }
         else
         {
-            printf("Can't find worldMatrix location!");
+            printf("Can't find gBuffer shader uniform block location!");
             assert(FALSE);
         }
     }

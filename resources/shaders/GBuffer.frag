@@ -24,5 +24,5 @@ void main()
     normalWorldTexture = vec4(normalWorld, ks.y);
     texCoordTexture    = vec4(fragTexCoord, ks.z, ns.w);
     kaMaterialTexture  = vec4(ka, 1.0f);
-    kdMaterialTexture  = vec4(kd, 1.0f);    
+    kdMaterialTexture  = vec4(kd, 1.0f);
 }

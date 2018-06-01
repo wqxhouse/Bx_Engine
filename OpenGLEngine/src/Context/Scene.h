@@ -50,11 +50,13 @@ public:
         const GLenum       wrapMethod  = GL_REPEAT,
         const BOOL         mipmap      = GL_FALSE);
 
-    inline size_t GetModelSize()                  const { return m_pSceneModelList.size(); }
-    inline Model* GetModelPtr(const UINT index)   const { return m_pSceneModelList[index]; }
+    inline size_t GetModelSize()                  const { return m_pSceneModelList.size();      }
+    inline Model* GetModelPtr(const UINT index)   const { return m_pSceneModelList[index];      }
 
-    inline UniformBufferMgr* GetUniformBufferMgr()      { return &m_uniformBufferMgr; }
-    inline GLuint GetMaterialUniformBufferIndex() const { return m_materialUniformBufferIndex; }
+    inline Camera* GetActivateCamera()            const { return m_pCameraList[m_activeCamera]; }
+
+    inline UniformBufferMgr* GetUniformBufferMgr()      { return &m_uniformBufferMgr;           }
+    inline GLuint GetMaterialUniformBufferIndex() const { return m_materialUniformBufferIndex;  }
 
     void setSceneShader(
         char* const vertexShaderFile,

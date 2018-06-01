@@ -94,9 +94,18 @@ void ShadowMap::drawShadowMap(Scene* pScene)
         glm::mat4 wvp            = prospectMatrix * viewMatrix * worldMatrix;
 
         GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
-        glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
-        pModel->drawModelPos();
+        if (tranMatrixLocation >= 0)
+        {
+            glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+
+            pModel->drawModelPos();
+        }
+        else
+        {
+            printf("Unable to get wvp matrix location in shadowMap shader");
+            assert(FALSE);
+        }
     }
 
     m_shadowMapFramebuffer.finishDrawFramebuffer();
