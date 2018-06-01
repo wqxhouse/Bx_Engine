@@ -26,7 +26,8 @@ UINT UniformBufferMgr::createUniformBuffer(
     assert(uniformBufferBindIndex < m_maxUboCount);
 
     //TODO
-    assert("Hasn't implemented!");
+    printf("Hasn't implemented!\n");
+    assert(FALSE);
 
     return uniformBufferBindIndex;
 }
@@ -63,7 +64,8 @@ void UniformBufferMgr::bindUniformBuffer(
     }
     else
     {
-        assert("Can't find the uniform buffer in the shader program.");
+        printf("Can't find the uniform buffer in the shader program.\n");
+        assert(FALSE);
     }
 }
 

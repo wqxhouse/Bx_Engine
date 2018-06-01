@@ -50,8 +50,11 @@ public:
         const GLenum       wrapMethod  = GL_REPEAT,
         const BOOL         mipmap      = GL_FALSE);
 
-    inline size_t GetModelSize()                const { return m_pSceneModelList.size(); }
-    inline Model* GetModelPtr(const UINT index) const { return m_pSceneModelList[index]; }
+    inline size_t GetModelSize()                  const { return m_pSceneModelList.size(); }
+    inline Model* GetModelPtr(const UINT index)   const { return m_pSceneModelList[index]; }
+
+    inline UniformBufferMgr* GetUniformBufferMgr()      { return &m_uniformBufferMgr; }
+    inline GLuint GetMaterialUniformBufferIndex() const { return m_materialUniformBufferIndex; }
 
     void setSceneShader(
         char* const vertexShaderFile,
@@ -85,7 +88,7 @@ private:
     GLuint m_transUniformbufferIndex;
     GLuint m_directionalLightUniformBufferIndex;
     GLuint m_pointLightUniformBufferIndex;
-    GLuint m_materialBufferIndex;
+    GLuint m_materialUniformBufferIndex;
 
     GLint  success;
     GLchar compileLog[512];

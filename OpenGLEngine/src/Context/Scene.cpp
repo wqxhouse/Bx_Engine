@@ -24,7 +24,8 @@ BOOL Scene::initialize()
 
     if (hs == FALSE)
     {
-        assert("Fail to compile shaders.\n");
+        printf("Fail to compile shaders.\n");
+        assert(FALSE);
         return FALSE;
     }
 
@@ -57,19 +58,20 @@ BOOL Scene::initialize()
         "pointLightUniformBlock");
 
     // Material ubo
-    m_materialBufferIndex =
+    m_materialUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(
             GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);
     m_uniformBufferMgr.bindUniformBuffer(
-        m_materialBufferIndex, m_sceneShader.GetShaderProgram(), "material");
+        m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map test
     m_pShadowMap = new ShadowMap(
-       static_cast<Light*>(&m_directionalLight), setting.width * 2, setting.height * 2, setting.m_graphicsSetting.antialasing);
+       static_cast<Light*>(&m_directionalLight), setting.width * 2, setting.height * 2,
+                           setting.m_graphicsSetting.antialasing);
     hs = m_pShadowMap->initialize();
 
     // Deferred shading
-    if (hs == TRUE && setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
+    //if (hs == TRUE && setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
     {
         m_pGBuffer = new GBuffer(setting.width, setting.height);
         hs = m_pGBuffer->initialize();
@@ -112,9 +114,23 @@ void Scene::draw()
 
     shadowPass();
 
+    m_uniformBufferMgr.
+        updateUniformBufferData(
+            m_directionalLightUniformBufferIndex,
+            m_directionalLight.getDataSize(),
+            m_directionalLight.getDataPtr());
+
+    m_uniformBufferMgr.
+        updateUniformBufferData(
+            m_pointLightUniformBufferIndex,
+            m_pointLight.getDataSize(),
+            m_pointLight.getDataPtr());
+
     if (setting.m_graphicsSetting.shadingMethod == RenderingMethod::FORWARD_RENDERING)
     {
+        m_pGBuffer->drawGBuffer(this);
         drawScene();
+
     }
     else
     {
@@ -142,7 +158,8 @@ Scene::~Scene()
             SafeDelete(static_cast<OrthographicCamera*>(pCamera));
             break;
         default:
-            assert("Invalid camera type");
+            printf("Invalid camera type");
+            assert(FALSE);
 
             SafeDelete(pCamera);
             break;
@@ -164,9 +181,10 @@ Scene::~Scene()
             SafeDelete(static_cast<TextureCube*>(pTexture));
             break;
         default:
-            assert("Invalid texture type");
-
+            printf("Invalid texture type!\n");
             SafeDelete(pTexture);
+
+            assert(FALSE);
             break;
         }
     }
@@ -212,23 +230,13 @@ void Scene::drawScene()
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_uniformBufferMgr.
-        updateUniformBufferData(
-            m_directionalLightUniformBufferIndex,
-            m_directionalLight.getDataSize(),
-            m_directionalLight.getDataPtr());
-
-    m_uniformBufferMgr.
-        updateUniformBufferData(
-            m_pointLightUniformBufferIndex,
-            m_pointLight.getDataSize(),
-            m_pointLight.getDataPtr());
-
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
+        Model* pModel = m_pSceneModelList[i];
+
         glm::mat4 transMatrix[4] =
         {
-            m_pSceneModelList[i]->m_pTrans->GetTransMatrix(),
+            pModel->m_pTrans->GetTransMatrix(),
             activeCamPtr->GetViewMatrix(),
             activeCamPtr->GetProjectionMatrix(),
             glm::mat4()
@@ -244,15 +252,15 @@ void Scene::drawScene()
         m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
 
         glm::mat4 lightTransWVP  = m_pShadowMap->GetLightTransVP() *
-                                   m_pSceneModelList[i]->m_pTrans->GetTransMatrix();
+                                   pModel->m_pTrans->GetTransMatrix();
 
         GLint lightTransHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
         m_pShadowMap->readShadowMap(GL_TEXTURE1, m_sceneShader.GetShaderProgram(), "shadowMapSampler", 1);
 
-        m_pSceneModelList[i]->updateMaterial(&m_uniformBufferMgr, m_materialBufferIndex);
-        m_pSceneModelList[i]->draw();
+        pModel->updateMaterial(&m_uniformBufferMgr, m_materialUniformBufferIndex);
+        pModel->draw();
     }
 
     m_sceneShader.finishProgram();
@@ -319,7 +327,8 @@ void Scene::addTexture(
         // TODO
         break;
     default:
-        assert("Unsupport texture type!");
+        printf("Unsupport texture type!\n");
+        assert(FALSE);
         break;
     }
 }

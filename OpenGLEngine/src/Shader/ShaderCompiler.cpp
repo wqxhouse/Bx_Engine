@@ -46,7 +46,7 @@ void ShaderCompiler::writeToShaderSource(
         }
         else
         {
-            printf("Exceed the shader source size, reallocate memory position.");
+            printf("Exceed the shader source size, reallocate memory position.\n");
             sourceSize *= 2;
             char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
 
@@ -122,7 +122,8 @@ void ShaderCompiler::preprocessingShaderFile(
         }
         else
         {
-            assert("Can't find include shader file!");
+            printf("Can't find include shader file!\n");
+            assert(FALSE);
         }
     }
 }
@@ -165,7 +166,7 @@ void ShaderCompiler::parseShaderFile(
                 }
                 else
                 {
-                    printf("Exceed the shader source size, reallocate memory position.");
+                    printf("Exceed the shader source size, reallocate memory position.\n");
                     sourceSize *= 2;
                     char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
 
@@ -181,6 +182,7 @@ void ShaderCompiler::parseShaderFile(
                     {
                         free(shaderSource);
                         printf("Error when reallocate for shader source.\n");
+                        assert(FALSE);
                         exit(1);
                     }
                 }
@@ -193,7 +195,8 @@ void ShaderCompiler::parseShaderFile(
     }
     else
     {
-        assert("Can't find shader file!");
+        printf("Can't find shader file!\n");
+        assert(FALSE);
     }
 
     //Release file path array

@@ -28,6 +28,7 @@ public:
 	virtual ~Material() {}
 
 	std::string m_materialName;
+    //UINT        m_materialId;
 
 	MaterialType materialType;
 	ShadingMethod shadingMethod;

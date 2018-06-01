@@ -50,7 +50,8 @@ BOOL ShadowMap::initialize()
     }
     else
     {
-        assert("Fail to compile shadow map shaders.\n");
+        printf("Fail to compile shadow map shaders.\n");
+        assert(FALSE);
     }
 
     return hs;
@@ -137,7 +138,8 @@ void ShadowMap::initializeLightCamera()
         break;
     }
     default:
-        assert("Unsupport light type.");
+        printf("Unsupport light type.\n");
+        assert(FALSE);
         break;
     }
 }

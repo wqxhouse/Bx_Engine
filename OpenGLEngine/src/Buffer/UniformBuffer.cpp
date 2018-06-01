@@ -73,7 +73,8 @@ UniformBuffer::UniformBuffer(
     }
     else
     {
-        assert("Can't find the uniform buffer in the shader program.");
+        printf("Can't find the uniform buffer in the shader program.\n");
+        assert(FALSE);
     }
 }
 
@@ -181,6 +182,7 @@ void UniformBuffer::update(
     }
     else
     {
-        assert("Can't find the uniform buffer in the shader program.");
+        printf("Can't find the uniform buffer in the shader program.\n");
+        assert(FALSE);
     }
 }

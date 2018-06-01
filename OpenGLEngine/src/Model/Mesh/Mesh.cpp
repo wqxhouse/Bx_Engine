@@ -148,7 +148,8 @@ void Mesh::draw()
     }
     else
     {
-        assert("The material pointer is NULL!");
+        printf("The material pointer is NULL!\n");
+        assert(FALSE);
     }
 
     glBindVertexArray(m_vertexArrayObj);
@@ -194,7 +195,7 @@ Mesh::~Mesh()
 }
 
 void Mesh::combineVertexData(
-    const int counter[],
+    const int                         counter[],
     const std::vector<Math::Vector3>& posBuf,
     const std::vector<Math::Vector3>& normalBuf,
     const std::vector<Math::Vector2>& texCoords,
@@ -223,7 +224,8 @@ void Mesh::combineVertexData(
         }
         else
         {
-            assert("Can't load the mesh without vertexes.\n");
+            printf("Can't load the mesh without vertexes.\n");
+            assert(FALSE);
         }
 
         normalIndex = normalIndices.size()   == 0 ? -1 : normalIndices[i];
@@ -259,8 +261,8 @@ void Mesh::combineVertexData(
 
 bool Mesh::findSimilarVertex(
     const std::map<Vertex, GLuint>& map,
-    const Vertex& vertex,
-    GLuint * index)
+    const Vertex&                   vertex,
+    GLuint*                         index)
 {
     auto it = map.find(vertex);
     if (it == map.end())

@@ -94,7 +94,8 @@ Texture* Framebuffer::getTexturePtr(const GLenum texUnit) const
     }
     else
     {
-        assert("Invalid texture unit!");
+        printf("Invalid texture unit!\n");
+        assert(FALSE);
     }
 
     return pTexture;

@@ -23,7 +23,10 @@ public:
 		Vertex()
 		{}
 
-		Vertex(const Math::Vector3& position, const Math::Vector3& normal, const Math::Vector2& texCoords)
+		Vertex(
+            const Math::Vector3& position,
+            const Math::Vector3& normal,
+            const Math::Vector2& texCoords)
 		{
 			setData(position, normal, texCoords);
 		}
@@ -43,7 +46,10 @@ public:
 			this->texCoords = texCoords;
 		}
 
-		void setData(const Math::Vector3& position, const Math::Vector3& normal, const Math::Vector2& texCoords)
+		void setData(
+            const Math::Vector3& position,
+            const Math::Vector3& normal,
+            const Math::Vector2& texCoords)
 		{
 			this->position = position;
 			this->normal = normal;
@@ -57,46 +63,46 @@ public:
 	};
 	
 	Mesh(
-		const std::string& name,
-		const std::string& materialFile,
-		const int counter[],
+		const std::string&                name,
+		const std::string&                materialFile,
+		const int                         counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
-		const std::vector<GLuint>& indices);
+		const std::vector<GLuint>&        indices);
 
 	Mesh(
-		const std::string& name,
-		const std::string& materialFile,
-		const int counter[],
+		const std::string&                name,
+		const std::string&                materialFile,
+		const int                         counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
-		const std::vector<GLuint>& indices,
-		const std::vector<Texture*>& textures);
+		const std::vector<GLuint>&        indices,
+		const std::vector<Texture*>&      textures);
 
 	Mesh(
-		const std::string& name,
-		const std::string& materialFile,
-		const int counter[],
+		const std::string&                name,
+		const std::string&                materialFile,
+		const int                         counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
-		const std::vector<GLuint>& posIndices,
-		const std::vector<GLuint>& normalIndices,
-		const std::vector<GLuint>& texCoordIndices);
+		const std::vector<GLuint>&        posIndices,
+		const std::vector<GLuint>&        normalIndices,
+		const std::vector<GLuint>&        texCoordIndices);
 
 	Mesh(
-		const std::string& name,
-		const std::string& materialFile,
-		const int counter[],
+		const std::string&                name,
+		const std::string&                materialFile,
+		const int                         counter[],
 		const std::vector<Math::Vector3>& posBuf, 
 		const std::vector<Math::Vector3>& normalBuf, 
 		const std::vector<Math::Vector2>& texCoords,
-		const std::vector<GLuint>& posIndices,
-		const std::vector<GLuint>& normalIndices,
-		const std::vector<GLuint>& texCoordIndices,
-		const std::vector<Texture*>& textures);
+		const std::vector<GLuint>&        posIndices,
+		const std::vector<GLuint>&        normalIndices,
+		const std::vector<GLuint>&        texCoordIndices,
+		const std::vector<Texture*>&      textures);
 
     ~Mesh();
 
@@ -114,18 +120,19 @@ public:
 	std::vector<GLuint>   m_indexBuffer;
 	std::vector<Texture*> m_textureList;
 
-	Material* m_pMaterial = nullptr;
+	Material* m_pMaterial = NULL;
+
 private:
 	void initialize();
 
 	void combineVertexData(
-		const int counter[],
+		const int                         counter[],
 		const std::vector<Math::Vector3>& posBuf,
 		const std::vector<Math::Vector3>& normalBuf,
 		const std::vector<Math::Vector2>& texCoords,
-		const std::vector<GLuint>& posIndices,
-		const std::vector<GLuint>& normalIndices,
-		const std::vector<GLuint>& texCoordIndices);
+		const std::vector<GLuint>&        posIndices,
+		const std::vector<GLuint>&        normalIndices,
+		const std::vector<GLuint>&        texCoordIndices);
 
 	bool findSimilarVertex(const std::map<Vertex, GLuint>& map,
                            const Vertex& vertex, GLuint* index);
