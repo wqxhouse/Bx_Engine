@@ -4,8 +4,8 @@
 
 enum PolyMode
 {
-	WIREFRAME = 0x00000000,
-	TRIANGLE  = 0x00000001,
+    WIREFRAME = 0x00000000,
+    TRIANGLE  = 0x00000001,
 };
 
 enum RenderingMethod
@@ -20,6 +20,12 @@ enum Antialasing
     LOW   = 0x00000002,
     HIGH  = 0x00000004,
     ELTRA = 0x00000008,
+};
+
+struct Resolution
+{
+    UINT width;
+    UINT height;
 };
 
 struct AmbientOcclutionSetting
@@ -68,12 +74,11 @@ struct GraphicsSetting
 
 struct Setting
 {
-	unsigned int width = 1280;
-    unsigned int height = 720;
+    Resolution resolution = { 1280, 720 };
 
-	float fov = 45.0f;
+    float fov = 45.0f;
 
-	PolyMode polyMode = PolyMode::TRIANGLE;
+    PolyMode polyMode = PolyMode::TRIANGLE;
 
-	GraphicsSetting m_graphicsSetting;
+    GraphicsSetting m_graphicsSetting;
 };
