@@ -142,7 +142,7 @@ void OpenGLTemplate::createDefaultScene()
     pScene->addModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
-    pScene->addModel(
+    /*pScene->addModel(
         "../resources/models/buddha/buddha.obj",
         "../resources/models/buddha/buddha.mtl",
         new Trans(glm::vec3(10.0f, -30.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
