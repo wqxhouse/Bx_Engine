@@ -59,6 +59,7 @@ void UniformBufferMgr::bindUniformBuffer(
     {
         glUniformBlockBinding(program, shaderLocation, uniformBufferBindIndex);
 
+        // TODO: No need to bind buffer base every time
         UniformBuffer* pUniformBuffer = m_pUniformBindBlockList[uniformBufferBindIndex];
         glBindBufferBase(GL_UNIFORM_BUFFER, uniformBufferBindIndex, pUniformBuffer->getUniformbufferHandle());
     }

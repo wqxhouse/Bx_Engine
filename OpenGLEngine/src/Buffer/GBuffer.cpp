@@ -2,8 +2,14 @@
 
 #include "../Context/Scene.h"
 
-GBuffer::GBuffer(const UINT width, const UINT height)
-    : m_gFramebuffer(5), m_width(width), m_height(height)
+GBuffer::GBuffer(
+    Scene*       pScene,
+    const UINT   width,
+    const UINT   height)
+    : m_gFramebuffer(6),
+      m_pScene(pScene),
+      m_width(width),
+      m_height(height)
 {
 
 }
@@ -21,7 +27,7 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
-                                              GL_COLOR_ATTACHMENT0,
+                                              GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -31,7 +37,7 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
-                                              GL_COLOR_ATTACHMENT1,
+                                              GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -41,7 +47,7 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
-                                              GL_COLOR_ATTACHMENT2,
+                                              GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -51,7 +57,7 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
-                                              GL_COLOR_ATTACHMENT3,
+                                              GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -61,10 +67,13 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
-                                              GL_COLOR_ATTACHMENT4,
+                                              GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
+
+    m_gFramebuffer.createRenderbufferAttachment(
+        FRAMEBUFFER_DEPTH_RENDERBUFFER_ATTACHMENT, m_width, m_height);
 
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     BOOL hs = m_gShader.linkProgram();
@@ -75,19 +84,27 @@ BOOL GBuffer::initialize()
         assert(FALSE);
     }
 
+    m_pScene->GetUniformBufferMgr()->bindUniformBuffer(
+        m_pScene->GetMaterialUniformBufferIndex(),
+        m_gShader.GetShaderProgram(),
+        "gMaterial");
+
     return hs;
 }
 
-void GBuffer::drawGBuffer(Scene* pScene)
+void GBuffer::drawGBuffer()
 {
     m_gShader.useProgram();
     m_gFramebuffer.drawFramebuffer();
 
-    size_t modelSize = pScene->GetModelSize();
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    size_t modelSize = m_pScene->GetModelSize();
     for (size_t i = 0; i < modelSize; ++i)
     {
-        Model* pModel = pScene->GetModelPtr(i);
-        Camera* pCam  = pScene->GetActivateCamera();
+        Model* pModel = m_pScene->GetModelPtr(i);
+        Camera* pCam  = m_pScene->GetActivateCamera();
 
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
         glm::mat4 wvp = pCam->GetProjectionMatrix() * pCam->GetViewMatrix() * worldTransMatrix;
@@ -100,7 +117,8 @@ void GBuffer::drawGBuffer(Scene* pScene)
             glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, glm::value_ptr(worldTransMatrix));
             glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
-            pModel->updateMaterial(pScene->GetUniformBufferMgr(), pScene->GetMaterialUniformBufferIndex());
+            pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
+                                   m_pScene->GetMaterialUniformBufferIndex());
             pModel->draw();
         }
         else
