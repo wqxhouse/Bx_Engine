@@ -12,6 +12,7 @@ Framebuffer::~Framebuffer()
         SafeDelete(pTexture);
     }
 
+    glDeleteRenderbuffers(1, &m_depthRenderBufferHandle);
     glDeleteFramebuffers(1, &m_framebufferHandle);
 }
 
@@ -53,11 +54,58 @@ void Framebuffer::createFramebufferTexture2D(
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    m_framebufferAttachmentsList.push_back(attachmentType);
+}
+
+void Framebuffer::createRenderbufferAttachment(
+    const FboRenderbufferAttachmentType attachmentType,
+    const UINT                          m_depthBufWidth,
+    const UINT                          m_depthBufHeight)
+{
+    GLenum attachment;
+    GLenum attachmentFormat;
+
+    switch (attachmentType)
+    {
+        case FRAMEBUFFER_COLOR_RENDERBUFFER_ATTACHMENT:
+            // TODO
+            break;
+
+        case FRAMEBUFFER_DEPTH_RENDERBUFFER_ATTACHMENT:
+            attachment       = GL_DEPTH_ATTACHMENT;
+            attachmentFormat = GL_DEPTH_COMPONENT;
+            break;
+
+        case FRAMEBUFFER_STENCIL_RENDERBUFFER_ATTACHMENT:
+            attachment       = GL_STENCIL_ATTACHMENT;
+            attachmentFormat = GL_STENCIL_COMPONENTS;
+            break;
+
+        case FRAMEBUFFER_DEPTH_STENCIL_RENDERBUFFER_ATTACHMENT:
+            attachment       = GL_DEPTH_STENCIL_ATTACHMENT;
+            attachmentFormat = GL_DEPTH24_STENCIL8; // Is this correct? Need varify.
+            break;
+
+        default:
+            printf("Unsupported render buffer type!");
+            assert(FALSE);
+    }
+
+    glGenRenderbuffers(1, &m_depthRenderBufferHandle);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderBufferHandle);
+    glRenderbufferStorage(GL_RENDERBUFFER, attachmentFormat, m_depthBufWidth, m_depthBufHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_depthRenderBufferHandle);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Framebuffer::drawFramebuffer()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+    glDrawBuffers(m_framebufferAttachmentsList.size(), m_framebufferAttachmentsList.data());
 }
 
 void Framebuffer::readFramebuffer(

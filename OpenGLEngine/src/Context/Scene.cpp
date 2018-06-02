@@ -73,7 +73,7 @@ BOOL Scene::initialize()
     // Deferred shading
     //if (hs == TRUE && setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
     {
-        m_pGBuffer = new GBuffer(setting.width, setting.height);
+        m_pGBuffer = new GBuffer(this, setting.width, setting.height);
         hs = m_pGBuffer->initialize();
     }
 
@@ -128,13 +128,11 @@ void Scene::draw()
 
     if (setting.m_graphicsSetting.shadingMethod == RenderingMethod::FORWARD_RENDERING)
     {
-        m_pGBuffer->drawGBuffer(this);
         drawScene();
-
     }
     else
     {
-        m_pGBuffer->drawGBuffer(this);
+        m_pGBuffer->drawGBuffer();
         deferredDrawScene();
     }
 }

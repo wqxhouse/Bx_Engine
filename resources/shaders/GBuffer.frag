@@ -1,6 +1,6 @@
 #version 440 core
 
-layout (std140) uniform material
+layout (std140) uniform gMaterial
 {
 	vec3 ka;
 	vec3 kd;

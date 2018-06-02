@@ -3,6 +3,14 @@
 #include "../Core/OpenGLPCH.h"
 #include "../Texture/Texture.h"
 
+enum FboRenderbufferAttachmentType
+{
+    FRAMEBUFFER_COLOR_RENDERBUFFER_ATTACHMENT,
+    FRAMEBUFFER_DEPTH_RENDERBUFFER_ATTACHMENT,
+    FRAMEBUFFER_STENCIL_RENDERBUFFER_ATTACHMENT,
+    FRAMEBUFFER_DEPTH_STENCIL_RENDERBUFFER_ATTACHMENT,
+};
+
 class Framebuffer final
 {
 public:
@@ -22,6 +30,11 @@ public:
         const GLenum wrapMethod = GL_CLAMP,
         const BOOL   mipmap     = GL_FALSE);
 
+    void createRenderbufferAttachment(
+        const FboRenderbufferAttachmentType attachmentType,
+        const UINT                          m_depthBufWidth,
+        const UINT                          m_depthBufHeight);
+
     void drawFramebuffer();
     void readFramebuffer(
         const GLenum texUnit,
@@ -36,9 +49,11 @@ public:
 
 protected:
     GLuint m_framebufferHandle;
+    GLuint m_depthRenderBufferHandle;
 
 private:
     BOOL checkFramebufferStatus() const;
 
     std::vector<Texture*> m_pAttachedTextures;
+    std::vector<GLenum>   m_framebufferAttachmentsList;
 };
