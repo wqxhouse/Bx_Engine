@@ -24,19 +24,6 @@ public:
         const GLenum wrapMethod = GL_CLAMP,
         const BOOL   mipmap     = GL_FALSE);
 
-    /*void createFramebufferTexture3D(
-        const GLenum texUnit,
-        const GLenum attachmentType,
-        const UINT   texWidth,
-        const UINT   texHeight,
-        const UINT   layers,
-        const UINT   samples,
-        const GLenum loadFormat,
-        const GLenum storeFormat,
-        const GLenum texDataType,
-        const GLenum wrapMethod = GL_CLAMP,
-        const BOOL   mipmap     = GL_FALSE);*/
-
     void createRenderbufferAttachment(
         const FboRenderbufferAttachmentType attachmentType,
         const UINT                          m_depthBufWidth,
