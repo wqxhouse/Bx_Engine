@@ -8,13 +8,18 @@ class Scene;
 class GBuffer
 {
 public:
-    GBuffer(const UINT width, const UINT height);
+    GBuffer(
+        Scene*       pScene,
+        const UINT   width,
+        const UINT   height);
     ~GBuffer();
 
     BOOL initialize();
-    void drawGBuffer(Scene* pScene);
+    void drawGBuffer();
 
 private:
+    Scene*      m_pScene; // Pointer to the scene
+
     Framebuffer m_gFramebuffer;
     Shader      m_gShader;
 
