@@ -60,7 +60,7 @@ BOOL GBuffer::initialize()
                                               m_height,
                                               1,
                                               GL_RGBA,
-                                              GL_RGBA,
+                                              GL_RGBA16F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -98,7 +98,7 @@ BOOL GBuffer::initialize()
 
 void GBuffer::drawGBuffer()
 {
-    m_gShader.useProgram();
+    GLuint gShaderProgram = m_gShader.useProgram();
     m_gFramebuffer.drawFramebuffer();
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -113,16 +113,27 @@ void GBuffer::drawGBuffer()
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
         glm::mat4 wvp = pCam->GetProjectionMatrix() * pCam->GetViewMatrix() * worldTransMatrix;
 
-        GLint worldMatrixLocation = glGetUniformLocation(m_gShader.GetShaderProgram(), "worldMatrix");
-        GLint wvpLocation         = glGetUniformLocation(m_gShader.GetShaderProgram(), "wvp");
+        GLint worldMatrixLocation = glGetUniformLocation(gShaderProgram, "worldMatrix");
+        GLint lightTransLocation  = glGetUniformLocation(gShaderProgram, "lightTransWVP");
+        GLint wvpLocation         = glGetUniformLocation(gShaderProgram, "wvp");
 
-        if (worldMatrixLocation >= 0 && wvpLocation >= 0)
+        if (worldMatrixLocation >= 0 && lightTransLocation >= 0 && wvpLocation >= 0)
         {
+            ShadowMap* pShadowMap = m_pScene->GetShadowMap();
+
             glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, glm::value_ptr(worldTransMatrix));
+
+            glm::mat4 lightTransWVP = 
+                pShadowMap->GetLightTransVP() * pModel->m_pTrans->GetTransMatrix();
+            glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
+
             glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
             pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
                                    m_pScene->GetMaterialUniformBufferIndex());
+
+            pShadowMap->readShadowMap(GL_TEXTURE0, gShaderProgram, "shadowMapSampler", 0);
+
             pModel->draw();
         }
         else

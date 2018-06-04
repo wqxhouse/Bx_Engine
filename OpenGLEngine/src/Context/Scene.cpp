@@ -350,12 +350,13 @@ void Scene::deferredDrawScene()
         glm::mat4 prospectMatrix = activeCamPtr->GetProjectionMatrix();
         glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
 
-        GLint tranMatrixLocation = glGetUniformLocation(gShaderProgram, "wvp");
+        GLint tranLocation       = glGetUniformLocation(gShaderProgram, "wvp");
         GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
 
-        if (tranMatrixLocation >= 0 && eyeLocation >= 0)
+        if (tranLocation >= 0 && eyeLocation >= 0)
         {
-            glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+            glUniformMatrix4fv(tranLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+
             glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
             pModel->drawModelPos();

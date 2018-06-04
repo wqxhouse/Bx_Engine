@@ -58,6 +58,8 @@ public:
     inline UniformBufferMgr* GetUniformBufferMgr()      { return &m_uniformBufferMgr;           }
     inline GLuint GetMaterialUniformBufferIndex() const { return m_materialUniformBufferIndex;  }
 
+    inline ShadowMap* GetShadowMap()              const { return m_pShadowMap; }
+
     void setSceneShader(
         char* const vertexShaderFile,
         char* const fragmentShaderFile);
