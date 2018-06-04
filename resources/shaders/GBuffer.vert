@@ -16,5 +16,6 @@ void main()
     posWorld     = (worldMatrix * vec4(position, 1.0f)).xyz;
     normalWorld  = (worldMatrix * vec4(normal, 0.0f)).xyz;
     fragTexCoord = texCoord;
+    
     gl_Position  = wvp * vec4(position, 1.0f);
 }
