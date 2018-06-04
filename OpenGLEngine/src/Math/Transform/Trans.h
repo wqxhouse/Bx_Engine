@@ -7,27 +7,35 @@
 class Trans
 {
 public:
-    Trans(glm::vec3 pos, glm::vec3 center, glm::vec3 up)
+    Trans(
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up)
         : scale(1.0f, 1.0f, 1.0f),
           pitch(0.0f), yaw(0.0f), roll(0.0f)
 	{
 		this->pos = pos;
 		this->front = glm::normalize(center - pos);
-		this->up = glm::normalize(up);
+		this->up    = glm::normalize(up);
 		this->right = glm::normalize(glm::cross(front, up));
 
-        m_transFlags.flags = 0;
-
         initialize();
+
+        m_transFlags.flags = 0;
 	}
 
-    Trans(glm::vec3 pos, glm::vec3 center, glm::vec3 up,
-        glm::vec3 scale,
-        float pitch, float yaw, float roll)
+    Trans(
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up,
+        const glm::vec3& scale,
+        const float      pitch,
+        const float      yaw,
+        const float      roll)
     {
         this->pos = pos;
         this->front = glm::normalize(center - pos);
-        this->up = glm::normalize(up);
+        this->up    = glm::normalize(up);
         this->right = glm::normalize(glm::cross(front, up));
 
         this->scale = scale;
@@ -35,9 +43,9 @@ public:
         this->yaw   = yaw;
         this->roll  = roll;
 
-        m_transFlags.flags = 0;
-
         initialize();
+
+        m_transFlags.flags = 0;
     }
 
     void update();
@@ -47,9 +55,29 @@ public:
         return pos;
     }
 
-	inline glm::mat4 GetViewMat() const
+    inline glm::vec3 GetFront() const
+    {
+        return front;
+    }
+
+    inline glm::vec3 GetRight() const
+    {
+        return right;
+    }
+
+    inline glm::vec3 GetUp() const
+    {
+        return up;
+    }
+
+	inline glm::mat4 GetViewMat()
 	{
-		return glm::lookAt(pos, pos + front, up);
+        if (m_transFlags.bits.viewFlag == 1)
+        {
+            viewMatrix = glm::lookAt(pos, pos + front, up);
+            m_transFlags.bits.viewFlag = 0;
+        }
+		return viewMatrix;
 	}
 
     inline glm::mat4 GetTranslateMatrix()
@@ -76,7 +104,7 @@ public:
 
     glm::mat4 GetTransMatrix();
 
-    inline void TransPos(const glm::vec3 trans)
+    inline void TransPos(const glm::vec3& trans)
     {
         this->pos += trans;
 
@@ -84,7 +112,22 @@ public:
         m_transFlags.bits.posFlag = 1;
     }
 
-    inline void SetScale(const glm::vec3 scale)
+    inline void SetTrans(
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up)
+    {
+        this->pos   = pos;
+        this->front = glm::normalize(center - pos);
+        this->up    = glm::normalize(up);
+        this->right = glm::normalize(glm::cross(front, up));
+
+        m_transFlags.bits.transFlag = 1;
+        m_transFlags.bits.posFlag   = 1;
+        m_transFlags.bits.viewFlag  = 1;
+    }
+
+    inline void SetScale(const glm::vec3& scale)
     {
         this->scale = scale;
 
@@ -143,7 +186,7 @@ private:
             UINT rotationFlag : 1;
             UINT viewFlag     : 1;
         private:
-            UINT reserve      : 29;
+            UINT reserve      : 27;
         }bits;
     }m_transFlags;
 };

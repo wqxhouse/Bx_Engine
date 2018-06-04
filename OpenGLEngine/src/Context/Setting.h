@@ -24,7 +24,7 @@ struct GraphicsSetting
 {
 public:
     Antialasing antialasing = Antialasing::HIGH;
-    RenderingMethod shadingMethod = RenderingMethod::FORWARD_RENDERING;
+    RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
 };
 
 struct Setting

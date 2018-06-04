@@ -11,15 +11,15 @@ Camera::Camera(
     const float      farClip)
 	: m_cameraType(type),
       m_trans(pos, center, up),
-      curFront(glm::normalize(center - pos)),
+      curFront(m_trans.GetFront()),
+      curRight(m_trans.GetRight()),
       worldUp(up),
       m_nearClip(nearClip),
       m_farClip(farClip)
 {
-	this->speed    = speed;
-	this->curRight = m_trans.right;
+	this->speed = speed;
 
-	m_viewMatrix = glm::lookAt(pos, center, up);
+	m_viewMatrix = m_trans.GetViewMat();
 }
 
 Camera::~Camera()
@@ -93,4 +93,17 @@ void Camera::update(float deltaTime)
 	{
 		speed = originSpeed;
 	}
+}
+
+void Camera::setCamTrans(
+    const glm::vec3& pos,
+    const glm::vec3& center,
+    const glm::vec3& up)
+{
+    m_trans.SetTrans(pos, center, up);
+    
+    curFront = m_trans.GetFront();
+    curRight = m_trans.GetRight();
+
+    m_viewMatrix = m_trans.GetViewMat();
 }

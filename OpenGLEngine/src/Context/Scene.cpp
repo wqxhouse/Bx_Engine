@@ -8,7 +8,7 @@
 
 Scene::Scene(const Setting& setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      m_directionalLight(Vector3(-0.8f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+      m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCamera(0),
       m_uniformBufferMgr(128)
@@ -31,6 +31,7 @@ BOOL Scene::initialize()
 
     m_transUniformbufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
+
     m_uniformBufferMgr.bindUniformBuffer(
         m_transUniformbufferIndex,
         m_sceneShader.GetShaderProgram(),
@@ -71,7 +72,10 @@ BOOL Scene::initialize()
     hs = m_pShadowMap->initialize();
 
     // Deferred shading
-    //if (hs == TRUE && setting.m_graphicsSetting.shadingMethod == RenderingMethod::DEFERRED_RENDERING)
+    m_defferedRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
+    m_defferedRendingShader.linkProgram();
+    
+    if (hs == TRUE && setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING)
     {
         m_pGBuffer = new GBuffer(this, setting.width, setting.height);
         hs = m_pGBuffer->initialize();
@@ -114,24 +118,23 @@ void Scene::draw()
 
     shadowPass();
 
-    m_uniformBufferMgr.
-        updateUniformBufferData(
+    m_uniformBufferMgr.updateUniformBufferData(
             m_directionalLightUniformBufferIndex,
             m_directionalLight.getDataSize(),
             m_directionalLight.getDataPtr());
 
-    m_uniformBufferMgr.
-        updateUniformBufferData(
+    m_uniformBufferMgr.updateUniformBufferData(
             m_pointLightUniformBufferIndex,
             m_pointLight.getDataSize(),
             m_pointLight.getDataPtr());
 
-    if (setting.m_graphicsSetting.shadingMethod == RenderingMethod::FORWARD_RENDERING)
+    if (setting.m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
     {
         drawScene();
     }
     else
     {
+        drawScene();
         m_pGBuffer->drawGBuffer();
         deferredDrawScene();
     }
@@ -188,9 +191,6 @@ Scene::~Scene()
     }
     m_pTextureList.clear();
 
-    //SafeDelete(m_pLightCamera);
-    //SafeDelete(m_pDirectionalLightCamera);
-
     SafeDelete(m_pShadowMap);
     SafeDelete(m_pGBuffer);
 }
@@ -207,10 +207,8 @@ void Scene::shadowPass()
     m_pShadowMap->update(&m_directionalLight);
 
     glCullFace(GL_FRONT);
-    //glDisable(GL_CULL_FACE);
     m_pShadowMap->drawShadowMap(this);
     glCullFace(GL_BACK);
-    //glEnable(GL_CULL_FACE);
 }
 
 void Scene::drawScene()
@@ -245,7 +243,7 @@ void Scene::drawScene()
             m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
 
         GLint eyeHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "eyePos");
-        glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->getTrans().GetPos()));
+        glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
         m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
 
@@ -266,6 +264,43 @@ void Scene::drawScene()
 
 void Scene::deferredDrawScene()
 {
+    assert(setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
+
+    GLuint gShaderProgram = m_defferedRendingShader.useProgram();
+    m_pGBuffer->readGBuffer(gShaderProgram);
+
+    Camera* activeCamPtr = m_pCameraList[m_activeCamera];
+    
+    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+    {
+        Model* pModel = m_pSceneModelList[i];
+
+        glm::mat4 worldMatrix = pModel->m_pTrans->GetTransMatrix();
+        glm::mat4 viewMatrix = activeCamPtr->GetViewMatrix();
+        glm::mat4 prospectMatrix = activeCamPtr->GetProjectionMatrix();
+        glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
+
+        GLint tranMatrixLocation = glGetUniformLocation(gShaderProgram, "wvp");
+        GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
+
+        //if (tranMatrixLocation >= 0 && eyeLocation >= 0)
+        {
+            glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+            glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
+
+            pModel->drawModelPos();
+        }
+        //else
+        {
+            //printf("Unable to get wvp matrix location in shadowMap shader");
+            //assert(FALSE);
+        }
+    }
+
+    m_defferedRendingShader.finishProgram();
 }
 
 void Scene::addModel(

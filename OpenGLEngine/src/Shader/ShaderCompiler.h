@@ -14,7 +14,7 @@ public:
 	const char* getDefaultPath();
 
 	//Compile vertex and fragment shader, then link them
-	int compileShader(
+    BOOL compileShader(
         const char*  vertexShaderPath,
         const char*  vertexShaderFile,
 		const char*  fragmentShaderPath,
@@ -23,7 +23,7 @@ public:
 		unsigned int vertexShaderSourceSize = 8192,
         unsigned int fragShaderSourceSize   = 8192);
 
-	int compileShader(
+	BOOL compileShader(
         const char*  vertexShaderFile,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,

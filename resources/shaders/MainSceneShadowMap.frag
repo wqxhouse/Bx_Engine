@@ -14,7 +14,7 @@ uniform sampler2DMS shadowMapSampler;
 
 layout (std140) uniform directionalLightUniformBlock
 {
-    DirectionalLight m_directionallight;
+    DirectionalLight m_directionalLight;
 };
 
 layout (std140) uniform pointLightUniformBlock
@@ -82,12 +82,11 @@ void main()
     
     //if (dis2 <= radius2)
     {
-        vec3 view = normalize(eyePos - posWorld);
-
         //vec3 lightColor = m_pointLight.lightBase.color;
         
-        vec3 dir        = m_directionallight.dir;
-        vec3 lightColor = m_directionallight.lightBase.color;
+        vec3 view       = normalize(eyePos - posWorld);
+        vec3 dir        = m_directionalLight.dir;
+        vec3 lightColor = m_directionalLight.lightBase.color;
         
         float NoL = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
         vec3 reflection = normalize(2 * NoL * normalWorld + dir);
@@ -107,14 +106,14 @@ void main()
         // Shadow casting(specular)
         // specColor *= shadowSpecularAttenuation;
         
-        outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
+        outColor = (vec4((/*ka +*/ diffuseColor/* + specColor*/), 1.0f));// * texColor;
         
         // Shadow casting
-        outColor *= shadowDiffuseAttenuation;
+        //outColor *= shadowDiffuseAttenuation;
         
         //outColor = vec4(shadowDiffuseAttenuation, shadowDiffuseAttenuation, shadowDiffuseAttenuation, 1.0f);
         // outColor = vec4(normalWorld.xyz, 1.0f);
-        vec3 posLight = posLightProj.xyz / posLightProj.w;
+        /*vec3 posLight = posLightProj.xyz / posLightProj.w;
         posLight = posLight * 0.5f + 0.5f;
         posLight.x = posLight.x * 1280.0f;
         posLight.y = posLight.y * 720.0f;
@@ -131,7 +130,7 @@ void main()
                 }
             }
         }
-        depth *= 0.25f;
+        depth *= 0.25f;*/
         
         //outColor = vec4(depth, depth, depth, 1.0f);
     }

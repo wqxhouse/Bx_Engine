@@ -83,6 +83,7 @@ private:
 	std::vector<Texture*> m_pTextureList;
 
     Shader m_sceneShader;
+    Shader m_defferedRendingShader;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
@@ -98,11 +99,6 @@ private:
     // Shadow map test
     void shadowPass();
     ShadowMap* m_pShadowMap;
-
-    /*OrthographicCamera* m_pDirectionalLightCamera;
-    ProspectiveCamera*  m_pLightCamera;
-    Shader              m_shadowMapShader;
-    DepthFramebuffer    m_shadowMap;*/
 
     // Deferred shading
     void deferredDrawScene();

@@ -25,7 +25,8 @@ public:
         const UINT   texWidth,
         const UINT   texHeight,
         const UINT   samples,
-        const GLenum format,
+        const GLenum loadFormat,
+        const GLenum storeFormat,
         const GLenum texDataType,
         const GLenum wrapMethod = GL_CLAMP,
         const BOOL   mipmap     = GL_FALSE);

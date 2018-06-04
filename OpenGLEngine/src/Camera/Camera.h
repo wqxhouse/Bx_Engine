@@ -33,9 +33,14 @@ public:
 
     inline CameraType GetCameraType() const { return m_cameraType; }
 
-    inline Trans getTrans() const { return m_trans; }
-    inline glm::mat4 GetViewMatrix() const { return m_viewMatrix; }
+    inline Trans     GetTrans()            const { return m_trans; }
+    inline glm::mat4 GetViewMatrix()       const { return m_viewMatrix; }
     inline glm::mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
+
+    void setCamTrans(
+        const glm::vec3& pos,
+        const glm::vec3& center,
+        const glm::vec3& up);
 
 protected:
     Trans m_trans;

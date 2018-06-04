@@ -18,12 +18,21 @@ ShadowMap::~ShadowMap()
 
 BOOL ShadowMap::initialize()
 {
+
+    float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
+    float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
+
+    m_pLightCamera = new OrthographicCamera(
+        glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
+        0.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+
     m_shadowMapFramebuffer.createFramebuffer();
     m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                                       GL_DEPTH_ATTACHMENT,
                                                       m_shadowMapWidth,
                                                       m_shadowMapHeight,
                                                       m_shadowMapSamples,
+                                                      GL_DEPTH_COMPONENT,
                                                       GL_DEPTH_COMPONENT,
                                                       GL_FLOAT,
                                                       GL_CLAMP_TO_BORDER,
@@ -69,9 +78,7 @@ void ShadowMap::update(Light* pLight)
     float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
     float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
 
-    m_pLightCamera = new OrthographicCamera(
-        -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
-        0.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+    m_pLightCamera->setCamTrans(-glmLightDir * lightPosScale, glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void ShadowMap::drawShadowMap(Scene* pScene)
@@ -118,7 +125,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
 
 void ShadowMap::readShadowMap(
     const GLenum       texUnit,
-    const UINT         shaderProgram,
+    const GLuint       shaderProgram,
     const std::string& samplerName,
     const UINT         samplerIndex)
 {
