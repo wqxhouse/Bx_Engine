@@ -109,7 +109,7 @@ void main()
         outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
         
         // Shadow casting
-        //outColor *= shadowDiffuseAttenuation;
+        outColor *= shadowDiffuseAttenuation;
         
         //outColor = vec4(shadowDiffuseAttenuation, shadowDiffuseAttenuation, shadowDiffuseAttenuation, 1.0f);
         // outColor = vec4(normalWorld.xyz, 1.0f);

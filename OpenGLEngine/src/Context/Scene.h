@@ -97,10 +97,12 @@ private:
     GLchar compileLog[512];
 
     // Shadow map test
+    BOOL initializeShadowMap();
     void shadowPass();
     ShadowMap* m_pShadowMap;
 
     // Deferred shading
+    BOOL initializeDeferredRendering();
     void deferredDrawScene();
     GBuffer* m_pGBuffer;
 

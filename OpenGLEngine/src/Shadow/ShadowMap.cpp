@@ -59,8 +59,7 @@ BOOL ShadowMap::initialize()
     }
     else
     {
-        printf("Fail to compile shadow map shaders.\n");
-        assert(FALSE);
+        m_shadowMapShader.assertErrors("Fail to compile shadow map shaders.\n");
     }
 
     return hs;
