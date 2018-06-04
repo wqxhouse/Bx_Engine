@@ -103,4 +103,7 @@ private:
     // Deferred shading
     void deferredDrawScene();
     GBuffer* m_pGBuffer;
+
+    // Test
+    GLuint m_directionalLightUniformBufferIndex2;
 };

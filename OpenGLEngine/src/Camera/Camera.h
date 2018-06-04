@@ -34,7 +34,7 @@ public:
     inline CameraType GetCameraType() const { return m_cameraType; }
 
     inline Trans     GetTrans()            const { return m_trans; }
-    inline glm::mat4 GetViewMatrix()       const { return m_viewMatrix; }
+    inline glm::mat4 GetViewMatrix()             { return m_trans.GetViewMat(); }
     inline glm::mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
 
     void setCamTrans(
@@ -45,7 +45,6 @@ public:
 protected:
     Trans m_trans;
 
-    glm::mat4 m_viewMatrix;
     float speed;
 
     glm::mat4 m_projectionMatrix;

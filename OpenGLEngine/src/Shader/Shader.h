@@ -18,6 +18,8 @@ public:
     GLuint useProgram();
     void finishProgram();
 
+    void assertErrors();
+
     inline GLuint GetShaderProgram() const { return m_shaderProgram; }
 
 private:

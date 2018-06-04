@@ -107,7 +107,7 @@ void UniformBuffer::update(const GLvoid * data)
 
 void UniformBuffer::update(
     const GLsizei dataSize,
-    const GLvoid * data)
+    const GLvoid* data)
 {
     assert(data != NULL);
 

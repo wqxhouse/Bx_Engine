@@ -18,8 +18,6 @@ Camera::Camera(
       m_farClip(farClip)
 {
 	this->speed = speed;
-
-	m_viewMatrix = m_trans.GetViewMat();
 }
 
 Camera::~Camera()
@@ -29,7 +27,6 @@ Camera::~Camera()
 void Camera::translate(glm::vec3 translate)
 {
     m_trans.TransPos(translate * speed);
-    m_viewMatrix = m_trans.GetViewMat();
 }
 
 void Camera::rotate(float pitch, float yaw)
@@ -47,41 +44,42 @@ void Camera::rotate(float pitch, float yaw)
     Math::Vector3 m_right = Math::rotate(
         Math::Vector3(curRight), Math::Vector3(0.0f, 1.0f, 0.0f), glm::radians(-yaw));
 
-    m_trans.front = glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z));
-    m_trans.right = glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z));
-    m_trans.up    = glm::normalize(glm::cross(m_trans.right, m_trans.front));
+    //m_trans.front = glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z));
+    //m_trans.right = glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z));
+    //m_trans.up    = glm::normalize(glm::cross(m_trans.right, m_trans.front));
 
-    m_viewMatrix = m_trans.GetViewMat();
+    m_trans.SetTransBase(glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z)),
+                         glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z)));
 
-    curFront = m_trans.front;
-    curRight = m_trans.right;
+    curFront = m_trans.GetFront();
+    curRight = m_trans.GetRight();
 }
 
 void Camera::update(float deltaTime)
 {
 	if (callbackInfo.keyboardCallBack[GLFW_KEY_W] == 1)
 	{
-		translate(m_trans.front * deltaTime);
+		translate(m_trans.GetFront() * deltaTime);
 	}
 	if (callbackInfo.keyboardCallBack[GLFW_KEY_S] == 1)
 	{
-		translate(-m_trans.front * deltaTime);
+		translate(-m_trans.GetFront() * deltaTime);
 	}
 	if (callbackInfo.keyboardCallBack[GLFW_KEY_A] == 1)
 	{
-		translate(-m_trans.right * deltaTime);
+		translate(-m_trans.GetRight() * deltaTime);
 	}
 	if (callbackInfo.keyboardCallBack[GLFW_KEY_D] == 1)
 	{
-		translate(m_trans.right * deltaTime);
+		translate(m_trans.GetRight() * deltaTime);
 	}
 	if (callbackInfo.keyboardCallBack[GLFW_KEY_Q] == 1)
 	{
-		translate(m_trans.up * deltaTime);
+		translate(m_trans.GetUp() * deltaTime);
 	}
 	if (callbackInfo.keyboardCallBack[GLFW_KEY_E] == 1)
 	{
-		translate(-m_trans.up * deltaTime);
+		translate(-m_trans.GetUp() * deltaTime);
 	}
 
 	static float originSpeed = speed;
@@ -93,6 +91,8 @@ void Camera::update(float deltaTime)
 	{
 		speed = originSpeed;
 	}
+
+    m_trans.update();
 }
 
 void Camera::setCamTrans(
@@ -104,6 +104,4 @@ void Camera::setCamTrans(
     
     curFront = m_trans.GetFront();
     curRight = m_trans.GetRight();
-
-    m_viewMatrix = m_trans.GetViewMat();
 }

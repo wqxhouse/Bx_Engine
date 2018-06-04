@@ -14,23 +14,26 @@ void Trans::initialize()
 
 void Trans::update()
 {
-    glm::mat4 translate = GetTranslateMatrix();
-    glm::mat4 scale     = GetScaleMatrix();
-
-    // TODO: Rotation matrix
-
-    if (m_transFlags.bits.transFlag == 1)
+    if (m_transFlags.flags != 0)
     {
-        transMatrix = translate * scale;
-    }
+        glm::mat4 translate = GetTranslateMatrix();
+        glm::mat4 scale     = GetScaleMatrix();
 
-    if (m_transFlags.bits.viewFlag == 1)
-    {
-        viewMatrix = glm::lookAt(pos, pos + front, up);
-    }
+        // TODO: Rotation matrix
 
-    // Reset all transform matrix flags
-    m_transFlags.flags = 0;
+        if (m_transFlags.bits.transFlag == 1)
+        {
+            transMatrix = translate * scale;
+        }
+
+        if (m_transFlags.bits.viewFlag == 1)
+        {
+            viewMatrix = glm::lookAt(pos, pos + front, up);
+        }
+
+        // Reset all transform matrix flags
+        m_transFlags.flags = 0;
+    }
 }
 
 glm::mat4 Trans::GetTransMatrix()

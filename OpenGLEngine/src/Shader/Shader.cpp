@@ -36,3 +36,9 @@ void Shader::finishProgram()
 {
     glUseProgram(0);
 }
+
+void Shader::assertErrors()
+{
+    printf("Fail to compile shaders.\n");
+    assert(FALSE);
+}

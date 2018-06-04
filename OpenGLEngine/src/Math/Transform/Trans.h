@@ -84,6 +84,8 @@ public:
     {
         if (m_transFlags.bits.posFlag == 1)
         {
+            assert(m_transFlags.bits.viewFlag == 1);
+
             translationMatrix = glm::translate(glm::mat4(), pos);
             m_transFlags.bits.posFlag = 0;
         }
@@ -109,7 +111,8 @@ public:
         this->pos += trans;
 
         m_transFlags.bits.transFlag = 1;
-        m_transFlags.bits.posFlag = 1;
+        m_transFlags.bits.posFlag   = 1;
+        m_transFlags.bits.viewFlag  = 1;
     }
 
     inline void SetTrans(
@@ -125,6 +128,17 @@ public:
         m_transFlags.bits.transFlag = 1;
         m_transFlags.bits.posFlag   = 1;
         m_transFlags.bits.viewFlag  = 1;
+    }
+
+    inline void SetTransBase(
+        const glm::vec3& front,
+        const glm::vec3& right)
+    {
+        this->front = front;
+        this->right = right;
+        this->up    = glm::normalize(glm::cross(right, front));
+
+        m_transFlags.bits.viewFlag = 1;
     }
 
     inline void SetScale(const glm::vec3& scale)
@@ -145,12 +159,13 @@ public:
         m_transFlags.bits.rotationFlag = 1;
     }
 
+private:
+    void initialize();
+
+    // Trans members
     glm::vec3 front;
     glm::vec3 up;
     glm::vec3 right;
-
-private:
-    void initialize();
 
     // Translation
     glm::vec3 pos;
