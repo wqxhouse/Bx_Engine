@@ -60,7 +60,7 @@ void main()
     vec3 ka  = texture(kaTex, gBufferTexCoord).xyz;
     vec3 kd  = texture(kdTex, gBufferTexCoord).xyz;
     vec3 ks  = vec3(gPos.w, gNormal.w, gTexCoord.z);
-    float ns = 1000.0f;//gTexCoord.w;
+    float ns = gTexCoord.w;
     
     /// Shading
     vec3 view       = normalize(eyePos - posWorld);
@@ -75,9 +75,11 @@ void main()
     // Calculate specular color
     vec3 reflection           = normalize(2 * NoL * normalWorld + dir);    
     float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
-    vec3 specularCoefficient  = ks * pow(VoR, ns);
+    vec3 specularCoefficient  = 
+    //vec3(0.0f, 0.0f, 0.0f);
+    ks * pow(VoR, ns);
         
-    vec3 phongShdingColor = clamp(((/*ka +*/ diffuseCoefficient/* + specularCoefficient*/) * lightColor), 0.0f, 1.0f);
+    vec3 phongShdingColor = clamp(((ka + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
     /// Finish Shading
     
     outColor = vec4(phongShdingColor, 1.0f);

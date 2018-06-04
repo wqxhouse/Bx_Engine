@@ -49,7 +49,7 @@ BOOL GBuffer::initialize()
                                               m_height,
                                               1,
                                               GL_RGBA,
-                                              GL_RGBA,
+                                              GL_RGBA32F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);

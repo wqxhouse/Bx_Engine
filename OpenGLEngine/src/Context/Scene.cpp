@@ -33,6 +33,7 @@ BOOL Scene::initialize()
     m_defferedRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
     m_defferedRendingShader.linkProgram();
 
+    /// UBOs initialization
     m_transUniformbufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
 
@@ -56,16 +57,6 @@ BOOL Scene::initialize()
         m_defferedRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
-    // Test
-    /*m_directionalLightUniformBufferIndex2 =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-            m_directionalLight.getDataSize(),
-            m_directionalLight.getDataPtr());
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex2,
-        m_sceneShader.GetShaderProgram(),
-        "directionalLightUniformBlock");*/
-
     // Point light ubo
     m_pointLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
@@ -83,7 +74,7 @@ BOOL Scene::initialize()
             GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);
     m_uniformBufferMgr.bindUniformBuffer(
         m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
-
+    ///
 
     // Shadow map test
     m_pShadowMap = new ShadowMap(
@@ -107,7 +98,6 @@ BOOL Scene::initialize()
     {
         m_sceneShader.assertErrors();
     }
-
 
     return status;
 }
@@ -146,18 +136,10 @@ void Scene::draw()
 
     shadowPass();
 
-    Vector4 lightData[2] =
-    {
-        m_directionalLight.getLightColor(),
-        m_directionalLight.getDir()
-    };
-
     m_uniformBufferMgr.updateUniformBufferData(
             m_directionalLightUniformBufferIndex,
-            //m_directionalLight.getDataSize(),
-            //m_directionalLight.getDataPtr());
-            sizeof(lightData),
-            lightData);
+            m_directionalLight.getDataSize(),
+            m_directionalLight.getDataPtr());
 
     m_uniformBufferMgr.updateUniformBufferData(
             m_pointLightUniformBufferIndex,
@@ -170,7 +152,6 @@ void Scene::draw()
     }
     else
     {
-        //drawScene();
         m_pGBuffer->drawGBuffer();
         deferredDrawScene();
     }
@@ -254,7 +235,7 @@ void Scene::drawScene()
     //ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
 
-#if 1
+#if 0
     Vector3 camPos = activeCamPtr->GetTrans().GetPos();
     printf("%f %f %f\n", camPos.x, camPos.y, camPos.z);
 #endif

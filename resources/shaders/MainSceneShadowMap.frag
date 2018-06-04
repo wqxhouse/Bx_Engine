@@ -106,7 +106,7 @@ void main()
         // Shadow casting(specular)
         // specColor *= shadowSpecularAttenuation;
         
-        outColor = (vec4((/*ka +*/ diffuseColor/* + specColor*/), 1.0f));// * texColor;
+        outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
         
         // Shadow casting
         //outColor *= shadowDiffuseAttenuation;
