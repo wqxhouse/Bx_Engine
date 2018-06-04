@@ -27,13 +27,15 @@ void Framebuffer::createFramebufferTexture2D(
     const UINT   texWidth,
     const UINT   texHeight,
     const UINT   samples,
-    const GLenum format,
+    const GLenum loadFormat,
+    const GLenum storeFormat,
     const GLenum texDataType,
     const GLenum wrapMethod,
     const BOOL   mipmap)
 {
     Texture2D* pTexture2D =
-        new Texture2D(texWidth, texHeight, samples, format, texDataType, wrapMethod, mipmap);
+        new Texture2D(
+            texWidth, texHeight, samples, loadFormat, storeFormat, texDataType, wrapMethod, mipmap);
 
     UINT texIndex = getTextureIndex(texUnit);
 

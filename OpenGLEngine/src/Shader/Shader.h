@@ -15,7 +15,7 @@ public:
 
     BOOL linkProgram();
 
-    void useProgram();
+    GLuint useProgram();
     void finishProgram();
 
     inline GLuint GetShaderProgram() const { return m_shaderProgram; }

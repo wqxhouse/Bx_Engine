@@ -14,6 +14,8 @@ uniform trans
 
 uniform mat4 lightTransWVP;
 
+uniform mat4 wvp2;
+
 out vec3 posWorld;
 out vec3 normalWorld;
 out vec2 fragTexCoord;

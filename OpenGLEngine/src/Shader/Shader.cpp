@@ -19,23 +19,17 @@ void Shader::setShaderFiles(
 
 BOOL Shader::linkProgram()
 {
-    BOOL linkResult = TRUE;
-
-    int result = 
-        m_shaderCompiler.compileShader(
+    BOOL result = m_shaderCompiler.compileShader(
             m_vertexShaderFile, m_fragmentShaderFile, &m_shaderProgram);
 
-    if (result != 0)
-    {
-        linkResult = FALSE;
-    }
-
-    return linkResult;
+    return result;
 }
 
-void Shader::useProgram()
+GLuint Shader::useProgram()
 {
     glUseProgram(m_shaderProgram);
+
+    return m_shaderProgram;
 }
 
 void Shader::finishProgram()

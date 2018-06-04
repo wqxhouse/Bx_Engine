@@ -16,6 +16,7 @@ public:
 
     BOOL initialize();
     void drawGBuffer();
+    void readGBuffer(GLuint shaderProgram);
 
 private:
     Scene*      m_pScene; // Pointer to the scene

@@ -1,0 +1,13 @@
+// Material header file
+
+struct PhongMaterial
+{
+    vec3 ka;
+	vec3 kd;
+	vec4 ks; // ks.rgb + ns
+}
+
+// TODO: PBR
+struct CookTorranceMaterial
+{
+}

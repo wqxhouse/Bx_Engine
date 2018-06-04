@@ -22,7 +22,7 @@ public:
     void drawShadowMap(Scene* pScene);
     void readShadowMap(
         const GLenum       texUnit,
-        const UINT         shaderProgram,
+        const GLuint       shaderProgram,
         const std::string& samplerName,
         const UINT         samplerIndex);
 

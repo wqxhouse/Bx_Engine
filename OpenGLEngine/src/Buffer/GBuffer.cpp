@@ -6,12 +6,11 @@ GBuffer::GBuffer(
     Scene*       pScene,
     const UINT   width,
     const UINT   height)
-    : m_gFramebuffer(6),
+    : m_gFramebuffer(5),
       m_pScene(pScene),
       m_width(width),
       m_height(height)
 {
-
 }
 
 GBuffer::~GBuffer()
@@ -28,6 +27,7 @@ BOOL GBuffer::initialize()
                                               m_height,
                                               1,
                                               GL_RGBA,
+                                              GL_RGBA32F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -38,6 +38,7 @@ BOOL GBuffer::initialize()
                                               m_height,
                                               1,
                                               GL_RGBA,
+                                              GL_RGBA32F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -47,6 +48,7 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
+                                              GL_RGBA,
                                               GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
@@ -58,6 +60,7 @@ BOOL GBuffer::initialize()
                                               m_height,
                                               1,
                                               GL_RGBA,
+                                              GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
@@ -67,6 +70,7 @@ BOOL GBuffer::initialize()
                                               m_width, 
                                               m_height,
                                               1,
+                                              GL_RGBA,
                                               GL_RGBA,
                                               GL_FLOAT,
                                               GL_REPEAT,
@@ -130,4 +134,23 @@ void GBuffer::drawGBuffer()
 
     m_gFramebuffer.finishDrawFramebuffer();
     m_gShader.finishProgram();
+}
+
+void GBuffer::readGBuffer(
+    GLuint shaderProgram)
+{
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE0)->
+        bindTexture(GL_TEXTURE0, shaderProgram, "posTex", 0);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE1)->
+        bindTexture(GL_TEXTURE1, shaderProgram, "normalTex", 1);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE2)->
+        bindTexture(GL_TEXTURE2, shaderProgram, "texCoordTex", 2);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE3)->
+        bindTexture(GL_TEXTURE3, shaderProgram, "kaTex", 3);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE4)->
+        bindTexture(GL_TEXTURE4, shaderProgram, "kdTex", 4);
 }

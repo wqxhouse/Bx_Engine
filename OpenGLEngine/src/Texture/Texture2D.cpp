@@ -8,7 +8,8 @@ Texture2D::Texture2D(
     const UINT   texWidth,
     const UINT   texHeight,
     const UINT   samples,
-    const GLenum format,
+    const GLenum loadFormat,
+    const GLenum storeFormat,
     const GLenum type,
     const GLenum wrapMethod,
     const BOOL   mipmap)
@@ -20,8 +21,7 @@ Texture2D::Texture2D(
     GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
 
     glBindTexture(glTextureType, m_textureHandle);
-    glTexImage2D(glTextureType, 0, format, m_textureWidth, m_textureHeight,
-        0, format, type, 0);
+    glTexImage2D(glTextureType, 0, storeFormat, m_textureWidth, m_textureHeight, 0, loadFormat, type, 0);
 
     if (mipmap == TRUE)
     {
@@ -88,10 +88,10 @@ void Texture2D::setBoarderColor(GLfloat borderColor[4])
     glBindTexture(glTextureType, 0);
 }
 
-void Texture2D::bindTexture(const GLenum textureUnit,
-                            const GLuint shaderProgram,
+void Texture2D::bindTexture(const GLenum       textureUnit,
+                            const GLuint       shaderProgram,
                             const std::string& samplerName,
-                            const int samplerIndex)
+                            const int          samplerIndex)
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
 

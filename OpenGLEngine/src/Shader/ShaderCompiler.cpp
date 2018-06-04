@@ -229,7 +229,7 @@ const char* ShaderCompiler::getDefaultPath()
     return shaderPath;
 }
 
-int ShaderCompiler::compileShader(
+BOOL ShaderCompiler::compileShader(
     const char*  vertexShaderPath,
     const char*  vertexShaderFile, 
     const char*  fragmentShaderPath,
@@ -246,19 +246,21 @@ int ShaderCompiler::compileShader(
 
     setDefaultShaderPath(vertexShaderPath);
     
-    int hs = compileShader(vertexShaderFile, fragmentShaderFile, shaderProgram,
+    BOOL hs = compileShader(vertexShaderFile, fragmentShaderFile, shaderProgram,
         vertexShaderSourceSize, fragmentShaderSourceSize);
 
     return hs;
 }
 
-int ShaderCompiler::compileShader(
+BOOL ShaderCompiler::compileShader(
     const char* vertexShaderFile,
     const char* fragmentShaderFile, 
     OUT GLuint* shaderProgram,
     unsigned int vertexShaderSourceSize,
     unsigned int fragmentShaderSourceSize)
 {
+    BOOL result = TRUE;
+
     GLint success = true;//Indicator of compile result
     char compileLog[512];
 
@@ -279,7 +281,7 @@ int ShaderCompiler::compileShader(
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, compileLog);
         printf("Fail to compile vertex shader.\n%s\n", compileLog);
-        return -1;
+        result = FALSE;
     }
 
     //Compile fragment(pixal) shader
@@ -299,7 +301,7 @@ int ShaderCompiler::compileShader(
     {
         glGetShaderInfoLog(fragShader, 512, NULL, compileLog);
         printf("Fail to compile fragment shader.\n%s\n", compileLog);
-        return -1;
+        result = FALSE;
     }
 
     *shaderProgram = glCreateProgram();	
@@ -323,7 +325,7 @@ int ShaderCompiler::compileShader(
         std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
         glGetProgramInfoLog(*shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
         printf("%s\n", &ProgramErrorMessage[0]);
-        return -1;
+        result = FALSE;
     }
 
     glDeleteShader(vertexShader);
@@ -332,7 +334,7 @@ int ShaderCompiler::compileShader(
     SafeRelease(vertexShaderSource, MALLOC);
     SafeRelease(fragmentShaderSource, MALLOC);
 
-    return 0;
+    return result;
 }
 
 ShaderCompiler::~ShaderCompiler()
