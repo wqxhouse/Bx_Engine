@@ -37,8 +37,8 @@ void Shader::finishProgram()
     glUseProgram(0);
 }
 
-void Shader::assertErrors()
+void Shader::assertErrors(const char* const str)
 {
-    printf("Fail to compile shaders.\n");
+    printf(str);
     assert(FALSE);
 }

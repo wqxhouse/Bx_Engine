@@ -11,7 +11,9 @@ Scene::Scene(const Setting& setting)
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCamera(0),
-      m_uniformBufferMgr(128)
+      m_uniformBufferMgr(128),
+      m_pShadowMap(NULL),
+      m_pGBuffer(NULL)
 {
     this->setting = setting;
 }
@@ -29,10 +31,6 @@ BOOL Scene::initialize()
         m_sceneShader.assertErrors();
     }
 
-    // G-Buffer shader
-    m_defferedRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
-    m_defferedRendingShader.linkProgram();
-
     /// UBOs initialization
     m_transUniformbufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
@@ -47,14 +45,10 @@ BOOL Scene::initialize()
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                m_directionalLight.getDataSize(),
                                                m_directionalLight.getDataPtr());
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
-        m_sceneShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
-        m_defferedRendingShader.GetShaderProgram(),
+        m_sceneShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
     // Point light ubo
@@ -77,20 +71,21 @@ BOOL Scene::initialize()
     ///
 
     // Shadow map test
-    m_pShadowMap = new ShadowMap(
-        static_cast<Light*>(&m_directionalLight), setting.width * 2, setting.height * 2,
-        setting.m_graphicsSetting.antialasing);
-    status = m_pShadowMap->initialize();
+    status = initializeShadowMap();
+    if (status == FALSE)
+    {
+        printf("Failed to initialize shadow map!\n");
+        assert(FALSE);
+    }
 
     // Deferred shading test
-    if (setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING)
+    if (setting.m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
     {
-        m_pGBuffer = new GBuffer(this, setting.width, setting.height);
-        status = m_pGBuffer->initialize();
-
+        status = initializeDeferredRendering();
         if (status == FALSE)
         {
-            m_sceneShader.assertErrors();
+            printf("Failed to initialize G-Buffer!\n");
+            assert(FALSE);
         }
     }
 
@@ -108,25 +103,43 @@ void Scene::update(float deltaTime)
 
     assert(cameraCount > 0);
 
-    if (callbackInfo.keyboardCallBack[GLFW_KEY_1] == 1)
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_1])
     {
         m_activeCamera = 0;
     }
-    else if (callbackInfo.keyboardCallBack[GLFW_KEY_2] == 1)
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_2])
     {
         m_activeCamera = ((1 < cameraCount) ? 1 : m_activeCamera);
     }
-    else if (callbackInfo.keyboardCallBack[GLFW_KEY_3] == 1)
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_3])
     {
         m_activeCamera = ((2 < cameraCount) ? 2 : m_activeCamera);
     }
-    else if (callbackInfo.keyboardCallBack[GLFW_KEY_4] == 1)
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_4])
     {
         m_activeCamera = ((3 < cameraCount) ? 3 : m_activeCamera);
     }
 
     m_pCameraList[m_activeCamera]->update(deltaTime);
     
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
+    {
+        setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_M])
+    {
+        setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+        if (m_pGBuffer == NULL)
+        {
+            BOOL result = initializeDeferredRendering();
+            if (result == FALSE)
+            {
+                printf("Failed to initialize G-Buffer!\n");
+                assert(FALSE);
+            }
+        }
+    }
+
     //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
 }
 
@@ -219,6 +232,19 @@ void Scene::setSceneShader(
     m_sceneShader.setShaderFiles(vertexShaderFile, fragmentShaderFile);
 }
 
+BOOL Scene::initializeShadowMap()
+{
+    BOOL result = TRUE;
+
+    m_pShadowMap = new ShadowMap(
+        static_cast<Light*>(&m_directionalLight), setting.width * 2, setting.height * 2,
+        setting.m_graphicsSetting.antialasing);
+
+    result = m_pShadowMap->initialize();
+
+    return result;
+}
+
 void Scene::shadowPass()
 {
     m_pShadowMap->update(&m_directionalLight);
@@ -279,6 +305,30 @@ void Scene::drawScene()
     m_sceneShader.finishProgram();
 }
 
+BOOL Scene::initializeDeferredRendering()
+{
+    BOOL status = TRUE;
+
+    // G-Buffer shader
+    m_defferedRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
+    m_defferedRendingShader.linkProgram();
+
+    m_pGBuffer = new GBuffer(this, setting.width, setting.height);
+    status = m_pGBuffer->initialize();
+
+    if (status == FALSE)
+    {
+        m_sceneShader.assertErrors();
+    }
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_directionalLightUniformBufferIndex,
+        m_defferedRendingShader.GetShaderProgram(),
+        "directionalLightUniformBlock");
+
+    return status;
+}
+
 void Scene::deferredDrawScene()
 {
     assert(setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
@@ -303,17 +353,17 @@ void Scene::deferredDrawScene()
         GLint tranMatrixLocation = glGetUniformLocation(gShaderProgram, "wvp");
         GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
 
-        //if (tranMatrixLocation >= 0 && eyeLocation >= 0)
+        if (tranMatrixLocation >= 0 && eyeLocation >= 0)
         {
             glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
             glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
             pModel->drawModelPos();
         }
-        //else
+        else
         {
-            //printf("Unable to get wvp matrix location in shadowMap shader");
-            //assert(FALSE);
+            printf("Unable to get wvp matrix location in shadowMap shader");
+            assert(FALSE);
         }
     }
 
