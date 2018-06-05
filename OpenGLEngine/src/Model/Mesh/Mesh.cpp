@@ -113,8 +113,7 @@ void Mesh::initialize()
         break;
     }
 
-    // Unbind VBO/VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // Unbind VAO
     glBindVertexArray(0);
 }
 

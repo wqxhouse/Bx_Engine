@@ -326,6 +326,23 @@ BOOL Scene::initializeDeferredRendering()
         m_defferedRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
+    // G-Buffer Quad initialize
+    glGenVertexArrays(1, &m_gQuadVAO);
+    glGenBuffers(1, &m_gQuadVertexBufObj);
+    glGenBuffers(1, &m_gQuadIndexBufObj);
+
+    glBindVertexArray(m_gQuadVAO);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, m_gQuadVertexBufObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(m_gQuadVertices), m_gQuadVertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_gQuadIndexBufObj);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_gQuadIndices), m_gQuadIndices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3), 0);
+
+    glBindVertexArray(0);
+
     return status;
 }
 
@@ -341,32 +358,22 @@ void Scene::deferredDrawScene()
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+    GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
+
+    if (eyeLocation >= 0)
     {
-        Model* pModel = m_pSceneModelList[i];
+        glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
-        glm::mat4 worldMatrix = pModel->m_pTrans->GetTransMatrix();
-        glm::mat4 viewMatrix = activeCamPtr->GetViewMatrix();
-        glm::mat4 prospectMatrix = activeCamPtr->GetProjectionMatrix();
-        glm::mat4 wvp = prospectMatrix * viewMatrix * worldMatrix;
-
-        GLint tranLocation       = glGetUniformLocation(gShaderProgram, "wvp");
-        GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
-
-        if (tranLocation >= 0 && eyeLocation >= 0)
-        {
-            glUniformMatrix4fv(tranLocation, 1, GL_FALSE, glm::value_ptr(wvp));
-
-            glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
-
-            pModel->drawModelPos();
-        }
-        else
-        {
-            printf("Unable to get wvp matrix location in shadowMap shader");
-            assert(FALSE);
-        }
+        glBindVertexArray(m_gQuadVAO);
+        glEnableVertexAttribArray(0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
+    else
+    {
+        printf("Unable to get wvp matrix location in shadowMap shader");
+        assert(FALSE);
+    }    
 
     m_defferedRendingShader.finishProgram();
 }
