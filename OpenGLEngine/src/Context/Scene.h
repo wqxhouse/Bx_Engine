@@ -106,23 +106,6 @@ private:
     // Deferred shading
     BOOL initializeDeferredRendering();
     void deferredDrawScene();
-
     GBuffer* m_pGBuffer;
-    GLuint   m_gQuadVAO;
-    GLuint   m_gQuadVertexBufObj;
-    GLuint   m_gQuadIndexBufObj;
 
-    Vector3 m_gQuadVertices[4] =
-    {
-        { -1.0f, -1.0f, 0.0f },
-        {  1.0f, -1.0f, 0.0f },
-        { -1.0f,  1.0f, 0.0f },
-        {  1.0f,  1.0f, 1.0f }
-    };
-
-    UINT m_gQuadIndices[6] =
-    {
-        0, 1, 2,
-        1, 3, 2
-    };
 };

@@ -49,6 +49,7 @@ void main()
     vec4 gNormal   = texture(normalTex, gBufferTexCoord);
     vec4 gTexCoord = texture(texCoordTex, gBufferTexCoord);
     vec4 gKa       = texture(kaTex, gBufferTexCoord);
+    vec4 gKd       = texture(kdTex, gBufferTexCoord);
     
     // Get mesh data
     vec3 posWorld    = gPos.xyz;
@@ -57,7 +58,7 @@ void main()
     
     // Get material data
     vec3 ka  = gKa.xyz;
-    vec3 kd  = texture(kdTex, gBufferTexCoord).xyz;
+    vec3 kd  = gKd.xyz;
     vec3 ks  = vec3(gPos.w, gNormal.w, gTexCoord.z);
     float ns = gTexCoord.w;
     
@@ -83,5 +84,5 @@ void main()
     phongShdingColor       *= shadowAttenuation;
     /// Finish Shading
     
-    outColor = vec4(phongShdingColor, 1.0f);
+    outColor = vec4(phongShdingColor, gKd.w);
 }
