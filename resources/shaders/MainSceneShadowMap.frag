@@ -106,10 +106,16 @@ void main()
         // Shadow casting(specular)
         // specColor *= shadowSpecularAttenuation;
         
-        outColor = (vec4((ka + diffuseColor + specColor), 1.0f));// * texColor;
+        vec3 outColorVec3 = ka + diffuseColor + specColor;// * texColor;
         
         // Shadow casting
-        outColor *= shadowDiffuseAttenuation;
+        outColorVec3*= shadowDiffuseAttenuation;
+        
+        // Gamma correction
+        float gammaCorrection = 1.0f / 2.2f;
+        outColorVec3 = pow(outColorVec3, vec3(gammaCorrection));
+        
+        outColor = vec4(outColorVec3, 1.0f);
         
         //outColor = vec4(shadowDiffuseAttenuation, shadowDiffuseAttenuation, shadowDiffuseAttenuation, 1.0f);
         // outColor = vec4(normalWorld.xyz, 1.0f);

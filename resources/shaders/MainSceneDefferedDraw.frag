@@ -83,6 +83,10 @@ void main()
     float shadowAttenuation = gKa.w;
     phongShdingColor       *= shadowAttenuation;
     /// Finish Shading
+
+    // Gamma correction
+    float gammaCorrection = 1.0f / 2.2f;
+    phongShdingColor = pow(phongShdingColor, vec3(gammaCorrection));
     
     outColor = vec4(phongShdingColor, gKd.w);
 }

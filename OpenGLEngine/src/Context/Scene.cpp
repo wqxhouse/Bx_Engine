@@ -258,7 +258,6 @@ void Scene::drawScene()
 {
     m_sceneShader.useProgram();
 
-    //ProspectiveCamera* activeCamPtr = static_cast<ProspectiveCamera*>(m_pCameraList[m_activeCamera]);
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
 
 #if 0
