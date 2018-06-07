@@ -11,6 +11,7 @@ class ShadowMap
 {
 public:
     ShadowMap(
+        Scene*     pScene,
         Light*     pLight,         ///< The light be casted shadow
         const UINT depthTexWidth,
         const UINT depthTexHeight,
@@ -32,12 +33,22 @@ public:
                m_pLightCamera->GetViewMatrix();
     }
 
+    inline GLuint GetShadowResolutionUniformBufferIndex() const
+    {
+        return m_shadowResolutionUniformBufferIndex;
+    }
+
 private:
     void initializeLightCamera();
 
     Framebuffer m_shadowMapFramebuffer;
     Shader      m_shadowMapShader;
 
+    GLuint m_shadowResolutionUniformBufferIndex;
+    UINT   m_sceneWidth;
+    UINT   m_sceneHeight;
+
+    Scene*  m_pScene;
     Light*  m_pLight;
     Camera* m_pLightCamera;
 

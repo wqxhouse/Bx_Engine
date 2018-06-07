@@ -1,6 +1,8 @@
 #version 440 core
 
 #include <Light.hglsl>
+#include <Material.hglsl>
+#include <Utilities.hglsl>
 
 in vec3 posWorld;
 in vec3 normalWorld;
@@ -24,10 +26,12 @@ layout (std140) uniform pointLightUniformBlock
 
 layout (std140) uniform material
 {
-	vec3 ka;
-	vec3 kd;
-	vec3 ks;
-	vec4 ns;
+	PhongMaterial m_phongMaterial;
+};
+
+uniform shadowMapResolutionUniformBlock
+{
+    ShadowMapResolution m_shadowMapResolution;
 };
 
 uniform vec3 eyePos;
@@ -43,8 +47,8 @@ float castingShadow()
     posLight = posLight * 0.5f + 0.5f;
 	
     // Multisampling, need integer coordinate
-    posLight.x = posLight.x * 1280.0f;
-    posLight.y = posLight.y * 720.0f;
+    posLight.x = posLight.x * 2560.0f; // m_shadowMapResolution.width;
+    posLight.y = posLight.y * 2560.0f; // m_shadowMapResolution.height;
     
 	//float depth = texture(shadowMapSampler, posLight.xy).r;
     float depth = 0.0f;
@@ -93,27 +97,26 @@ void main()
         
         float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
         
-        float specularCoefficient = pow(VoR, ns.w);
+        float specularCoefficient = pow(VoR, m_phongMaterial.ks.w);
         
         float shadowDiffuseAttenuation = castingShadow();
         float shadowSpecularAttenuation = ((shadowDiffuseAttenuation < 1.0f) ? 0.0f : 1.0f);
 
         vec4 texColor = texture(sampler, fragTexCoord);
         
-        vec3 diffuseColor = clamp(NoL * kd * lightColor, 0.0f, 1.0f);
-        vec3 specColor    = clamp(specularCoefficient * ks * lightColor, 0.0f, 1.0f);
+        vec3 diffuseColor = clamp(NoL * m_phongMaterial.kd * lightColor, 0.0f, 1.0f);
+        vec3 specColor    = clamp(specularCoefficient * m_phongMaterial.ks.xyz * lightColor, 0.0f, 1.0f);
         
         // Shadow casting(specular)
         // specColor *= shadowSpecularAttenuation;
         
-        vec3 outColorVec3 = ka + diffuseColor + specColor;// * texColor;
+        vec3 outColorVec3 = m_phongMaterial.ka + diffuseColor + specColor;// * texColor;
         
         // Shadow casting
-        outColorVec3*= shadowDiffuseAttenuation;
+        outColorVec3 *= shadowDiffuseAttenuation;
         
         // Gamma correction
-        float gammaCorrection = 1.0f / 2.2f;
-        outColorVec3 = pow(outColorVec3, vec3(gammaCorrection));
+        outColorVec3 = gammaCorrection(outColorVec3);
         
         outColor = vec4(outColorVec3, 1.0f);
         

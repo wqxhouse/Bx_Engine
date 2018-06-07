@@ -12,7 +12,7 @@
 class Scene
 {
 public:
-	Scene(const Setting & setting);
+	Scene(const Setting& setting);
     BOOL initialize();
 	void update(float deltaTime);
 	void draw();
@@ -68,14 +68,15 @@ public:
 
     inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
 
+    DirectionalLight m_directionalLight;
+
 private:
     void drawScene();
 
-	Setting setting;
+	Setting m_setting;
 
     Vector4 m_backgroundColor;
 
-    DirectionalLight m_directionalLight;
     PointLight       m_pointLight;
 
     std::vector<Camera*> m_pCameraList;

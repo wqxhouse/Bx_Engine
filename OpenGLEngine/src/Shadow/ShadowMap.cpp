@@ -3,11 +3,13 @@
 #include "../Context/Scene.h"
 
 ShadowMap::ShadowMap(
+    Scene*     pScene,         ///< Pointer to the scene
     Light*     pLight,         ///< The light be casted shadow
     const UINT depthTexWidth,
     const UINT depthTexHeight,
     const UINT samples)
-    : m_pLight(pLight),
+    : m_pScene(pScene),
+      m_pLight(pLight),
       m_shadowMapWidth(depthTexWidth),
       m_shadowMapHeight(depthTexWidth),
       m_shadowMapSamples(samples)
@@ -18,13 +20,17 @@ ShadowMap::~ShadowMap()
 
 BOOL ShadowMap::initialize()
 {
-
     float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
     float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
 
+    float offset = -0.0f;
+
     m_pLightCamera = new OrthographicCamera(
         glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
-        0.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);
+        0.0f, Rectangle(-halfWidth + offset,
+                         halfWidth + offset,
+                        -halfHeight + offset,
+                         halfHeight + offset), 0.1f, 10000.0f);
 
     m_shadowMapFramebuffer.createFramebuffer();
     m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
@@ -62,6 +68,16 @@ BOOL ShadowMap::initialize()
         m_shadowMapShader.assertErrors("Fail to compile shadow map shaders.\n");
     }
 
+    // Bind shadow resolution with shadow map
+    UniformBufferMgr* pUniformBufMgr = m_pScene->GetUniformBufferMgr();
+
+    UINT shadowMapResolution[2] = { m_shadowMapWidth, m_shadowMapHeight };
+
+    m_shadowResolutionUniformBufferIndex =
+        pUniformBufMgr->createUniformBuffer(GL_STATIC_DRAW,
+                                            sizeof(shadowMapResolution),
+                                            shadowMapResolution);
+
     return hs;
 }
 
@@ -73,7 +89,7 @@ void ShadowMap::update(Light* pLight)
     Vector3 lightDir = pDirectionalLight->getDir();
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
-    float lightPosScale = 179.0f;
+    float lightPosScale = 1000.0f;
     float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
     float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
 
@@ -88,6 +104,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
     m_shadowMapFramebuffer.drawFramebuffer();
 
     glClear(GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, m_shadowMapWidth, m_shadowMapWidth);
 
     size_t modelSize = pScene->GetModelSize();
     for (size_t i = 0; i < modelSize; ++i)

@@ -26,14 +26,14 @@ void OpenGLTemplate::createDefaultScene()
 
     const float aspectRadio = static_cast<float>(m_setting.width) / static_cast<float>(m_setting.height);
 
-    float halfWidth = static_cast<float>(m_setting.width) * 0.002f;
-    float halfHeight = static_cast<float>(m_setting.width) * 0.002f;
+    float halfWidth = static_cast<float>(m_setting.width * 2) * 0.002f;
+    float halfHeight = static_cast<float>(m_setting.width * 2) * 0.002f;
 
-    /*Vector3 lightDir = m_directionalLight.getDir();
-    glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
+    //Vector3 lightDir = pScene->m_directionalLight.getDir();
+    //glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
-    float lightPosScale = 100.0f;
-    pScene->addOrthographicCamera(
+    //float lightPosScale = 100.0f;
+    /*pScene->addOrthographicCamera(
         -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
         5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);*/
 

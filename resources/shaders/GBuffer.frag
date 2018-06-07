@@ -3,14 +3,19 @@
 */
 #version 440 core
 
+#include <Material.hglsl>
+#include <Utilities.hglsl>
+
 uniform sampler2DMS shadowMapSampler;
+
+layout (std140) uniform shadowMapResolutionUniformBlock
+{
+    ShadowMapResolution m_shadowMapResolution;
+};
 
 layout (std140) uniform gMaterial
 {
-	vec3 ka;
-	vec3 kd;
-	vec3 ks;
-	vec4 ns;
+	PhongMaterial m_phongMaterial;
 };
 
 in vec3 posWorld;
@@ -34,8 +39,8 @@ float castingShadow()
     posLight = posLight * 0.5f + 0.5f;
 	
     // Multisampling, need integer coordinate
-    posLight.x = posLight.x * 1280.0f;
-    posLight.y = posLight.y * 720.0f;
+    posLight.x = posLight.x * 2560.0f;//m_shadowMapResolution.width;
+    posLight.y = posLight.y * 2560.0f;//m_shadowMapResolution.height;
     
 	//float depth = texture(shadowMapSampler, posLight.xy).r;
     float depth = 0.0f;
@@ -67,9 +72,9 @@ void main()
 {    
     float shadowAttenuation = castingShadow();
     
-    posWorldTexture    = vec4(posWorld, ks.x);
-    normalWorldTexture = vec4(normalWorld, ks.y);
-    texCoordTexture    = vec4(fragTexCoord, ks.z, ns.w);
-    kaMaterialTexture  = vec4(ka, shadowAttenuation);
-    kdMaterialTexture  = vec4(kd, 1.0f);
+    posWorldTexture    = vec4(posWorld, m_phongMaterial.ks.x);
+    normalWorldTexture = vec4(normalWorld, m_phongMaterial.ks.y);
+    texCoordTexture    = vec4(fragTexCoord, m_phongMaterial.ks.z, m_phongMaterial.ks.w);
+    kaMaterialTexture  = vec4(m_phongMaterial.ka, shadowAttenuation);
+    kdMaterialTexture  = vec4(m_phongMaterial.kd, 1.0f);
 }

@@ -6,7 +6,7 @@
 //Image loader
 #include "stb_image.h"
 
-Scene::Scene(const Setting& setting)
+Scene::Scene(const Setting& m_setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
@@ -15,7 +15,7 @@ Scene::Scene(const Setting& setting)
       m_pShadowMap(NULL),
       m_pGBuffer(NULL)
 {
-    this->setting = setting;
+    this->m_setting = m_setting;
 }
 
 BOOL Scene::initialize()
@@ -78,8 +78,15 @@ BOOL Scene::initialize()
         assert(FALSE);
     }
 
+    // Shadow map resolution ubo
+    /*m_uniformBufferMgr.bindUniformBuffer(
+        m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
+        m_sceneShader.GetShaderProgram(),
+        "shadowMapResolutionUniformBlock"
+    );*/
+
     // Deferred shading test
-    if (setting.m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
+    if (m_setting.m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
     {
         status = initializeDeferredRendering();
         if (status == FALSE)
@@ -124,11 +131,11 @@ void Scene::update(float deltaTime)
     
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
     {
-        setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+        m_setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_M])
     {
-        setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+        m_setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
         if (m_pGBuffer == NULL)
         {
             BOOL result = initializeDeferredRendering();
@@ -140,7 +147,14 @@ void Scene::update(float deltaTime)
         }
     }
 
-    //m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
+    {
+        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
+    {
+        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+    }
 }
 
 void Scene::draw()
@@ -159,7 +173,9 @@ void Scene::draw()
             m_pointLight.getDataSize(),
             m_pointLight.getDataPtr());
 
-    if (setting.m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
+    glViewport(0, 0, m_setting.width, m_setting.height);
+
+    if (m_setting.m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
     {
         drawScene();
     }
@@ -237,8 +253,8 @@ BOOL Scene::initializeShadowMap()
     BOOL result = TRUE;
 
     m_pShadowMap = new ShadowMap(
-        static_cast<Light*>(&m_directionalLight), setting.width * 2, setting.height * 2,
-        setting.m_graphicsSetting.antialasing);
+        this, static_cast<Light*>(&m_directionalLight), m_setting.width * 2, m_setting.height * 2,
+        m_setting.m_graphicsSetting.antialasing);
 
     result = m_pShadowMap->initialize();
 
@@ -312,7 +328,7 @@ BOOL Scene::initializeDeferredRendering()
     m_defferedRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
     m_defferedRendingShader.linkProgram();
 
-    m_pGBuffer = new GBuffer(this, setting.width, setting.height);
+    m_pGBuffer = new GBuffer(this, m_setting.width, m_setting.height);
     status = m_pGBuffer->initialize();
 
     if (status == FALSE)
@@ -330,7 +346,7 @@ BOOL Scene::initializeDeferredRendering()
 
 void Scene::deferredDrawScene()
 {
-    assert(setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
+    assert(m_setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
 
     GLuint gShaderProgram = m_defferedRendingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);

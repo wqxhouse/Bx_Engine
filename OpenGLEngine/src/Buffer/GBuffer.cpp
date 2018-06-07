@@ -93,6 +93,12 @@ BOOL GBuffer::initialize()
         m_gShader.GetShaderProgram(),
         "gMaterial");
 
+    /*m_pScene->GetUniformBufferMgr()->bindUniformBuffer(
+        m_pScene->GetShadowMap()->GetShadowResolutionUniformBufferIndex(),
+        m_gShader.GetShaderProgram(),
+        "shadowMapResolutionUniformBlock"
+    );*/
+
     // G-Buffer Quad initialize
     glGenVertexArrays(1, &m_gQuadVAO);
     glGenBuffers(1, &m_gQuadVertexBufObj);

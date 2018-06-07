@@ -5,9 +5,11 @@ struct PhongMaterial
     vec3 ka;
 	vec3 kd;
 	vec4 ks; // ks.rgb + ns
-}
+};
 
-// TODO: PBR
 struct CookTorranceMaterial
 {
-}
+    vec3  albedo; float albedoPadding;
+    float roughness;
+    float metallic;
+};

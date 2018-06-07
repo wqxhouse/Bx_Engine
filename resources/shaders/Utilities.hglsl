@@ -1,0 +1,15 @@
+// GLSL Utilities Header
+
+struct ShadowMapResolution
+{
+    float width;
+    float height;
+};
+
+vec3 gammaCorrection(const vec3 color)
+{
+    float gammaCorrectionExponent = 1.0f / 2.2f;
+    vec3 outputColor = pow(color, vec3(gammaCorrectionExponent));
+    
+    return outputColor;
+}

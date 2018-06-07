@@ -56,8 +56,7 @@ public:
         {
             Vector3 ka; float ka_padding;
             Vector3 kd; float kd_padding;
-            Vector3 ks; float ks_padding;
-            Vector3 ns_padding; float ns;
+            Vector3 ks; float ns; // Vector4
         };
         Mat4 m_materialData;
     };

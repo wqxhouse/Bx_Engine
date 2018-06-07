@@ -1,5 +1,7 @@
 #version 440 core
 
+#include <Material.hglsl>
+
 in vec3 posWorld;
 in vec3 normalWorld;
 in vec2 fragTexCoord;
@@ -17,10 +19,7 @@ layout (std140) uniform light
 
 uniform material
 {
-	vec4 ka;
-	vec4 kd;
-	vec4 ks;
-	vec4 ns;
+	PhongMaterial m_phongMaterial;
 };
 
 uniform vec3 eyePos;
@@ -54,13 +53,13 @@ void main()
 	
 	float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
 	
-	float specularCoefficient = pow(VoR, ns.w);
+	float specularCoefficient = pow(VoR, m_phongMaterial.ks.w);
 	
 	float shadowAttenuation = castingShadow();
 
 	vec4 texColor = texture(sampler, fragTexCoord);
-	vec3 diffuseColor = NoL * kd.xyz * lightColor;
-	vec3 specColor = specularCoefficient * ks.xyz * lightColor;
+	vec3 diffuseColor = NoL * m_phongMaterial.kd.xyz * lightColor;
+	vec3 specColor = specularCoefficient * m_phongMaterial.ks.xyz * lightColor;
 	outColor = (/*ka +*/ vec4((diffuseColor + specColor), 1.0f)) * texColor;
 	
 	//outColor *= shadowAttenuation;

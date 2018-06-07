@@ -4,6 +4,7 @@
 #version 440 core
 
 #include <Light.hglsl>
+#include <Utilities.hglsl>
 
 uniform sampler2D posTex;
 uniform sampler2D normalTex;
@@ -85,8 +86,7 @@ void main()
     /// Finish Shading
 
     // Gamma correction
-    float gammaCorrection = 1.0f / 2.2f;
-    phongShdingColor = pow(phongShdingColor, vec3(gammaCorrection));
+    phongShdingColor = gammaCorrection(phongShdingColor);
     
     outColor = vec4(phongShdingColor, gKd.w);
 }
