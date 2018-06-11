@@ -167,7 +167,8 @@ void GBuffer::drawGBuffer()
     }
 
     m_gFramebuffer.finishDrawFramebuffer();
-    m_gShader.finishProgram();
+
+    Shader::FinishProgram();
 }
 
 void GBuffer::readGBuffer(

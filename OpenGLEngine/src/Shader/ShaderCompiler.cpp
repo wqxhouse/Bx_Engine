@@ -31,51 +31,66 @@ void ShaderCompiler::combileShaderPathAndFile(
 void ShaderCompiler::writeToShaderSource(
     FILE*       pFile,
     UINT        sourceSize,
-    UINT        writtenSize,
+    UINT*       writtenSize,
     OUT char*   shaderSource)
 {
-    char fileCharacter;
+    // Assemption: character in one line no longer than 256 characters
+    char line[256];
 
-    UINT size = writtenSize;
+    UINT size = *writtenSize;
 
-    while ((fileCharacter = getc(pFile)) != EOF)
+    while (fgets(line, sizeof(line), pFile) != NULL)
     {
-        if (size < sourceSize)
+        fputs(line, stdout);
+
+        if (strstr(line, "#include") != NULL)
         {
-            strncat(shaderSource, &fileCharacter, 1);
+            preprocessingShaderFile(line, sourceSize, &size, shaderSource);
         }
         else
         {
-            printf("Exceed the shader source size, reallocate memory position.\n");
-            sourceSize *= 2;
-            char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
+            UINT lineSize = strlen(line) * sizeof(char);
 
-            if (newShaderSource != nullptr)
+            if (size + lineSize < sourceSize)
             {
-                memcpy(newShaderSource, shaderSource, size);
-                free(shaderSource);
-
-                shaderSource = newShaderSource;
-                strncat(shaderSource, &fileCharacter, 1);
+                strncat(shaderSource, line, strlen(line));
             }
             else
             {
-                free(shaderSource);
-                printf("Error when reallocate for shader source.\n");
-                exit(1);
-            }
-        }
+                printf("Exceed the shader source size, reallocate memory position.\n");
+                sourceSize *= 2;
+                char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
 
-        size += sizeof(fileCharacter);
+                if (newShaderSource != nullptr)
+                {
+                    memcpy(newShaderSource, shaderSource, size);
+                    free(shaderSource);
+
+                    shaderSource = newShaderSource;
+                    strncat(shaderSource, line, strlen(line));
+                }
+                else
+                {
+                    free(shaderSource);
+                    printf("Error when reallocate for shader source.\n");
+                    assert(FALSE);
+                    exit(1);
+                }
+            }
+
+            size += lineSize;
+        }
     }
     char endChar = '\0';
     strncat(shaderSource, &endChar, 1);
+
+    *writtenSize = size;
 }
 
 void ShaderCompiler::preprocessingShaderFile(
     const char* line,
     UINT        sourceSize,
-    UINT        writtenSize,
+    UINT*       writtenSize,
     OUT char*   shaderSource)
 {
     char includeFile[256];
@@ -143,53 +158,8 @@ void ShaderCompiler::parseShaderFile(
 
     if (pFile != NULL)
     {
-        // Assemption: character in one line no longer than 256 characters
-        char line[256];
-
         UINT size = 0;
-
-        while (fgets(line, sizeof(line), pFile) != NULL)
-        {
-            fputs(line, stdout);
-
-            if (strstr(line, "#include") != NULL)
-            {
-                preprocessingShaderFile(line, sourceSize, size, shaderSource);
-            }
-            else
-            {
-                UINT lineSize = strlen(line) * sizeof(char);
-
-                if (size + lineSize < sourceSize)
-                {
-                    strncat(shaderSource, line, strlen(line));
-                }
-                else
-                {
-                    printf("Exceed the shader source size, reallocate memory position.\n");
-                    sourceSize *= 2;
-                    char* newShaderSource = (char*)realloc(shaderSource, sourceSize);
-
-                    if (newShaderSource != nullptr)
-                    {
-                        memcpy(newShaderSource, shaderSource, size);
-                        free(shaderSource);
-
-                        shaderSource = newShaderSource;
-                        strncat(shaderSource, line, strlen(line));
-                    }
-                    else
-                    {
-                        free(shaderSource);
-                        printf("Error when reallocate for shader source.\n");
-                        assert(FALSE);
-                        exit(1);
-                    }
-                }
-
-                size += lineSize;
-            }
-        }
+        writeToShaderSource(pFile, sourceSize, &size, shaderSource);        
 
         fclose(pFile);
     }
@@ -275,12 +245,12 @@ BOOL ShaderCompiler::compileShader(
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (success)
     {
-        printf("Vertex shader is successly compiled.\n");
+        printf("\nVertex shader is successly compiled.\n");
     }
     else
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, compileLog);
-        printf("Fail to compile vertex shader.\n%s\n", compileLog);
+        printf("\nFail to compile vertex shader.\n%s\n", compileLog);
         result = FALSE;
     }
 
@@ -295,12 +265,12 @@ BOOL ShaderCompiler::compileShader(
     glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
     if (success)
     {
-        printf("Fragment shader is successly compiled.\n");
+        printf("\nFragment shader is successly compiled.\n");
     }
     else
     {
         glGetShaderInfoLog(fragShader, 512, NULL, compileLog);
-        printf("Fail to compile fragment shader.\n%s\n", compileLog);
+        printf("\nFail to compile fragment shader.\n%s\n", compileLog);
         result = FALSE;
     }
 
@@ -315,12 +285,12 @@ BOOL ShaderCompiler::compileShader(
 
     if (success)
     {
-        printf("Shader program is successly linked.\n");
+        printf("\nShader program is successly linked.\n");
     }
     else
     {
         glGetShaderInfoLog(*shaderProgram, InfoLogLength, NULL, &compileLog[0]);
-        printf("Fail to link shaders in the program.\n");
+        printf("\nFail to link shaders in the program.\n");
 
         std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
         glGetProgramInfoLog(*shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);

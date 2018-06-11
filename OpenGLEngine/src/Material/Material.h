@@ -6,7 +6,7 @@ using namespace Math;
 
 enum MaterialType
 {
-	SPECULAR, ALBEDO, PBR
+	PHONG, ALBEDO, COOKTORRANCE
 };
 
 enum ShadingMethod
@@ -22,16 +22,24 @@ enum ShadingMethod
 class Material
 {
 public:
-	Material(const std::string& materialName, float refraction, float alpha, bool transparency);
+	Material(
+        const MaterialType materialType,
+        const std::string& materialName,
+        const float refraction,
+        const float alpha,
+        const bool transparency);
 
 	void setShadingMethod(const ShadingMethod shadingMethod);
 	virtual ~Material() {}
 
+    inline MaterialType GetMaterialType() const { return m_materialType; }
+
+private:
 	std::string m_materialName;
     //UINT        m_materialId;
 
-	MaterialType materialType;
-	ShadingMethod shadingMethod;
+	MaterialType m_materialType;
+	ShadingMethod m_shadingMethod;
 
 	bool transparency;
 	float refraction;
@@ -57,7 +65,43 @@ public:
             Vector3 ka; float ka_padding;
             Vector3 kd; float kd_padding;
             Vector3 ks; float ns; // Vector4
+            Vector4 padding;
         };
-        Mat4 m_materialData;
+        Mat4 m_specularMaterialData;
     };
+};
+
+class CookTorranceMaterial : public Material
+{
+public:
+    // TODO: Load material from file
+    CookTorranceMaterial()
+        : Material(COOKTORRANCE, "", 1.0f, 1.0f, false), albedoVector4(Vector4())
+    {
+
+    }
+    ~CookTorranceMaterial() {}
+
+    inline void* GetCookTorranceMaterialData() const
+    {
+        return (void*)(&albedo);
+    }
+
+    static inline size_t GetOpaqueCookTorranceMaterialDataSize()
+    {
+        return sizeof(CookTorranceMaterial) - sizeof(Material);
+    }
+
+    union
+    {
+        struct
+        {
+            Vector3 albedo; float albedoPadding;
+        };
+        Vector4 albedoVector4;
+    };
+    float roughness;
+    float metallic;
+    float fresnel;
+    float padding; // Vector4
 };

@@ -22,53 +22,20 @@ BOOL Scene::initialize()
 {
     BOOL status = TRUE;
 
-    //Compile shaders
-    m_sceneShader.setShaderFiles("MainSceneShadowMap.vert", "MainSceneShadowMap.frag");
-    status = m_sceneShader.linkProgram();
-
+    status = initializePhongRendering();
     if (status == FALSE)
     {
-        m_sceneShader.assertErrors();
+        printf("Failed to initialize main scene Phong Rendering!\n");
+        assert(FALSE);
     }
 
-    /// UBOs initialization
-    m_transUniformbufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_transUniformbufferIndex,
-        m_sceneShader.GetShaderProgram(),
-        "trans");
-
-    // Directional light ubo
-    m_directionalLightUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-                                               m_directionalLight.getDataSize(),
-                                               m_directionalLight.getDataPtr());
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
-        m_sceneShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
-
-    // Point light ubo
-    m_pointLightUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-            m_pointLight.getDataSize(),
-            m_pointLight.getDataPtr());
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_pointLightUniformBufferIndex,
-        m_sceneShader.GetShaderProgram(),
-        "pointLightUniformBlock");
-
-    // Material ubo
-    m_materialUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(
-            GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_materialData), NULL);
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
-    ///
+    // PBR rendering initialization
+    status = initializePBRendering();
+    if (status == FALSE)
+    {
+        printf("Failed to initialize main scene PBRendering!\n");
+        assert(FALSE);
+    }
 
     // Shadow map test
     status = initializeShadowMap();
@@ -84,7 +51,7 @@ BOOL Scene::initialize()
         m_sceneShader.GetShaderProgram(),
         "shadowMapResolutionUniformBlock"
     );*/
-
+    
     // Deferred shading test
     if (m_setting.m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
     {
@@ -98,7 +65,7 @@ BOOL Scene::initialize()
 
     if (status == FALSE)
     {
-        m_sceneShader.assertErrors();
+        Shader::AssertErrors();
     }
 
     return status;
@@ -270,10 +237,63 @@ void Scene::shadowPass()
     glCullFace(GL_BACK);
 }
 
+BOOL Scene::initializePhongRendering()
+{
+    BOOL status = TRUE;
+
+    //Compile shaders
+    m_sceneShader.setShaderFiles("MainScene.vert", "MainScene.frag");
+    status = m_sceneShader.linkProgram();
+
+    if (status == FALSE)
+    {
+        Shader::AssertErrors();
+    }
+
+    /// UBOs initialization
+    m_transUniformbufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_transUniformbufferIndex,
+        m_sceneShader.GetShaderProgram(),
+        "trans");
+
+    // Directional light ubo
+    m_directionalLightUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
+            m_directionalLight.getDataSize(),
+            m_directionalLight.getDataPtr());
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_directionalLightUniformBufferIndex,
+        m_sceneShader.GetShaderProgram(),
+        "directionalLightUniformBlock");
+
+    // Point light ubo
+    m_pointLightUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
+            m_pointLight.getDataSize(),
+            m_pointLight.getDataPtr());
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pointLightUniformBufferIndex,
+        m_sceneShader.GetShaderProgram(),
+        "pointLightUniformBlock");
+
+    // Material ubo
+    m_materialUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(
+            GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_specularMaterialData), NULL);
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
+    ///
+
+    return status;
+}
+
 void Scene::drawScene()
 {
-    m_sceneShader.useProgram();
-
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
 
 #if 0
@@ -284,9 +304,30 @@ void Scene::drawScene()
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    GLuint sceneShaderProgram;
+    GLuint materialIndex;
+
     for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
     {
         Model* pModel = m_pSceneModelList[i];
+
+        MaterialType modelMaterialType = pModel->GetModelMaterialType();
+
+        switch (modelMaterialType)
+        {
+        case MaterialType::PHONG:
+            sceneShaderProgram = m_sceneShader.useProgram();
+            materialIndex      = m_materialUniformBufferIndex;
+            break;
+        case MaterialType::COOKTORRANCE:
+            sceneShaderProgram = m_pbrShader.useProgram();
+            materialIndex = m_pbrMaterialUniformBufferIndex;
+            break;
+        default:
+            printf("Unsupport material!\n");
+            assert(FALSE);
+            break;
+        }
 
         glm::mat4 transMatrix[4] =
         {
@@ -300,24 +341,24 @@ void Scene::drawScene()
         m_uniformBufferMgr.updateUniformBufferData(
             m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
 
-        GLint eyeHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "eyePos");
+        GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
-        m_pTextureList[0]->bindTexture(GL_TEXTURE0, m_sceneShader.GetShaderProgram(), "sampler", 0);
+        m_pTextureList[0]->bindTexture(GL_TEXTURE0, sceneShaderProgram, "sampler", 0);
 
         glm::mat4 lightTransWVP  = m_pShadowMap->GetLightTransVP() *
                                    pModel->m_pTrans->GetTransMatrix();
 
-        GLint lightTransHandle = glGetUniformLocation(m_sceneShader.GetShaderProgram(), "lightTransWVP");
+        GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
-        m_pShadowMap->readShadowMap(GL_TEXTURE1, m_sceneShader.GetShaderProgram(), "shadowMapSampler", 1);
+        m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
 
-        pModel->updateMaterial(&m_uniformBufferMgr, m_materialUniformBufferIndex);
+        pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
         pModel->draw();
     }
 
-    m_sceneShader.finishProgram();
+    Shader::FinishProgram();
 }
 
 BOOL Scene::initializeDeferredRendering()
@@ -333,7 +374,7 @@ BOOL Scene::initializeDeferredRendering()
 
     if (status == FALSE)
     {
-        m_sceneShader.assertErrors();
+        Shader::AssertErrors();
     }
 
     m_uniformBufferMgr.bindUniformBuffer(
@@ -356,7 +397,7 @@ void Scene::deferredDrawScene()
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
+    GLint eyeLocation = glGetUniformLocation(gShaderProgram, "eyePos");
 
     if (eyeLocation >= 0)
     {
@@ -373,7 +414,46 @@ void Scene::deferredDrawScene()
         assert(FALSE);
     }    
 
-    m_defferedRendingShader.finishProgram();
+    Shader::FinishProgram();
+}
+
+BOOL Scene::initializePBRendering()
+{
+    BOOL status = TRUE;
+
+    // PBR shader
+    m_pbrShader.setShaderFiles("MainScene.vert", "MainSceneCookTorrance.frag");
+    status = m_pbrShader.linkProgram();
+
+    if (status == FALSE)
+    {
+        Shader::AssertErrors();
+    }
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_transUniformbufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "trans");
+
+    // Directional light ubo
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_directionalLightUniformBufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "directionalLightUniformBlock");
+
+    // Point light ubo
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pointLightUniformBufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "pointLightUniformBlock");
+
+    m_pbrMaterialUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(
+            GL_DYNAMIC_DRAW, sizeof(CookTorranceMaterial::GetOpaqueCookTorranceMaterialDataSize()), NULL);
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pbrMaterialUniformBufferIndex, m_pbrShader.GetShaderProgram(), "CookTorranceMaterialUniformBlock");
+
+    return status;
 }
 
 void Scene::addModel(

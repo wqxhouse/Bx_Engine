@@ -70,7 +70,7 @@ float castingShadow()
 	
 	if (depth < posLight.z - 0.000001f)
 	{
-		shadowAttenuation = 0.5f;
+		shadowAttenuation = 0.2f;
 	}
 	
 	return shadowAttenuation;
@@ -110,10 +110,10 @@ void main()
         // Shadow casting(specular)
         // specColor *= shadowSpecularAttenuation;
         
-        vec3 outColorVec3 = m_phongMaterial.ka + diffuseColor + specColor;// * texColor;
+        vec3 outColorVec3 = /*m_phongMaterial.ka +*/ diffuseColor + specColor;// * texColor;
         
         // Shadow casting
-        outColorVec3 *= shadowDiffuseAttenuation;
+        //outColorVec3 *= shadowDiffuseAttenuation;
         
         // Gamma correction
         outColorVec3 = gammaCorrection(outColorVec3);

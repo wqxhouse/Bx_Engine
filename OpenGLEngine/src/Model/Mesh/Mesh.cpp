@@ -9,7 +9,7 @@ Mesh::Mesh(
     const std::vector<Math::Vector3>& normalBuf,
     const std::vector<Math::Vector2>& texCoords, 
     const std::vector<GLuint>&        indices)
-    : m_name(name), m_materialName(materialFile)
+    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
 {
     initialize();
 }
@@ -23,7 +23,7 @@ Mesh::Mesh(
     const std::vector<Math::Vector2>& texCoords, 
     const std::vector<GLuint>&        indices, 
     const std::vector<Texture*>&      textures)
-    : m_name(name), m_materialName(materialFile)
+    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
 {
     initialize();
 }
@@ -38,7 +38,7 @@ Mesh::Mesh(
     const std::vector<GLuint>&        posIndices,
     const std::vector<GLuint>&        normalIndices,
     const std::vector<GLuint>&        texCoordIndices)
-    : m_name(name), m_materialName(materialFile)
+    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
 {
     combineVertexData(counter, posBuf, normalBuf, texCoords,
                       posIndices, normalIndices, texCoordIndices);
@@ -57,7 +57,7 @@ Mesh::Mesh(
     const std::vector<GLuint>&        normalIndices,
     const std::vector<GLuint>&        texCoordIndices,
     const std::vector<Texture*>&      textures)
-    : m_name(name), m_materialName(materialFile)
+    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
 {
     //TODO: Safely register the memory
     //Memory::MemoryPool::registerMemory<Mesh>(this);
@@ -131,19 +131,46 @@ void Mesh::drawMeshPos()
 
 void Mesh::draw()
 {
+
     if (m_pUniformBufferMgr != NULL && m_pMaterial != NULL)
     {
-        SpecularMaterial* pMaterial =
-            static_cast<SpecularMaterial*>(m_pMaterial);
-        /*pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
-        pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
-        pMaterial->ns = 50.0f;*/
+        switch (m_pMaterial->GetMaterialType())
+        {
+        case MaterialType::PHONG:
+        {
+            SpecularMaterial* pMaterial =
+                static_cast<SpecularMaterial*>(m_pMaterial);
+            /*pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
+            pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
+            pMaterial->ns = 50.0f;*/
 
-        m_pUniformBufferMgr->
-            updateUniformBufferData(
-                m_materialBufferIndex,
-                sizeof(pMaterial->m_materialData),
-                &(pMaterial->m_materialData));
+            m_pUniformBufferMgr->
+                updateUniformBufferData(
+                    m_materialBufferIndex,
+                    sizeof(pMaterial->m_specularMaterialData),
+                    &(pMaterial->m_specularMaterialData));
+
+            break;
+        }
+        case MaterialType::COOKTORRANCE:
+        {
+            CookTorranceMaterial* pPbrMaterial =
+                static_cast<CookTorranceMaterial*>(m_pMaterial);
+
+            m_pUniformBufferMgr->
+                updateUniformBufferData(
+                    m_materialBufferIndex,
+                    pPbrMaterial->GetOpaqueCookTorranceMaterialDataSize(),
+                    pPbrMaterial->GetCookTorranceMaterialData());
+
+            break;
+        }
+        default:
+            printf("Unsupport material!\n");
+            assert(FALSE);
+            break;
+        }
+        
     }
     else
     {
@@ -178,9 +205,9 @@ Mesh::~Mesh()
     //Memory::MemoryPool::release<Mesh>(this);
     if (m_pMaterial != NULL)
     {
-        switch (m_pMaterial->materialType)
+        switch (m_pMaterial->GetMaterialType())
         {
-        case SPECULAR:
+        case PHONG:
             SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
             break;
         case ALBEDO:
@@ -209,7 +236,7 @@ void Mesh::combineVertexData(
     size_t normalBufferSize = normalBuf.size();
     size_t texCoordsSize    = texCoords.size();
 
-    assert(normalBufferSize > 0 && texCoordsSize > 0);
+    assert(normalBufferSize > 0 || texCoordsSize > 0);
 
     for (int i = 0; i < counter[3]; ++i)
     {

@@ -42,14 +42,14 @@ private:
     void writeToShaderSource(
         FILE*       pFile,
         const UINT  sourceSize,
-        UINT        writtenSize,
+        UINT*       writtenSize,
         OUT char*   shaderSource);
 
     // Preprocessing macros in shader
     void preprocessingShaderFile(
         const char* line,
         UINT        sourceSize,
-        UINT        writtenSize,
+        UINT*       writtenSize,
         OUT char*   shaderSource);
 
 	void parseShaderFile(

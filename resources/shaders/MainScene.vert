@@ -23,7 +23,7 @@ out vec4 posLightProj;
 void main()
 {
 	posWorld     = (world * vec4(position, 1.0f)).xyz;
-	normalWorld  = (world * vec4(normal, 1.0f)).xyz;
+	normalWorld  = (world * vec4(normal, 0.0f)).xyz;
 	fragTexCoord = texCoord;
 	
 	posLightProj = lightTransWVP * vec4(position, 1.0f);

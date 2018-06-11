@@ -1,11 +1,17 @@
 #include "Material.h"
 
 Material::Material(
+    const MaterialType materialType,
     const std::string& materialName,
-    float refraction,
-    float alpha,
-    bool transparency)
+    const float refraction,
+    const float alpha,
+    const bool transparency)
+    : m_materialType(materialType),
+      m_materialName(materialName)      
 {
+    this->refraction   = refraction;
+    this->alpha        = alpha;
+    this->transparency = transparency;
 }
 
 void Material::setShadingMethod(const ShadingMethod shadingMethod)
@@ -13,8 +19,8 @@ void Material::setShadingMethod(const ShadingMethod shadingMethod)
 }
 
 SpecularMaterial::SpecularMaterial(const std::string & materialName)
-	: Material(materialName, 1.0f, 1.0f, false),
-      m_materialData(0.0f)
+	: Material(PHONG, materialName, 1.0f, 1.0f, false),
+      m_specularMaterialData(0.0f)
 {
 }
 
@@ -24,8 +30,8 @@ SpecularMaterial::SpecularMaterial(
     const Vector3&     kd,
     const Vector3&     ks,
     float ns)
-	: Material(materialName, 1.0f, 1.0f, false),
-      m_materialData(0.0f)
+	: Material(PHONG, materialName, 1.0f, 1.0f, false),
+      m_specularMaterialData(0.0f)
 {
 	this->ka = ka;
 	this->kd = kd;
@@ -42,7 +48,7 @@ SpecularMaterial::SpecularMaterial(
 	float refraction,
     float alpha,
     bool transparency)
-	: Material(materialName, refraction, alpha, transparency)
+	: Material(PHONG, materialName, refraction, alpha, transparency)
 {
 	this->ka = ka;
 	this->kd = kd;

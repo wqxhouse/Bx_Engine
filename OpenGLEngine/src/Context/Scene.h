@@ -71,6 +71,7 @@ public:
     DirectionalLight m_directionalLight;
 
 private:
+    BOOL initializePhongRendering();
     void drawScene();
 
 	Setting m_setting;
@@ -87,6 +88,7 @@ private:
 
     Shader m_sceneShader;
     Shader m_defferedRendingShader;
+    Shader m_pbrShader;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
@@ -95,6 +97,7 @@ private:
     GLuint m_directionalLightUniformBufferIndex;
     GLuint m_pointLightUniformBufferIndex;
     GLuint m_materialUniformBufferIndex;
+    GLuint m_pbrMaterialUniformBufferIndex;
 
     GLint  success;
     GLchar compileLog[512];
@@ -108,5 +111,8 @@ private:
     BOOL initializeDeferredRendering();
     void deferredDrawScene();
     GBuffer* m_pGBuffer;
+
+    // PBR
+    BOOL initializePBRendering();
 
 };

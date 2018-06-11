@@ -32,13 +32,3 @@ GLuint Shader::useProgram()
     return m_shaderProgram;
 }
 
-void Shader::finishProgram()
-{
-    glUseProgram(0);
-}
-
-void Shader::assertErrors(const char* const str)
-{
-    printf(str);
-    assert(FALSE);
-}

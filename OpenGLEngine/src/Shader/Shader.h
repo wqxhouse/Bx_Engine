@@ -16,9 +16,17 @@ public:
     BOOL linkProgram();
 
     GLuint useProgram();
-    void finishProgram();
 
-    void assertErrors(const char* const str = "Fail to compile shaders.\n");
+    static inline void FinishProgram()
+    {
+        glUseProgram(0);
+    }
+
+    static inline void AssertErrors(const char* const str = "Fail to compile shaders.\n")
+    {
+        printf(str);
+        assert(FALSE);
+    }
 
     inline GLuint GetShaderProgram() const { return m_shaderProgram; }
 

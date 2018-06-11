@@ -12,4 +12,5 @@ struct CookTorranceMaterial
     vec3  albedo; float albedoPadding;
     float roughness;
     float metallic;
+    float fresnel;
 };

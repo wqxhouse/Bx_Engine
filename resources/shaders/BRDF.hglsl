@@ -1,0 +1,115 @@
+/*
+    BRDF.hglsl
+*/
+
+#include <Material.hglsl>
+
+#define PI    3.1415926f
+#define InvPI 0.318309886f
+
+layout(std140) uniform CookTorranceMaterialUniformBlock
+{
+    CookTorranceMaterial m_cookTorranceMaterial;
+};
+
+vec3 calCookTorranceDiffuse()
+{
+    vec3 diffuseComponent;
+    
+    diffuseComponent = m_cookTorranceMaterial.albedo * InvPI;
+    
+    return diffuseComponent;
+}
+
+float cookTorranceDistribution(
+    const vec3 N,
+    const vec3 H)
+{
+    float distributionCoefficient = 0.0f;
+    
+    float alpha  = m_cookTorranceMaterial.roughness;
+    float alpha2 = alpha * alpha;
+    
+    float NoH  = clamp(dot(N, H), 0.0f, 1.0f);
+    
+    if (NoH > 0.0f)
+    {
+        float NoH2 = NoH * NoH;
+        
+        float k  = NoH2 * (alpha2 - 1) + 1;
+        float k2 = k * k;
+        
+        distributionCoefficient = ((alpha2) / (PI * k2));
+    }
+    
+    return distributionCoefficient;
+}
+
+float cookTorranceGeometry(
+    float NoX) ///< NoL or NoV
+{
+    float geometryCoefficient;
+    
+    float alpha  = m_cookTorranceMaterial.roughness;
+    
+    float k = (alpha + 1) * (alpha + 1) * 0.125f;
+    
+    geometryCoefficient = ((NoX) / (NoX * (1 - k) + k));
+    
+    return geometryCoefficient;
+}
+
+float schlickFresnel(
+    const vec3 V,
+    const vec3 H)
+{
+    float fresnelCoefficient = 1.0f;
+    
+    float F0 = m_cookTorranceMaterial.fresnel;
+    
+    float VoH = clamp(dot(V, H), 0.0f, 1.0f);
+    float exponent = (-5.55473f * VoH - 6.98316f) * VoH;
+    
+    fresnelCoefficient = F0 + (1 - F0) * pow(2.0f, exponent);
+    
+    return fresnelCoefficient;
+}
+
+vec3 calCookTorranceSpecular(
+    const vec3  V,
+    const vec3  N,
+    const vec3  L,
+    const float NoL)
+{
+    float specularComponent;
+    
+    vec3 halfVector = normalize(V + L);
+    
+    float NoV = clamp(dot(N, V), 0.0f, 1.0f);
+    
+    float D = cookTorranceDistribution(N, halfVector);
+    float G = cookTorranceGeometry(NoL) * cookTorranceGeometry(NoV);
+    float F = schlickFresnel(V, halfVector);
+    
+    specularComponent = (D /** G * F*/) / (4 * NoL * NoV);
+    
+    return vec3(specularComponent);
+}
+
+vec3 calCookTorranceBRDF(
+    const vec3  V,
+    const vec3  N,
+    const vec3  L,
+    const float NoL)
+{
+    vec3 fd = calCookTorranceDiffuse();
+    vec3 fs = calCookTorranceSpecular(V, N, L, NoL);
+
+    vec3 brdf = clamp((((1.0f - m_cookTorranceMaterial.metallic) * fd) +
+                        (m_cookTorranceMaterial.metallic) * fs), 0.0f, 1.0f);
+    
+    brdf = fs;
+    
+    return brdf;
+}
+    

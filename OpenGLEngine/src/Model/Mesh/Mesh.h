@@ -120,7 +120,7 @@ public:
 	std::vector<GLuint>   m_indexBuffer;
 	std::vector<Texture*> m_textureList;
 
-	Material* m_pMaterial = NULL;
+	Material* m_pMaterial;
 
 private:
 	void initialize();

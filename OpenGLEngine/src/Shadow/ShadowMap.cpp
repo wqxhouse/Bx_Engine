@@ -65,7 +65,7 @@ BOOL ShadowMap::initialize()
     }
     else
     {
-        m_shadowMapShader.assertErrors("Fail to compile shadow map shaders.\n");
+        Shader::AssertErrors("Fail to compile shadow map shaders.\n");
     }
 
     // Bind shadow resolution with shadow map
@@ -136,7 +136,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
     glDrawBuffer(GL_FRONT);
     glReadBuffer(GL_FRONT);
 
-    m_shadowMapShader.finishProgram();
+    Shader::FinishProgram();
 }
 
 void ShadowMap::readShadowMap(
