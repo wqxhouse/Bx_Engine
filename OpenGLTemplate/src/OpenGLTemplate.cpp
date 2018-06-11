@@ -57,17 +57,24 @@ void OpenGLTemplate::createDefaultScene()
     addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
     new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
-    new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
-    /*pScene->addModel("../resources/models/cornellbox/CornellBox-Sphere.obj",
-                     "../resources/models/cornellbox/CornellBox-Sphere.mtl",
-                     new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
-    pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-        new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    */
+    /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
     //Model* pModel = pScene->GetModelPtr(0);
+
+    pScene->addModel("../resources/models/cornellbox/CornellBox-Sphere.obj",
+        "../resources/models/cornellbox/CornellBox-Sphere.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     /*pScene->addModel(
         "../resources/models/buddha/buddha.obj",
         "../resources/models/buddha/buddha.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+    pScene->addModel(
+        "../resources/models/dragon/dragon.obj",
+        "../resources/models/dragon/dragon.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     //Create texture and set sampler

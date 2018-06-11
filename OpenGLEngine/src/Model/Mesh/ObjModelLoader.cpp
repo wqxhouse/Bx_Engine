@@ -140,7 +140,7 @@ void ObjModelLoader::LoadModel(
             SafeDelete(meshPtr->m_pMaterial);
             CookTorranceMaterial* pMaterial = new CookTorranceMaterial();
             pMaterial->albedo = Vector3(0.6f, 0.6f, 0.6f);
-            pMaterial->roughness = 0.2f;
+            pMaterial->roughness = 0.3f;
             pMaterial->metallic = 0.5f;
             pMaterial->fresnel = 1.0f;
 

@@ -32,15 +32,12 @@ float cookTorranceDistribution(
     
     float NoH  = clamp(dot(N, H), 0.0f, 1.0f);
     
-    if (NoH > 0.0f)
-    {
-        float NoH2 = NoH * NoH;
-        
-        float k  = NoH2 * (alpha2 - 1) + 1;
-        float k2 = k * k;
-        
-        distributionCoefficient = ((alpha2) / (PI * k2));
-    }
+    float NoH2 = NoH * NoH;
+    
+    float k  = NoH2 * (alpha2 - 1) + 1;
+    float k2 = k * k;
+    
+    distributionCoefficient = ((alpha2) / (PI * k2));
     
     return distributionCoefficient;
 }
@@ -81,17 +78,20 @@ vec3 calCookTorranceSpecular(
     const vec3  L,
     const float NoL)
 {
-    float specularComponent;
-    
-    vec3 halfVector = normalize(V + L);
+    float specularComponent = 0.0f;
     
     float NoV = clamp(dot(N, V), 0.0f, 1.0f);
     
-    float D = cookTorranceDistribution(N, halfVector);
-    float G = cookTorranceGeometry(NoL) * cookTorranceGeometry(NoV);
-    float F = schlickFresnel(V, halfVector);
+    if (NoL > 0.0f && NoV > 0.0f)
+    {
+        vec3 halfVector = normalize(V + L);
     
-    specularComponent = (D /** G * F*/) / (4 * NoL * NoV);
+        float D = cookTorranceDistribution(N, halfVector);
+        float G = cookTorranceGeometry(NoL) * cookTorranceGeometry(NoV);
+        float F = schlickFresnel(V, halfVector);
+        
+        specularComponent = (D * G * F) / (4 * NoL * NoV);
+    }
     
     return vec3(specularComponent);
 }
