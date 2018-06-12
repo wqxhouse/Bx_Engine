@@ -80,16 +80,17 @@ public:
     {
 
     }
+
     ~CookTorranceMaterial() {}
 
-    inline void* GetCookTorranceMaterialData() const
+    inline void* GetCookTorranceMaterialData()
     {
-        return (void*)(&albedo);
+        return static_cast<void*>(&albedoVector4);
     }
 
     static inline size_t GetOpaqueCookTorranceMaterialDataSize()
     {
-        return sizeof(CookTorranceMaterial) - sizeof(Material);
+        return 2 * sizeof(Vector4);
     }
 
     union

@@ -122,7 +122,6 @@ void ObjModelLoader::LoadModel(
                     tempMaterialName = vecPtr[1];
                 }
             }
-
         }
         
         if (counter[3] > 0)

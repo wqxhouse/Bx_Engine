@@ -57,7 +57,8 @@ inline void SafeRelease(void* ptr, AllocateMode allocateMode)
 	}
 }
 
-inline void SafeFree(void* ptr)
+template<typename T>
+inline void SafeFree(T* ptr)
 {
 	if (ptr != nullptr)
 	{
@@ -65,7 +66,8 @@ inline void SafeFree(void* ptr)
 	}
 }
 
-inline void SafeDelete(void* ptr)
+template<typename T>
+inline void SafeDelete(T* ptr)
 {
 	if (ptr != nullptr)
 	{

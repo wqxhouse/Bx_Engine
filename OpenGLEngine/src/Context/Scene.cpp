@@ -258,7 +258,7 @@ BOOL Scene::initializePhongRendering()
     m_uniformBufferMgr.bindUniformBuffer(
         m_transUniformbufferIndex,
         m_sceneShader.GetShaderProgram(),
-        "trans");
+        "transUniformBlock");
 
     // Directional light ubo
     m_directionalLightUniformBufferIndex =
@@ -322,7 +322,7 @@ void Scene::drawScene()
             break;
         case MaterialType::COOKTORRANCE:
             sceneShaderProgram = m_pbrShader.useProgram();
-            materialIndex = m_pbrMaterialUniformBufferIndex;
+            materialIndex      = m_pbrMaterialUniformBufferIndex;
             break;
         default:
             printf("Unsupport material!\n");
@@ -434,7 +434,7 @@ BOOL Scene::initializePBRendering()
     m_uniformBufferMgr.bindUniformBuffer(
         m_transUniformbufferIndex,
         m_pbrShader.GetShaderProgram(),
-        "trans");
+        "transUniformBlock");
 
     // Directional light ubo
     m_uniformBufferMgr.bindUniformBuffer(
@@ -450,7 +450,7 @@ BOOL Scene::initializePBRendering()
 
     m_pbrMaterialUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(
-            GL_DYNAMIC_DRAW, sizeof(CookTorranceMaterial::GetOpaqueCookTorranceMaterialDataSize()), NULL);
+            GL_DYNAMIC_DRAW, CookTorranceMaterial::GetOpaqueCookTorranceMaterialDataSize(), NULL);
     m_uniformBufferMgr.bindUniformBuffer(
         m_pbrMaterialUniformBufferIndex, m_pbrShader.GetShaderProgram(), "CookTorranceMaterialUniformBlock");
 

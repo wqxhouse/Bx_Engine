@@ -13,7 +13,9 @@ Texture2D::Texture2D(
     const GLenum type,
     const GLenum wrapMethod,
     const BOOL   mipmap)
-    : Texture(TEXTURE_2D), m_samples(samples)
+    : Texture(TEXTURE_2D),
+      m_samples(samples),
+      m_textureData(NULL)
 {
     m_textureWidth  = texWidth;
     m_textureHeight = texHeight;
@@ -117,5 +119,8 @@ void * Texture2D::getTextureData()
 
 Texture2D::~Texture2D()
 {
-    stbi_image_free(m_textureData);
+    if (m_textureData != NULL)
+    {
+        stbi_image_free(m_textureData);
+    }
 }

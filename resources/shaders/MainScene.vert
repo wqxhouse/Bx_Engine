@@ -4,15 +4,22 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoord;
 
-uniform trans
+struct Trans
 {
-	mat4 world;
-	mat4 view;
-	mat4 proj;
-	mat4 wvp;
+    mat4 world;
+    mat4 view;
+    mat4 proj;
+    mat4 wvp;
+};
+
+uniform transUniformBlock
+{
+    Trans m_trans;
 };
 
 uniform mat4 lightTransWVP;
+
+uniform mat4 wvp2;
 
 out vec3 posWorld;
 out vec3 normalWorld;
@@ -22,11 +29,11 @@ out vec4 posLightProj;
 
 void main()
 {
-	posWorld     = (world * vec4(position, 1.0f)).xyz;
-	normalWorld  = (world * vec4(normal, 0.0f)).xyz;
+	posWorld     = (m_trans.world * vec4(position, 1.0f)).xyz;
+	normalWorld  = (m_trans.world * vec4(normal, 0.0f)).xyz;
 	fragTexCoord = texCoord;
 	
 	posLightProj = lightTransWVP * vec4(position, 1.0f);
 	
-    gl_Position  = wvp * vec4(position, 1.0f);
+    gl_Position  = m_trans.wvp * vec4(position, 1.0f);
 }

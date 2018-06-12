@@ -5,24 +5,26 @@ UniformBuffer::UniformBuffer(
     const GLenum  usage,
     const GLsizei dataSize,
     const GLvoid* data)
-    : m_uniformBufferIndex(uniformBufferIndex)
+    : m_uniformBufferIndex(uniformBufferIndex),
+      m_uniformDataBuffer(NULL),
+      m_memberNames(NULL),
+      m_indices(NULL),
+      m_offsets(NULL)
 {
+    m_uniformDataBufferSize = dataSize;
+
+    m_uniformDataBuffer = (GLubyte*)malloc(m_uniformDataBufferSize);
+
+    if (data != NULL)
     {
-        m_uniformDataBufferSize = dataSize;
-
-        m_uniformDataBuffer = (GLubyte*)malloc(m_uniformDataBufferSize);
-
-        if (data != NULL)
-        {
-            memcpy(m_uniformDataBuffer, data, m_uniformDataBufferSize);
-        }
-
-        glGenBuffers(1, &m_uniformBufferHandle);
-        glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferHandle);
-        glBufferData(GL_UNIFORM_BUFFER, m_uniformDataBufferSize, m_uniformDataBuffer, usage);
-
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        memcpy(m_uniformDataBuffer, data, m_uniformDataBufferSize);
     }
+
+    glGenBuffers(1, &m_uniformBufferHandle);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferHandle);
+    glBufferData(GL_UNIFORM_BUFFER, m_uniformDataBufferSize, m_uniformDataBuffer, usage);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 UniformBuffer::UniformBuffer(
@@ -84,13 +86,16 @@ UniformBuffer::~UniformBuffer()
 
     SafeDeleteArray(m_indices);
     SafeDeleteArray(m_offsets);
-    SafeDeleteArray(m_memberNames);
 
     SafeFree(m_uniformDataBuffer);
 
-    for (UINT i = 0; i < m_memberCount; ++i)
+    if (m_memberNames != NULL)
     {
-        SafeDelete(m_memberNames[i]);
+        for (UINT i = 0; i < m_memberCount; ++i)
+        {
+            SafeDelete(m_memberNames[i]);
+        }
+        SafeDeleteArray(m_memberNames);
     }
 }
 
