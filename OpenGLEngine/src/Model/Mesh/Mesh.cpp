@@ -140,9 +140,6 @@ void Mesh::draw()
         {
             SpecularMaterial* pMaterial =
                 static_cast<SpecularMaterial*>(m_pMaterial);
-            /*pMaterial->kd = Vector3(0.6f, 0.6f, 0.6f);
-            pMaterial->ks = Vector3(0.4f, 0.4f, 0.4f);
-            pMaterial->ns = 50.0f;*/
 
             m_pUniformBufferMgr->
                 updateUniformBufferData(
@@ -225,9 +222,9 @@ void Mesh::combineVertexData(
     const std::vector<Math::Vector3>& posBuf,
     const std::vector<Math::Vector3>& normalBuf,
     const std::vector<Math::Vector2>& texCoords,
-    const std::vector<GLuint>& posIndices,
-    const std::vector<GLuint>& normalIndices,
-    const std::vector<GLuint>& texCoordIndices)
+    const std::vector<GLuint>&        posIndices,
+    const std::vector<GLuint>&        normalIndices,
+    const std::vector<GLuint>&        texCoordIndices)
 {
     std::map<Vertex, GLuint> vertexIndexKey;
 

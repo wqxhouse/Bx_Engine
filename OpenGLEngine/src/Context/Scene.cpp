@@ -9,7 +9,7 @@
 Scene::Scene(const Setting& m_setting)
     : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
-      //m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+      // m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCamera(0),
       m_uniformBufferMgr(128),
@@ -123,13 +123,25 @@ void Scene::update(float deltaTime)
     {
         m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
+
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
+    {
+        m_setting.m_graphicsSetting.shadowCasting = TRUE;
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_X])
+    {
+        m_setting.m_graphicsSetting.shadowCasting = FALSE;
+    }
 }
 
 void Scene::draw()
 {
     GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
 
-    shadowPass();
+    // if (m_setting.m_graphicsSetting.shadowCasting == TRUE)
+    {
+        shadowPass();
+    }
 
     m_uniformBufferMgr.updateUniformBufferData(
             m_directionalLightUniformBufferIndex,
@@ -220,9 +232,10 @@ BOOL Scene::initializeShadowMap()
 {
     BOOL result = TRUE;
 
+    // Reverted the multi-sampled shadow map here, needs to fix the issue.
     m_pShadowMap = new ShadowMap(
         this, static_cast<Light*>(&m_directionalLight), m_setting.width * 2, m_setting.height * 2,
-        m_setting.m_graphicsSetting.antialasing);
+        /*m_setting.m_graphicsSetting.antialasing*/ 1);
 
     result = m_pShadowMap->initialize();
 
@@ -234,8 +247,16 @@ void Scene::shadowPass()
     m_pShadowMap->update(&m_directionalLight);
 
     glCullFace(GL_FRONT);
+    if (m_setting.m_graphicsSetting.shadowCasting == FALSE)
+    {
+        glDepthFunc(GL_NEVER);
+    }
     m_pShadowMap->drawShadowMap(this);
     glCullFace(GL_BACK);
+    if (m_setting.m_graphicsSetting.shadowCasting == FALSE)
+    {
+        glDepthFunc(GL_LEQUAL);
+    }
 }
 
 BOOL Scene::initializePhongRendering()
@@ -353,7 +374,10 @@ void Scene::drawScene()
         GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
-        m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+        if (m_setting.m_graphicsSetting.shadowCasting == TRUE)
+        {
+            m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+        }
 
         pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
         pModel->draw();

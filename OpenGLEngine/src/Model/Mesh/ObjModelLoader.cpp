@@ -94,14 +94,14 @@ void ObjModelLoader::LoadModel(
                         }
 
                         // Test PBR
-                        SafeDelete(meshPtr->m_pMaterial);
+                        /*SafeDelete(meshPtr->m_pMaterial);
                         CookTorranceMaterial* pMaterial = new CookTorranceMaterial();
                         pMaterial->albedo = Vector3(0.6f, 0.6f, 0.6f);
                         pMaterial->roughness = 0.2f;
                         pMaterial->metallic = 0.5f;
                         pMaterial->fresnel = 1.0f;
 
-                        meshPtr->m_pMaterial = pMaterial;
+                        meshPtr->m_pMaterial = pMaterial;*/
 
                         modelPtr->m_pMeshList.push_back(meshPtr);
 
@@ -136,14 +136,14 @@ void ObjModelLoader::LoadModel(
             }
 
             // Test PBR
-            SafeDelete(meshPtr->m_pMaterial);
+            /*SafeDelete(meshPtr->m_pMaterial);
             CookTorranceMaterial* pMaterial = new CookTorranceMaterial();
             pMaterial->albedo = Vector3(0.6f, 0.6f, 0.6f);
             pMaterial->roughness = 0.3f;
             pMaterial->metallic = 0.5f;
             pMaterial->fresnel = 1.0f;
 
-            meshPtr->m_pMaterial = pMaterial;
+            meshPtr->m_pMaterial = pMaterial;*/
 
             modelPtr->m_pMeshList.push_back(meshPtr);
         }

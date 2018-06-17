@@ -113,10 +113,10 @@ void main()
         
         vec3 radiance = calCookTorranceRadiance(view, normal, dir, lightColor);
         
-        float shadowDiffuseAttenuation = castingShadow();
+        float shadowAttenuation = castingShadow();
 
         // Shadow casting
-        radiance *= shadowDiffuseAttenuation;
+        radiance *= shadowAttenuation;
         
         // Gamma correction
         radiance = gammaCorrection(radiance);
@@ -124,7 +124,7 @@ void main()
         outColor = vec4(radiance, 1.0f);
         
         // Debug
-        float roughness = m_cookTorranceMaterial.roughness;
+        //float roughness = m_cookTorranceMaterial.roughness;
         //outColor = vec4(roughness, roughness, roughness, 1.0f);
         
         //outColor = vec4(normalWorld, 1.0f);

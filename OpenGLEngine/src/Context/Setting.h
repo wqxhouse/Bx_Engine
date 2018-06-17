@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Core/TypeDef.h"
+
 enum PolyMode
 {
 	WIREFRAME = 0x00000000,
@@ -22,14 +24,13 @@ enum Antialasing
 
 struct GraphicsSetting
 {
-public:
-    Antialasing antialasing = Antialasing::HIGH;
+    Antialasing antialasing         = Antialasing::HIGH;
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
+    BOOL shadowCasting              = TRUE;
 };
 
 struct Setting
 {
-public:
 	unsigned int width = 1280;
     unsigned int height = 720;
 

@@ -89,7 +89,7 @@ void ShadowMap::update(Light* pLight)
     Vector3 lightDir = pDirectionalLight->getDir();
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
-    float lightPosScale = 1000.0f;
+    float lightPosScale = 5.0f;
     float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
     float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
 
@@ -107,13 +107,15 @@ void ShadowMap::drawShadowMap(Scene* pScene)
     glViewport(0, 0, m_shadowMapWidth, m_shadowMapWidth);
 
     size_t modelSize = pScene->GetModelSize();
+
+    glm::mat4 viewMatrix = m_pLightCamera->GetViewMatrix();
+    glm::mat4 prospectMatrix = m_pLightCamera->GetProjectionMatrix();
+
     for (size_t i = 0; i < modelSize; ++i)
     {
         Model* pModel = pScene->GetModelPtr(i);
 
         glm::mat4 worldMatrix    = pModel->m_pTrans->GetTransMatrix();
-        glm::mat4 viewMatrix     = m_pLightCamera->GetViewMatrix();
-        glm::mat4 prospectMatrix = m_pLightCamera->GetProjectionMatrix();
         glm::mat4 wvp            = prospectMatrix * viewMatrix * worldMatrix;
 
         GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");

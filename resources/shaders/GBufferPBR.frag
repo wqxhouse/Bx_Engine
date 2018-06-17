@@ -6,8 +6,7 @@
 #include <Material.hglsl>
 #include <Utilities.hglsl>
 
-uniform sampler2D shadowMapSampler;
-//uniform sampler2DMS shadowMapSampler;
+uniform sampler2DMS shadowMapSampler;
 
 layout (std140) uniform shadowMapResolutionUniformBlock
 {
@@ -16,15 +15,8 @@ layout (std140) uniform shadowMapResolutionUniformBlock
 
 layout (std140) uniform gMaterial
 {
-	PhongMaterial m_phongMaterial;
-};
-
-layout (std140) uniform gMaterialPBR
-{
 	CookTorranceMaterial m_Material;
 };
-
-uniform int materialType;
 
 in vec3 posWorld;
 in vec3 normalWorld;
@@ -35,9 +27,8 @@ in vec4 posLightProj;
 layout(location = 0) out vec3 posWorldTexture;
 layout(location = 1) out vec3 normalWorldTexture;
 layout(location = 2) out vec3 texCoordTexture;
-layout(location = 3) out vec4 albedoTexture;
-layout(location = 4) out vec4 specularTexture;
-layout(location = 5) out vec3 environmentLightTexture;
+layout(location = 3) out vec3 albedoTexture;
+layout(location = 4) out vec3 specularTexture;
 
 float castingShadow()
 {
@@ -48,11 +39,11 @@ float castingShadow()
     posLight = posLight * 0.5f + 0.5f;
 	
     // Multisampling, need integer coordinate
-    //posLight.x = posLight.x * 2560.0f;//m_shadowMapResolution.width;
-    //posLight.y = posLight.y * 2560.0f;//m_shadowMapResolution.height;
+    posLight.x = posLight.x * 2560.0f;//m_shadowMapResolution.width;
+    posLight.y = posLight.y * 2560.0f;//m_shadowMapResolution.height;
     
-	float depth = texture(shadowMapSampler, posLight.xy).r;
-    /*float depth = 0.0f;
+	//float depth = texture(shadowMapSampler, posLight.xy).r;
+    float depth = 0.0f;
     
     for (int i = 0; i < 4; ++i)
     {
@@ -67,11 +58,11 @@ float castingShadow()
         }
         depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
     }
-    depth *= 0.25f;*/
+    depth *= 0.25f;
 	
 	if (depth < posLight.z - 0.000001f)
 	{
-		shadowAttenuation = 0.2f;
+		shadowAttenuation = 0.5f;
 	}
 	
 	return shadowAttenuation;
@@ -84,28 +75,6 @@ void main()
     posWorldTexture    = posWorld;
     normalWorldTexture = normalWorld;
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
-
-    switch (materialType)
-    {
-        case PHONG_MATERIAL:
-        {
-            albedoTexture            = vec4(m_phongMaterial.kd, 1.0f);
-            specularTexture          = m_phongMaterial.ks;
-            environmentLightTexture  = m_phongMaterial.ka;
-            break;
-        }
-        case ALBEDO_MATERIAL:
-        // TODO
-            break;
-        case COOKTORRANCE_MATERIAL:
-        {
-            albedoTexture           = vec4(m_Material.albedo, 1.0f);
-            specularTexture         = vec4(m_Material.roughness, m_Material.metallic, m_Material.fresnel, 1.0f);
-
-            // TODO: Calculate enviroment light
-            environmentLightTexture = vec3(0.0f, 0.0f, 0.0f);
-        }
-        default:
-            break;
-    }
+    albedoTexture      = m_Material.albedo;
+    specularTexture    = vec3(m_Material.roughness, m_Material.metallic, m_Material.fresnel);
 }

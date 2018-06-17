@@ -33,8 +33,7 @@ void Framebuffer::createFramebufferTexture2D(
     const GLenum wrapMethod,
     const BOOL   mipmap)
 {
-    Texture2D* pTexture2D =
-        new Texture2D(
+    Texture2D* pTexture2D = new Texture2D(
             texWidth, texHeight, samples, loadFormat, storeFormat, texDataType, wrapMethod, mipmap);
 
     UINT texIndex = getTextureIndex(texUnit);

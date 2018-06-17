@@ -3,6 +3,7 @@
 #include "Framebuffer.h"
 #include "../Shader/Shader.h"
 #include "../Math/Vector3.h"
+#include "../Material/Material.h"
 
 class Scene;
 
@@ -10,9 +11,10 @@ class GBuffer
 {
 public:
     GBuffer(
-        Scene*       pScene,
-        const UINT   width,
-        const UINT   height);
+        Scene*     pScene,
+        const UINT width,
+        const UINT height);
+
     ~GBuffer();
 
     BOOL initialize();

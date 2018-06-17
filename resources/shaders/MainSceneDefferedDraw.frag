@@ -9,8 +9,9 @@
 uniform sampler2D posTex;
 uniform sampler2D normalTex;
 uniform sampler2D texCoordTex;
-uniform sampler2D kaTex;
-uniform sampler2D kdTex;
+uniform sampler2D albedoTex;
+uniform sampler2D specularTex;
+uniform sampler2D environmentLightTex;
 
 layout (std140) uniform directionalLightUniformBlock
 {
@@ -46,22 +47,22 @@ void main()
     vec2 gBufferTexCoord = calgBufferTexCoord();
     
     // Sample from G-Buffer
-    vec4 gPos      = texture(posTex, gBufferTexCoord);
-    vec4 gNormal   = texture(normalTex, gBufferTexCoord);
-    vec4 gTexCoord = texture(texCoordTex, gBufferTexCoord);
-    vec4 gKa       = texture(kaTex, gBufferTexCoord);
-    vec4 gKd       = texture(kdTex, gBufferTexCoord);
-    
     // Get mesh data
-    vec3 posWorld    = gPos.xyz;
-    vec3 normalWorld = gNormal.xyz;
+    vec3 posWorld    = texture(posTex, gBufferTexCoord).xyz;
+    vec3 normalWorld = texture(normalTex, gBufferTexCoord).xyz;
+
+    vec3 gTexCoord   = texture(texCoordTex, gBufferTexCoord).xyz;
     vec2 texCoord    = gTexCoord.xy;
-    
+
     // Get material data
-    vec3 ka  = gKa.xyz;
+    vec3 ka  = texture(environmentLightTex, gBufferTexCoord).xyz;
+
+    vec4 gKd = texture(albedoTex, gBufferTexCoord);
     vec3 kd  = gKd.xyz;
-    vec3 ks  = vec3(gPos.w, gNormal.w, gTexCoord.z);
-    float ns = gTexCoord.w;
+
+    vec4  gKs = texture(specularTex, gBufferTexCoord);
+    vec3  ks  = gKs.xyz;
+    float ns  = gKs.w;
     
     /// Shading
     vec3 view       = normalize(eyePos - posWorld);
@@ -77,12 +78,15 @@ void main()
     vec3 reflection           = normalize(2 * NoL * normalWorld + dir);    
     float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
     vec3 specularCoefficient  = ks * pow(VoR, ns);
-        
-    vec3 phongShdingColor = clamp(((ka + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
     
     // Casting shadow
-    float shadowAttenuation = gKa.w;
-    phongShdingColor       *= shadowAttenuation;
+    float shadowAttenuation   = gTexCoord.z;
+    float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
+
+    specularCoefficient  *= shadowSpecularAttenuation;
+    vec3 phongShdingColor = clamp(((ka + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
+
+    phongShdingColor *= shadowAttenuation;
     /// Finish Shading
 
     // Gamma correction

@@ -3,10 +3,10 @@
 #include "../Context/Scene.h"
 
 GBuffer::GBuffer(
-    Scene*       pScene,
-    const UINT   width,
-    const UINT   height)
-    : m_gFramebuffer(5),
+    Scene*     pScene,
+    const UINT width,
+    const UINT height)
+    : m_gFramebuffer(6),
       m_pScene(pScene),
       m_width(width),
       m_height(height)
@@ -19,33 +19,50 @@ GBuffer::~GBuffer()
 
 BOOL GBuffer::initialize()
 {
+    BOOL result = TRUE;
+
     m_gFramebuffer.createFramebuffer();
 
+    // Position buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                               GL_COLOR_ATTACHMENT0,
-                                              m_width, 
+                                              m_width,
                                               m_height,
                                               1,
                                               GL_RGBA,
-                                              GL_RGBA32F,
+                                              GL_RGB32F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
 
+    // Normal buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE1,
                                               GL_COLOR_ATTACHMENT1,
-                                              m_width, 
+                                              m_width,
                                               m_height,
                                               1,
                                               GL_RGBA,
-                                              GL_RGBA32F,
+                                              GL_RGB32F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
 
+    // TexCoord0
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE2,
                                               GL_COLOR_ATTACHMENT2,
-                                              m_width, 
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGB32F,
+                                              GL_FLOAT,
+                                              GL_REPEAT,
+                                              FALSE);
+
+    // Albedo material
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE3,
+                                              GL_COLOR_ATTACHMENT3,
+                                              m_width,
                                               m_height,
                                               1,
                                               GL_RGBA,
@@ -54,39 +71,41 @@ BOOL GBuffer::initialize()
                                               GL_REPEAT,
                                               FALSE);
 
-    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE3,
-                                              GL_COLOR_ATTACHMENT3,
-                                              m_width, 
-                                              m_height,
-                                              1,
-                                              GL_RGBA,
-                                              GL_RGBA16F,
-                                              GL_FLOAT,
-                                              GL_REPEAT,
-                                              FALSE);
-
+    // Specular material
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE4,
                                               GL_COLOR_ATTACHMENT4,
-                                              m_width, 
+                                              m_width,
                                               m_height,
                                               1,
                                               GL_RGBA,
-                                              GL_RGBA,
+                                              GL_RGBA32F,
                                               GL_FLOAT,
                                               GL_REPEAT,
                                               FALSE);
 
-    m_gFramebuffer.createRenderbufferAttachment(
-        FRAMEBUFFER_DEPTH_RENDERBUFFER_ATTACHMENT, m_width, m_height);
+    // Environment light
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE5,
+                                              GL_COLOR_ATTACHMENT5,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGB32F,
+                                              GL_FLOAT,
+                                              GL_REPEAT,
+                                              FALSE);
 
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
-    BOOL hs = m_gShader.linkProgram();
+    result = m_gShader.linkProgram();
 
-    if (hs == FALSE)
+    if (result == FALSE)
     {
         printf("Fail to compile GBuffer shaders.\n");
         assert(FALSE);
     }
+
+    m_gFramebuffer.createRenderbufferAttachment(
+        FRAMEBUFFER_DEPTH_RENDERBUFFER_ATTACHMENT, m_width, m_height);
 
     m_pScene->GetUniformBufferMgr()->bindUniformBuffer(
         m_pScene->GetMaterialUniformBufferIndex(),
@@ -116,7 +135,7 @@ BOOL GBuffer::initialize()
 
     glBindVertexArray(0);
 
-    return hs;
+    return result;
 }
 
 void GBuffer::drawGBuffer()
@@ -130,7 +149,9 @@ void GBuffer::drawGBuffer()
     size_t modelSize = m_pScene->GetModelSize();
     for (size_t i = 0; i < modelSize; ++i)
     {
-        Model* pModel = m_pScene->GetModelPtr(i);
+        Model* pModel             = m_pScene->GetModelPtr(i);
+        MaterialType materialType = pModel->GetModelMaterialType();
+
         Camera* pCam  = m_pScene->GetActivateCamera();
 
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
@@ -184,10 +205,13 @@ void GBuffer::readGBuffer(
         bindTexture(GL_TEXTURE2, shaderProgram, "texCoordTex", 2);
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE3)->
-        bindTexture(GL_TEXTURE3, shaderProgram, "kaTex", 3);
+        bindTexture(GL_TEXTURE3, shaderProgram, "albedoTex", 3);
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE4)->
-        bindTexture(GL_TEXTURE4, shaderProgram, "kdTex", 4);
+        bindTexture(GL_TEXTURE4, shaderProgram, "specularTex", 4);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE5)->
+        bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex", 5);
 }
 
 void GBuffer::draw()

@@ -1,5 +1,9 @@
 // Material header file
 
+#define PHONG_MATERIAL        0
+#define ALBEDO_MATERIAL       1
+#define COOKTORRANCE_MATERIAL 2
+
 struct PhongMaterial
 {
     vec3 ka;
