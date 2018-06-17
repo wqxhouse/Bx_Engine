@@ -21,7 +21,7 @@ layout (std140) uniform gMaterial
 
 layout (std140) uniform gMaterialPBR
 {
-	CookTorranceMaterial m_Material;
+	CookTorranceMaterial m_pbrMaterial;
 };
 
 uniform int materialType;
@@ -99,8 +99,8 @@ void main()
             break;
         case COOKTORRANCE_MATERIAL:
         {
-            albedoTexture           = vec4(m_Material.albedo, 1.0f);
-            specularTexture         = vec4(m_Material.roughness, m_Material.metallic, m_Material.fresnel, 1.0f);
+            albedoTexture           = vec4(m_pbrMaterial.albedo, 1.0f);
+            specularTexture         = vec4(m_pbrMaterial.roughness, m_pbrMaterial.metallic, m_pbrMaterial.fresnel, -1.0f);
 
             // TODO: Calculate enviroment light
             environmentLightTexture = vec3(0.0f, 0.0f, 0.0f);
@@ -108,4 +108,10 @@ void main()
         default:
             break;
     }
+    
+    //albedoTexture           = vec4(m_pbrMaterial.albedo, 1.0f);
+    //specularTexture         = vec4(m_pbrMaterial.roughness, m_pbrMaterial.metallic, m_pbrMaterial.fresnel, 1.0f);
+
+    // TODO: Calculate enviroment light
+    //environmentLightTexture = vec3(0.0f, 0.0f, 0.0f);
 }

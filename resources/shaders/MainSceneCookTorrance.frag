@@ -12,8 +12,8 @@ in vec2 fragTexCoord;
 in vec4 posLightProj;
 
 uniform sampler2D sampler;
-//uniform sampler2D shadowMapSampler;
-uniform sampler2DMS shadowMapSampler;
+uniform sampler2D shadowMapSampler;
+//uniform sampler2DMS shadowMapSampler;
 
 layout (std140) uniform directionalLightUniformBlock
 {
@@ -48,11 +48,11 @@ float castingShadow()
     posLight = posLight * 0.5f + 0.5f;
 	
     // Multisampling, need integer coordinate
-    posLight.x = posLight.x * 2560.0f; // m_shadowMapResolution.width;
-    posLight.y = posLight.y * 2560.0f; // m_shadowMapResolution.height;
+    //posLight.x = posLight.x * 2560.0f; // m_shadowMapResolution.width;
+    //posLight.y = posLight.y * 2560.0f; // m_shadowMapResolution.height;
     
-	//float depth = texture(shadowMapSampler, posLight.xy).r;
-    float depth = 0.0f;
+	float depth = texture(shadowMapSampler, posLight.xy).r;
+    /*float depth = 0.0f;
     
     for (int i = 0; i < 4; ++i)
     {
@@ -67,7 +67,7 @@ float castingShadow()
         }
         depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
     }
-    depth *= 0.25f;
+    depth *= 0.25f;*/
 	
 	if (depth < posLight.z - 0.000001f)
 	{
@@ -78,16 +78,17 @@ float castingShadow()
 }
 
 vec3 calCookTorranceRadiance(
-    const vec3 view,
-    const vec3 normal,
-    const vec3 lightDir,
-    const vec3 lightColor)
+    const vec3  view,
+    const vec3  normal,
+    const vec3  lightDir,
+    const vec3  lightColor,
+    const float shadowSpecularAttenuation)
 {
     vec3 L = -lightDir;
     
     float NoL = clamp(dot(normal, L), 0.0f, 1.0f);
     
-    vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL);
+    vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, m_cookTorranceMaterial, /*shadowSpecularAttenuation*/ 1.0f);
     
     vec3 radiance = brdf * lightColor * NoL;
     
@@ -111,10 +112,11 @@ void main()
         vec3 dir        = normalize(m_directionalLight.dir);
         vec3 lightColor = m_directionalLight.lightBase.color;
         
-        vec3 radiance = calCookTorranceRadiance(view, normal, dir, lightColor);
-        
-        float shadowAttenuation = castingShadow();
+        float shadowAttenuation         = castingShadow();
+        float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
+        vec3 radiance = calCookTorranceRadiance(view, normal, dir, lightColor, shadowSpecularAttenuation);
+        
         // Shadow casting
         radiance *= shadowAttenuation;
         

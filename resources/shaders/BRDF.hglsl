@@ -12,22 +12,23 @@ layout(std140) uniform CookTorranceMaterialUniformBlock
     CookTorranceMaterial m_cookTorranceMaterial;
 };
 
-vec3 calCookTorranceDiffuse()
+vec3 calCookTorranceDiffuse(
+    const vec3 albedo)
 {
     vec3 diffuseComponent;
     
-    diffuseComponent = m_cookTorranceMaterial.albedo * InvPI;
+    diffuseComponent = albedo * InvPI;
     
     return diffuseComponent;
 }
 
 float cookTorranceDistribution(
-    const vec3 N,
-    const vec3 H)
+    const vec3  N,
+    const vec3  H,
+    const float alpha) ///< Material roughness
 {
     float distributionCoefficient = 0.0f;
     
-    float alpha  = m_cookTorranceMaterial.roughness;
     float alpha2 = alpha * alpha;
     
     float NoH  = clamp(dot(N, H), 0.0f, 1.0f);
@@ -43,11 +44,10 @@ float cookTorranceDistribution(
 }
 
 float cookTorranceGeometry(
-    float NoX) ///< NoL or NoV
+    const float NoX,   ///< NoL or NoV
+    const float alpha) ///< Material roughness
 {
     float geometryCoefficient;
-    
-    float alpha  = m_cookTorranceMaterial.roughness;
     
     float k = (alpha + 1) * (alpha + 1) * 0.125f;
     
@@ -57,12 +57,13 @@ float cookTorranceGeometry(
 }
 
 float schlickFresnel(
-    const vec3 V,
-    const vec3 H)
+    const vec3  V,
+    const vec3  H,
+    const float fresnel)
 {
     float fresnelCoefficient = 1.0f;
     
-    float F0 = m_cookTorranceMaterial.fresnel;
+    float F0 = fresnel;
     
     float VoH = clamp(dot(V, H), 0.0f, 1.0f);
     float exponent = (-5.55473f * VoH - 6.98316f) * VoH;
@@ -73,10 +74,11 @@ float schlickFresnel(
 }
 
 vec3 calCookTorranceSpecular(
-    const vec3  V,
-    const vec3  N,
-    const vec3  L,
-    const float NoL)
+    const vec3                 V,
+    const vec3                 N,
+    const vec3                 L,
+    const float                NoL,
+    const CookTorranceMaterial material)
 {
     float specularComponent = 0.0f;
     
@@ -86,9 +88,9 @@ vec3 calCookTorranceSpecular(
     {
         vec3 halfVector = normalize(V + L);
     
-        float D = cookTorranceDistribution(N, halfVector);
-        float G = cookTorranceGeometry(NoL) * cookTorranceGeometry(NoV);
-        float F = schlickFresnel(V, halfVector);
+        float D = cookTorranceDistribution(N, halfVector, material.roughness);
+        float G = cookTorranceGeometry(NoL, material.roughness) * cookTorranceGeometry(NoV,  material.roughness);
+        float F = schlickFresnel(V, halfVector, material.fresnel);
         
         specularComponent = (D * G * F) / (4 * NoL * NoV);
     }
@@ -97,16 +99,18 @@ vec3 calCookTorranceSpecular(
 }
 
 vec3 calCookTorranceBRDF(
-    const vec3  V,
-    const vec3  N,
-    const vec3  L,
-    const float NoL)
+    const vec3                 V,
+    const vec3                 N,
+    const vec3                 L,
+    const float                NoL,
+    const CookTorranceMaterial material,
+    const float                shadowSpecularAttenuation)
 {
-    vec3 fd = calCookTorranceDiffuse();
-    vec3 fs = calCookTorranceSpecular(V, N, L, NoL);
+    vec3 fd = calCookTorranceDiffuse(material.albedo);
+    vec3 fs = shadowSpecularAttenuation * calCookTorranceSpecular(V, N, L, NoL, material);
 
-    vec3 brdf = clamp((((1.0f - m_cookTorranceMaterial.metallic) * fd) +
-                        (m_cookTorranceMaterial.metallic) * fs), 0.0f, 1.0f);
+    vec3 brdf = clamp((((1.0f - material.metallic) * fd) +
+                        (material.metallic) * fs), 0.0f, 1.0f);
     
     brdf = fs;
     

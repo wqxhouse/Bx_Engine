@@ -2,6 +2,8 @@
 
 #include "../Core/OpenGLPCH.h"
 
+#define DEFAULT_SHADER_SIZE 65536
+
 class ShaderCompiler
 {
 public:
@@ -20,15 +22,15 @@ public:
 		const char*  fragmentShaderPath,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = 8192,
-        unsigned int fragShaderSourceSize   = 8192);
+		unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
+        unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
 
 	BOOL compileShader(
         const char*  vertexShaderFile,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = 8192,
-        unsigned int fragShaderSourceSize   = 8192);
+		unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
+        unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
 
 private:
 	char* shaderPath;

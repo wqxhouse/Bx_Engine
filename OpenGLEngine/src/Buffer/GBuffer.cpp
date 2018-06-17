@@ -112,6 +112,11 @@ BOOL GBuffer::initialize()
         m_gShader.GetShaderProgram(),
         "gMaterial");
 
+    m_pScene->GetUniformBufferMgr()->bindUniformBuffer(
+        m_pScene->GetPBRMaterialUniformBufferIndex(),
+        m_gShader.GetShaderProgram(),
+        "gMaterialPBR");
+
     /*m_pScene->GetUniformBufferMgr()->bindUniformBuffer(
         m_pScene->GetShadowMap()->GetShadowResolutionUniformBufferIndex(),
         m_gShader.GetShaderProgram(),
@@ -157,11 +162,15 @@ void GBuffer::drawGBuffer()
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
         glm::mat4 wvp = pCam->GetProjectionMatrix() * pCam->GetViewMatrix() * worldTransMatrix;
 
-        GLint worldMatrixLocation = glGetUniformLocation(gShaderProgram, "worldMatrix");
-        GLint lightTransLocation  = glGetUniformLocation(gShaderProgram, "lightTransWVP");
-        GLint wvpLocation         = glGetUniformLocation(gShaderProgram, "wvp");
+        GLint worldMatrixLocation  = glGetUniformLocation(gShaderProgram, "worldMatrix");
+        GLint lightTransLocation   = glGetUniformLocation(gShaderProgram, "lightTransWVP");
+        GLint wvpLocation          = glGetUniformLocation(gShaderProgram, "wvp");
+        GLint materialTypeLocation = glGetUniformLocation(gShaderProgram, "materialType");
 
-        if (worldMatrixLocation >= 0 && lightTransLocation >= 0 && wvpLocation >= 0)
+        if (worldMatrixLocation  >= 0 &&
+            lightTransLocation   >= 0 &&
+            wvpLocation          >= 0 &&
+            materialTypeLocation >= 0)
         {
             ShadowMap* pShadowMap = m_pScene->GetShadowMap();
 
@@ -173,8 +182,26 @@ void GBuffer::drawGBuffer()
 
             glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
-            pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
-                                   m_pScene->GetMaterialUniformBufferIndex());
+            glUniform1i(materialTypeLocation, materialType);
+
+            switch (materialType)
+            {
+                case PHONG:
+                    pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
+                                           m_pScene->GetMaterialUniformBufferIndex());
+                    break;
+                case ALBEDO:
+                    assert(FALSE);
+                    break;
+                case COOKTORRANCE:
+                    pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
+                                           m_pScene->GetPBRMaterialUniformBufferIndex());
+                    break;
+                default:
+                    printf("Unsupported material type!\n");
+                    assert(FALSE);
+                    break;
+            }
 
             pShadowMap->readShadowMap(GL_TEXTURE0, gShaderProgram, "shadowMapSampler", 0);
 

@@ -232,6 +232,7 @@ BOOL Scene::initializeShadowMap()
 {
     BOOL result = TRUE;
 
+    // TODO: Finish multi-sampled shadow map
     // Reverted the multi-sampled shadow map here, needs to fix the issue.
     m_pShadowMap = new ShadowMap(
         this, static_cast<Light*>(&m_directionalLight), m_setting.width * 2, m_setting.height * 2,
@@ -390,10 +391,6 @@ BOOL Scene::initializeDeferredRendering()
 {
     BOOL status = TRUE;
 
-    // G-Buffer shader
-    m_defferedRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
-    m_defferedRendingShader.linkProgram();
-
     m_pGBuffer = new GBuffer(this, m_setting.width, m_setting.height);
     status = m_pGBuffer->initialize();
 
@@ -402,10 +399,22 @@ BOOL Scene::initializeDeferredRendering()
         Shader::AssertErrors();
     }
 
+    // G-Buffer shaders
+    m_deferredRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
+    m_deferredRendingShader.linkProgram();
+
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
-        m_defferedRendingShader.GetShaderProgram(),
+        m_deferredRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
+
+    /*m_pbrDeferredRenderingShader.setShaderFiles("MainSceneDefferedDraw.vert", "CookTorranceDefferedDraw.frag");
+    m_pbrDeferredRenderingShader.linkProgram();
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_directionalLightUniformBufferIndex,
+        m_pbrDeferredRenderingShader.GetShaderProgram(),
+        "directionalLightUniformBlock");*/
 
     return status;
 }
@@ -414,7 +423,7 @@ void Scene::deferredDrawScene()
 {
     assert(m_setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
 
-    GLuint gShaderProgram = m_defferedRendingShader.useProgram();
+    GLuint gShaderProgram = m_deferredRendingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
 
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
@@ -475,6 +484,7 @@ BOOL Scene::initializePBRendering()
     m_pbrMaterialUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(
             GL_DYNAMIC_DRAW, CookTorranceMaterial::GetOpaqueCookTorranceMaterialDataSize(), NULL);
+
     m_uniformBufferMgr.bindUniformBuffer(
         m_pbrMaterialUniformBufferIndex, m_pbrShader.GetShaderProgram(), "CookTorranceMaterialUniformBlock");
 

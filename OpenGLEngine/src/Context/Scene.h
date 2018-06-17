@@ -55,8 +55,9 @@ public:
 
     inline Camera* GetActivateCamera()            const { return m_pCameraList[m_activeCamera]; }
 
-    inline UniformBufferMgr* GetUniformBufferMgr()      { return &m_uniformBufferMgr;           }
-    inline GLuint GetMaterialUniformBufferIndex() const { return m_materialUniformBufferIndex;  }
+    inline UniformBufferMgr* GetUniformBufferMgr()         { return &m_uniformBufferMgr;             }
+    inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;    }
+    inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex; }
 
     inline ShadowMap* GetShadowMap()              const { return m_pShadowMap; }
 
@@ -87,8 +88,10 @@ private:
 	std::vector<Texture*> m_pTextureList;
 
     Shader m_sceneShader;
-    Shader m_defferedRendingShader;
+    Shader m_deferredRendingShader;
+
     Shader m_pbrShader;
+    Shader m_pbrDeferredRenderingShader;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;

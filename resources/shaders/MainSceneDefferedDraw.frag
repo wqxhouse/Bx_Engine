@@ -5,6 +5,7 @@
 
 #include <Light.hglsl>
 #include <Utilities.hglsl>
+#include <BRDF.hglsl>
 
 uniform sampler2D posTex;
 uniform sampler2D normalTex;
@@ -28,6 +29,25 @@ uniform vec3 eyePos;
 //uniform uint screenHeight;
 
 out vec4 outColor;
+
+vec3 calCookTorranceRadiance(
+    const vec3                 view,
+    const vec3                 normal,
+    const vec3                 lightDir,
+    const vec3                 lightColor,
+    const CookTorranceMaterial material,
+    const float                shadowSpecularAttenuation)
+{
+    vec3 L = -lightDir;
+    
+    float NoL = clamp(dot(normal, L), 0.0f, 1.0f);
+    
+    vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, material, 1.0f);
+    
+    vec3 radiance = brdf * lightColor * NoL;
+    
+    return radiance;
+}
 
 vec2 calgBufferTexCoord()
 {
@@ -55,42 +75,64 @@ void main()
     vec2 texCoord    = gTexCoord.xy;
 
     // Get material data
-    vec3 ka  = texture(environmentLightTex, gBufferTexCoord).xyz;
+    vec3 environmentLight  = texture(environmentLightTex, gBufferTexCoord).xyz;
 
-    vec4 gKd = texture(albedoTex, gBufferTexCoord);
-    vec3 kd  = gKd.xyz;
+    vec4 gAlbedo = texture(albedoTex, gBufferTexCoord);
+    vec3 albedo  = gAlbedo.xyz;
 
-    vec4  gKs = texture(specularTex, gBufferTexCoord);
-    vec3  ks  = gKs.xyz;
-    float ns  = gKs.w;
+    vec4  gSpecular = texture(specularTex, gBufferTexCoord);
+    vec3  specular  = gSpecular.xyz;
+    float ns  = gSpecular.w;
     
     /// Shading
     vec3 view       = normalize(eyePos - posWorld);
-    
+    vec3 normal     = normalize(normalWorld);    
     vec3 dir        = m_directionalLight.dir;
     vec3 lightColor = m_directionalLight.lightBase.color;
-
-    // Calculate diffuse color
-    float NoL                = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
-    vec3 diffuseCoefficient  = kd * NoL;
-    
-    // Calculate specular color
-    vec3 reflection           = normalize(2 * NoL * normalWorld + dir);    
-    float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
-    vec3 specularCoefficient  = ks * pow(VoR, ns);
-    
+        
     // Casting shadow
     float shadowAttenuation   = gTexCoord.z;
     float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
-
-    specularCoefficient  *= shadowSpecularAttenuation;
-    vec3 phongShdingColor = clamp(((ka + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
-
-    phongShdingColor *= shadowAttenuation;
-    /// Finish Shading
-
-    // Gamma correction
-    phongShdingColor = gammaCorrection(phongShdingColor);
     
-    outColor = vec4(phongShdingColor, gKd.w);
+    if (ns > 0.0f)
+    {
+        // Calculate diffuse color
+        float NoL                = clamp(dot(normal, -dir), 0.0f, 1.0f);
+        vec3 diffuseCoefficient  = albedo * NoL;
+        
+        // Calculate specular color
+        vec3 reflection           = normalize(2 * NoL * normal + dir);    
+        float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
+        vec3 specularCoefficient  = specular * pow(VoR, ns);
+
+        specularCoefficient  *= shadowSpecularAttenuation;
+        vec3 phongShdingColor = clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
+
+        phongShdingColor *= shadowAttenuation;
+        /// Finish Shading
+
+        // Gamma correction
+        phongShdingColor = gammaCorrection(phongShdingColor);
+        
+        outColor = vec4(phongShdingColor, gAlbedo.w);
+    }
+    else
+    {
+        // Get material data
+        float roughness = specular.x;
+        float matellic  = specular.y;
+        float fresnel   = specular.z;
+        
+        CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
+        
+        vec3 radiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
+        
+        // Shadow casting
+        radiance *= shadowAttenuation;
+        
+        // Gamma correction
+        radiance = gammaCorrection(radiance);
+        
+        outColor = vec4(radiance, gAlbedo.w);
+    }
 }
