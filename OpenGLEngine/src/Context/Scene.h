@@ -50,16 +50,22 @@ public:
         const GLenum       wrapMethod  = GL_REPEAT,
         const BOOL         mipmap      = GL_FALSE);
 
-    inline size_t GetModelSize()                  const { return m_pSceneModelList.size();      }
-    inline Model* GetModelPtr(const UINT index)   const { return m_pSceneModelList[index];      }
+    void setGlobalMaterial(Material* pMaterial);
+    void enableSceneLocalMaterial();
+    void disableSceneLocalMaterial();
 
-    inline Camera* GetActivateCamera()            const { return m_pCameraList[m_activeCamera]; }
+    inline size_t GetModelSize()                     const { return m_pSceneModelList.size();        }
+    inline Model* GetModelPtr(const UINT index)      const { return m_pSceneModelList[index];        }
+
+    inline Camera* GetActivateCamera()               const { return m_pCameraList[m_activeCamera];   }
 
     inline UniformBufferMgr* GetUniformBufferMgr()         { return &m_uniformBufferMgr;             }
     inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;    }
     inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex; }
 
-    inline ShadowMap* GetShadowMap()              const { return m_pShadowMap; }
+    inline ShadowMap* GetShadowMap()                 const { return m_pShadowMap;                    }
+
+    inline CookTorranceMaterial getGlobalMaterial()  const { return m_globalPbrMaterial;             }
 
     void setSceneShader(
         char* const vertexShaderFile,
@@ -91,11 +97,11 @@ private:
     Shader m_deferredRendingShader;
 
     Shader m_pbrShader;
-    Shader m_pbrDeferredRenderingShader;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
 
+    // UBO index
     GLuint m_transUniformbufferIndex;
     GLuint m_directionalLightUniformBufferIndex;
     GLuint m_pointLightUniformBufferIndex;
@@ -117,5 +123,7 @@ private:
 
     // PBR
     BOOL initializePBRendering();
+    CookTorranceMaterial m_globalPbrMaterial;
 
+    BOOL useGlobalMaterial;
 };

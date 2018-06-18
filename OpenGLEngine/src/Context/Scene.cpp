@@ -14,9 +14,15 @@ Scene::Scene(const Setting& m_setting)
       m_activeCamera(0),
       m_uniformBufferMgr(128),
       m_pShadowMap(NULL),
-      m_pGBuffer(NULL)
+      m_pGBuffer(NULL),
+      useGlobalMaterial(FALSE)
 {
     this->m_setting = m_setting;
+
+    m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
+    m_globalPbrMaterial.roughness = 0.2f;
+    m_globalPbrMaterial.metallic  = 0.5f;
+    m_globalPbrMaterial.fresnel   = 1.0f;
 }
 
 BOOL Scene::initialize()
@@ -132,6 +138,44 @@ void Scene::update(float deltaTime)
     {
         m_setting.m_graphicsSetting.shadowCasting = FALSE;
     }
+
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_G])
+    {
+        m_globalPbrMaterial.roughness += 0.01f;
+
+        if (m_globalPbrMaterial.roughness > 1.0f)
+        {
+            m_globalPbrMaterial.roughness = 1.0f;
+        }
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_H])
+    {
+        m_globalPbrMaterial.roughness -= 0.01f;
+
+        if (m_globalPbrMaterial.roughness < 0.01f)
+        {
+            m_globalPbrMaterial.roughness = 0.01f;
+        }
+    }
+    
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_J])
+    {
+        m_globalPbrMaterial.metallic += 0.01f;
+
+        if (m_globalPbrMaterial.metallic > 1.0f)
+        {
+            m_globalPbrMaterial.metallic = 1.0f;
+        }
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_K])
+    {
+        m_globalPbrMaterial.metallic -= 0.01f;
+
+        if (m_globalPbrMaterial.metallic < 0.01f)
+        {
+            m_globalPbrMaterial.metallic = 0.01f;
+        }
+    }
 }
 
 void Scene::draw()
@@ -152,6 +196,14 @@ void Scene::draw()
             m_pointLightUniformBufferIndex,
             m_pointLight.getDataSize(),
             m_pointLight.getDataPtr());
+
+    if (useGlobalMaterial == TRUE)
+    {
+        m_uniformBufferMgr.updateUniformBufferData(
+            m_pbrMaterialUniformBufferIndex,
+            m_globalPbrMaterial.GetOpaqueCookTorranceMaterialDataSize(),
+            m_globalPbrMaterial.GetCookTorranceMaterialData());
+    }
 
     glViewport(0, 0, m_setting.width, m_setting.height);
 
@@ -308,6 +360,7 @@ BOOL Scene::initializePhongRendering()
     m_materialUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(
             GL_DYNAMIC_DRAW, sizeof(SpecularMaterial::m_specularMaterialData), NULL);
+
     m_uniformBufferMgr.bindUniformBuffer(
         m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
     ///
@@ -334,22 +387,33 @@ void Scene::drawScene()
     {
         Model* pModel = m_pSceneModelList[i];
 
-        MaterialType modelMaterialType = pModel->GetModelMaterialType();
-
-        switch (modelMaterialType)
+        if (useGlobalMaterial == FALSE)
         {
-        case MaterialType::PHONG:
-            sceneShaderProgram = m_sceneShader.useProgram();
-            materialIndex      = m_materialUniformBufferIndex;
-            break;
-        case MaterialType::COOKTORRANCE:
+            MaterialType modelMaterialType = pModel->GetModelMaterialType();
+
+            switch (modelMaterialType)
+            {
+            case MaterialType::PHONG:
+                sceneShaderProgram = m_sceneShader.useProgram();
+                materialIndex = m_materialUniformBufferIndex;
+                break;
+            case MaterialType::COOKTORRANCE:
+                sceneShaderProgram = m_pbrShader.useProgram();
+                materialIndex = m_pbrMaterialUniformBufferIndex;
+                break;
+            default:
+                printf("Unsupport material!\n");
+                assert(FALSE);
+                break;
+            }
+
+            pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
+        }
+        else
+        {
             sceneShaderProgram = m_pbrShader.useProgram();
             materialIndex      = m_pbrMaterialUniformBufferIndex;
-            break;
-        default:
-            printf("Unsupport material!\n");
-            assert(FALSE);
-            break;
+            pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
         }
 
         glm::mat4 transMatrix[4] =
@@ -380,7 +444,6 @@ void Scene::drawScene()
             m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
         }
 
-        pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
         pModel->draw();
     }
 
@@ -393,6 +456,15 @@ BOOL Scene::initializeDeferredRendering()
 
     m_pGBuffer = new GBuffer(this, m_setting.width, m_setting.height);
     status = m_pGBuffer->initialize();
+    
+    if (useGlobalMaterial == TRUE)
+    {
+        m_pGBuffer->UseGlobalMaterial();
+    }
+    else
+    {
+        m_pGBuffer->UseLocalMaterial();
+    }
 
     if (status == FALSE)
     {
@@ -407,14 +479,6 @@ BOOL Scene::initializeDeferredRendering()
         m_directionalLightUniformBufferIndex,
         m_deferredRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
-
-    /*m_pbrDeferredRenderingShader.setShaderFiles("MainSceneDefferedDraw.vert", "CookTorranceDefferedDraw.frag");
-    m_pbrDeferredRenderingShader.linkProgram();
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
-        m_pbrDeferredRenderingShader.GetShaderProgram(),
-        "directionalLightUniformBlock");*/
 
     return status;
 }
@@ -551,5 +615,36 @@ void Scene::addTexture(
         printf("Unsupport texture type!\n");
         assert(FALSE);
         break;
+    }
+}
+
+void Scene::setGlobalMaterial(
+    Material* pMaterial)
+{
+    for (Model* pModel : m_pSceneModelList)
+    {
+        pModel->updateMaterialData(pMaterial);
+    }
+}
+
+void Scene::enableSceneLocalMaterial()
+{
+    useGlobalMaterial = FALSE;
+    if (m_pGBuffer != NULL) { m_pGBuffer->UseLocalMaterial(); }
+
+    for (Model* pModel : m_pSceneModelList)
+    {
+        pModel->UseLocalMaterial();
+    }
+}
+
+void Scene::disableSceneLocalMaterial()
+{
+    useGlobalMaterial = TRUE;
+    if (m_pGBuffer != NULL) { m_pGBuffer->UseGlobalMaterial(); }
+
+    for (Model* pModel : m_pSceneModelList)
+    {
+        pModel->UseGlobalMaterial();
     }
 }

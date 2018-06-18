@@ -10,11 +10,21 @@ namespace Math
     class Vector4
     {
     public:
-        Vector4(float x = 0, float y = 0, float z = 0, float w = 0)
+        Vector4()
+            : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
+        {}
+
+        Vector4(
+            const float x,
+            const float y,
+            const float z,
+            const float w)
             : X(x), Y(y), Z(z), W(w)
-        {
-            //"Warning: Uncontrolled memory block.(Ignore if you assign memory on stack)
-        }
+        {}
+
+        Vector4(const float f)
+            : x(f), y(f), z(f), w(f)
+        {}
 
         Vector4(const Vector3& v, float w)
             : m_v3(v), W(w)

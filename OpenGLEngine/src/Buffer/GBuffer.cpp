@@ -182,25 +182,34 @@ void GBuffer::drawGBuffer()
 
             glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
-            glUniform1i(materialTypeLocation, materialType);
-
-            switch (materialType)
+            if (useGlobalMaterial == FALSE)
             {
+                glUniform1i(materialTypeLocation, materialType);
+
+                switch (materialType)
+                {
                 case PHONG:
                     pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
-                                           m_pScene->GetMaterialUniformBufferIndex());
+                        m_pScene->GetMaterialUniformBufferIndex());
                     break;
                 case ALBEDO:
                     assert(FALSE);
                     break;
                 case COOKTORRANCE:
                     pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
-                                           m_pScene->GetPBRMaterialUniformBufferIndex());
+                        m_pScene->GetPBRMaterialUniformBufferIndex());
                     break;
                 default:
                     printf("Unsupported material type!\n");
                     assert(FALSE);
                     break;
+                }
+            }
+            else
+            {
+                glUniform1i(materialTypeLocation, COOKTORRANCE);
+                pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
+                    m_pScene->GetPBRMaterialUniformBufferIndex());
             }
 
             pShadowMap->readShadowMap(GL_TEXTURE0, gShaderProgram, "shadowMapSampler", 0);
