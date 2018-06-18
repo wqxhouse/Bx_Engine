@@ -72,15 +72,15 @@ void OpenGLTemplate::createDefaultScene()
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
-    pScene->addModel(
+    /*pScene->addModel(
         "../resources/models/cornellbox/CornellBox-Sphere.obj",
         "../resources/models/cornellbox/CornellBox-Sphere.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
-    /*pScene->addModel(
+    pScene->addModel(
         "../resources/models/buddha/buddha.obj",
         "../resources/models/buddha/buddha.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     /*pScene->addModel(
         "../resources/models/dragon/dragon.obj",
