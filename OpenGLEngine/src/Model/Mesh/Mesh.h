@@ -113,6 +113,11 @@ public:
     void drawMeshPos();
     void draw();
 
+    void setMaterial(Material* pMaterial);
+
+    inline void UseGlobalMaterial() { useGlobalMaterial = TRUE; }
+    inline void UseLocalMaterial()  { useGlobalMaterial = FALSE; }
+
 	std::string m_name;
 	std::string m_materialName;
 
@@ -146,4 +151,6 @@ private:
 
     UniformBufferMgr* m_pUniformBufferMgr;
     GLuint            m_materialBufferIndex;
+
+    BOOL useGlobalMaterial;
 };

@@ -23,6 +23,9 @@ public:
 
     void draw();
 
+    inline void UseGlobalMaterial() { useGlobalMaterial = TRUE;  }
+    inline void UseLocalMaterial()  { useGlobalMaterial = FALSE; }
+
 private:
     Scene*      m_pScene; // Pointer to the scene
 
@@ -49,4 +52,6 @@ private:
         0, 1, 2,
         1, 3, 2
     };
+
+    BOOL useGlobalMaterial;
 };

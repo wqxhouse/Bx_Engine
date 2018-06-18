@@ -21,7 +21,7 @@ void OpenGLContext::initialize()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    glfwWindowHint(GLFW_SAMPLES, setting.m_graphicsSetting.antialasing);// 4x MSAA
+    glfwWindowHint(GLFW_SAMPLES, setting.m_graphicsSetting.antialasing); // 4x MSAA
 
     window = glfwCreateWindow(setting.width, setting.height, "OpenGL Template", nullptr, nullptr);
     if (window == nullptr)

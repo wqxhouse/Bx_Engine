@@ -16,6 +16,13 @@ public:
     void drawModelPos();
     void draw();
 
+    void updateMaterialData(
+        Material* pMaterial);
+
+    void updateMaterialData(
+        Material*  pMaterial,
+        const UINT meshIndex);
+
     void updateMaterial(
         UniformBufferMgr* pUniformBufferMgr,
         const GLuint      materialBufferIndex);
@@ -33,7 +40,14 @@ public:
         return m_pMeshList[0]->m_pMaterial->GetMaterialType();
     }
 
+    void UseLocalMaterial();
+    void UseGlobalMaterial();
+
+    inline void UseLocalMaterial (const UINT meshIndex) const { m_pMeshList[meshIndex]->UseLocalMaterial();  }
+    inline void UseGlobalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseGlobalMaterial(); }
+
 	std::vector<Mesh*> m_pMeshList;
 
 	Trans* m_pTrans;
+
 };

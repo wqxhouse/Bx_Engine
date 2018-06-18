@@ -58,6 +58,11 @@ public:
 
 	~SpecularMaterial() {}
 
+    void operator=(const SpecularMaterial& material)
+    {
+        m_specularMaterialData = material.m_specularMaterialData;
+    }
+
     union
     {
         struct
@@ -76,7 +81,11 @@ class CookTorranceMaterial : public Material
 public:
     // TODO: Load material from file
     CookTorranceMaterial()
-        : Material(COOKTORRANCE, "", 1.0f, 1.0f, false), albedoVector4(Vector4())
+        : Material(COOKTORRANCE, "", 1.0f, 1.0f, false),
+          albedoVector4(Vector4(1.0f)),
+          roughness(0.5f),
+          metallic(0.5f),
+          fresnel(1.0f)
     {
 
     }
@@ -91,6 +100,13 @@ public:
     static inline size_t GetOpaqueCookTorranceMaterialDataSize()
     {
         return 2 * sizeof(Vector4);
+    }
+
+    void operator=(const CookTorranceMaterial& material)
+    {
+        albedo    = material.albedo;
+        roughness = material.roughness;
+        fresnel   = material.fresnel;
     }
 
     union

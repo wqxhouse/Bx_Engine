@@ -112,8 +112,6 @@ vec3 calCookTorranceBRDF(
     vec3 brdf = clamp((((1.0f - material.metallic) * fd) +
                         (material.metallic) * fs), 0.0f, 1.0f);
     
-    brdf = fs;
-    
     return brdf;
 }
     

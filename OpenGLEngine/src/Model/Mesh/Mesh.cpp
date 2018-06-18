@@ -9,7 +9,10 @@ Mesh::Mesh(
     const std::vector<Math::Vector3>& normalBuf,
     const std::vector<Math::Vector2>& texCoords, 
     const std::vector<GLuint>&        indices)
-    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
+    : m_name(name),
+      m_materialName(materialFile),
+      m_pMaterial(NULL),
+      useGlobalMaterial(FALSE)
 {
     initialize();
 }
@@ -23,7 +26,10 @@ Mesh::Mesh(
     const std::vector<Math::Vector2>& texCoords, 
     const std::vector<GLuint>&        indices, 
     const std::vector<Texture*>&      textures)
-    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
+    : m_name(name),
+      m_materialName(materialFile),
+      m_pMaterial(NULL),
+      useGlobalMaterial(FALSE)
 {
     initialize();
 }
@@ -38,7 +44,10 @@ Mesh::Mesh(
     const std::vector<GLuint>&        posIndices,
     const std::vector<GLuint>&        normalIndices,
     const std::vector<GLuint>&        texCoordIndices)
-    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
+    : m_name(name),
+      m_materialName(materialFile),
+      m_pMaterial(NULL),
+      useGlobalMaterial(FALSE)
 {
     combineVertexData(counter, posBuf, normalBuf, texCoords,
                       posIndices, normalIndices, texCoordIndices);
@@ -57,7 +66,10 @@ Mesh::Mesh(
     const std::vector<GLuint>&        normalIndices,
     const std::vector<GLuint>&        texCoordIndices,
     const std::vector<Texture*>&      textures)
-    : m_name(name), m_materialName(materialFile), m_pMaterial(NULL)
+    : m_name(name),
+      m_materialName(materialFile),
+      m_pMaterial(NULL),
+      useGlobalMaterial(FALSE)
 {
     //TODO: Safely register the memory
     //Memory::MemoryPool::registerMemory<Mesh>(this);
@@ -131,9 +143,10 @@ void Mesh::drawMeshPos()
 
 void Mesh::draw()
 {
-
-    if (m_pUniformBufferMgr != NULL && m_pMaterial != NULL)
+    if (useGlobalMaterial == FALSE)
     {
+        assert(m_pUniformBufferMgr != NULL && m_pMaterial != NULL);
+
         switch (m_pMaterial->GetMaterialType())
         {
         case MaterialType::PHONG:
@@ -166,13 +179,7 @@ void Mesh::draw()
             printf("Unsupport material!\n");
             assert(FALSE);
             break;
-        }
-        
-    }
-    else
-    {
-        printf("The material pointer is NULL!\n");
-        assert(FALSE);
+        }        
     }
 
     glBindVertexArray(m_vertexArrayObj);
@@ -182,7 +189,22 @@ void Mesh::draw()
     glEnableVertexAttribArray(2);
 
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
+
     glBindVertexArray(0);
+}
+
+void Mesh::setMaterial(
+    Material* pMaterial)
+{
+    if (pMaterial->GetMaterialType() != m_pMaterial->GetMaterialType())
+    {
+        SafeDelete(m_pMaterial);
+        m_pMaterial = pMaterial;
+    }
+    else
+    {
+        *m_pMaterial = *pMaterial;
+    }
 }
 
 void Mesh::updateMaterial(
