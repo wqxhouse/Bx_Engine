@@ -2,11 +2,13 @@
 
 #include "../Context/Scene.h"
 
+#define GBUFFER_TEXTURE_SIZE 6
+
 GBuffer::GBuffer(
     Scene*     pScene,
     const UINT width,
     const UINT height)
-    : m_gFramebuffer(6),
+    : m_gFramebuffer(GBUFFER_TEXTURE_SIZE),
       m_pScene(pScene),
       m_width(width),
       m_height(height)

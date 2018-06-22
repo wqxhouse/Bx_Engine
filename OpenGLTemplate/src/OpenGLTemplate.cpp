@@ -1,9 +1,10 @@
 #include "OpenGLTemplate.h"
 
 OpenGLTemplate::OpenGLTemplate(
-    const Setting& setting,
+    Setting*       pSetting,
     const BOOL     defaultScene)
-    : m_setting(setting), m_context(setting)
+    : m_pSetting(pSetting),
+      m_context(pSetting)
 {
     if (defaultScene == TRUE)
     {
@@ -24,10 +25,10 @@ void OpenGLTemplate::createDefaultScene()
 {
     Scene* pScene = m_context.GetScene();
 
-    const float aspectRadio = static_cast<float>(m_setting.width) / static_cast<float>(m_setting.height);
+    const float aspectRadio = static_cast<float>(m_pSetting->width) / static_cast<float>(m_pSetting->height);
 
-    float halfWidth = static_cast<float>(m_setting.width * 2) * 0.002f;
-    float halfHeight = static_cast<float>(m_setting.width * 2) * 0.002f;
+    float halfWidth = static_cast<float>(m_pSetting->width * 2) * 0.002f;
+    float halfHeight = static_cast<float>(m_pSetting->width * 2) * 0.002f;
 
     //Vector3 lightDir = pScene->m_directionalLight.getDir();
     //glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
@@ -72,15 +73,15 @@ void OpenGLTemplate::createDefaultScene()
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
-    /*pScene->addModel(
+    pScene->addModel(
         "../resources/models/cornellbox/CornellBox-Sphere.obj",
         "../resources/models/cornellbox/CornellBox-Sphere.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
-    pScene->addModel(
+    /*pScene->addModel(
         "../resources/models/buddha/buddha.obj",
         "../resources/models/buddha/buddha.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     /*pScene->addModel(
         "../resources/models/dragon/dragon.obj",

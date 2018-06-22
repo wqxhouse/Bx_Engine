@@ -1,0 +1,16 @@
+/*
+    SSAO.hglsl
+*/
+
+#define SSAO_SAMPLE_MAX 256
+
+struct SsaoSample
+{
+    uint sampleNum; vec3 padding;
+    vec3 samples[SSAO_SAMPLE_MAX];
+};
+
+layout (std140) uniform SsaoSamplesUniformBlock
+{
+    SsaoSample m_ssaoSample;
+};

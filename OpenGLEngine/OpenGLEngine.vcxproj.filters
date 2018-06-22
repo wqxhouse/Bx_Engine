@@ -153,6 +153,9 @@
     <ClInclude Include="src\Shadow\ShadowMap.h">
       <Filter>src\Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="src\Shadow\SSAO.h">
+      <Filter>src\Shadow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -252,6 +255,9 @@
       <Filter>src\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Shadow\ShadowMap.cpp">
+      <Filter>src\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shadow\SSAO.cpp">
       <Filter>src\Shadow</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,17 +2,17 @@
 
 #include "../Model/Model.h"
 #include "../Light/Light.h"
-#include "../Texture/Texture.h"
 #include "../Buffer/UniformBufferMgr.h"
 #include "../Shadow/ShadowMap.h"
 #include "../Buffer/GBuffer.h"
+#include "../Shadow/SSAO.h"
 
 #include "Setting.h"
 
 class Scene
 {
 public:
-	Scene(const Setting& setting);
+	Scene(Setting* pSetting);
     BOOL initialize();
 	void update(float deltaTime);
 	void draw();
@@ -54,6 +54,8 @@ public:
     void enableSceneLocalMaterial();
     void disableSceneLocalMaterial();
 
+    inline Setting* GetSetting()                     const { return m_pSetting;                      }
+
     inline size_t GetModelSize()                     const { return m_pSceneModelList.size();        }
     inline Model* GetModelPtr(const UINT index)      const { return m_pSceneModelList[index];        }
 
@@ -65,7 +67,9 @@ public:
 
     inline ShadowMap* GetShadowMap()                 const { return m_pShadowMap;                    }
 
-    inline CookTorranceMaterial getGlobalMaterial()  const { return m_globalPbrMaterial;             }
+    inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;             }
+
+    inline SSAO* GetSSAO()                           const { return m_pSsao;                         }
 
     void setSceneShader(
         char* const vertexShaderFile,
@@ -74,6 +78,8 @@ public:
     inline void SetActiveCamera(const UINT activeCameraIndex) { m_activeCamera = activeCameraIndex; }
 
     inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
+    
+    BOOL useSSAO();
 
     DirectionalLight m_directionalLight;
 
@@ -81,11 +87,11 @@ private:
     BOOL initializePhongRendering();
     void drawScene();
 
-	Setting m_setting;
+	Setting* m_pSetting;
 
     Vector4 m_backgroundColor;
 
-    PointLight       m_pointLight;
+    PointLight m_pointLight;
 
     std::vector<Camera*> m_pCameraList;
     UINT m_activeCamera;
@@ -124,6 +130,8 @@ private:
     // PBR
     BOOL initializePBRendering();
     CookTorranceMaterial m_globalPbrMaterial;
-
     BOOL useGlobalMaterial;
+
+    // SSAO
+    SSAO* m_pSsao;
 };

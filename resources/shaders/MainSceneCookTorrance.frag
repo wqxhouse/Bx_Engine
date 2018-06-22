@@ -4,6 +4,7 @@
 #include <Material.hglsl>
 #include <Utilities.hglsl>
 #include <BRDF.hglsl>
+#include <SSAO.hglsl>
 
 in vec3 posWorld;
 in vec3 normalWorld;

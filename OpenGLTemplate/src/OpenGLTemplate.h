@@ -6,7 +6,7 @@ class OpenGLTemplate
 {
 public:
     OpenGLTemplate(
-        const Setting& setting, 
+        Setting*       pSetting,
         const BOOL     defaultScene = TRUE);
     ~OpenGLTemplate();
 
@@ -14,6 +14,6 @@ public:
 
     void createDefaultScene();
 
-    Setting       m_setting;
+    Setting*      m_pSetting;
     OpenGLContext m_context;
 };

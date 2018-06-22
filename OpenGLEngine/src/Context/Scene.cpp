@@ -6,8 +6,9 @@
 //Image loader
 #include "stb_image.h"
 
-Scene::Scene(const Setting& m_setting)
-    : m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
+Scene::Scene(Setting* pSetting)
+    : m_pSetting(pSetting),
+      m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       // m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
@@ -15,10 +16,9 @@ Scene::Scene(const Setting& m_setting)
       m_uniformBufferMgr(128),
       m_pShadowMap(NULL),
       m_pGBuffer(NULL),
-      useGlobalMaterial(FALSE)
+      useGlobalMaterial(FALSE),
+      m_pSsao(NULL)
 {
-    this->m_setting = m_setting;
-
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
     m_globalPbrMaterial.roughness = 0.2f;
     m_globalPbrMaterial.metallic  = 0.5f;
@@ -58,15 +58,35 @@ BOOL Scene::initialize()
         m_sceneShader.GetShaderProgram(),
         "shadowMapResolutionUniformBlock"
     );*/
-    
+
     // Deferred shading test
-    if (m_setting.m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
+    if (m_pSetting->m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
     {
         status = initializeDeferredRendering();
         if (status == FALSE)
         {
             printf("Failed to initialize G-Buffer!\n");
             assert(FALSE);
+        }
+
+        // SSAO only support deferred shading now
+        if (useSSAO() == TRUE)
+        {
+            m_pSsao = new SSAO(m_pSetting, &m_uniformBufferMgr);
+            m_pSsao->initialize();
+
+            /*m_uniformBufferMgr.bindUniformBuffer(m_pSsao->GetSampleUboIndex(),
+            m_pbrShader.GetShaderProgram(),
+            "SsaoSamplesUniformBlock");
+
+            m_uniformBufferMgr.bindUniformBuffer(m_pSsao->GetSampleUboIndex(),
+            m_sceneShader.GetShaderProgram(),
+            "SsaoSamplesUniformBlock");*/
+
+            m_uniformBufferMgr.bindUniformBuffer(
+                m_pSsao->GetSampleUboIndex(),
+                m_deferredRendingShader.GetShaderProgram(),
+                "SsaoSamplesUniformBlock");
         }
     }
 
@@ -105,11 +125,11 @@ void Scene::update(float deltaTime)
     
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
     {
-        m_setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+        m_pSetting->m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_M])
     {
-        m_setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+        m_pSetting->m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
         if (m_pGBuffer == NULL)
         {
             BOOL result = initializeDeferredRendering();
@@ -132,11 +152,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
     {
-        m_setting.m_graphicsSetting.shadowCasting = TRUE;
+        m_pSetting->m_graphicsSetting.shadowCasting = TRUE;
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_X])
     {
-        m_setting.m_graphicsSetting.shadowCasting = FALSE;
+        m_pSetting->m_graphicsSetting.shadowCasting = FALSE;
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_G])
@@ -182,7 +202,7 @@ void Scene::draw()
 {
     GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
 
-    // if (m_setting.m_graphicsSetting.shadowCasting == TRUE)
+    // if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
     {
         shadowPass();
     }
@@ -205,9 +225,9 @@ void Scene::draw()
             m_globalPbrMaterial.GetCookTorranceMaterialData());
     }
 
-    glViewport(0, 0, m_setting.width, m_setting.height);
+    glViewport(0, 0, m_pSetting->width, m_pSetting->height);
 
-    if (m_setting.m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
+    if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
     {
         drawScene();
     }
@@ -271,6 +291,7 @@ Scene::~Scene()
 
     SafeDelete(m_pShadowMap);
     SafeDelete(m_pGBuffer);
+    SafeDelete(m_pSsao);
 }
 
 void Scene::setSceneShader(
@@ -287,8 +308,8 @@ BOOL Scene::initializeShadowMap()
     // TODO: Finish multi-sampled shadow map
     // Reverted the multi-sampled shadow map here, needs to fix the issue.
     m_pShadowMap = new ShadowMap(
-        this, static_cast<Light*>(&m_directionalLight), m_setting.width * 2, m_setting.height * 2,
-        /*m_setting.m_graphicsSetting.antialasing*/ 1);
+        this, static_cast<Light*>(&m_directionalLight), m_pSetting->width * 2, m_pSetting->height * 2,
+        /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
 
     result = m_pShadowMap->initialize();
 
@@ -300,13 +321,13 @@ void Scene::shadowPass()
     m_pShadowMap->update(&m_directionalLight);
 
     glCullFace(GL_FRONT);
-    if (m_setting.m_graphicsSetting.shadowCasting == FALSE)
+    if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
         glDepthFunc(GL_NEVER);
     }
     m_pShadowMap->drawShadowMap(this);
     glCullFace(GL_BACK);
-    if (m_setting.m_graphicsSetting.shadowCasting == FALSE)
+    if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
         glDepthFunc(GL_LEQUAL);
     }
@@ -439,7 +460,7 @@ void Scene::drawScene()
         GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
-        if (m_setting.m_graphicsSetting.shadowCasting == TRUE)
+        if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
         {
             m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
         }
@@ -450,11 +471,23 @@ void Scene::drawScene()
     Shader::FinishProgram();
 }
 
+BOOL Scene::useSSAO()
+{
+    BOOL result = TRUE;
+    AmbientOcclutionSetting ambientOcclutionSetting =
+        m_pSetting->m_graphicsSetting.ambientOcclutionSetting;
+
+    result = ((ambientOcclutionSetting.ambientOcclusion !=
+               AmbientOcclutionSetting::AmbientOcclusion::NONE) ? TRUE : FALSE);
+
+    return result;
+}
+
 BOOL Scene::initializeDeferredRendering()
 {
     BOOL status = TRUE;
 
-    m_pGBuffer = new GBuffer(this, m_setting.width, m_setting.height);
+    m_pGBuffer = new GBuffer(this, m_pSetting->width, m_pSetting->height);
     status = m_pGBuffer->initialize();
     
     if (useGlobalMaterial == TRUE)
@@ -485,7 +518,7 @@ BOOL Scene::initializeDeferredRendering()
 
 void Scene::deferredDrawScene()
 {
-    assert(m_setting.m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
+    assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
 
     GLuint gShaderProgram = m_deferredRendingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
@@ -501,6 +534,31 @@ void Scene::deferredDrawScene()
     {
         glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
+        if (useSSAO() == TRUE)
+        {
+            m_pSsao->draw(gShaderProgram);
+
+            GLint projMatLocation = glGetUniformLocation(gShaderProgram, "projMat");
+            if (projMatLocation >= 0)
+            {
+                const GLfloat* projMatData = glm::value_ptr(activeCamPtr->GetProjectionMatrix());
+                glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, projMatData);
+            }
+            else
+            {
+                printf("Unable to get projection matrix location in shader");
+                //assert(FALSE);
+            }
+
+            // Test
+            GLint sampleNumLocation = glGetUniformLocation(gShaderProgram, "testSampleNum");
+            glUniform1ui(sampleNumLocation, (GLuint)(m_pSsao->GetSampleNum()));
+
+            GLint sampleLocation = glGetUniformLocation(gShaderProgram, "testSamples");
+            glUniform3fv(sampleLocation, m_pSsao->GetSampleNum(), (const GLfloat*)(m_pSsao->GetSsaoSampleData()));
+            // Test end
+        }
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         m_pGBuffer->draw();
@@ -508,9 +566,9 @@ void Scene::deferredDrawScene()
     }
     else
     {
-        printf("Unable to get wvp matrix location in shadowMap shader");
+        printf("Unable to get wvp matrix location in shader");
         assert(FALSE);
-    }    
+    }
 
     Shader::FinishProgram();
 }

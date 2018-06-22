@@ -34,6 +34,6 @@ void main()
 	fragTexCoord = texCoord;
 	
 	posLightProj = lightTransWVP * vec4(position, 1.0f);
-	
+    
     gl_Position  = m_trans.wvp * vec4(position, 1.0f);
 }

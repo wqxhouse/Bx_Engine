@@ -5,7 +5,7 @@
 enum PolyMode
 {
 	WIREFRAME = 0x00000000,
-	TRIANGLE = 0x00000001,
+	TRIANGLE  = 0x00000001,
 };
 
 enum RenderingMethod
@@ -16,17 +16,42 @@ enum RenderingMethod
 
 enum Antialasing
 {
-    NONE = 0x00000000,
-    LOW = 0x00000002,
-    HIGH = 0x00000004,
+    NONE  = 0x00000000,
+    LOW   = 0x00000002,
+    HIGH  = 0x00000004,
     ELTRA = 0x00000008,
+};
+
+struct AmbientOcclutionSetting
+{
+    enum AmbientOcclusion
+    {
+        NONE, SSAO,
+    };
+
+    enum SSAO_Quality
+    {
+        LOW    = 0x00000004,
+        NORMAL = 0x0000000F,
+        HIGH   = 0x00000040,
+        ELTRA  = 0x000000F0,
+    };
+
+    AmbientOcclusion ambientOcclusion;
+    SSAO_Quality     ssaoQuality;
 };
 
 struct GraphicsSetting
 {
-    Antialasing antialasing         = Antialasing::HIGH;
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
+    Antialasing antialasing         = Antialasing::HIGH;
     BOOL shadowCasting              = TRUE;
+
+    AmbientOcclutionSetting ambientOcclutionSetting = 
+    { 
+        AmbientOcclutionSetting::AmbientOcclusion::SSAO, 
+        AmbientOcclutionSetting::SSAO_Quality::HIGH
+    };
 };
 
 struct Setting

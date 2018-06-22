@@ -36,6 +36,12 @@ public:
         const UINT                          m_depthBufWidth,
         const UINT                          m_depthBufHeight);
 
+    void attachTexture2D(
+        const GLenum texUnit,
+        const GLenum attachmentType,
+        Texture2D*   pTexture2D,
+        const UINT   samples);
+
     void drawFramebuffer();
     void readFramebuffer(
         const GLenum texUnit,

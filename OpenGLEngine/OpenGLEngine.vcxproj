@@ -183,6 +183,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Shader\Shader.h" />
     <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Shadow\ShadowMap.h" />
+    <ClInclude Include="src\Shadow\SSAO.h" />
     <ClInclude Include="src\Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +216,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Shader\Shader.cpp" />
     <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Shadow\ShadowMap.cpp" />
+    <ClCompile Include="src\Shadow\SSAO.cpp" />
     <ClCompile Include="src\Texture\Texture.cpp" />
     <ClCompile Include="src\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Texture\Texture3D.cpp" />
