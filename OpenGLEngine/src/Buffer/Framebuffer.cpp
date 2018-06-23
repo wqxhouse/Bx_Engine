@@ -2,7 +2,7 @@
 
 Framebuffer::Framebuffer(const UINT attachTexCount)
 {
-    m_pAttachedTextures.resize(attachTexCount);
+    m_pAttachedTextures.resize(attachTexCount, NULL);
 }
 
 Framebuffer::~Framebuffer()

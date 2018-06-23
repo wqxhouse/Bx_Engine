@@ -92,5 +92,5 @@ void OpenGLTemplate::createDefaultScene()
     pScene->addTexture("../resources/textures/teaport/wall.jpg",
         GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE);
 
-    pScene->disableSceneLocalMaterial();
+    // pScene->disableSceneLocalMaterial();
 }

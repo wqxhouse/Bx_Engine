@@ -46,6 +46,9 @@
     <Filter Include="src\Shadow">
       <UniqueIdentifier>{c3a76853-2458-4672-aef8-d2c3acb2d3b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Model\Primitives">
+      <UniqueIdentifier>{e8e30c14-4787-41d7-bc04-b4aef278c961}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector3.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="src\Shadow\SSAO.h">
       <Filter>src\Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="src\Model\Primitives\Quad.h">
+      <Filter>src\Model\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -259,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="src\Shadow\SSAO.cpp">
       <Filter>src\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Primitives\Quad.cpp">
+      <Filter>src\Model\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

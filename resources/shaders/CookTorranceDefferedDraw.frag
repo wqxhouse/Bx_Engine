@@ -12,7 +12,6 @@ uniform sampler2D normalTex;
 uniform sampler2D texCoordTex;
 uniform sampler2D specularTex;
 uniform sampler2D albedoTex;
-uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
 
 layout (std140) uniform directionalLightUniformBlock

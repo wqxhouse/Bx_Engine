@@ -19,7 +19,12 @@ public:
 
     BOOL initialize();
     void drawGBuffer();
-    void readGBuffer(GLuint shaderProgram);
+
+    void readGBuffer(const GLuint shaderProgram);
+    void readGBuffer(
+        const GLuint       shaderProgram,
+        const std::string& textureName,
+        const GLenum       texUnit);
 
     void draw();
 

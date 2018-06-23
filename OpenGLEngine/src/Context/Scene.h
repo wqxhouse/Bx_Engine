@@ -67,6 +67,8 @@ public:
 
     inline ShadowMap* GetShadowMap()                 const { return m_pShadowMap;                    }
 
+    inline GBuffer*   GetGBuffer()                   const { return m_pGBuffer;                      }
+
     inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;             }
 
     inline SSAO* GetSSAO()                           const { return m_pSsao;                         }

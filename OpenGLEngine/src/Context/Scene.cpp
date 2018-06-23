@@ -72,21 +72,8 @@ BOOL Scene::initialize()
         // SSAO only support deferred shading now
         if (useSSAO() == TRUE)
         {
-            m_pSsao = new SSAO(m_pSetting, &m_uniformBufferMgr);
+            m_pSsao = new SSAO(this, m_pSetting);
             m_pSsao->initialize();
-
-            /*m_uniformBufferMgr.bindUniformBuffer(m_pSsao->GetSampleUboIndex(),
-            m_pbrShader.GetShaderProgram(),
-            "SsaoSamplesUniformBlock");
-
-            m_uniformBufferMgr.bindUniformBuffer(m_pSsao->GetSampleUboIndex(),
-            m_sceneShader.GetShaderProgram(),
-            "SsaoSamplesUniformBlock");*/
-
-            m_uniformBufferMgr.bindUniformBuffer(
-                m_pSsao->GetSampleUboIndex(),
-                m_deferredRendingShader.GetShaderProgram(),
-                "SsaoSamplesUniformBlock");
         }
     }
 
@@ -234,6 +221,12 @@ void Scene::draw()
     else
     {
         m_pGBuffer->drawGBuffer();
+
+        if (useSSAO() == TRUE)
+        {
+            m_pSsao->draw();
+        }
+
         deferredDrawScene();
     }
 }
@@ -533,31 +526,6 @@ void Scene::deferredDrawScene()
     if (eyeLocation >= 0)
     {
         glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
-
-        if (useSSAO() == TRUE)
-        {
-            m_pSsao->draw(gShaderProgram);
-
-            GLint projMatLocation = glGetUniformLocation(gShaderProgram, "projMat");
-            if (projMatLocation >= 0)
-            {
-                const GLfloat* projMatData = glm::value_ptr(activeCamPtr->GetProjectionMatrix());
-                glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, projMatData);
-            }
-            else
-            {
-                printf("Unable to get projection matrix location in shader");
-                //assert(FALSE);
-            }
-
-            // Test
-            GLint sampleNumLocation = glGetUniformLocation(gShaderProgram, "testSampleNum");
-            glUniform1ui(sampleNumLocation, (GLuint)(m_pSsao->GetSampleNum()));
-
-            GLint sampleLocation = glGetUniformLocation(gShaderProgram, "testSamples");
-            glUniform3fv(sampleLocation, m_pSsao->GetSampleNum(), (const GLfloat*)(m_pSsao->GetSsaoSampleData()));
-            // Test end
-        }
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

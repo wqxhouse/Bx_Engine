@@ -6,7 +6,6 @@
 #include <Light.hglsl>
 #include <Utilities.hglsl>
 #include <BRDF.hglsl>
-#include <SSAO.hglsl>
 
 uniform sampler2D posTex;
 uniform sampler2D normalTex;
@@ -14,8 +13,6 @@ uniform sampler2D texCoordTex;
 uniform sampler2D albedoTex;
 uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
-
-uniform sampler2D noiseTex;
 
 layout (std140) uniform directionalLightUniformBlock
 {
@@ -28,10 +25,6 @@ layout (std140) uniform pointLightUniformBlock
 };
 
 uniform vec3 eyePos;
-uniform mat4 projMat;
-
-uniform uint testSampleNum;
-uniform vec3 testSamples[64];
 
 //uniform uint screenWidth;
 //uniform uint screenHeight;
@@ -68,46 +61,6 @@ vec2 calgBufferTexCoord()
     result.y /= 720.0f;
     
     return result;
-}
-
-float calSsao(
-    const vec3  pos,        // position
-    const vec3  normal,     // Normal
-    const vec2  texCoord)   // Texture coordinate
-{
-    float occlusion = testSampleNum;//m_ssaoSample.sampleNum;
-    
-    vec2 ssaoTexCoord = vec2(texCoord.x * 1280.0f, texCoord.y * 720.0f);
-    
-    vec3 randomVec = normalize(texture(noiseTex, ssaoTexCoord)).xyz;
-    vec3 tangent   = normalize(randomVec - normal * dot(normal, randomVec)); // X axis
-    vec3 biTangent = cross(normal, tangent);                                  // Y axis
-    
-    mat3 TBN = mat3(tangent, biTangent, normal);
-    
-    for (uint i = 0; i < testSampleNum/*m_ssaoSample.sampleNum*/; ++i)
-    {
-        vec3 sampleVec = TBN * testSamples[i];//m_ssaoSample.samples[i];
-        
-        vec3 samplePos = pos + sampleVec;
-        
-        vec4 samplePosVec4     = vec4(samplePos, 1.0f);
-        vec4 samplePosProjVec4 = projMat * samplePosVec4;
-        samplePosProjVec4.xy  /= samplePosProjVec4.w;
-        samplePosProjVec4.xy   = 0.5f * samplePosProjVec4.xy + 0.5f;
-        
-        float depth = texture(posTex, samplePosProjVec4.xy).z;
-        
-        if (samplePos.z > depth) // occlusion
-        {
-            float scale = clamp(length(sampleVec), 0.0f, 1.0f);
-            occlusion -= scale;
-        }
-    }
-    
-    occlusion /= float(/*m_ssaoSample.sampleNum*/testSampleNum);
-    
-    return occlusion;
 }
 
 void main()
@@ -180,8 +133,8 @@ void main()
     
     // TODO: Real-time open and close SSAO
     // SSAO
-    float occlusion = calSsao(posWorld, normalWorld, texCoord);
-    radiance *= occlusion;
+    //float occlusion = calSsao(posWorld, normalWorld, texCoord);
+    //radiance *= occlusion;
     
     // Gamma correction
     radiance = gammaCorrection(radiance);

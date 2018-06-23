@@ -17,6 +17,9 @@ GBuffer::GBuffer(
 
 GBuffer::~GBuffer()
 {
+    glDeleteBuffers(1, &m_gQuadVertexBufObj);
+    glDeleteBuffers(1, &m_gQuadIndexBufObj);
+    glDeleteVertexArrays(1, &m_gQuadVAO);
 }
 
 BOOL GBuffer::initialize()
@@ -231,7 +234,7 @@ void GBuffer::drawGBuffer()
 }
 
 void GBuffer::readGBuffer(
-    GLuint shaderProgram)
+    const GLuint shaderProgram)
 {
     m_gFramebuffer.getTexturePtr(GL_TEXTURE0)->
         bindTexture(GL_TEXTURE0, shaderProgram, "posTex", 0);
@@ -250,6 +253,17 @@ void GBuffer::readGBuffer(
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE5)->
         bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex", 5);
+}
+
+void GBuffer::readGBuffer(
+    const GLuint       shaderProgram,
+    const std::string& textureName,
+    const GLenum       texUnit)
+{
+    assert(texUnit >= GL_TEXTURE0);
+
+    m_gFramebuffer.getTexturePtr(texUnit)->
+        bindTexture(texUnit, shaderProgram, textureName, texUnit - GL_TEXTURE0);
 }
 
 void GBuffer::draw()
