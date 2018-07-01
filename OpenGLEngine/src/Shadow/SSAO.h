@@ -36,6 +36,12 @@ public:
     inline void* GetSsaoSampleData() { return m_ssaoSampleVectors.data(); }
     inline void* GetSsaoUboData() { return static_cast<void*>(&m_sampleNum); }
 
+    void bindSsaoTexture(
+        const GLenum       texUnit,
+        const UINT         program,
+        const std::string& texName,
+        const UINT         samplerIndex);
+
 private:
     const Setting* m_pSetting;
 

@@ -128,7 +128,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
         }
         else
         {
-            printf("Unable to get wvp matrix location in shadowMap shader");
+            printf("Unable to get wvp matrix location in shadowMap shader\n");
             assert(FALSE);
         }
     }

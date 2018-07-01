@@ -21,12 +21,14 @@ Texture2D::Texture2D(
     m_textureWidth  = texWidth;
     m_textureHeight = texHeight;
 
+    m_mipmap = mipmap;
+
     GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
 
     glBindTexture(glTextureType, m_textureHandle);
     glTexImage2D(glTextureType, 0, storeFormat, m_textureWidth, m_textureHeight, 0, loadFormat, type, data);
 
-    if (mipmap == TRUE)
+    if (m_mipmap == TRUE)
     {
         glTexParameteri(glTextureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(glTextureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -53,6 +55,8 @@ Texture2D::Texture2D(
     const BOOL         mipmap)
     : Texture(TEXTURE_2D)
 {
+    m_mipmap = mipmap;
+
     glBindTexture(GL_TEXTURE_2D, m_textureHandle);
     m_textureData = stbi_load(textureFile.data(),
                               reinterpret_cast<int*>(&m_textureWidth),
@@ -63,7 +67,7 @@ Texture2D::Texture2D(
     glTexImage2D(GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight,
                  0, format, type, m_textureData);
 
-    if (mipmap == TRUE)
+    if (m_mipmap == TRUE)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -106,6 +110,16 @@ void Texture2D::bindTexture(const GLenum       textureUnit,
         glBindTexture(glTextureType, m_textureHandle);
         glUniform1i(textureLocation, samplerIndex);
     }
+}
+
+void Texture2D::setTextureSampleMethod(
+    const GLenum minSampleMethod,  // Nearest neighbor / Linear
+    const GLenum magSampleMethod)  // Nearest neighbor / Linear
+{
+    GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
+
+    glTexParameteri(glTextureType, GL_TEXTURE_MIN_FILTER, minSampleMethod);
+    glTexParameteri(glTextureType, GL_TEXTURE_MAG_FILTER, magSampleMethod);
 }
 
 void Texture2D::unbindTexture()

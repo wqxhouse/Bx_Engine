@@ -14,6 +14,8 @@ uniform sampler2D albedoTex;
 uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
 
+uniform sampler2D ssaoTex;
+
 layout (std140) uniform directionalLightUniformBlock
 {
     DirectionalLight m_directionalLight;
@@ -134,6 +136,8 @@ void main()
     // TODO: Real-time open and close SSAO
     // SSAO
     //float occlusion = calSsao(posWorld, normalWorld, texCoord);
+    //radiance *= occlusion;
+    //float occlusion = texture(ssaoTex, gBufferTexCoord).r;
     //radiance *= occlusion;
     
     // Gamma correction

@@ -63,6 +63,10 @@ public:
         const std::string& samplerName,
         const int samplerIndex);
 
+    void setTextureSampleMethod(
+        const GLenum minSampleMethod,  // Nearest neighbor / Linear
+        const GLenum magSampleMethod); // Nearest neighbor / Linear
+
     inline void unbindTexture();
 
     inline void* getTextureData();
@@ -74,6 +78,7 @@ private:
     UINT  m_textureWidth;
 
     UINT  m_samples;
+    BOOL  m_mipmap;
 
     UINT  m_textureType;
 

@@ -183,6 +183,15 @@ void Scene::update(float deltaTime)
             m_globalPbrMaterial.metallic = 0.01f;
         }
     }
+
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_C])
+    {
+        EnableSSAO();
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_V])
+    {
+        DisableSSAO();
+    }
 }
 
 void Scene::draw()
@@ -516,6 +525,15 @@ void Scene::deferredDrawScene()
     GLuint gShaderProgram = m_deferredRendingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
 
+    if (useSSAO() == TRUE)
+    {
+        m_pSsao->bindSsaoTexture(GL_TEXTURE6, gShaderProgram, "ssaoTex", 6);
+    }
+    else
+    {
+
+    }
+
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
     
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
@@ -534,7 +552,7 @@ void Scene::deferredDrawScene()
     }
     else
     {
-        printf("Unable to get wvp matrix location in shader");
+        printf("Unable to get wvp matrix location in shader\n");
         assert(FALSE);
     }
 

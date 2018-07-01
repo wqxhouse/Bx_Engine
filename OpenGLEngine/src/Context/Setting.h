@@ -47,6 +47,18 @@ struct GraphicsSetting
     Antialasing antialasing         = Antialasing::HIGH;
     BOOL shadowCasting              = TRUE;
 
+    inline void EnableSSAO()
+    {
+        ambientOcclutionSetting.ambientOcclusion =
+            AmbientOcclutionSetting::AmbientOcclusion::SSAO;
+    }
+
+    inline void DisableSSAO()
+    {
+        ambientOcclutionSetting.ambientOcclusion =
+            AmbientOcclutionSetting::AmbientOcclusion::NONE;
+    }
+
     AmbientOcclutionSetting ambientOcclutionSetting = 
     { 
         AmbientOcclutionSetting::AmbientOcclusion::SSAO, 

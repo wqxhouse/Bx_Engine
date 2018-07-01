@@ -82,6 +82,8 @@ public:
     inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
     
     BOOL useSSAO();
+    inline void EnableSSAO() { m_pSetting->m_graphicsSetting.EnableSSAO(); }
+    inline void DisableSSAO() { m_pSetting->m_graphicsSetting.DisableSSAO(); }
 
     DirectionalLight m_directionalLight;
 
