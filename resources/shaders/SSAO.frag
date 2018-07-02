@@ -11,49 +11,21 @@ uniform sampler2D texCoordTex;
 
 uniform sampler2D noiseTex;
 
-/*struct SsaoSample
+struct SsaoSample
 {
-    uint sampleNum; vec3 padding;
+    uint sampleNum;
     vec3 samples[SSAO_SAMPLE_MAX];
 };
 
-layout (std140) uniform SsaoSamplesUniformBlock
+uniform SsaoSamplesUniformBlock
 {
     SsaoSample m_ssaoSample;
-};*/
+};
 
-//uniform mat4 viewMat;
 uniform mat4 projMat;
 
-uniform uint testSampleNum;
-uniform vec3 testSamples[64];
-
-// if (samplePos.z > depth) // occlusion
-//{
-      //occlusion = 0.0f;
-//}
-
-//depthTex = depthGPosWorld;
-//depthViewTex.z = depth; // 2
-//samplePosTex = samplePos;//vec3(samplePos.x + 5.0f, samplePos.y + 5.0f, samplePos.z); // 3
-//
-//posWorldTex = posWorld.xyz; // 4
-//posViewTex = posView.xyz; // 5
-//
-//sampleVecTex = sampleVec; // 6
-//samplePosProjTex.xy = samplePosProjVec4.xy; // 7
-
-layout(location = 0) out float ssaoTexture;
-///layout(location = 1) out vec4 depthTex;
-///layout(location = 2) out vec3 depthViewTex;
-///layout(location = 3) out vec3 samplePosTex;
-//layout(location = 4) out vec3 posWorldTex;
-//layout(location = 5) out vec3 posViewTex;
-///layout(location = 4) out vec3 sampleVecTex;
-//layout(location = 7) out vec3 samplePosProjTex;
-///layout(location = 5) out vec3 xAxis;
-///layout(location = 6) out vec3 yAxis;
-///layout(location = 7) out vec3 zAxis;
+layout(location = 0) out vec3 ssaoTexture;
+//layout(location = 1) out vec3 indexTexture;
 
 vec2 calgBufferTexCoord()
 {
@@ -75,22 +47,15 @@ void main()
 {
     vec2 gBufferTexCoord = calgBufferTexCoord();
     
-    //vec3 posWorld    = texture(posTex, gBufferTexCoord).xyz;
-    //vec3 normalWorld = texture(normalTex, gBufferTexCoord).xyz;
     vec2 texCoord    = texture(texCoordTex, gBufferTexCoord).xy;
-    
-    //vec4 posViewVec4    = viewMat * vec4(posWorld, 1.0f);
-    //vec4 normalViewVec4 = viewMat * vec4(normalWorld, 1.0f);
-    
-    //vec3 posView    = posViewVec4.xyz / posViewVec4.w;
-    //vec3 normalView = normalize(normalViewVec4.xyz / normalViewVec4.w);
     
     vec3 posView    = texture(posTex, gBufferTexCoord).xyz;
     vec3 normalView = texture(normalTex, gBufferTexCoord).xyz;
     
-    float occlusion = float(testSampleNum);//m_ssaoSample.sampleNum;
+    float occlusion = //float(testSampleNum);
+                      m_ssaoSample.sampleNum;
     
-    vec2 ssaoTexCoord = texCoord * tileDeminsion;//gl_FragCoord.xy;
+    vec2 ssaoTexCoord = texCoord * tileDeminsion;
     
     vec3 randomVec = normalize(texture(noiseTex, ssaoTexCoord)).xyz;
     vec3 tangent   = normalize(randomVec - normalView * dot(normalView, randomVec)); // X axis
@@ -98,16 +63,14 @@ void main()
     
     mat3 TBN = mat3(tangent, biTangent, normalView);
     
-    //uint i = 0;
-    for (uint i = 0; i < testSampleNum/*m_ssaoSample.sampleNum*/; ++i)
+    // Test
+    //int index = -1;
+    
+    //uint i = 1;
+    for (uint i = 0; i < m_ssaoSample.sampleNum; ++i)
     {
-        vec3 sampleVec = TBN * testSamples[i];//m_ssaoSample.samples[i];
-        //vec3 samplePosWorld = posWorld + sampleVec;
-        
+        vec3 sampleVec = TBN * m_ssaoSample.samples[i];
         vec3 samplePos = posView + sampleVec;
-        
-        //vec4 samplePosView = viewMat * vec4(samplePosWorld, 1.0f);
-        //vec3 samplePos = (samplePosView.xyz / samplePosView.w);
         
         vec4 samplePosVec4     = vec4(samplePos, 1.0f);
         vec4 samplePosProjVec4 = projMat * samplePosVec4;
@@ -122,35 +85,20 @@ void main()
         
         if (depthGPosWorld.w > 0.99999f)
         {
-            //depthPosWorld = depthGPosWorld.xyz;
-            //depthPosView  = viewMat * vec4(depthPosWorld, 1.0f);
-            //depth = depthPosView.z / depthPosView.w;
             depth = depthPosView.z;
             
-            if (samplePos.z < depth + 0.0001f) // occlusion
+            if (samplePos.z < depth + 0.001f) // occlusion
             {
                 occlusion -= 1.0f;
                 //occlusion = 0.0f;
+                //index = int(i);
+                //break;
             }
         }
     }
     
     occlusion /= 64.0f;//float(/*m_ssaoSample.sampleNum*/testSampleNum);
     
-    ssaoTexture = occlusion; // 0
-    
-    // depthTex.z = depthPosWorld.z; // 1
-    ///depthTex = depthGPosWorld;
-    ///depthViewTex.z = depth; // 2
-    ///samplePosTex = samplePos;//vec3(samplePos.x + 5.0f, samplePos.y + 5.0f, samplePos.z); // 3
-    
-    //posWorldTex = posWorld.xyz; // 4
-    //posViewTex = posView.xyz; // 5
-    
-    ///sampleVecTex = sampleVec; // 6
-    //samplePosProjTex.xy = samplePosProjVec4.xy; // 7
-    
-    ///xAxis = tangent;
-    ///yAxis = biTangent;
-    ///zAxis = normalView;
+    ssaoTexture = vec3(occlusion);
+    //indexTexture = vec3(index);
 }

@@ -33,6 +33,9 @@ uniform vec3 eyePos;
 
 out vec4 outColor;
 
+// Test
+uniform int useSsao;
+
 vec3 calCookTorranceRadiance(
     const vec3                 view,
     const vec3                 normal,
@@ -133,12 +136,12 @@ void main()
     // Shadow casting
     radiance *= shadowAttenuation;
     
-    // TODO: Real-time open and close SSAO
     // SSAO
-    //float occlusion = calSsao(posWorld, normalWorld, texCoord);
-    //radiance *= occlusion;
-    //float occlusion = texture(ssaoTex, gBufferTexCoord).r;
-    //radiance *= occlusion;
+    float occlusion = texture(ssaoTex, gBufferTexCoord).r;
+    if (useSsao == 1)
+    {
+        radiance *= occlusion;
+    }
     
     // Gamma correction
     radiance = gammaCorrection(radiance);

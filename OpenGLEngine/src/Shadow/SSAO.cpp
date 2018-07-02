@@ -7,15 +7,14 @@
 
 static std::random_device rd;
 static std::default_random_engine generator(rd());
-static std::uniform_real_distribution<float> posDistribution(0.0f, 1.0f);
-static std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+static std::uniform_real_distribution<float> distribution(0.1f, 1.0f);
 
 SSAO::SSAO(
     Scene*          pScene,
     const Setting*  pSetting)
     : m_pSetting(pSetting),
       m_pScene(pScene),
-      m_ssaoFramebuffer(20),
+      // m_ssaoFramebuffer(10),
       m_pSsaoTexture(NULL),
       m_pNoiseTexture(NULL)
 {
@@ -24,7 +23,6 @@ SSAO::SSAO(
 
     m_sampleNum = ambientOcclution.ssaoQuality;
 
-    m_ssaoSampleVectors.reserve(m_sampleNum);
     m_noiseTextureData.reserve(SSAO_NOISE_TEXTURE_DATA_SIZE);
 }
 
@@ -35,6 +33,8 @@ SSAO::~SSAO()
 
 BOOL SSAO::initialize()
 {
+    std::vector<Math::Vector4> m_ssaoSampleVectors(m_sampleNum, Vector4());
+
     BOOL result = TRUE;
 
     m_ssaoFramebuffer.createFramebuffer();
@@ -43,35 +43,24 @@ BOOL SSAO::initialize()
     m_pSsaoTexture = new Texture2D(m_pSetting->width,
                                    m_pSetting->height,
                                    1,
-                                   GL_RGBA,
-                                   GL_RGBA32F,
+                                   GL_RGB,
+                                   GL_RGB32F,
                                    GL_FLOAT,
                                    GL_CLAMP_TO_BORDER,
                                    FALSE);
 
     m_ssaoFramebuffer.attachTexture2D(GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pSsaoTexture, 1);
 
-    // Test
-    /*m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE1, GL_COLOR_ATTACHMENT1, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGBA32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);
-
-    m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE2, GL_COLOR_ATTACHMENT2, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGB32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);
-
-    m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE3, GL_COLOR_ATTACHMENT3, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGB32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);
-
-    m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE4, GL_COLOR_ATTACHMENT4, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGB32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);
-
-    m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE5, GL_COLOR_ATTACHMENT5, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGB32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);
-
-    m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE6, GL_COLOR_ATTACHMENT6, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGB32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);
-
-    m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE7, GL_COLOR_ATTACHMENT7, m_pSetting->width, m_pSetting->height,
-        1, GL_RGBA, GL_RGB32F, GL_FLOAT, GL_CLAMP_TO_BORDER, FALSE);*/
+    /*m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE1,
+                                                 GL_COLOR_ATTACHMENT1,
+                                                 m_pSetting->width,
+                                                 m_pSetting->height,
+                                                 1,
+                                                 GL_RGBA,
+                                                 GL_RGB32F,
+                                                 GL_FLOAT,
+                                                 GL_CLAMP_TO_BORDER,
+                                                 FALSE);*/
 
     // Compiler and link ssao shaders
     m_ssaoShader.setShaderFiles("SSAO.vert", "SSAO.frag");
@@ -85,18 +74,24 @@ BOOL SSAO::initialize()
 
     for (size_t i = 0; i < m_sampleNum; ++i)
     {
-        Math::Vector3 sample = { distribution(generator),      // x
-                                 distribution(generator),      // y
-                                 posDistribution(generator) }; // z
+        Math::Vector3 sample = { distribution(generator),   // x
+                                 distribution(generator),   // y
+                                 distribution(generator) }; // z
 
-        float scale = posDistribution(generator);
+        // Map to [-1, 1]
+        sample.x = (sample.x - 0.5f) * 2.0f;
+        sample.y = (sample.y - 0.5f) * 2.0f;
+
+        float scale = distribution(generator);
         sample     *= scale;
         // TODO: Added lerp here
 
-        m_ssaoSampleVectors.push_back(sample);
+        m_ssaoSampleVectors[i] = Math::Vector4(sample, 1.0f);
     }
 
-    /*UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
+    memcpy(m_ssaoSamples, m_ssaoSampleVectors.data(), m_sampleNum * sizeof(Math::Vector4));
+
+    UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
 
     m_sampleUboIndex = pUboMgr->createUniformBuffer(
                                   GL_STATIC_DRAW,
@@ -105,7 +100,7 @@ BOOL SSAO::initialize()
 
     pUboMgr->bindUniformBuffer(m_sampleUboIndex,
                                m_ssaoShader.GetShaderProgram(),
-                               "SsaoSamplesUniformBlock");*/
+                               "SsaoSamplesUniformBlock");
 
     for (UINT i = 0; i < SSAO_NOISE_TEXTURE_DATA_SIZE; ++i)
     {
@@ -120,7 +115,7 @@ BOOL SSAO::initialize()
                                     SSAO_NOISE_TEXTURE_DEMENSION,
                                     1,
                                     GL_RGB,
-                                    GL_R32F,
+                                    GL_RGB32F,
                                     GL_FLOAT,
                                     GL_REPEAT,
                                     FALSE,
@@ -141,15 +136,11 @@ void SSAO::draw()
     pGBuffer->readGBuffer(ssaoShaderProgram, "normalTex", GL_TEXTURE7);
     pGBuffer->readGBuffer(ssaoShaderProgram, "texCoordTex", GL_TEXTURE2);
 
-    //GLint viewMatLocation = glGetUniformLocation(ssaoShaderProgram, "viewMat");
     GLint projMatLocation = glGetUniformLocation(ssaoShaderProgram, "projMat");
 
-    if (/*viewMatLocation >= 0 &&*/ projMatLocation >= 0)
+    if (projMatLocation >= 0)
     {
         Camera* pActiveCam = m_pScene->GetActivateCamera();
-
-        //const GLfloat* viewMatData = glm::value_ptr(pActiveCam->GetViewMatrix());
-        //glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, viewMatData);
 
         const GLfloat* projMatData = glm::value_ptr(pActiveCam->GetProjectionMatrix());
         glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, projMatData);
@@ -159,14 +150,6 @@ void SSAO::draw()
         printf("Unable to get projection matrix location in shader\n");
         assert(FALSE);
     }
-
-    // Test
-    GLint sampleNumLocation = glGetUniformLocation(ssaoShaderProgram, "testSampleNum");
-    glUniform1ui(sampleNumLocation, /*static_cast<GLuint>(m_sampleNum)*/64u);
-
-    GLint sampleLocation = glGetUniformLocation(ssaoShaderProgram, "testSamples");
-    glUniform3fv(sampleLocation, m_sampleNum, (const GLfloat*)(m_ssaoSampleVectors.data()));
-    // Test end
 
     m_ssaoFramebuffer.drawFramebuffer();
     m_pNoiseTexture->bindTexture(GL_TEXTURE3, ssaoShaderProgram, "noiseTex", 3);
@@ -184,4 +167,9 @@ void SSAO::bindSsaoTexture(
     const UINT         samplerIndex)
 {
     m_pSsaoTexture->bindTexture(texUnit, program, texName, samplerIndex);
+}
+
+void SSAO::unbindSsaoTexture()
+{
+    // TODO: unbind ssao texture
 }

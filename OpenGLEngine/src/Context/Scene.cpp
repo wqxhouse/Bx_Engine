@@ -525,13 +525,20 @@ void Scene::deferredDrawScene()
     GLuint gShaderProgram = m_deferredRendingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
 
+    // Test
+    GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
     if (useSSAO() == TRUE)
     {
         m_pSsao->bindSsaoTexture(GL_TEXTURE6, gShaderProgram, "ssaoTex", 6);
+
+        glUniform1i(useSsaoLocation, 1);
     }
     else
     {
+        glUniform1i(useSsaoLocation, 0);
 
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];

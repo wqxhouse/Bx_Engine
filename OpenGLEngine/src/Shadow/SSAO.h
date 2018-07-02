@@ -3,12 +3,14 @@
 #include <random>
 
 #include "../Context/Setting.h"
-#include "../Math/Vector3.h"
+#include "../Math/Vector4.h"
 #include "../Texture/Texture.h"
 #include "../Buffer/UniformBufferMgr.h"
 #include "../Buffer/Framebuffer.h"
 #include "../Shader/Shader.h"
 #include "../Model/Primitives/Quad.h"
+
+#define SSAO_SAMPLE_MAX 256
 
 class Scene;
 
@@ -30,17 +32,19 @@ public:
 
     inline UINT  GetSsaoSampleDataSize()
     {
-        return (sizeof(m_sampleNum) + sizeof(Math::Vector3) * m_sampleNum);
+        return (sizeof(m_sampleNumVec4) + sizeof(m_ssaoSamples[0]) * m_sampleNum);
     }
 
-    inline void* GetSsaoSampleData() { return m_ssaoSampleVectors.data(); }
-    inline void* GetSsaoUboData() { return static_cast<void*>(&m_sampleNum); }
+    inline void* GetSsaoSampleData() { return &(m_ssaoSamples[0]); }
+    inline void* GetSsaoUboData()    { return static_cast<void*>(&m_sampleNum); }
 
     void bindSsaoTexture(
         const GLenum       texUnit,
         const UINT         program,
         const std::string& texName,
         const UINT         samplerIndex);
+
+    void unbindSsaoTexture();
 
 private:
     const Setting* m_pSetting;
@@ -59,6 +63,13 @@ private:
 
     Quad m_ssaoQuad;
 
-    UINT m_sampleNum; Math::Vector3 padding;
-    std::vector<Math::Vector3> m_ssaoSampleVectors;
+    union
+    {
+        struct
+        {
+            UINT m_sampleNum; Math::Vector3 padding;
+        };
+        Math::Vector4 m_sampleNumVec4;
+    };
+    Math::Vector4 m_ssaoSamples[SSAO_SAMPLE_MAX];
 };
