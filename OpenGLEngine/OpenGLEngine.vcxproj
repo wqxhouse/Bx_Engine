@@ -164,6 +164,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
     <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Effect\BlurEffect.h" />
     <ClInclude Include="src\Light\Light.h" />
     <ClInclude Include="src\Material\Material.h" />
     <ClInclude Include="src\Math\Math.h" />
@@ -202,6 +203,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Context\Setting.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
+    <ClCompile Include="src\Effect\BlurEffect.cpp" />
     <ClCompile Include="src\Light\DirectionalLight.cpp" />
     <ClCompile Include="src\Light\Light.cpp" />
     <ClCompile Include="src\Light\PointLight.cpp" />

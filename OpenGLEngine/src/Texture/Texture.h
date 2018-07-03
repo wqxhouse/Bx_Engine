@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/OpenGLPCH.h"
+#include "../Shader/Shader.h"
 
 enum TextureType
 {
@@ -11,7 +12,7 @@ class Texture
 {
 public:
     Texture(TextureType textureType);
-    
+
     virtual void bindTexture(const GLenum textureIndex,
                              const GLuint shaderProgram,
                              const std::string& samplerName,
@@ -21,11 +22,17 @@ public:
 
     virtual ~Texture();
 
-    inline TextureType GetTextureType()   const { return m_textureType; }
+    inline TextureType GetTextureType()   const { return m_textureType;   }
     inline GLuint      GetTextureHandle() const { return m_textureHandle; }
+
+    inline UINT        GetTextureWidth()  const { return m_textureWidth;  }
+    inline UINT        GetTextureHeight() const { return m_textureHeight; }
 
 protected:
     GLuint m_textureHandle;
+
+    UINT  m_textureWidth;
+    UINT  m_textureHeight;
 
 private:
     TextureType m_textureType;
@@ -74,13 +81,10 @@ public:
     ~Texture2D();
 
 private:
-    UINT  m_textureHeight;
-    UINT  m_textureWidth;
-
+    UINT  m_textureType;
+    
     UINT  m_samples;
     BOOL  m_mipmap;
-
-    UINT  m_textureType;
 
     void* m_textureData;
 };

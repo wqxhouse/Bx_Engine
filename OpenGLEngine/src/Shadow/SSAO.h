@@ -6,9 +6,9 @@
 #include "../Math/Vector4.h"
 #include "../Texture/Texture.h"
 #include "../Buffer/UniformBufferMgr.h"
-#include "../Buffer/Framebuffer.h"
 #include "../Shader/Shader.h"
 #include "../Model/Primitives/Quad.h"
+#include "../Effect/BlurEffect.h"
 
 #define SSAO_SAMPLE_MAX 256
 
@@ -62,6 +62,9 @@ private:
     Shader m_ssaoShader;
 
     Quad m_ssaoQuad;
+
+    BOOL blurSSAO;
+    BlurEffect* m_pBlurEffect;
 
     union
     {
