@@ -542,9 +542,6 @@ void Scene::deferredDrawScene()
     }
 
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
-    
-    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GLint eyeLocation = glGetUniformLocation(gShaderProgram, "eyePos");
 
@@ -554,6 +551,10 @@ void Scene::deferredDrawScene()
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         m_pGBuffer->draw();
         glDisable(GL_BLEND);
     }

@@ -16,7 +16,8 @@ SSAO::SSAO(
       m_pScene(pScene),
       // m_ssaoFramebuffer(10),
       m_pSsaoTexture(NULL),
-      m_pNoiseTexture(NULL)
+      m_pNoiseTexture(NULL),
+      blurSSAO(TRUE)
 {
     AmbientOcclutionSetting ambientOcclution =
         m_pSetting->m_graphicsSetting.ambientOcclutionSetting;
@@ -29,6 +30,7 @@ SSAO::SSAO(
 SSAO::~SSAO()
 {
     SafeDelete(m_pNoiseTexture);
+    SafeDelete(m_pBlurEffect);
 }
 
 BOOL SSAO::initialize()
@@ -123,6 +125,14 @@ BOOL SSAO::initialize()
 
     m_ssaoQuad.initialize();
 
+    m_pBlurEffect = new BlurEffect(m_pSsaoTexture);
+    result = m_pBlurEffect->initialize();
+    if (result == FALSE)
+    {
+        printf("Fail to initialize blur effect.\n");
+        assert(FALSE);
+    }
+
     return result;
 }
 
@@ -157,6 +167,11 @@ void SSAO::draw()
     m_ssaoFramebuffer.finishDrawFramebuffer();
 
     m_ssaoShader.FinishProgram();
+
+    if (blurSSAO == TRUE)
+    {
+        m_pBlurEffect->draw();
+    }
 }
 
 // Bind the ssao texture to program for final rendering to backbuffer
@@ -166,7 +181,10 @@ void SSAO::bindSsaoTexture(
     const std::string& texName,
     const UINT         samplerIndex)
 {
-    m_pSsaoTexture->bindTexture(texUnit, program, texName, samplerIndex);
+    m_pSsaoTexture = m_pBlurEffect->GetBlurTexture();
+    Texture2D* ssaoTexture = ((blurSSAO == TRUE) ? m_pBlurEffect->GetBlurTexture() : m_pSsaoTexture);
+    
+    ssaoTexture->bindTexture(texUnit, program, texName, samplerIndex);
 }
 
 void SSAO::unbindSsaoTexture()
