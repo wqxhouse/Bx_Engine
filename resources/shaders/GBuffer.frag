@@ -54,6 +54,7 @@ void main()
     // posViewTexture     = vec4(posView, 1.0f);
     posWorldTexture    = posWorldVec4; //vec4(posWorld, 1.0f);
     normalViewTexture  = normalView;
+
     texCoordTexture    = fragTexCoord;
     posViewTexture     = vec4(posView, 1.0f);
 
