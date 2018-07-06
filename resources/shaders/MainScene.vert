@@ -38,8 +38,8 @@ void main()
 	fragTexCoord = texCoord;
 	
 	posLightProj = lightTransWVP * vec4(position, 1.0f);
-    
-    lightProbeSampler = position;//vec3(position.x, position.y, position.z);
-    
+
+    lightProbeSampler = position;
+
     gl_Position  = m_trans.wvp * vec4(position, 1.0f);
 }

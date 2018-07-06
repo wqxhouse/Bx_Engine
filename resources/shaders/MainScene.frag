@@ -99,11 +99,11 @@ void main()
     float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
     vec4 texColor = texture(sampler, fragTexCoord);
-    
+
     // Light Probe
     vec3 environmentLight = texture(lightProbeCubemap, normalWorld).xyz;    
     lightColor += environmentLight;
-    
+
     vec3 diffuseColor = clamp(NoL * m_phongMaterial.kd * lightColor, 0.0f, 1.0f);
     vec3 specColor    = clamp(specularCoefficient * m_phongMaterial.ks.xyz * lightColor, 0.0f, 1.0f);
     

@@ -93,7 +93,11 @@ void main()
 
     posViewTexture     = vec4(posView, 1.0f);
     normalViewTexture  = normalView;
+   
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
+    
+    posViewTexture    = vec4(posView, 1.0f);
+    normalViewTexture = normalView;
 
     switch (materialType)
     {
@@ -124,5 +128,4 @@ void main()
             break;
     }
 }
-// End GBuffer.frag
 // End GBuffer.frag

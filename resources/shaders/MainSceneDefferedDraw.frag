@@ -102,6 +102,7 @@ void main()
 
     // Casting shadow
     float shadowAttenuation   = gTexCoord.z;
+
     float shadowSpecularAttenuation = 1.0f;// ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
     /// Shading
@@ -110,7 +111,7 @@ void main()
     vec3 view       = normalize(eyePosView - posView);
     vec3 normal     = normalize(normalView);
     vec3 lightColor = m_directionalLight[0].lightBase.color;
-
+ 
     if (ns > 0.0f)
     {
         // Get material data
@@ -126,6 +127,7 @@ void main()
         vec3 specularCoefficient  = specular * pow(VoR, ns);
 
         specularCoefficient  *= shadowSpecularAttenuation;
+
         vec3 phongShdingColor =
             clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
 
