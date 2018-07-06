@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/OpenGLPCH.h"
+#include "../Shader/Shader.h"
 
 enum TextureType
 {
@@ -11,7 +12,7 @@ class Texture
 {
 public:
     Texture(TextureType textureType);
-    
+
     virtual void bindTexture(const GLenum textureIndex,
                              const GLuint shaderProgram,
                              const std::string& samplerName,
@@ -21,11 +22,23 @@ public:
 
     virtual ~Texture();
 
-    inline TextureType GetTextureType()   const { return m_textureType; }
+    inline TextureType GetTextureType()   const { return m_textureType;   }
     inline GLuint      GetTextureHandle() const { return m_textureHandle; }
+
+    inline UINT        GetTextureWidth()  const { return m_textureWidth;  }
+    inline UINT        GetTextureHeight() const { return m_textureHeight; }
+
+    inline void SetTextureHandle(
+        const GLuint textureHandle) 
+    {
+        m_textureHandle = textureHandle;
+    }
 
 protected:
     GLuint m_textureHandle;
+
+    UINT  m_textureWidth;
+    UINT  m_textureHeight;
 
 private:
     TextureType m_textureType;
@@ -39,12 +52,13 @@ public:
     Texture2D(
         const UINT   texWidth,
         const UINT   texHeight,
-        const UINT   samples     = 0,
+        const UINT   samples     = 1,
         const GLenum loadFormat  = GL_RGBA,
         const GLenum storeFormat = GL_RGBA,
         const GLenum type        = GL_UNSIGNED_BYTE,
         const GLenum wrapMethod  = GL_REPEAT,
-        const BOOL   mipmap      = FALSE);
+        const BOOL   mipmap      = FALSE,
+        const void*  data        = NULL);
 
     // Create 2D texture from texture file
     Texture2D(
@@ -62,6 +76,10 @@ public:
         const std::string& samplerName,
         const int samplerIndex);
 
+    void setTextureSampleMethod(
+        const GLenum minSampleMethod,  // Nearest neighbor / Linear
+        const GLenum magSampleMethod); // Nearest neighbor / Linear
+
     inline void unbindTexture();
 
     inline void* getTextureData();
@@ -69,12 +87,10 @@ public:
     ~Texture2D();
 
 private:
-    UINT  m_textureHeight;
-    UINT  m_textureWidth;
-
-    UINT  m_samples;
-
     UINT  m_textureType;
+    
+    UINT  m_samples;
+    BOOL  m_mipmap;
 
     void* m_textureData;
 };

@@ -32,12 +32,19 @@ in vec2 fragTexCoord;
 
 in vec4 posLightProj;
 
-layout(location = 0) out vec3 posWorldTexture;
+in vec3 posView;
+in vec3 normalView;
+
+layout(location = 0) out vec4 posWorldTexture;
 layout(location = 1) out vec3 normalWorldTexture;
 layout(location = 2) out vec3 texCoordTexture;
 layout(location = 3) out vec4 albedoTexture;
 layout(location = 4) out vec4 specularTexture;
 layout(location = 5) out vec3 environmentLightTexture;
+
+// Test
+layout(location = 6) out vec4 posViewTexture;
+layout(location = 7) out vec3 normalViewTexture;
 
 float castingShadow()
 {
@@ -81,9 +88,12 @@ void main()
 {    
     float shadowAttenuation = castingShadow();
     
-    posWorldTexture    = posWorld;
+    posWorldTexture    = vec4(posWorld, 1.0f);
     normalWorldTexture = normalWorld;
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
+    
+    posViewTexture    = vec4(posView, 1.0f);
+    normalViewTexture = normalView;
 
     switch (materialType)
     {

@@ -5,7 +5,7 @@
 class OpenGLContext
 {
 public:
-	OpenGLContext(const Setting& setting);
+	OpenGLContext(Setting* pSetting);
 	~OpenGLContext();
 
     void run();

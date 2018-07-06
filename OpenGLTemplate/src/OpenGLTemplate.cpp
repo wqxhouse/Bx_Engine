@@ -1,9 +1,10 @@
 #include "OpenGLTemplate.h"
 
 OpenGLTemplate::OpenGLTemplate(
-    const Setting& setting,
+    Setting*       pSetting,
     const BOOL     defaultScene)
-    : m_setting(setting), m_context(setting)
+    : m_pSetting(pSetting),
+      m_context(pSetting)
 {
     if (defaultScene == TRUE)
     {
@@ -24,10 +25,10 @@ void OpenGLTemplate::createDefaultScene()
 {
     Scene* pScene = m_context.GetScene();
 
-    const float aspectRadio = static_cast<float>(m_setting.width) / static_cast<float>(m_setting.height);
+    const float aspectRadio = static_cast<float>(m_pSetting->width) / static_cast<float>(m_pSetting->height);
 
-    float halfWidth = static_cast<float>(m_setting.width * 2) * 0.002f;
-    float halfHeight = static_cast<float>(m_setting.width * 2) * 0.002f;
+    float halfWidth = static_cast<float>(m_pSetting->width * 2) * 0.002f;
+    float halfHeight = static_cast<float>(m_pSetting->width * 2) * 0.002f;
 
     //Vector3 lightDir = pScene->m_directionalLight.getDir();
     //glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
@@ -37,7 +38,7 @@ void OpenGLTemplate::createDefaultScene()
         -glmLightDir * lightPosScale, glmLightDir, glm::vec3(0, 1, 0),
         5.0f, Rectangle(-halfWidth, halfWidth, -halfHeight, halfHeight), 0.1f, 1000.0f);*/
 
-    /*pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0, 0, 0),
+    /*pScene->addProspectiveCamera(glm::vec3(0.0f, 15.0f, 10.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);*/
 
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
@@ -76,6 +77,8 @@ void OpenGLTemplate::createDefaultScene()
         "../resources/models/cornellbox/CornellBox-Sphere.obj",
         "../resources/models/cornellbox/CornellBox-Sphere.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+    //pScene->GetModelPtr(0)->m_pTrans->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
 
     /*pScene->addModel(
         "../resources/models/buddha/buddha.obj",

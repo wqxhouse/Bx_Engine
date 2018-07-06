@@ -2,11 +2,13 @@
 
 #include "../Context/Scene.h"
 
+#define GBUFFER_TEXTURE_SIZE 8
+
 GBuffer::GBuffer(
     Scene*     pScene,
     const UINT width,
     const UINT height)
-    : m_gFramebuffer(6),
+    : m_gFramebuffer(GBUFFER_TEXTURE_SIZE),
       m_pScene(pScene),
       m_width(width),
       m_height(height)
@@ -21,8 +23,6 @@ BOOL GBuffer::initialize()
 {
     BOOL result = TRUE;
 
-    m_gFramebuffer.createFramebuffer();
-
     // Position buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                               GL_COLOR_ATTACHMENT0,
@@ -30,10 +30,15 @@ BOOL GBuffer::initialize()
                                               m_height,
                                               1,
                                               GL_RGBA,
-                                              GL_RGB32F,
+                                              GL_RGBA32F,
                                               GL_FLOAT,
-                                              GL_REPEAT,
+                                              GL_CLAMP_TO_BORDER,
                                               FALSE);
+    Texture2D* pPosTex = static_cast<Texture2D*>(m_gFramebuffer.getTexturePtr(GL_TEXTURE0));
+    pPosTex->setTextureSampleMethod(GL_NEAREST, GL_NEAREST);
+
+    GLfloat posTexBoderColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    pPosTex->setBoarderColor(posTexBoderColor);
 
     // Normal buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE1,
@@ -44,7 +49,7 @@ BOOL GBuffer::initialize()
                                               GL_RGBA,
                                               GL_RGB32F,
                                               GL_FLOAT,
-                                              GL_REPEAT,
+                                              GL_CLAMP_TO_BORDER,
                                               FALSE);
 
     // TexCoord0
@@ -56,7 +61,7 @@ BOOL GBuffer::initialize()
                                               GL_RGBA,
                                               GL_RGB32F,
                                               GL_FLOAT,
-                                              GL_REPEAT,
+                                              GL_CLAMP_TO_BORDER,
                                               FALSE);
 
     // Albedo material
@@ -68,7 +73,7 @@ BOOL GBuffer::initialize()
                                               GL_RGBA,
                                               GL_RGBA32F,
                                               GL_FLOAT,
-                                              GL_REPEAT,
+                                              GL_CLAMP_TO_BORDER,
                                               FALSE);
 
     // Specular material
@@ -80,7 +85,7 @@ BOOL GBuffer::initialize()
                                               GL_RGBA,
                                               GL_RGBA32F,
                                               GL_FLOAT,
-                                              GL_REPEAT,
+                                              GL_CLAMP_TO_BORDER,
                                               FALSE);
 
     // Environment light
@@ -92,7 +97,31 @@ BOOL GBuffer::initialize()
                                               GL_RGBA,
                                               GL_RGB32F,
                                               GL_FLOAT,
-                                              GL_REPEAT,
+                                              GL_CLAMP_TO_BORDER,
+                                              FALSE);
+
+    // Position View
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
+                                              GL_COLOR_ATTACHMENT6,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGBA32F,
+                                              GL_FLOAT,
+                                              GL_CLAMP_TO_BORDER,
+                                              FALSE);
+
+    // Normal View
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
+                                              GL_COLOR_ATTACHMENT7,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGB32F,
+                                              GL_FLOAT,
+                                              GL_CLAMP_TO_BORDER,
                                               FALSE);
 
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
@@ -124,21 +153,7 @@ BOOL GBuffer::initialize()
     );*/
 
     // G-Buffer Quad initialize
-    glGenVertexArrays(1, &m_gQuadVAO);
-    glGenBuffers(1, &m_gQuadVertexBufObj);
-    glGenBuffers(1, &m_gQuadIndexBufObj);
-
-    glBindVertexArray(m_gQuadVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_gQuadVertexBufObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(m_gQuadVertices), m_gQuadVertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_gQuadIndexBufObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_gQuadIndices), m_gQuadIndices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3), 0);
-
-    glBindVertexArray(0);
+    m_gQuad.initialize();
 
     return result;
 }
@@ -160,17 +175,25 @@ void GBuffer::drawGBuffer()
         Camera* pCam  = m_pScene->GetActivateCamera();
 
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
-        glm::mat4 wvp = pCam->GetProjectionMatrix() * pCam->GetViewMatrix() * worldTransMatrix;
+
+        // Test
+        glm::mat4 wv = pCam->GetViewMatrix() * worldTransMatrix;
+
+        glm::mat4 wvp = pCam->GetProjectionMatrix() * wv;
+        
 
         GLint worldMatrixLocation  = glGetUniformLocation(gShaderProgram, "worldMatrix");
         GLint lightTransLocation   = glGetUniformLocation(gShaderProgram, "lightTransWVP");
         GLint wvpLocation          = glGetUniformLocation(gShaderProgram, "wvp");
         GLint materialTypeLocation = glGetUniformLocation(gShaderProgram, "materialType");
 
+        GLuint vpLocation          = glGetUniformLocation(gShaderProgram, "wv");
+
         if (worldMatrixLocation  >= 0 &&
             lightTransLocation   >= 0 &&
             wvpLocation          >= 0 &&
-            materialTypeLocation >= 0)
+            materialTypeLocation >= 0 &&
+            vpLocation           >= 0)
         {
             ShadowMap* pShadowMap = m_pScene->GetShadowMap();
 
@@ -181,6 +204,8 @@ void GBuffer::drawGBuffer()
             glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
             glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+
+            glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(wv));
 
             if (useGlobalMaterial == FALSE)
             {
@@ -229,7 +254,7 @@ void GBuffer::drawGBuffer()
 }
 
 void GBuffer::readGBuffer(
-    GLuint shaderProgram)
+    const GLuint shaderProgram)
 {
     m_gFramebuffer.getTexturePtr(GL_TEXTURE0)->
         bindTexture(GL_TEXTURE0, shaderProgram, "posTex", 0);
@@ -250,10 +275,18 @@ void GBuffer::readGBuffer(
         bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex", 5);
 }
 
+void GBuffer::readGBuffer(
+    const GLuint       shaderProgram,
+    const std::string& textureName,
+    const GLenum       texUnit)
+{
+    assert(texUnit >= GL_TEXTURE0);
+
+    m_gFramebuffer.getTexturePtr(texUnit)->
+        bindTexture(texUnit, shaderProgram, textureName, texUnit - GL_TEXTURE0);
+}
+
 void GBuffer::draw()
 {
-    glBindVertexArray(m_gQuadVAO);
-    glEnableVertexAttribArray(0);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    m_gQuad.draw();
 }

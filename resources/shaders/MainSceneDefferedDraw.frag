@@ -14,6 +14,8 @@ uniform sampler2D albedoTex;
 uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
 
+uniform sampler2D ssaoTex;
+
 layout (std140) uniform directionalLightUniformBlock
 {
     DirectionalLight m_directionalLight;
@@ -25,10 +27,14 @@ layout (std140) uniform pointLightUniformBlock
 };
 
 uniform vec3 eyePos;
+
 //uniform uint screenWidth;
 //uniform uint screenHeight;
 
 out vec4 outColor;
+
+// Test
+uniform int useSsao;
 
 vec3 calCookTorranceRadiance(
     const vec3                 view,
@@ -94,6 +100,8 @@ void main()
     float shadowAttenuation   = gTexCoord.z;
     float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
     
+    vec3 radiance;
+    
     if (ns > 0.0f)
     {
         // Calculate diffuse color
@@ -107,14 +115,11 @@ void main()
 
         specularCoefficient  *= shadowSpecularAttenuation;
         vec3 phongShdingColor = clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
-
-        phongShdingColor *= shadowAttenuation;
         /// Finish Shading
-
-        // Gamma correction
-        phongShdingColor = gammaCorrection(phongShdingColor);
         
-        outColor = vec4(phongShdingColor, gAlbedo.w);
+        radiance = phongShdingColor;
+        
+        phongShdingColor *= shadowAttenuation;
     }
     else
     {
@@ -125,14 +130,21 @@ void main()
         
         CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
         
-        vec3 radiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
-        
-        // Shadow casting
-        radiance *= shadowAttenuation;
-        
-        // Gamma correction
-        radiance = gammaCorrection(radiance);
-        
-        outColor = vec4(radiance, gAlbedo.w);
+        radiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
     }
+        
+    // Shadow casting
+    radiance *= shadowAttenuation;
+    
+    // SSAO
+    float occlusion = texture(ssaoTex, gBufferTexCoord).r;
+    if (useSsao == 1)
+    {
+        radiance *= occlusion;
+    }
+    
+    // Gamma correction
+    radiance = gammaCorrection(radiance);
+    
+    outColor = vec4(radiance, gAlbedo.w);
 }

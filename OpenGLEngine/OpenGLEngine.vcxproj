@@ -164,6 +164,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
     <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Effect\BlurEffect.h" />
     <ClInclude Include="src\Light\Light.h" />
     <ClInclude Include="src\Material\Material.h" />
     <ClInclude Include="src\Math\Math.h" />
@@ -180,9 +181,11 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
     <ClInclude Include="src\Model\Model.h" />
+    <ClInclude Include="src\Model\Primitives\Quad.h" />
     <ClInclude Include="src\Shader\Shader.h" />
     <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Shadow\ShadowMap.h" />
+    <ClInclude Include="src\Shadow\SSAO.h" />
     <ClInclude Include="src\Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +203,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Context\Setting.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
+    <ClCompile Include="src\Effect\BlurEffect.cpp" />
     <ClCompile Include="src\Light\DirectionalLight.cpp" />
     <ClCompile Include="src\Light\Light.cpp" />
     <ClCompile Include="src\Light\PointLight.cpp" />
@@ -212,9 +216,11 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
     <ClCompile Include="src\Model\Model.cpp" />
+    <ClCompile Include="src\Model\Primitives\Quad.cpp" />
     <ClCompile Include="src\Shader\Shader.cpp" />
     <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Shadow\ShadowMap.cpp" />
+    <ClCompile Include="src\Shadow\SSAO.cpp" />
     <ClCompile Include="src\Texture\Texture.cpp" />
     <ClCompile Include="src\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Texture\Texture3D.cpp" />

@@ -2,7 +2,8 @@
 
 Framebuffer::Framebuffer(const UINT attachTexCount)
 {
-    m_pAttachedTextures.resize(attachTexCount);
+    m_pAttachedTextures.resize(attachTexCount, NULL);
+    glGenFramebuffers(1, &m_framebufferHandle);
 }
 
 Framebuffer::~Framebuffer()
@@ -14,11 +15,6 @@ Framebuffer::~Framebuffer()
 
     glDeleteRenderbuffers(1, &m_depthRenderBufferHandle);
     glDeleteFramebuffers(1, &m_framebufferHandle);
-}
-
-void Framebuffer::createFramebuffer()
-{
-    glGenFramebuffers(1, &m_framebufferHandle);
 }
 
 void Framebuffer::createFramebufferTexture2D(
@@ -50,8 +46,7 @@ void Framebuffer::createFramebufferTexture2D(
     else
     {
         glFramebufferTexture2D(
-            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE,
-            pTexture2D->GetTextureHandle(), 0);
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture2D->GetTextureHandle(), 0);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -101,6 +96,34 @@ void Framebuffer::createRenderbufferAttachment(
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_depthRenderBufferHandle);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::attachTexture2D(
+    const GLenum texUnit,
+    const GLenum attachmentType,
+    Texture2D*   pTexture2D,
+    const UINT   samples)
+{
+    UINT texIndex = getTextureIndex(texUnit);
+
+    m_pAttachedTextures[texIndex] = pTexture2D;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+
+    if (samples < 2)
+    {
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture2D->GetTextureHandle(), 0);
+    }
+    else
+    {
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture2D->GetTextureHandle(), 0);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    m_framebufferAttachmentsList.push_back(attachmentType);
 }
 
 void Framebuffer::drawFramebuffer()

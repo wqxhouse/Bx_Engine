@@ -17,8 +17,6 @@ public:
     Framebuffer(const UINT attachTexCount = 1);
     ~Framebuffer();
 
-    void createFramebuffer();
-
     void createFramebufferTexture2D(
         const GLenum texUnit,
         const GLenum attachmentType,
@@ -35,6 +33,12 @@ public:
         const FboRenderbufferAttachmentType attachmentType,
         const UINT                          m_depthBufWidth,
         const UINT                          m_depthBufHeight);
+
+    void attachTexture2D(
+        const GLenum texUnit,
+        const GLenum attachmentType,
+        Texture2D*   pTexture2D,
+        const UINT   samples);
 
     void drawFramebuffer();
     void readFramebuffer(
