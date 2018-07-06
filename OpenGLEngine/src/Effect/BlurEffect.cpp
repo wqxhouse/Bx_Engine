@@ -8,6 +8,7 @@ BlurEffect::BlurEffect(
 
 BlurEffect::~BlurEffect()
 {
+    SafeDelete(m_pBlurQuad);
 }
 
 BOOL BlurEffect::initialize()
@@ -30,7 +31,8 @@ BOOL BlurEffect::initialize()
                                          GL_CLAMP_TO_BORDER,
                                          FALSE);
 
-    m_blurQuad.initialize();
+    m_pBlurQuad = new Quad();
+    m_pBlurQuad->initialize();
 
     return result;
 }
@@ -43,7 +45,7 @@ void BlurEffect::draw()
     
     m_pInputTexture->bindTexture(GL_TEXTURE0, blurShader, "inputTexture", 0);
 
-    m_blurQuad.draw();
+    m_pBlurQuad->draw();
 
     m_blurFbo.finishDrawFramebuffer();
 

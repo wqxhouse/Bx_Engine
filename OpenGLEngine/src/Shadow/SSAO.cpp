@@ -14,7 +14,6 @@ SSAO::SSAO(
     const Setting*  pSetting)
     : m_pSetting(pSetting),
       m_pScene(pScene),
-      // m_ssaoFramebuffer(10),
       m_pSsaoTexture(NULL),
       m_pNoiseTexture(NULL),
       blurSSAO(TRUE)
@@ -39,8 +38,6 @@ BOOL SSAO::initialize()
 
     BOOL result = TRUE;
 
-    m_ssaoFramebuffer.createFramebuffer();
-
     // Create ssao texture and attach to framebuffer
     m_pSsaoTexture = new Texture2D(m_pSetting->width,
                                    m_pSetting->height,
@@ -52,17 +49,6 @@ BOOL SSAO::initialize()
                                    FALSE);
 
     m_ssaoFramebuffer.attachTexture2D(GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pSsaoTexture, 1);
-
-    /*m_ssaoFramebuffer.createFramebufferTexture2D(GL_TEXTURE1,
-                                                 GL_COLOR_ATTACHMENT1,
-                                                 m_pSetting->width,
-                                                 m_pSetting->height,
-                                                 1,
-                                                 GL_RGBA,
-                                                 GL_RGB32F,
-                                                 GL_FLOAT,
-                                                 GL_CLAMP_TO_BORDER,
-                                                 FALSE);*/
 
     // Compiler and link ssao shaders
     m_ssaoShader.setShaderFiles("SSAO.vert", "SSAO.frag");
@@ -181,7 +167,6 @@ void SSAO::bindSsaoTexture(
     const std::string& texName,
     const UINT         samplerIndex)
 {
-    m_pSsaoTexture = m_pBlurEffect->GetBlurTexture();
     Texture2D* ssaoTexture = ((blurSSAO == TRUE) ? m_pBlurEffect->GetBlurTexture() : m_pSsaoTexture);
     
     ssaoTexture->bindTexture(texUnit, program, texName, samplerIndex);

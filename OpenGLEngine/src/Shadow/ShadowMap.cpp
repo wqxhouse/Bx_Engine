@@ -32,7 +32,6 @@ BOOL ShadowMap::initialize()
                         -halfHeight + offset,
                          halfHeight + offset), 0.1f, 10000.0f);
 
-    m_shadowMapFramebuffer.createFramebuffer();
     m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                                       GL_DEPTH_ATTACHMENT,
                                                       m_shadowMapWidth,

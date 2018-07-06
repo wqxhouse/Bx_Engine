@@ -28,6 +28,12 @@ public:
     inline UINT        GetTextureWidth()  const { return m_textureWidth;  }
     inline UINT        GetTextureHeight() const { return m_textureHeight; }
 
+    inline void SetTextureHandle(
+        const GLuint textureHandle) 
+    {
+        m_textureHandle = textureHandle;
+    }
+
 protected:
     GLuint m_textureHandle;
 

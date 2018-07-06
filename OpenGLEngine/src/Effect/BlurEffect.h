@@ -27,5 +27,5 @@ private:
     Shader      m_blurShader;
     Framebuffer m_blurFbo;
 
-    Quad        m_blurQuad;
+    Quad*       m_pBlurQuad;
 };

@@ -25,7 +25,6 @@ uniform SsaoSamplesUniformBlock
 uniform mat4 projMat;
 
 layout(location = 0) out vec3 ssaoTexture;
-//layout(location = 1) out vec3 indexTexture;
 
 vec2 calgBufferTexCoord()
 {
@@ -59,14 +58,10 @@ void main()
     
     vec3 randomVec = normalize(texture(noiseTex, ssaoTexCoord)).xyz;
     vec3 tangent   = normalize(randomVec - normalView * dot(normalView, randomVec)); // X axis
-    vec3 biTangent = cross(normalView, tangent);                                      // Y axis
+    vec3 biTangent = cross(normalView, tangent);                                     // Y axis
     
     mat3 TBN = mat3(tangent, biTangent, normalView);
     
-    // Test
-    //int index = -1;
-    
-    //uint i = 1;
     for (uint i = 0; i < m_ssaoSample.sampleNum; ++i)
     {
         vec3 sampleVec = TBN * m_ssaoSample.samples[i];
@@ -77,7 +72,7 @@ void main()
         samplePosProjVec4.xy  /= samplePosProjVec4.w;
         samplePosProjVec4.xy   = 0.5f * samplePosProjVec4.xy + 0.5f;
         
-        vec4 depthGPosWorld = texture(posTex, samplePosProjVec4.xy/*gBufferTexCoord*/);
+        vec4 depthGPosWorld = texture(posTex, samplePosProjVec4.xy);
         
         vec3 depthPosWorld;
         vec3 depthPosView = depthGPosWorld.xyz;
@@ -90,15 +85,11 @@ void main()
             if (samplePos.z < depth + 0.001f) // occlusion
             {
                 occlusion -= 1.0f;
-                //occlusion = 0.0f;
-                //index = int(i);
-                //break;
             }
         }
     }
     
-    occlusion /= 64.0f;//float(/*m_ssaoSample.sampleNum*/testSampleNum);
+    occlusion /= 64.0f;
     
     ssaoTexture = vec3(occlusion);
-    //indexTexture = vec3(index);
 }

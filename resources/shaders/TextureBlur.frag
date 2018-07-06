@@ -6,7 +6,7 @@
 
 uniform sampler2D inputTexture;
 
-out vec3 blurColor;
+layout(location = 0) out vec3 blurColor;
 
 void main()
 {

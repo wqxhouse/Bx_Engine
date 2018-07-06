@@ -3,6 +3,7 @@
 Framebuffer::Framebuffer(const UINT attachTexCount)
 {
     m_pAttachedTextures.resize(attachTexCount, NULL);
+    glGenFramebuffers(1, &m_framebufferHandle);
 }
 
 Framebuffer::~Framebuffer()
@@ -14,11 +15,6 @@ Framebuffer::~Framebuffer()
 
     glDeleteRenderbuffers(1, &m_depthRenderBufferHandle);
     glDeleteFramebuffers(1, &m_framebufferHandle);
-}
-
-void Framebuffer::createFramebuffer()
-{
-    glGenFramebuffers(1, &m_framebufferHandle);
 }
 
 void Framebuffer::createFramebufferTexture2D(

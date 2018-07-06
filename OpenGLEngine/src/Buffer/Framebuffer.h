@@ -17,8 +17,6 @@ public:
     Framebuffer(const UINT attachTexCount = 1);
     ~Framebuffer();
 
-    void createFramebuffer();
-
     void createFramebufferTexture2D(
         const GLenum texUnit,
         const GLenum attachmentType,
