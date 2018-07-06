@@ -14,11 +14,6 @@ public:
                              const GLuint       shaderProgram,
                              const std::string& samplerName) = 0;
 
-    virtual void bindTexture(const GLenum       textureUnit,
-                             const GLuint       shaderProgram,
-                             const std::string& samplerName,
-                             const int          bindPosition) = 0;
-
     virtual void unbindTexture() = 0;
 
     virtual ~Texture();
@@ -83,12 +78,6 @@ public:
         const GLenum       textureUnit,
         const GLuint       shaderProgram,
         const std::string& samplerName);
-
-    void bindTexture(
-        const GLenum       textureUnit,
-        const GLuint       shaderProgram,
-        const std::string& samplerName,
-        const int          bindPosition);
 
     void setTextureSampleMethod(
         const GLenum minSampleMethod,  // Nearest neighbor / Linear

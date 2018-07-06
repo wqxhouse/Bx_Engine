@@ -112,25 +112,8 @@ void Texture2D::bindTexture(
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
 
-    // assert(textureLocation >= 0);
-    
-    GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
-
-    glActiveTexture(textureUnit);
-    glBindTexture(glTextureType, m_textureHandle);
-    glUniform1i(textureLocation, textureUnit - GL_TEXTURE0);
-}
-
-void Texture2D::bindTexture(
-    const GLenum       textureUnit,
-    const GLuint       shaderProgram,
-    const std::string& samplerName,
-    const int          index)
-{
-    GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
-
     assert(textureLocation >= 0);
-
+    
     GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
 
     glActiveTexture(textureUnit);
@@ -164,4 +147,5 @@ Texture2D::~Texture2D()
     {
         stbi_image_free(m_textureData);
     }
+    glDeleteTextures(1, &m_textureHandle);
 }

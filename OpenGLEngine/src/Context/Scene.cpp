@@ -423,7 +423,7 @@ void Scene::drawScene()
 {
     assert(m_pSetting->m_graphicsSetting.renderingMethod != DEFERRED_RENDERING);
 
-    auto test  = glm::uintBitsToFloat(0u);
+    /*auto test  = glm::uintBitsToFloat(0u);
     auto test2 = glm::uintBitsToFloat(0xFFFFFFFF);
 
     struct NearFarPlanes
@@ -438,7 +438,7 @@ void Scene::drawScene()
     {
         nearFarPlanes.push_back({ pData[i].nearPlane.d, pData[i].farPlane.d });
     }
-    /*struct LightTile
+    struct LightTile
     {
         UINT offset = 0;
         UINT size = 0;
@@ -581,7 +581,6 @@ void Scene::deferredDrawScene()
         else
         {
             glUniform1i(useSsaoLocation, 0);
-
             glActiveTexture(GL_TEXTURE7);
             glBindTexture(GL_TEXTURE_2D, 0);
         }

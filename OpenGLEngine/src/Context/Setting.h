@@ -27,7 +27,7 @@ struct GraphicsSetting
     }
 
     AmbientOcclutionSetting ambientOcclutionSetting = 
-    { 
+    {
         AmbientOcclusion::AMBIENTOCCLUSION_SSAO,
         SSAO_Quality::SSAO_HIGH
     };

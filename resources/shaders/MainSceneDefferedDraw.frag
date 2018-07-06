@@ -339,6 +339,7 @@ void main()
     if (useSsao == 1)
     {
         float occlusion = texture(ssaoTex, gBufferTexCoord).r;
+
         radiance *= occlusion;
     }
     

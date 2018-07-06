@@ -35,7 +35,6 @@ BOOL GBuffer::initialize()
                                               GL_FLOAT,
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
-
     Texture2D* pPosTex = static_cast<Texture2D*>(m_gFramebuffer.getTexturePtr(GL_TEXTURE0));
     pPosTex->setTextureSampleMethod(GL_NEAREST, GL_NEAREST);
 

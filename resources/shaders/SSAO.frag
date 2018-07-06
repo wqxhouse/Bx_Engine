@@ -78,14 +78,12 @@ void main()
         if (depthGPosWorld.w > 0.99999f)
         {            
             float depth = depthPosView.z;
-
             if (samplePos.z < depth + 0.001f) // occlusion
             {
                 occlusion -= 1.0f;
             }
         }
     }
-
     occlusion *= 0.015625f;
 
     ssaoTexture = vec3(occlusion);

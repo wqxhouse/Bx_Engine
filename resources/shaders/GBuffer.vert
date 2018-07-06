@@ -24,6 +24,9 @@ out vec2 fragTexCoord;
 
 out vec4 posLightProj;
 
+out vec3 posView;
+out vec3 normalView;
+
 void main()
 {
     posWorldVec4 = worldMatrix * vec4(position, 1.0f);

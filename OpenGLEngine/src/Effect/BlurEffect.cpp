@@ -16,6 +16,7 @@ BOOL BlurEffect::initialize()
     BOOL result = TRUE;
 
     m_blurShader.setShaderFiles("TextureBlur.vert", "TextureBlur.frag");
+
     result = m_blurShader.compileShaderProgram();
 
     assert(result == TRUE);

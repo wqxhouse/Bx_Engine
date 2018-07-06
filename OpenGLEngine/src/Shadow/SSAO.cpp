@@ -128,7 +128,9 @@ void SSAO::draw()
     GBuffer* pGBuffer = m_pScene->GetGBuffer();
 
     pGBuffer->readGBuffer(ssaoShaderProgram, "posTex", GL_TEXTURE6);
+
     pGBuffer->readGBuffer(ssaoShaderProgram, "normalTex", GL_TEXTURE1);
+
     pGBuffer->readGBuffer(ssaoShaderProgram, "texCoordTex", GL_TEXTURE2);
 
     GLint projMatLocation = glGetUniformLocation(ssaoShaderProgram, "projMat");
@@ -148,6 +150,7 @@ void SSAO::draw()
 
     m_ssaoFramebuffer.setRenderTargets();
     m_pNoiseTexture->bindTexture(GL_TEXTURE3, ssaoShaderProgram, "noiseTex");
+
     m_ssaoQuad.draw();
     m_ssaoFramebuffer.finishDrawFramebuffer();
 
@@ -167,7 +170,7 @@ void SSAO::bindSsaoTexture(
     const UINT         samplerIndex)
 {
     Texture2D* ssaoTexture = ((blurSSAO == TRUE) ? m_pBlurEffect->GetBlurTexture() : m_pSsaoTexture);
-    
+
     ssaoTexture->bindTexture(texUnit, program, texName);
 }
 
