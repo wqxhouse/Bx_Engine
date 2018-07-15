@@ -9,3 +9,11 @@ Texture3D::Texture3D(const std::string & textureFile, GLenum format,
 Texture3D::~Texture3D()
 {
 }
+
+void Texture3D::bindTexture(
+    const GLenum       textureUnit,
+    const GLuint       shaderProgram,
+    const std::string& samplerName,
+    const int          samplerIndex) 
+{
+}
