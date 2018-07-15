@@ -6,6 +6,7 @@
 #include "../Shadow/ShadowMap.h"
 #include "../Buffer/GBuffer.h"
 #include "../Shadow/SSAO.h"
+#include "../Effect/Skybox.h"
 
 #include "Setting.h"
 
@@ -138,4 +139,7 @@ private:
 
     // SSAO
     SSAO* m_pSsao;
+
+    // Skybox
+    Skybox* m_pSkybox;
 };

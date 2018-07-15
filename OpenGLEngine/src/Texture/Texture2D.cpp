@@ -1,7 +1,10 @@
 #include "Texture.h"
 
 //Image loader
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif // STB_IMAGE_IMPLEMENTATION
+
 #include "stb_image.h"
 
 Texture2D::Texture2D(
@@ -61,11 +64,11 @@ Texture2D::Texture2D(
     m_textureData = stbi_load(textureFile.data(),
                               reinterpret_cast<int*>(&m_textureWidth),
                               reinterpret_cast<int*>(&m_textureHeight),
-                              reinterpret_cast<int*>(&m_textureType),
+                              reinterpret_cast<int*>(&m_textureDataType),
                               STBI_rgb_alpha);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight,
-                 0, format, type, m_textureData);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight, 0, format, type, m_textureData);
 
     if (m_mipmap == TRUE)
     {
@@ -137,5 +140,4 @@ Texture2D::~Texture2D()
     {
         stbi_image_free(m_textureData);
     }
-    glDeleteTextures(1, &m_textureHandle);
 }

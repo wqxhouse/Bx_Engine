@@ -20,9 +20,9 @@ private:
     Math::Vector3 m_gQuadVertices[4] =
     {
         { -1.0f, -1.0f, 0.0f },
-        { 1.0f,  -1.0f, 0.0f },
-        { -1.0f,  1.0f, 0.0f },
-        { 1.0f,   1.0f, 1.0f }
+        {  1.0f, -1.0f, 0.0f },
+        { -1.0f, 1.0f, 0.0f },
+        {  1.0f, 1.0f, 1.0f }
     };
 
     UINT m_gQuadIndices[6] =

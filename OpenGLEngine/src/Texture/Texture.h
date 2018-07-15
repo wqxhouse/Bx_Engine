@@ -37,6 +37,8 @@ public:
 protected:
     GLuint m_textureHandle;
 
+    UINT  m_textureDataType;
+
     UINT  m_textureWidth;
     UINT  m_textureHeight;
 
@@ -56,7 +58,7 @@ public:
         const GLenum loadFormat  = GL_RGBA,
         const GLenum storeFormat = GL_RGBA,
         const GLenum type        = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod  = GL_REPEAT,
+        const GLenum wrapMethod  = GL_CLAMP_TO_BORDER,
         const BOOL   mipmap      = FALSE,
         const void*  data        = NULL);
 
@@ -65,16 +67,16 @@ public:
         const std::string& textureFile,
         const GLenum format     = GL_RGBA,
         const GLenum type       = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod = GL_REPEAT,
+        const GLenum wrapMethod = GL_CLAMP_TO_BORDER,
         const BOOL   mipmap     = GL_FALSE);
 
     void setBoarderColor(GLfloat borderColor[4]);
 
     void bindTexture(
-        const GLenum textureUnit,
-        const GLuint shaderProgram,
+        const GLenum       textureUnit,
+        const GLuint       shaderProgram,
         const std::string& samplerName,
-        const int samplerIndex);
+        const int          samplerIndex);
 
     void setTextureSampleMethod(
         const GLenum minSampleMethod,  // Nearest neighbor / Linear
@@ -87,8 +89,6 @@ public:
     ~Texture2D();
 
 private:
-    UINT  m_textureType;
-    
     UINT  m_samples;
     BOOL  m_mipmap;
 
@@ -102,21 +102,38 @@ public:
         const std::string& textureFile,
         const GLenum format     = GL_RGBA,
         const GLenum type       = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod = GL_REPEAT,
+        const GLenum wrapMethod = GL_CLAMP_TO_BORDER,
         const BOOL mipmap       = GL_FALSE);
 
     ~Texture3D();
+
+    void bindTexture(
+        const GLenum       textureUnit,
+        const GLuint       shaderProgram,
+        const std::string& samplerName,
+        const int          samplerIndex);
 };
 
-class TextureCube : public Texture
+class Cubemap : public Texture
 {
 public:
-    TextureCube(
-        const std::string& textureFile,
-        const GLenum format     = GL_RGBA,
-        const GLenum type       = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod = GL_REPEAT,
-        const BOOL mipmap       = GL_FALSE);
+    Cubemap(
+        const std::vector<std::string>& textureFile,
+        const GLenum                    format     = GL_RGBA,
+        const GLenum                    type       = GL_UNSIGNED_BYTE,
+        const GLenum                    wrapMethod = GL_CLAMP_TO_BORDER,
+        const BOOL                      mipmap     = GL_FALSE);
 
-    ~TextureCube();
+    ~Cubemap();
+
+    void bindTexture(
+        const GLenum       textureUnit,
+        const GLuint       shaderProgram,
+        const std::string& samplerName,
+        const int          samplerIndex);
+
+    inline void unbindTexture();
+
+private:
+    void* m_cubeMapData[6];
 };

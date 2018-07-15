@@ -3,9 +3,6 @@
 #include "../Model/Mesh/ObjModelLoader.h"
 #include "../Core/Utility.h"
 
-//Image loader
-#include "stb_image.h"
-
 Scene::Scene(Setting* pSetting)
     : m_pSetting(pSetting),
       m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
@@ -17,7 +14,8 @@ Scene::Scene(Setting* pSetting)
       m_pShadowMap(NULL),
       m_pGBuffer(NULL),
       useGlobalMaterial(FALSE),
-      m_pSsao(NULL)
+      m_pSsao(NULL),
+      m_pSkybox(NULL)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
     m_globalPbrMaterial.roughness = 0.2f;
@@ -279,7 +277,7 @@ Scene::~Scene()
             SafeDelete(static_cast<Texture3D*>(pTexture));
             break;
         case TextureType::TEXTURE_CUBEBOX:
-            SafeDelete(static_cast<TextureCube*>(pTexture));
+            SafeDelete(static_cast<Cubemap*>(pTexture));
             break;
         default:
             printf("Invalid texture type!\n");
@@ -294,6 +292,7 @@ Scene::~Scene()
     SafeDelete(m_pShadowMap);
     SafeDelete(m_pGBuffer);
     SafeDelete(m_pSsao);
+    SafeDelete(m_pSkybox);
 }
 
 void Scene::setSceneShader(

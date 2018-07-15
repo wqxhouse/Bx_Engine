@@ -168,6 +168,15 @@
     <ClInclude Include="src\Effect\BlurEffect.h">
       <Filter>src\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="src\Effect\Skybox.h">
+      <Filter>src\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Primitives\Cube.h">
+      <Filter>src\Model\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Primitives\Primitive.h">
+      <Filter>src\Model\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -233,9 +242,6 @@
     <ClCompile Include="src\Texture\Texture3D.cpp">
       <Filter>src\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture\TextureCube.cpp">
-      <Filter>src\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="src\Buffer\VertexBuffer.cpp">
       <Filter>src\Buffer</Filter>
     </ClCompile>
@@ -277,6 +283,18 @@
     </ClCompile>
     <ClCompile Include="src\Effect\BlurEffect.cpp">
       <Filter>src\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Effect\Skybox.cpp">
+      <Filter>src\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\Cubemap.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Primitives\Cube.cpp">
+      <Filter>src\Model\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Primitives\Primitive.cpp">
+      <Filter>src\Model\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
