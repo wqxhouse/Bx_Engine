@@ -4,10 +4,13 @@
 #include "../Texture/Texture.h"
 #include "../Model/Primitives/Cube.h"
 
+class Scene;
+
 class Skybox
 {
 public:
     Skybox(
+        Scene*                          pScene,
         const std::vector<std::string>& skyboxImages);
 
     BOOL initialize();
@@ -18,6 +21,8 @@ public:
     inline Cubemap GetSkyboxCubemap() const { return m_skyboxCubemap; }
 
 private:
+    Scene*  m_pScene; // Pointer to the render scene
+
     Shader  m_skyboxShader;
 
     Cubemap m_skyboxCubemap;

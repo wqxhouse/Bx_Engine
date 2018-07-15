@@ -196,6 +196,9 @@ void Scene::draw()
 {
     GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
 
+    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     if (m_skyboxImages.size() == 6)
     {
         m_pSkybox->draw();
@@ -404,9 +407,6 @@ void Scene::drawScene()
     printf("%f %f %f\n", camPos.x, camPos.y, camPos.z);
 #endif
 
-    glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     GLuint sceneShaderProgram;
     GLuint materialIndex;
 
@@ -555,9 +555,6 @@ void Scene::deferredDrawScene()
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-        glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         m_pGBuffer->draw();
         glDisable(GL_BLEND);
@@ -697,7 +694,7 @@ void Scene::addSkyboxImage(
     {
         if (m_pSkybox == NULL)
         {
-            m_pSkybox = new Skybox(m_skyboxImages);
+            m_pSkybox = new Skybox(this, m_skyboxImages);
         }
         else
         {

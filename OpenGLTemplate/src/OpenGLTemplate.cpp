@@ -41,8 +41,8 @@ void OpenGLTemplate::createDefaultScene()
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 15.0f, 10.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);*/
 
-    /*pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);*/
+    pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
 
     pScene->addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
@@ -95,12 +95,12 @@ void OpenGLTemplate::createDefaultScene()
         GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE);
 
     pScene->addSkyboxImage(
-        "../resources/textures/skybox/SunSet/SunSetFront2048.png",
-        "../resources/textures/skybox/SunSet/SunSetBack2048.png",
+        "../resources/textures/skybox/SunSet/SunSetLeft2048.png",
+        "../resources/textures/skybox/SunSet/SunSetRight2048.png",
         "../resources/textures/skybox/SunSet/SunSetUp2048.png",
         "../resources/textures/skybox/SunSet/SunSetDown2048.png",
-        "../resources/textures/skybox/SunSet/SunSetLeft2048.png",
-        "../resources/textures/skybox/SunSet/SunSetRight2048.png");
+        "../resources/textures/skybox/SunSet/SunSetFront2048.png",
+        "../resources/textures/skybox/SunSet/SunSetBack2048.png");
 
     pScene->disableSceneLocalMaterial();
 }

@@ -122,9 +122,7 @@ public:
     Cubemap(
         const std::vector<std::string>& textureFile,
         const GLenum                    format     = GL_RGBA,
-        const GLenum                    type       = GL_UNSIGNED_BYTE,
-        const GLenum                    wrapMethod = GL_CLAMP_TO_BORDER,
-        const BOOL                      mipmap     = GL_FALSE);
+        const GLenum                    type       = GL_UNSIGNED_BYTE);
 
     ~Cubemap();
 

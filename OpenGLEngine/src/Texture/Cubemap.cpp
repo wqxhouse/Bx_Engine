@@ -15,9 +15,7 @@ static GLenum cubeFace[CUBE_MAP_FACE_NUM] =
 Cubemap::Cubemap(
     const std::vector<std::string>& textureFile,
     const GLenum                    format,    
-    const GLenum                    type,
-    const GLenum                    wrapMethod,
-    const BOOL                      mipmap)
+    const GLenum                    type)
     : Texture(TEXTURE_CUBEBOX)
 {
     assert(textureFile.size() == CUBE_MAP_FACE_NUM);
@@ -35,24 +33,14 @@ Cubemap::Cubemap(
         glTexImage2D(
             cubeFace[i], 0, format, m_textureWidth, m_textureHeight, 0, format, type, m_cubeMapData[i]);
 
-        if (mipmap == TRUE)
-        {
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-        }
-        else
-        {
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-        }
-
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, wrapMethod);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, wrapMethod);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, wrapMethod);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
