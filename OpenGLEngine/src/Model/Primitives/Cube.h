@@ -10,8 +10,6 @@ public:
     Cube();
     ~Cube();
 
-    void draw();
-
 private:
     float scale;
 

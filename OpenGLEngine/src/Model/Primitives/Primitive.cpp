@@ -31,3 +31,11 @@ void Primitive::initialize()
 
     glBindVertexArray(0);
 }
+
+void Primitive::draw()
+{
+    glBindVertexArray(m_vertexArrayObj);
+    glEnableVertexAttribArray(0);
+    glDrawElements(GL_TRIANGLES, m_indicesDataSize, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}

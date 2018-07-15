@@ -80,6 +80,20 @@ BOOL Scene::initialize()
         Shader::AssertErrors();
     }
 
+    // Skybox
+    std::vector<std::string> skyboxImages =
+    {
+        "../resources/textures/skybox/SunSet/SunSetFront2048.png",
+        "../resources/textures/skybox/SunSet/SunSetBack2048.png",
+        "../resources/textures/skybox/SunSet/SunSetUp2048.png",
+        "../resources/textures/skybox/SunSet/SunSetDown2048.png",
+        "../resources/textures/skybox/SunSet/SunSetLeft2048.png",
+        "../resources/textures/skybox/SunSet/SunSetRight2048.png",
+    };
+
+    m_pSkybox = new Skybox(skyboxImages);
+    m_pSkybox->initialize();
+
     return status;
 }
 

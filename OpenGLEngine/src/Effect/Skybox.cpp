@@ -25,6 +25,7 @@ void Skybox::draw()
     m_skyboxCubemap.bindTexture(GL_TEXTURE0, shaderProgram, "skyboxCubemap", 0);
 
     // TODO: Draw
+    m_skyboxCube.draw();
 
     m_skyboxCubemap.unbindTexture();
 

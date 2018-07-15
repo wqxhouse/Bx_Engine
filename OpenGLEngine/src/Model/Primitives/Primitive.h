@@ -10,7 +10,7 @@ public:
 
     void initialize();
 
-    virtual void draw() = 0;
+    void draw();
 
 protected:
     GLuint m_vertexArrayObj;

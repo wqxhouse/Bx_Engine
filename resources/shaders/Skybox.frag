@@ -1,6 +1,6 @@
 #version 440 core
 
-samplerCube skyboxCubemap
+uniform samplerCube skyboxCubemap;
 
 in vec3 skyboxTextureSampler;
 
@@ -8,5 +8,5 @@ out vec4 outColor;
 
 void main()
 {
-    outColor = textureCube(skyboxCubemap, skyboxTextureSampler);
+    outColor = texture(skyboxCubemap, skyboxTextureSampler);
 }
