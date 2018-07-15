@@ -15,6 +15,8 @@ public:
 
     ~Skybox();
 
+    inline Cubemap GetSkyboxCubemap() const { return m_skyboxCubemap; }
+
 private:
     Shader  m_skyboxShader;
 

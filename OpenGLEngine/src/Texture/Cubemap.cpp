@@ -2,8 +2,6 @@
 
 #include "stb_image.h"
 
-#define CUBE_MAP_FACE_NUM 6
-
 static GLenum cubeFace[CUBE_MAP_FACE_NUM] =
 {
     GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -81,6 +79,33 @@ void Cubemap::bindTexture(
     glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
     glUniform1i(textureLocation, samplerIndex);
+}
+
+void Cubemap::update(
+    const std::vector<std::string>& textureFile,
+    const GLenum                    format,
+    const GLenum                    type)
+{
+    for (void* texData : m_cubeMapData)
+    {
+        stbi_image_free(texData);
+    }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
+
+    for (size_t i = 0; i < CUBE_MAP_FACE_NUM; ++i)
+    {
+        m_cubeMapData[i] = stbi_load(textureFile[i].data(),
+            reinterpret_cast<int*>(&m_textureWidth),
+            reinterpret_cast<int*>(&m_textureHeight),
+            reinterpret_cast<int*>(&m_textureDataType),
+            STBI_rgb_alpha);
+
+        glTexImage2D(
+            cubeFace[i], 0, format, m_textureWidth, m_textureHeight, 0, format, type, m_cubeMapData[i]);
+    }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 void Cubemap::unbindTexture()

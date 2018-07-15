@@ -15,6 +15,8 @@ BOOL Skybox::initialize()
 
     assert(result == TRUE);
 
+    m_skyboxCube.initialize();
+
     return result;
 }
 
@@ -24,7 +26,7 @@ void Skybox::draw()
 
     m_skyboxCubemap.bindTexture(GL_TEXTURE0, shaderProgram, "skyboxCubemap", 0);
 
-    // TODO: Draw
+    // TODO: Sent wvp matrix to shader
     m_skyboxCube.draw();
 
     m_skyboxCubemap.unbindTexture();

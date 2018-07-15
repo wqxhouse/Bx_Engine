@@ -51,6 +51,14 @@ public:
         const GLenum       wrapMethod  = GL_REPEAT,
         const BOOL         mipmap      = GL_FALSE);
 
+    void addSkyboxImage(
+        const char* const x_frontImg,
+        const char* const x_backImg,
+        const char* const y_frontImg,
+        const char* const y_backImg,
+        const char* const z_frontImg,
+        const char* const z_backImg);
+
     void setGlobalMaterial(Material* pMaterial);
     void enableSceneLocalMaterial();
     void disableSceneLocalMaterial();
@@ -142,4 +150,5 @@ private:
 
     // Skybox
     Skybox* m_pSkybox;
+    std::vector<std::string> m_skyboxImages;
 };

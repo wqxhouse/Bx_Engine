@@ -7,6 +7,7 @@ Cube::Cube()
 
     m_indicesData      = &(m_cubeIndices[0]);
     m_indicesDataSize  = sizeof(m_cubeIndices);
+    m_indicesDataCount = m_indicesDataSize / sizeof(m_cubeIndices[0]);
 }
 
 Cube::~Cube()

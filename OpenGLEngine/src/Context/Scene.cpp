@@ -80,20 +80,6 @@ BOOL Scene::initialize()
         Shader::AssertErrors();
     }
 
-    // Skybox
-    std::vector<std::string> skyboxImages =
-    {
-        "../resources/textures/skybox/SunSet/SunSetFront2048.png",
-        "../resources/textures/skybox/SunSet/SunSetBack2048.png",
-        "../resources/textures/skybox/SunSet/SunSetUp2048.png",
-        "../resources/textures/skybox/SunSet/SunSetDown2048.png",
-        "../resources/textures/skybox/SunSet/SunSetLeft2048.png",
-        "../resources/textures/skybox/SunSet/SunSetRight2048.png",
-    };
-
-    m_pSkybox = new Skybox(skyboxImages);
-    m_pSkybox->initialize();
-
     return status;
 }
 
@@ -209,6 +195,11 @@ void Scene::update(float deltaTime)
 void Scene::draw()
 {
     GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
+
+    if (m_skyboxImages.size() == 6)
+    {
+        m_pSkybox->draw();
+    }
 
     // if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
     {
@@ -680,6 +671,40 @@ void Scene::addTexture(
         printf("Unsupport texture type!\n");
         assert(FALSE);
         break;
+    }
+}
+
+void Scene::addSkyboxImage(
+    const char* const x_frontImg,
+    const char* const x_backImg,
+    const char* const y_frontImg,
+    const char* const y_backImg,
+    const char* const z_frontImg,
+    const char* const z_backImg)
+{
+    m_skyboxImages = 
+    {
+        x_frontImg,
+        x_backImg,
+        y_frontImg,
+        y_backImg,
+        z_frontImg,
+        z_backImg
+    };
+
+    // Skybox
+    if (m_skyboxImages.size() == CUBE_MAP_FACE_NUM)
+    {
+        if (m_pSkybox == NULL)
+        {
+            m_pSkybox = new Skybox(m_skyboxImages);
+        }
+        else
+        {
+            m_pSkybox->GetSkyboxCubemap().update(m_skyboxImages);
+        }
+
+        m_pSkybox->initialize();
     }
 }
 

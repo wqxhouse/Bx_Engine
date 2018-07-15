@@ -22,4 +22,5 @@ protected:
 
     void*  m_indicesData;
     size_t m_indicesDataSize;
+    UINT   m_indicesDataCount;
 };

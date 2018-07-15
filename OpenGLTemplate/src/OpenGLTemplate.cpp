@@ -94,5 +94,13 @@ void OpenGLTemplate::createDefaultScene()
     pScene->addTexture("../resources/textures/teaport/wall.jpg",
         GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE);
 
+    pScene->addSkyboxImage(
+        "../resources/textures/skybox/SunSet/SunSetFront2048.png",
+        "../resources/textures/skybox/SunSet/SunSetBack2048.png",
+        "../resources/textures/skybox/SunSet/SunSetUp2048.png",
+        "../resources/textures/skybox/SunSet/SunSetDown2048.png",
+        "../resources/textures/skybox/SunSet/SunSetLeft2048.png",
+        "../resources/textures/skybox/SunSet/SunSetRight2048.png");
+
     pScene->disableSceneLocalMaterial();
 }

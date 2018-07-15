@@ -3,6 +3,8 @@
 #include "../Core/OpenGLPCH.h"
 #include "../Shader/Shader.h"
 
+#define CUBE_MAP_FACE_NUM 6
+
 enum TextureType
 {
     TEXTURE_2D, TEXTURE_3D, TEXTURE_CUBEBOX
@@ -131,6 +133,11 @@ public:
         const GLuint       shaderProgram,
         const std::string& samplerName,
         const int          samplerIndex);
+
+    void update(
+        const std::vector<std::string>& textureFile,
+        const GLenum                    format = GL_RGBA,
+        const GLenum                    type   = GL_UNSIGNED_BYTE);
 
     inline void unbindTexture();
 
