@@ -140,4 +140,5 @@ Texture2D::~Texture2D()
     {
         stbi_image_free(m_textureData);
     }
+    glDeleteTextures(1, &m_textureHandle);
 }

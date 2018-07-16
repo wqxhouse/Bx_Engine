@@ -168,6 +168,7 @@
     <ClInclude Include="src\Effect\BlurEffect.h">
       <Filter>src\Effect</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="src\Effect\Skybox.h">
       <Filter>src\Effect</Filter>
     </ClInclude>
@@ -177,6 +178,8 @@
     <ClInclude Include="src\Model\Primitives\Primitive.h">
       <Filter>src\Model\Primitives</Filter>
     </ClInclude>
+=======
+>>>>>>> 515e51c336c9d0607320711cb04e3c7177d786bb
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -284,6 +287,7 @@
     <ClCompile Include="src\Effect\BlurEffect.cpp">
       <Filter>src\Effect</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="src\Effect\Skybox.cpp">
       <Filter>src\Effect</Filter>
     </ClCompile>
@@ -296,5 +300,7 @@
     <ClCompile Include="src\Model\Primitives\Primitive.cpp">
       <Filter>src\Model\Primitives</Filter>
     </ClCompile>
+=======
+>>>>>>> 515e51c336c9d0607320711cb04e3c7177d786bb
   </ItemGroup>
 </Project>
