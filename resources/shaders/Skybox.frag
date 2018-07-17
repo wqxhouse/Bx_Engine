@@ -1,3 +1,7 @@
+/*
+    Skybox.frag
+*/
+
 #version 440 core
 
 uniform samplerCube skyboxCubemap;

@@ -458,7 +458,7 @@ void Scene::drawScene()
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
 
-        m_pTextureList[0]->bindTexture(GL_TEXTURE0, sceneShaderProgram, "sampler", 0);
+        //m_pTextureList[0]->bindTexture(GL_TEXTURE0, sceneShaderProgram, "sampler", 0);
 
         glm::mat4 lightTransWVP  = m_pShadowMap->GetLightTransVP() *
                                    pModel->m_pTrans->GetTransMatrix();
