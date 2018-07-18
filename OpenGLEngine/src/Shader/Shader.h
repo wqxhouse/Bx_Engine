@@ -10,8 +10,11 @@ public:
     ~Shader();
 
     void setShaderFiles(
-        char* vertexShaderFile,
-        char* fragmentShaderFile);
+        char* const vertexShaderFile,
+        char* const fragmentShaderFile,
+        char* const geometryShaderFile = NULL,  //Optional
+        char* const tesShaderFile      = NULL,  //Optional
+        char* const tcsShaderFile      = NULL); //Optional
 
     BOOL linkProgram();
 
@@ -37,6 +40,7 @@ private:
 
     char* m_vertexShaderFile;
     char* m_fragmentShaderFile;
-
-    char** pGeometryShaderFile;
+    char* m_geometryShaderFile;
+    char* m_tesShaderFile;
+    char* m_tcsShaderFile;
 };

@@ -22,15 +22,18 @@ public:
 		const char*  fragmentShaderPath,
         const char*  fragmentShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
-        unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
+        const unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
+        const unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
 
 	BOOL compileShader(
-        const char*  vertexShaderFile,
-        const char*  fragmentShaderFile,
+        const char*  const vertexShaderFile,
+        const char*  const fragmentShaderFile,
+        const char*  const geometryShaderFile,
+        const char*  const tcsShaderFile,
+        const char*  const tesShaderFile,
         OUT GLuint*  shaderProgram,
-		unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
-        unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
+        const unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
+        const unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
 
 private:
 	char* shaderPath;
