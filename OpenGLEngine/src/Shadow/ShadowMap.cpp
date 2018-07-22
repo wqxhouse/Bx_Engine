@@ -40,7 +40,7 @@ BOOL ShadowMap::initialize()
                                                       GL_DEPTH_COMPONENT,
                                                       GL_DEPTH_COMPONENT,
                                                       GL_FLOAT,
-                                                      GL_CLAMP_TO_BORDER,
+                                                      GL_CLAMP_TO_EDGE,
                                                       FALSE);
 
     GLfloat boarder[] = { 1.0f, 1.0f, 1.0f, 1.0f };
