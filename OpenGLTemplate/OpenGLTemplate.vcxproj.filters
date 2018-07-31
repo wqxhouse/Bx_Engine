@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\OpenGLTemplate.h">
-      <Filter>Source Files\src</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

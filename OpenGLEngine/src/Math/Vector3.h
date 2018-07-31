@@ -170,7 +170,7 @@ namespace Math
 			return result;
 		}
 
-		float operator[](int index)
+		float& operator[](int index)
 		{
 			switch (index)
 			{

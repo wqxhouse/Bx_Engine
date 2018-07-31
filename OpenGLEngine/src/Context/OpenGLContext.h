@@ -10,7 +10,8 @@ public:
 
     void run();
 
-    inline Scene* GetScene() { return &m_scene; }
+    inline GLFWwindow* GetWindow() const { return window;   }
+    inline Scene*      GetScene()        { return &m_scene; }
 
 private:
 	void initialize();

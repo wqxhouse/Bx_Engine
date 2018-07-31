@@ -17,4 +17,12 @@ namespace Math
 	Quaternion operator*(const float& f, const Quaternion& q);
 
 	Quaternion operator*(const Vector4& v, const Quaternion& q);
+
+    template<typename T>
+    void swap(T* l, T* r)
+    {
+        T temp = *l;
+        *l     = *r;
+        *r     = temp;
+    }
 }

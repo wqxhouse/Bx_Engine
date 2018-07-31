@@ -177,6 +177,9 @@
     <ClInclude Include="src\Model\Primitives\Primitive.h">
       <Filter>src\Model\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math\Matrix2x2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">

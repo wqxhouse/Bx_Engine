@@ -5,10 +5,11 @@ ShaderCompiler::ShaderCompiler()
     shaderPath = (char*)malloc(512 * sizeof(char));
 #if _DEBUG
     char defaultPath[] = "../resources/shaders/\0";
+    memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 #else
     this->shaderPath = "../../resources/shaders/\0";
+    //memcpy(this->shaderPath, shaderPath, sizeof(shaderPath));
 #endif
-    memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 }
 
 ShaderCompiler::ShaderCompiler(const char * shaderPath)

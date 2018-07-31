@@ -118,21 +118,11 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName).lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName).lib"
-copy /Y "$(ProjectDir)include\*.*" "$(SolutionDir)bin\lib\OpenGLEngine\include\*.*"</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include"
-mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include"
-
-if not exist "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)"
-mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\$(Configuration)"
-
-if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Math"
-mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Math"
-
-if not exist "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
-mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
-</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -169,6 +159,7 @@ mkdir "$(SolutionDir)bin\lib\OpenGLEngine\include\Mesh"
     <ClInclude Include="src\Light\Light.h" />
     <ClInclude Include="src\Material\Material.h" />
     <ClInclude Include="src\Math\Math.h" />
+    <ClInclude Include="src\Math\Matrix2x2.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
     <ClInclude Include="src\Math\Quaternion.h" />

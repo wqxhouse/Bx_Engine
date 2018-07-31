@@ -65,7 +65,7 @@ namespace Math
 		float sinThetaInv = 1.0f / std::sqrt(1 - cosTheta * cosTheta);
 
 		Quaternion result = sin((1 - u) * theta) * sinThetaInv * q1 +
-			sin(u * theta) * sinThetaInv * q2;
+			                sin(u * theta) * sinThetaInv * q2;
 
 		return result;
 	}

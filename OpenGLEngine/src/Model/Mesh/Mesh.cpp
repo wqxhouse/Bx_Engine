@@ -90,7 +90,7 @@ void Mesh::initialize()
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
     glBufferData(GL_ARRAY_BUFFER, m_vertexBuffer.size() * sizeof(Vertex),
-                 m_vertexBuffer.data(), GL_STATIC_DRAW);
+                 m_vertexBuffer.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObj);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * sizeof(GLuint),
@@ -127,6 +127,12 @@ void Mesh::initialize()
 
     // Unbind VAO
     glBindVertexArray(0);
+
+    /*glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
+    GLint bufSize;
+
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufSize);
+    Vertex* data = (Vertex*)glMapBufferRange(GL_ARRAY_BUFFER, 0, bufSize, GL_MAP_READ_BIT);*/
 }
 
 void Mesh::drawMeshPos()
@@ -191,6 +197,36 @@ void Mesh::draw()
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
+}
+
+void Mesh::updateVertexData()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
+    auto err = glGetError();
+    glBufferSubData(GL_ARRAY_BUFFER, 0, m_vertexBuffer.size() * sizeof(Mesh::Vertex), m_vertexBuffer.data());
+    err = glGetError();
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void* Mesh::mapVertexBufferData()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
+    GLenum err = glGetError();
+    printf("%i\n", err);
+    
+
+    GLint bufSize;
+
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufSize);
+
+    GLvoid* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+
+    Vertex* data = (Vertex*)glMapBufferRange(GL_ARRAY_BUFFER, 0, bufSize, GL_MAP_READ_BIT);
+    err = glGetError();
+    printf("%i\n", err);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    return data;
 }
 
 void Mesh::setMaterial(

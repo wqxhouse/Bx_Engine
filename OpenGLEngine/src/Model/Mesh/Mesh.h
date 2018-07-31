@@ -113,10 +113,16 @@ public:
     void drawMeshPos();
     void draw();
 
+    void updateVertexData();
+
+    void* mapVertexBufferData();
+
     void setMaterial(Material* pMaterial);
 
     inline void UseGlobalMaterial() { useGlobalMaterial = TRUE; }
     inline void UseLocalMaterial()  { useGlobalMaterial = FALSE; }
+
+    //inline GLuint GetVertexBufferObj() const { return m_vertexBufferObj; }
 
 	std::string m_name;
 	std::string m_materialName;
