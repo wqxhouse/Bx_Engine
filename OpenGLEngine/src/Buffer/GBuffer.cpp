@@ -23,7 +23,7 @@ BOOL GBuffer::initialize()
 {
     BOOL result = TRUE;
 
-    // Position buffer
+    // Position view buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                               GL_COLOR_ATTACHMENT0,
                                               m_width,
@@ -41,7 +41,7 @@ BOOL GBuffer::initialize()
     GLfloat posTexBoderColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     pPosTex->setBoarderColor(posTexBoderColor);
 
-    // Normal buffer
+    // Normal view buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE1,
                                               GL_COLOR_ATTACHMENT1,
                                               m_width,
@@ -102,7 +102,7 @@ BOOL GBuffer::initialize()
                                               FALSE);
 
     // Position View
-    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
+    /*m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
                                               GL_COLOR_ATTACHMENT6,
                                               m_width,
                                               m_height,
@@ -111,10 +111,10 @@ BOOL GBuffer::initialize()
                                               GL_RGBA32F,
                                               GL_FLOAT,
                                               GL_CLAMP_TO_BORDER,
-                                              FALSE);
+                                              FALSE);*/
 
     // Normal View
-    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
+    /*m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
                                               GL_COLOR_ATTACHMENT7,
                                               m_width,
                                               m_height,
@@ -123,7 +123,7 @@ BOOL GBuffer::initialize()
                                               GL_RGB32F,
                                               GL_FLOAT,
                                               GL_CLAMP_TO_BORDER,
-                                              FALSE);
+                                              FALSE);*/
 
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     result = m_gShader.linkProgram();
@@ -181,24 +181,19 @@ void GBuffer::drawGBuffer()
         glm::mat4 wv = pCam->GetViewMatrix() * worldTransMatrix;
 
         glm::mat4 wvp = pCam->GetProjectionMatrix() * wv;
-        
 
-        GLint worldMatrixLocation  = glGetUniformLocation(gShaderProgram, "worldMatrix");
         GLint lightTransLocation   = glGetUniformLocation(gShaderProgram, "lightTransWVP");
         GLint wvpLocation          = glGetUniformLocation(gShaderProgram, "wvp");
         GLint materialTypeLocation = glGetUniformLocation(gShaderProgram, "materialType");
 
-        GLuint vpLocation          = glGetUniformLocation(gShaderProgram, "wv");
+        GLuint wvLocation          = glGetUniformLocation(gShaderProgram, "wv");
 
-        if (worldMatrixLocation  >= 0 &&
-            lightTransLocation   >= 0 &&
+        if (lightTransLocation   >= 0 &&
             wvpLocation          >= 0 &&
             materialTypeLocation >= 0 &&
-            vpLocation           >= 0)
+            wvLocation           >= 0)
         {
             ShadowMap* pShadowMap = m_pScene->GetShadowMap();
-
-            glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, glm::value_ptr(worldTransMatrix));
 
             glm::mat4 lightTransWVP = 
                 pShadowMap->GetLightTransVP() * pModel->m_pTrans->GetTransMatrix();
@@ -206,7 +201,7 @@ void GBuffer::drawGBuffer()
 
             glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
-            glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(wv));
+            glUniformMatrix4fv(wvLocation, 1, GL_FALSE, glm::value_ptr(wv));
 
             if (useGlobalMaterial == FALSE)
             {

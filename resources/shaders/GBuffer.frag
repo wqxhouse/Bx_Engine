@@ -26,25 +26,19 @@ layout (std140) uniform gMaterialPBR
 
 uniform int materialType;
 
-in vec3 posWorld;
-in vec3 normalWorld;
+in vec3 posView;
+in vec3 normalView;
+
 in vec2 fragTexCoord;
 
 in vec4 posLightProj;
 
-in vec3 posView;
-in vec3 normalView;
-
-layout(location = 0) out vec4 posWorldTexture;
-layout(location = 1) out vec3 normalWorldTexture;
+layout(location = 0) out vec4 posViewTexture;
+layout(location = 1) out vec3 normalViewTexture;
 layout(location = 2) out vec3 texCoordTexture;
 layout(location = 3) out vec4 albedoTexture;
 layout(location = 4) out vec4 specularTexture;
 layout(location = 5) out vec3 environmentLightTexture;
-
-// Test
-layout(location = 6) out vec4 posViewTexture;
-layout(location = 7) out vec3 normalViewTexture;
 
 float castingShadow()
 {
@@ -87,13 +81,10 @@ float castingShadow()
 void main()
 {    
     float shadowAttenuation = castingShadow();
-    
-    posWorldTexture    = vec4(posWorld, 1.0f);
-    normalWorldTexture = normalWorld;
+
+    posViewTexture     = vec4(posView, 1.0f);
+    normalViewTexture  = normalView;
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
-    
-    posViewTexture    = vec4(posView, 1.0f);
-    normalViewTexture = normalView;
 
     switch (materialType)
     {
@@ -119,9 +110,6 @@ void main()
             break;
     }
     
-    //albedoTexture           = vec4(m_pbrMaterial.albedo, 1.0f);
-    //specularTexture         = vec4(m_pbrMaterial.roughness, m_pbrMaterial.metallic, m_pbrMaterial.fresnel, 1.0f);
-
     // TODO: Calculate enviroment light
     //environmentLightTexture = vec3(0.0f, 0.0f, 0.0f);
 }

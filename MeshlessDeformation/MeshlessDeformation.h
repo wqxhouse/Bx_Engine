@@ -46,7 +46,7 @@ private:
     std::vector<Math::Vector3> q; // Original Relative location to geometry center
 
     Mat3 A;                       // Matrix A
-    Mat3 Aqq;                     // Sigma(mi * qi * qiT)
+    Mat3 Aqq;                     // Sigma(mi * qi * qi^T)
 
     Math::Vector3 t;              // Real-time geometry center
     std::vector<Math::Vector3> p; // Real-time relative location to geometry center

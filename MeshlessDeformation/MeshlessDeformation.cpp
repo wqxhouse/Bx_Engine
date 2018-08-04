@@ -65,8 +65,8 @@ void MeshlessDeformation::initScene()
     pScene->addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);
 
-    pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-        new Trans(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    /*pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+        new Trans(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     /*pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
@@ -149,6 +149,7 @@ void MeshlessDeformation::update(
 
     Mat3 Q = A.Transpose() * A; // Q = A^T * A
 
+    // Symmetric matrix
     Mat3 S;
 
 
@@ -156,7 +157,7 @@ void MeshlessDeformation::update(
 
     integration(deltaTime);
 
-    m_pMesh->updateVertexData();
+    //m_pMesh->updateVertexData();
 }
 
 void MeshlessDeformation::draw()

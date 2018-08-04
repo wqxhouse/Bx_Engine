@@ -547,11 +547,13 @@ void Scene::deferredDrawScene()
 
     Camera* activeCamPtr = m_pCameraList[m_activeCamera];
 
-    GLint eyeLocation = glGetUniformLocation(gShaderProgram, "eyePos");
+    GLint eyeLocation     = glGetUniformLocation(gShaderProgram, "eyePos");
+    GLint viewMatLocation = glGetUniformLocation(gShaderProgram, "viewMat");
 
-    if (eyeLocation >= 0)
+    if (eyeLocation >= 0 && viewMatLocation >= 0)
     {
         glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
+        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->GetViewMatrix()));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

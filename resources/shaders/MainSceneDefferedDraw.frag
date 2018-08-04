@@ -28,6 +28,8 @@ layout (std140) uniform pointLightUniformBlock
 
 uniform vec3 eyePos;
 
+uniform mat4 viewMat;
+
 //uniform uint screenWidth;
 //uniform uint screenHeight;
 
@@ -71,11 +73,11 @@ vec2 calgBufferTexCoord()
 void main()
 {
     vec2 gBufferTexCoord = calgBufferTexCoord();
-    
+
     // Sample from G-Buffer
     // Get mesh data
-    vec3 posWorld    = texture(posTex, gBufferTexCoord).xyz;
-    vec3 normalWorld = texture(normalTex, gBufferTexCoord).xyz;
+    vec3 posView    = texture(posTex, gBufferTexCoord).xyz;
+    vec3 normalView = texture(normalTex, gBufferTexCoord).xyz;
 
     vec3 gTexCoord   = texture(texCoordTex, gBufferTexCoord).xyz;
     vec2 texCoord    = gTexCoord.xy;
@@ -89,19 +91,26 @@ void main()
     vec4  gSpecular = texture(specularTex, gBufferTexCoord);
     vec3  specular  = gSpecular.xyz;
     float ns  = gSpecular.w;
+
+    // Transform eye position to view space
+    vec4 eyePosVec4 = viewMat * vec4(eyePos, 1.0f);
+    vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
+
+    // Transform light direction vector to view space
+    vec3 dir   = (viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
     
     /// Shading
-    vec3 view       = normalize(eyePos - posWorld);
-    vec3 normal     = normalize(normalWorld);    
-    vec3 dir        = m_directionalLight.dir;
+    vec3 view       = normalize(eyePosView - posView);
+    vec3 normal     = normalize(normalView);
+    
     vec3 lightColor = m_directionalLight.lightBase.color;
-        
+
     // Casting shadow
     float shadowAttenuation   = gTexCoord.z;
-    float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
-    
+    float shadowSpecularAttenuation = 1.0f;// ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
+
     vec3 radiance;
-    
+
     if (ns > 0.0f)
     {
         // Calculate diffuse color
