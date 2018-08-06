@@ -40,6 +40,14 @@ public:
         Texture2D*   pTexture2D,
         const UINT   samples);
 
+    void attachCubemap(
+        const GLenum texUnit,
+        const GLenum attachmentType,
+        Cubemap*     pCubemap,
+        const GLenum cubeface,
+        const UINT   samples,
+        const BOOL   addDrawBuffer = FALSE);
+
     void drawFramebuffer();
     void readFramebuffer(
         const GLenum texUnit,

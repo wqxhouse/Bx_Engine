@@ -11,9 +11,13 @@ in vec2 fragTexCoord;
 
 in vec4 posLightProj;
 
+in vec3 lightProbeSampler;
+
 uniform sampler2D sampler;
 uniform sampler2D shadowMapSampler;
 //uniform sampler2DMS shadowMapSampler;
+
+uniform samplerCube lightProbeCubemap;
 
 layout (std140) uniform directionalLightUniformBlock
 {
@@ -50,7 +54,7 @@ float castingShadow()
     // Multisampling, need integer coordinate
     //posLight.x = posLight.x * 2560.0f; // m_shadowMapResolution.width;
     //posLight.y = posLight.y * 2560.0f; // m_shadowMapResolution.height;
-    
+
 	float depth = texture(shadowMapSampler, posLight.xy).r;
     /*float depth = 0.0f;
     
@@ -112,6 +116,12 @@ void main()
         vec3 dir        = normalize(m_directionalLight.dir);
         vec3 lightColor = m_directionalLight.lightBase.color;
         
+        vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
+        
+        // Light Probe
+        vec3 environmentLight = texture(lightProbeCubemap, lightProbeSampler).xyz;    
+        lightColor += environmentLight;
+        
         float shadowAttenuation         = castingShadow();
         float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
@@ -124,6 +134,8 @@ void main()
         radiance = gammaCorrection(radiance);
         
         outColor = vec4(radiance, 1.0f);
+        
+        outColor = vec4(environmentLight, 1.0f);
         
         // Debug
         //float roughness = m_cookTorranceMaterial.roughness;

@@ -7,6 +7,7 @@
 #include "../Buffer/GBuffer.h"
 #include "../Shadow/SSAO.h"
 #include "../Effect/Skybox.h"
+#include "../Probe/LightProbe.h"
 
 #include "Setting.h"
 
@@ -16,8 +17,12 @@ public:
 	Scene(Setting* pSetting);
     BOOL initialize();
 	void update(float deltaTime);
-	void draw();
-	~Scene();
+        
+    void preDraw();  // Pre-draw: shadow map, SSAO, etc
+    void draw();
+    void postDraw(); // Post draw: post processing, etc
+    
+    ~Scene();
 
 	void addModel(
         const std::string& modelFile,
@@ -63,30 +68,33 @@ public:
     void enableSceneLocalMaterial();
     void disableSceneLocalMaterial();
 
-    inline Setting* GetSetting()                     const { return m_pSetting;                      }
+    inline Setting* GetSetting()                     const { return m_pSetting;                           }
+                                                                                                         
+    inline size_t GetModelSize()                     const { return m_pSceneModelList.size();             }
+    inline Model* GetModelPtr(const UINT index)      const { return m_pSceneModelList[index];             }
 
-    inline size_t GetModelSize()                     const { return m_pSceneModelList.size();        }
-    inline Model* GetModelPtr(const UINT index)      const { return m_pSceneModelList[index];        }
+    inline Camera* GetActivateCamera()               const { return m_pActiveCamera;                      }
 
-    inline Camera* GetActivateCamera()               const { return m_pCameraList[m_activeCamera];   }
+    inline UniformBufferMgr* GetUniformBufferMgr()         { return &m_uniformBufferMgr;                  }
+    inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;         }
+    inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex;      }
 
-    inline UniformBufferMgr* GetUniformBufferMgr()         { return &m_uniformBufferMgr;             }
-    inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;    }
-    inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex; }
+    inline ShadowMap* GetShadowMap()                 const { return m_pShadowMap;                         }
 
-    inline ShadowMap* GetShadowMap()                 const { return m_pShadowMap;                    }
+    inline GBuffer*   GetGBuffer()                   const { return m_pGBuffer;                           }
 
-    inline GBuffer*   GetGBuffer()                   const { return m_pGBuffer;                      }
-
-    inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;             }
-
-    inline SSAO* GetSSAO()                           const { return m_pSsao;                         }
+    inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;                  }
+                                                                                                          
+    inline SSAO* GetSSAO()                           const { return m_pSsao;                              }
+                                                                                                          
+    inline Vector4 GetBackGroundColor()              const { return m_backgroundColor;                    }
 
     void setSceneShader(
         char* const vertexShaderFile,
         char* const fragmentShaderFile);
 
-    inline void SetActiveCamera(const UINT activeCameraIndex) { m_activeCamera = activeCameraIndex; }
+    inline void SetActiveCamera(Camera* pCam) { m_pActiveCamera = pCam; }
+    inline void SetActiveCameraIndex(const UINT activeCameraIndex) { m_activeCameraIndex = activeCameraIndex; }
 
     inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
     
@@ -94,10 +102,13 @@ public:
     inline void EnableSSAO() { m_pSetting->m_graphicsSetting.EnableSSAO(); }
     inline void DisableSSAO() { m_pSetting->m_graphicsSetting.DisableSSAO(); }
 
+    inline void EnableRealtimeLightProbe() { enableRealtimeLightProbe = TRUE; }
+
     DirectionalLight m_directionalLight;
 
 private:
     BOOL initializePhongRendering();
+
     void drawScene();
 
 	Setting* m_pSetting;
@@ -107,7 +118,8 @@ private:
     PointLight m_pointLight;
 
     std::vector<Camera*> m_pCameraList;
-    UINT m_activeCamera;
+    UINT m_activeCameraIndex;
+    Camera* m_pActiveCamera;
 
 	std::vector<Model*>   m_pSceneModelList;
 	std::vector<Texture*> m_pTextureList;
@@ -151,4 +163,8 @@ private:
     // Skybox
     Skybox* m_pSkybox;
     std::vector<std::string> m_skyboxImages;
+
+    // Light Probe
+    LightProbe* m_pLightProbe;
+    BOOL enableRealtimeLightProbe;
 };

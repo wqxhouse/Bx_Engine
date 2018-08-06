@@ -120,9 +120,20 @@ class Cubemap : public Texture
 {
 public:
     Cubemap(
+        const UINT   texSize,
+        const UINT   samples     = 1,
+        const GLenum loadFormat  = GL_RGBA,
+        const GLenum storeFormat = GL_RGBA,
+        const GLenum type        = GL_UNSIGNED_BYTE,
+        const GLenum wrapMethod  = GL_CLAMP_TO_EDGE,
+        const BOOL   mipmap      = FALSE,
+        const void*  data        = NULL);
+
+    Cubemap(
         const std::vector<std::string>& textureFile,
         const GLenum                    format     = GL_RGBA,
-        const GLenum                    type       = GL_UNSIGNED_BYTE);
+        const GLenum                    type       = GL_UNSIGNED_BYTE,
+        const BOOL   mipmap                        = FALSE);
 
     ~Cubemap();
 

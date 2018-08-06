@@ -1,3 +1,7 @@
+/*
+    MainScene.vert
+*/
+
 #version 440 core
 
 layout (location = 0) in vec3 position;
@@ -19,13 +23,13 @@ uniform transUniformBlock
 
 uniform mat4 lightTransWVP;
 
-uniform mat4 wvp2;
-
 out vec3 posWorld;
 out vec3 normalWorld;
 out vec2 fragTexCoord;
 
 out vec4 posLightProj;
+
+out vec3 lightProbeSampler;
 
 void main()
 {
@@ -34,6 +38,8 @@ void main()
 	fragTexCoord = texCoord;
 	
 	posLightProj = lightTransWVP * vec4(position, 1.0f);
+    
+    lightProbeSampler = vec3(position.x, -position.y + 0.5f, -position.z);
     
     gl_Position  = m_trans.wvp * vec4(position, 1.0f);
 }

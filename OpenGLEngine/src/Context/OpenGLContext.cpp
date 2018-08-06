@@ -56,6 +56,8 @@ void OpenGLContext::initialize()
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     glStencilMask(0xFF);
 
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
     glfwGetFramebufferSize(window,
                            reinterpret_cast<int*>(&fbWidth),
                            reinterpret_cast<int*>(&fbHeight));
@@ -91,7 +93,9 @@ void OpenGLContext::run()
         m_scene.update(deltaTime);
 
         //Start Rendering
+        m_scene.preDraw();
         m_scene.draw();
+        m_scene.postDraw();
 
         glfwSwapBuffers(window);
     }

@@ -9,13 +9,14 @@ Scene::Scene(Setting* pSetting)
       m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       // m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
-      m_activeCamera(0),
+      m_activeCameraIndex(0),
       m_uniformBufferMgr(128),
       m_pShadowMap(NULL),
       m_pGBuffer(NULL),
       useGlobalMaterial(FALSE),
       m_pSsao(NULL),
-      m_pSkybox(NULL)
+      m_pSkybox(NULL),
+      enableRealtimeLightProbe(FALSE)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
     m_globalPbrMaterial.roughness = 0.2f;
@@ -80,33 +81,67 @@ BOOL Scene::initialize()
         Shader::AssertErrors();
     }
 
+    // Light Probe
+    m_pLightProbe = new LightProbe(this, Math::Vector3(), 0.1f, 1000.0f);
+    m_pLightProbe->initialize();
+    // m_pLightProbe->draw();
+
+    // Test
+    /*m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[0]);
+    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[1]);
+    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[2]);
+    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[3]);
+    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[4]);
+    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[5]);*/
+
     return status;
 }
 
 void Scene::update(float deltaTime)
 {
+    GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
+
     UINT cameraCount = m_pCameraList.size();
 
     assert(cameraCount > 0);
 
+#if _DEBUG
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_1])
     {
-        m_activeCamera = 0;
+        m_activeCameraIndex = 0;
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_2])
     {
-        m_activeCamera = ((1 < cameraCount) ? 1 : m_activeCamera);
+        m_activeCameraIndex = ((1 < cameraCount) ? 1 : m_activeCameraIndex);
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_3])
     {
-        m_activeCamera = ((2 < cameraCount) ? 2 : m_activeCamera);
+        m_activeCameraIndex = ((2 < cameraCount) ? 2 : m_activeCameraIndex);
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_4])
     {
-        m_activeCamera = ((3 < cameraCount) ? 3 : m_activeCamera);
+        m_activeCameraIndex = ((3 < cameraCount) ? 3 : m_activeCameraIndex);
     }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_5])
+    {
+        m_activeCameraIndex = ((4 < cameraCount) ? 4 : m_activeCameraIndex);
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_6])
+    {
+        m_activeCameraIndex = ((5 < cameraCount) ? 5 : m_activeCameraIndex);
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_7])
+    {
+        m_activeCameraIndex = ((6 < cameraCount) ? 6 : m_activeCameraIndex);
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_8])
+    {
+        m_activeCameraIndex = ((7 < cameraCount) ? 7 : m_activeCameraIndex);
+    }
+#endif
 
-    m_pCameraList[m_activeCamera]->update(deltaTime);
+    m_pActiveCamera = m_pCameraList[m_activeCameraIndex];
+    m_pActiveCamera->update(deltaTime);
     
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
     {
@@ -192,32 +227,25 @@ void Scene::update(float deltaTime)
     }
 }
 
-void Scene::draw()
+void Scene::preDraw()
 {
-    GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
-
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (m_skyboxImages.size() == 6)
-    {
-        m_pSkybox->draw();
-    }
-
-    // if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
+    if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
     {
         shadowPass();
     }
 
     m_uniformBufferMgr.updateUniformBufferData(
-            m_directionalLightUniformBufferIndex,
-            m_directionalLight.getDataSize(),
-            m_directionalLight.getDataPtr());
+        m_directionalLightUniformBufferIndex,
+        m_directionalLight.getDataSize(),
+        m_directionalLight.getDataPtr());
 
     m_uniformBufferMgr.updateUniformBufferData(
-            m_pointLightUniformBufferIndex,
-            m_pointLight.getDataSize(),
-            m_pointLight.getDataPtr());
+        m_pointLightUniformBufferIndex,
+        m_pointLight.getDataSize(),
+        m_pointLight.getDataPtr());
 
     if (useGlobalMaterial == TRUE)
     {
@@ -227,7 +255,26 @@ void Scene::draw()
             m_globalPbrMaterial.GetCookTorranceMaterialData());
     }
 
-    glViewport(0, 0, m_pSetting->width, m_pSetting->height);
+    if ((m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING) && 
+        (enableRealtimeLightProbe == TRUE ||
+         m_pLightProbe->IsFirstDraw() == TRUE))
+    {
+        m_pLightProbe->draw();
+
+        glViewport(0, 0, m_pSetting->width, m_pSetting->height);
+    }
+    else
+    {
+        glViewport(0, 0, m_pSetting->width, m_pSetting->height);
+    }
+}
+
+void Scene::draw()
+{
+    if (m_skyboxImages.size() == 6)
+    {
+        m_pSkybox->draw();
+    }
 
     if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
     {
@@ -244,6 +291,10 @@ void Scene::draw()
 
         deferredDrawScene();
     }
+}
+
+void Scene::postDraw()
+{
 }
 
 Scene::~Scene()
@@ -400,7 +451,7 @@ BOOL Scene::initializePhongRendering()
 
 void Scene::drawScene()
 {
-    Camera* activeCamPtr = m_pCameraList[m_activeCamera];
+    //Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
 
 #if 0
     Vector3 camPos = activeCamPtr->GetTrans().GetPos();
@@ -446,8 +497,8 @@ void Scene::drawScene()
         glm::mat4 transMatrix[4] =
         {
             pModel->m_pTrans->GetTransMatrix(),
-            activeCamPtr->GetViewMatrix(),
-            activeCamPtr->GetProjectionMatrix(),
+            m_pActiveCamera->GetViewMatrix(),
+            m_pActiveCamera->GetProjectionMatrix(),
             glm::mat4()
         };
         transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
@@ -456,7 +507,7 @@ void Scene::drawScene()
             m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
 
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
-        glUniform3fv(eyeHandle, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
+        glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
 
         //m_pTextureList[0]->bindTexture(GL_TEXTURE0, sceneShaderProgram, "sampler", 0);
 
@@ -469,6 +520,11 @@ void Scene::drawScene()
         if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
         {
             m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+        }
+
+        if (m_pLightProbe != NULL)
+        {
+            m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE2);
         }
 
         pModel->draw();
@@ -545,7 +601,7 @@ void Scene::deferredDrawScene()
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    Camera* activeCamPtr = m_pCameraList[m_activeCamera];
+    Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
 
     GLint eyeLocation     = glGetUniformLocation(gShaderProgram, "eyePos");
     GLint viewMatLocation = glGetUniformLocation(gShaderProgram, "viewMat");

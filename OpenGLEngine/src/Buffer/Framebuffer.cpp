@@ -117,13 +117,47 @@ void Framebuffer::attachTexture2D(
     }
     else
     {
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture2D->GetTextureHandle(), 0);
+        /*glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture2D->GetTextureHandle(), 0);*/
+
+        // TODO: Multi-sampled texture2D
+        assert(FALSE);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     m_framebufferAttachmentsList.push_back(attachmentType);
+}
+
+void Framebuffer::attachCubemap(
+    const GLenum texUnit,
+    const GLenum attachmentType,
+    Cubemap*     pCubemap,
+    const GLenum cubeface,
+    const UINT   samples,
+    const BOOL   addDrawBuffer)
+{
+    UINT texIndex = getTextureIndex(texUnit);
+    m_pAttachedTextures[texIndex] = pCubemap;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+
+    if (samples < 2)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, cubeface, pCubemap->GetTextureHandle(), 0);
+    }
+    else
+    {
+        // TODO: Multi-sampled cubemap
+        assert(FALSE);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    if (addDrawBuffer == TRUE)
+    {
+        m_framebufferAttachmentsList.push_back(attachmentType);
+    }
 }
 
 void Framebuffer::drawFramebuffer()

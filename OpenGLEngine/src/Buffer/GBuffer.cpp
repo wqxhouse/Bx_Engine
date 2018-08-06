@@ -101,30 +101,6 @@ BOOL GBuffer::initialize()
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
 
-    // Position View
-    /*m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
-                                              GL_COLOR_ATTACHMENT6,
-                                              m_width,
-                                              m_height,
-                                              1,
-                                              GL_RGBA,
-                                              GL_RGBA32F,
-                                              GL_FLOAT,
-                                              GL_CLAMP_TO_BORDER,
-                                              FALSE);*/
-
-    // Normal View
-    /*m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
-                                              GL_COLOR_ATTACHMENT7,
-                                              m_width,
-                                              m_height,
-                                              1,
-                                              GL_RGBA,
-                                              GL_RGB32F,
-                                              GL_FLOAT,
-                                              GL_CLAMP_TO_BORDER,
-                                              FALSE);*/
-
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     result = m_gShader.linkProgram();
 

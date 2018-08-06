@@ -18,6 +18,8 @@ uniform sampler2D sampler;
 uniform sampler2D shadowMapSampler;
 //uniform sampler2DMS shadowMapSampler;
 
+uniform samplerCube lightProbeCubemap;
+
 layout (std140) uniform directionalLightUniformBlock
 {
     DirectionalLight m_directionalLight;
@@ -98,11 +100,15 @@ void main()
 
     vec4 texColor = texture(sampler, fragTexCoord);
     
+    // Light Probe
+    vec3 environmentLight = texture(lightProbeCubemap, normalWorld).xyz;    
+    lightColor += environmentLight;
+    
     vec3 diffuseColor = clamp(NoL * m_phongMaterial.kd * lightColor, 0.0f, 1.0f);
     vec3 specColor    = clamp(specularCoefficient * m_phongMaterial.ks.xyz * lightColor, 0.0f, 1.0f);
     
     // Shadow casting(specular)
-     specColor *= shadowSpecularAttenuation;
+    specColor *= shadowSpecularAttenuation;
     
     vec3 outColorVec3 = clamp(((m_phongMaterial.ka + diffuseColor + specColor) * lightColor), 0.0f, 1.0f);// * texColor;
     
