@@ -27,7 +27,7 @@ LightProbe::LightProbe(
     const float          nearClip,
     const float          farClip)
     : m_pScene(pScene),
-      probeResolution(128),
+      probeResolution(2048),
       m_pos(pos),
       m_nearClip(nearClip),
       m_farClip(farClip),
