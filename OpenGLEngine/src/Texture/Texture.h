@@ -60,7 +60,7 @@ public:
         const GLenum loadFormat  = GL_RGBA,
         const GLenum storeFormat = GL_RGBA,
         const GLenum type        = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod  = GL_CLAMP_TO_BORDER,
+        const GLenum wrapMethod  = GL_CLAMP_TO_EDGE,
         const BOOL   mipmap      = FALSE,
         const void*  data        = NULL);
 
@@ -69,7 +69,7 @@ public:
         const std::string& textureFile,
         const GLenum format     = GL_RGBA,
         const GLenum type       = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod = GL_CLAMP_TO_BORDER,
+        const GLenum wrapMethod = GL_CLAMP_TO_EDGE,
         const BOOL   mipmap     = GL_FALSE);
 
     void setBoarderColor(GLfloat borderColor[4]);
@@ -104,7 +104,7 @@ public:
         const std::string& textureFile,
         const GLenum format     = GL_RGBA,
         const GLenum type       = GL_UNSIGNED_BYTE,
-        const GLenum wrapMethod = GL_CLAMP_TO_BORDER,
+        const GLenum wrapMethod = GL_CLAMP_TO_EDGE,
         const BOOL mipmap       = GL_FALSE);
 
     ~Texture3D();
@@ -126,14 +126,14 @@ public:
         const GLenum storeFormat = GL_RGBA,
         const GLenum type        = GL_UNSIGNED_BYTE,
         const GLenum wrapMethod  = GL_CLAMP_TO_EDGE,
-        const BOOL   mipmap      = FALSE,
+        const BOOL   mipmap      = TRUE,
         const void*  data        = NULL);
 
     Cubemap(
         const std::vector<std::string>& textureFile,
         const GLenum                    format     = GL_RGBA,
         const GLenum                    type       = GL_UNSIGNED_BYTE,
-        const BOOL   mipmap                        = FALSE);
+        const BOOL   mipmap                        = TRUE);
 
     ~Cubemap();
 

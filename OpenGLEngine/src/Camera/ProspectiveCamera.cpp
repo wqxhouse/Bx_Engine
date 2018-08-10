@@ -14,7 +14,7 @@ ProspectiveCamera::ProspectiveCamera(
     const float fov)
 	:Camera(CameraType::PROSPECTIVE_CAM, pos, center, up, speed, nearClip, farClip)
 {
-	this->m_projectionMatrix = glm::perspective(fov, aspectRatio, nearClip, farClip);
+	this->m_projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
 	this->fov = fov;
 }
 
