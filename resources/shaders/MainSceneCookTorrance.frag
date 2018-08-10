@@ -135,40 +135,7 @@ void main()
         
         outColor = vec4(radiance, 1.0f);
         
-        outColor = vec4(environmentLight, 1.0f);
-        
-        // Debug
-        //float roughness = m_cookTorranceMaterial.roughness;
-        //outColor = vec4(roughness, roughness, roughness, 1.0f);
-        
-        //outColor = vec4(normalWorld, 1.0f);
-        /*float NoV = clamp(dot(normalWorld, view), 0.0f, 1.0f);
-        
-        float NoL = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
-        vec3 reflection = normalize(2 * NoL * normalWorld + dir);
-        
-        vec3 H = normalize(view + (-dir));
-        
-        float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
-        float NoH = clamp(dot(normalize(normalWorld), H), 0.0f, 1.0f);
-        float NoH2 = NoH * NoH;
-        
-        float alpha  = 0.1f;// m_cookTorranceMaterial.roughness;
-        float alpha2 = alpha * alpha;
-        
-        float k  = NoH2 * (alpha2 - 1) + 1;
-        float k2 = k * k;
-        
-        float D = ((alpha2) / (PI * k2));
-        
-        vec3 specularComponent = vec3((D) / (4 * NoL * NoV));
-        
-        float specularCoefficient = pow(NoH, 50.0f);
-        
-        vec3 specColor = clamp(specularComponent * lightColor, 0.0f, 1.0f);
-        outColor = vec4(clamp(specColor, 0.0f, 1.0f), 1.0f);*/
-        
-        //outColor = vec4(H, 1.0f);
+        //outColor = vec4(environmentLight, 1.0f);
     }
     //else
     {

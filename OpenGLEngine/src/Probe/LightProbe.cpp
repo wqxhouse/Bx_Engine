@@ -18,7 +18,7 @@ glm::vec3 lightProbeFrontVector[6] =
     glm::vec3( 0.0f,  1.0f,  0.0f),
     glm::vec3( 0.0f, -1.0f,  0.0f),
     glm::vec3( 0.0f,  0.0f,  1.0f),
-    glm::vec3( 0.0f,  0.0f, -1.0f)
+    glm::vec3( 0.0f,  0.0f, -1.0f),
 };
 
 LightProbe::LightProbe(
@@ -27,7 +27,7 @@ LightProbe::LightProbe(
     const float          nearClip,
     const float          farClip)
     : m_pScene(pScene),
-      probeResolution(128),
+      probeResolution(2048),
       m_pos(pos),
       m_nearClip(nearClip),
       m_farClip(farClip),
@@ -53,15 +53,31 @@ BOOL LightProbe::initialize()
     // TODO: Replace glm lib with Math lib
     for(UINT i = 0; i < CUBE_MAP_FACE_NUM; ++i)
     { 
-        m_pCubemapCam[i] = 
-            new ProspectiveCamera(glm::vec3(m_pos.x, m_pos.y, m_pos.z),
-                                  glm::vec3(m_pos.x, m_pos.y, m_pos.z) + lightProbeFrontVector[i],
-                                  glm::vec3(0.0f, 1.0f, 0.0f),
-                                  0.0f,
-                                  1.0f,
-                                  m_nearClip,
-                                  m_farClip,
-                                  90.0f);
+        if (i != 2 && i != 3)
+        { 
+            m_pCubemapCam[i] = 
+                new ProspectiveCamera(glm::vec3(m_pos.x, m_pos.y, m_pos.z),
+                                      glm::vec3(m_pos.x, m_pos.y, m_pos.z) + lightProbeFrontVector[i],
+                    // TODO: Figure out the reason of why we need to flip the camera (up to negative y)
+                                      glm::vec3(0.0f, -1.0f, 0.0f),
+                                      0.0f,
+                                      1.0f,
+                                      m_nearClip,
+                                      m_farClip,
+                                      90.0f);
+        }
+        else
+        {
+            m_pCubemapCam[i] = 
+                new ProspectiveCamera(glm::vec3(m_pos.x, m_pos.y, m_pos.z),
+                                      glm::vec3(m_pos.x, m_pos.y, m_pos.z) + lightProbeFrontVector[i],
+                                      glm::vec3(0.0f, 0.0f, 1.0f),
+                                      0.0f,
+                                      1.0f,
+                                      m_nearClip,
+                                      m_farClip,
+                                      90.0f);
+        }
     }
 
     return result;
@@ -90,6 +106,7 @@ void LightProbe::draw()
 
     for (UINT i = 0; i < CUBE_MAP_FACE_NUM; ++i)
     {
+        //if (i == 2 || i == 3 || i == 1 || i == 5) continue;
         m_pScene->SetActiveCamera(m_pCubemapCam[i]);
 
         if (i == 0)
@@ -115,12 +132,15 @@ void LightProbe::draw()
 
         m_probeFbo.drawFramebuffer();
 
-        glClearColor(backColor.r, backColor.g, backColor.b, backColor.a);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glViewport(0, 0, probeResolution, probeResolution);
 
         m_pScene->draw(); // Render the light probe
+
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
         m_probeFbo.finishDrawFramebuffer();
     }
 

@@ -39,7 +39,7 @@ void main()
 	
 	posLightProj = lightTransWVP * vec4(position, 1.0f);
     
-    lightProbeSampler = vec3(position.x, -position.y + 0.5f, -position.z);
+    lightProbeSampler = position;//vec3(position.x, position.y, position.z);
     
     gl_Position  = m_trans.wvp * vec4(position, 1.0f);
 }
