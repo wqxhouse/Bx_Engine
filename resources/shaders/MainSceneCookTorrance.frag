@@ -119,7 +119,7 @@ void main()
         vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
         
         // Light Probe
-        vec3 environmentLight = texture(lightProbeCubemap, lightProbeSampler).xyz;    
+        vec3 environmentLight = texture(lightProbeCubemap, reflection).xyz;
         lightColor += environmentLight;
         
         float shadowAttenuation         = castingShadow();
