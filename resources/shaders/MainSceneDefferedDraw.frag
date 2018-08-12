@@ -14,11 +14,15 @@ uniform sampler2D albedoTex;
 uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
 
+// SSAO Texture
 uniform sampler2D ssaoTex;
+
+// Lightprobe cubemap
+uniform samplerCube lightProbeCubemap;
 
 layout (std140) uniform directionalLightUniformBlock
 {
-    DirectionalLight m_directionalLight;
+    DirectionalLight m_directionalLight[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform pointLightUniformBlock
@@ -97,13 +101,12 @@ void main()
     vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
 
     // Transform light direction vector to view space
-    vec3 dir   = (viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
+    vec3 dir   = (viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
     
     /// Shading
     vec3 view       = normalize(eyePosView - posView);
     vec3 normal     = normalize(normalView);
-    
-    vec3 lightColor = m_directionalLight.lightBase.color;
+    vec3 lightColor = m_directionalLight[0].lightBase.color;
 
     // Casting shadow
     float shadowAttenuation   = gTexCoord.z;
@@ -123,12 +126,12 @@ void main()
         vec3 specularCoefficient  = specular * pow(VoR, ns);
 
         specularCoefficient  *= shadowSpecularAttenuation;
-        vec3 phongShdingColor = clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
+        vec3 phongShdingColor =
+            clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
         /// Finish Shading
-        
-        radiance = phongShdingColor;
-        
+
         phongShdingColor *= shadowAttenuation;
+        radiance = phongShdingColor;
     }
     else
     {
@@ -139,11 +142,17 @@ void main()
         
         CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
         
-        radiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
-    }
+        vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
+        // Shadow casting
+        directLightRadiance *= shadowAttenuation;
         
-    // Shadow casting
-    radiance *= shadowAttenuation;
+        vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
+        vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
+        vec3 environmentLightRadiance =
+            calCookTorranceRadiance(view, normal, -reflection, environmentLight, material, shadowSpecularAttenuation);
+
+        radiance = directLightRadiance + environmentLightRadiance;
+    }
     
     // SSAO
     float occlusion = texture(ssaoTex, gBufferTexCoord).r;

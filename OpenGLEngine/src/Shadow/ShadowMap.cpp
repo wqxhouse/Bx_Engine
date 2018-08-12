@@ -85,7 +85,7 @@ void ShadowMap::update(Light* pLight)
     m_pLight = pLight;
 
     DirectionalLight* pDirectionalLight = static_cast<DirectionalLight*>(m_pLight);
-    Vector3 lightDir = pDirectionalLight->getDir();
+    Vector3 lightDir = pDirectionalLight->GetDir();
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
     float lightPosScale = 5.0f;

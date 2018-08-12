@@ -37,7 +37,6 @@ LightProbe::LightProbe(
 
 LightProbe::~LightProbe()
 {
-    SafeDelete(m_pCubemap);
     for (UINT i = 0; i < CUBE_MAP_FACE_NUM; ++i)
     {
         SafeDelete(m_pCubemapCam[i]);

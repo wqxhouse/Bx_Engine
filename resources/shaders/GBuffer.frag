@@ -109,7 +109,4 @@ void main()
         default:
             break;
     }
-    
-    // TODO: Calculate enviroment light
-    //environmentLightTexture = vec3(0.0f, 0.0f, 0.0f);
 }

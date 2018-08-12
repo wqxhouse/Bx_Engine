@@ -14,6 +14,7 @@ uniform mat4 lightTransWVP;
 
 out vec3 posView;
 out vec3 normalView;
+
 out vec2 fragTexCoord;
 
 out vec4 posLightProj;

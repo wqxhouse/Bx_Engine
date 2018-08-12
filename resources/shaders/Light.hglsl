@@ -1,24 +1,28 @@
 // Light header file
 
+#ifndef MAX_LIGHT_NUM
+#define MAX_LIGHT_NUM 20
+#endif
+
 struct LightBase
 {
-	vec3 color;
+    //int  type;  //vec3 typePadding;
+    vec3 color; //float colorPadding;
 };
 
 struct DirectionalLight
 {
-	LightBase lightBase;
-	
-	vec3 dir;
+    LightBase lightBase;
+    vec3 dir;
 };
 
 struct PointLight
 {
-	LightBase lightBase;
+    LightBase lightBase;
 	
-	// vec4 pointLightData
-	vec3 pos;
-	float radius;
+    // vec4 pointLightData
+    vec3 pos;
+    float radius;
 };
 
 struct SpotLight

@@ -15,7 +15,7 @@ class Camera
 {
 public:
     Camera(
-        CameraType type,
+        CameraType       type,
         const glm::vec3& pos,
         const glm::vec3& center,
         const glm::vec3& up,
@@ -71,8 +71,8 @@ public:
         const float speed,
         const float aspectRatio,
         const float nearClip = 0.1f,
-        const float farClip = 100.0f,
-        const float fov = 45.0f);
+        const float farClip  = 100.0f,
+        const float fov      = 45.0f);
 
     void update(float deltaTime);
 
@@ -90,7 +90,7 @@ public:
         const float      speed,
         const Rectangle  viewport,
         const float      nearClip = 0.1f,
-        const float      farClip = 100.0f);
+        const float      farClip  = 100.0f);
     ~OrthographicCamera();
 
     void update(float deltaTime);

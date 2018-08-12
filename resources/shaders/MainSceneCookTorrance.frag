@@ -21,7 +21,7 @@ uniform samplerCube lightProbeCubemap;
 
 layout (std140) uniform directionalLightUniformBlock
 {
-    DirectionalLight m_directionalLight;
+    DirectionalLight m_directionalLight[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform pointLightUniformBlock
@@ -73,9 +73,9 @@ float castingShadow()
     }
     depth *= 0.25f;*/
 	
-	if (depth < posLight.z - 0.000001f)
+	if (depth < posLight.z - 0.0001f)
 	{
-		shadowAttenuation = 0.2f;
+		shadowAttenuation = 0.0f;
 	}
 	
 	return shadowAttenuation;
@@ -109,30 +109,35 @@ void main()
     
     //if (dis2 <= radius2)
     {
-        //vec3 lightColor = m_pointLight.lightBase.color;
-        
         vec3 view       = normalize(eyePos - posWorld);
         vec3 normal     = normalize(normalWorld);
-        vec3 dir        = normalize(m_directionalLight.dir);
-        vec3 lightColor = m_directionalLight.lightBase.color;
+        vec3 dir        = normalize(m_directionalLight[0].dir);
+        vec3 lightColor = m_directionalLight[0].lightBase.color;
         
         vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
         
         // Light Probe
-        vec3 environmentLight = texture(lightProbeCubemap, reflection).xyz;
-        lightColor += environmentLight;
+        // 0 - 1 roughtness; 0 - 7 mipmap
+        vec3 environmentLight = texture(lightProbeCubemap, reflection, m_cookTorranceMaterial.roughness * 7.0f).xyz;
+        // lightColor = environmentLight;
         
         float shadowAttenuation         = castingShadow();
         float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
-        vec3 radiance = calCookTorranceRadiance(view, normal, dir, lightColor, shadowSpecularAttenuation);
+        vec3 lightRadiance            = calCookTorranceRadiance(view, normal, dir, lightColor, shadowSpecularAttenuation);
         
         // Shadow casting
-        radiance *= shadowAttenuation;
+        lightRadiance *= shadowAttenuation;
+        
+        // Fetch environmentLight
+        vec3 environmentLightRadiance = calCookTorranceRadiance(view, normal, -reflection, environmentLight, shadowSpecularAttenuation);
+
+        // TODO: Indirect radiance
+        // Combine the direct radiance and environmentLightRadiance
+        vec3 radiance = lightRadiance + environmentLightRadiance;
         
         // Gamma correction
         radiance = gammaCorrection(radiance);
-        
         outColor = vec4(radiance, 1.0f);
         
         // outColor = vec4(environmentLight, 1.0f);

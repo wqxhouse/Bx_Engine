@@ -34,6 +34,9 @@ Cubemap::Cubemap(
         glTexImage2D(
             cubeFace[i], 0, storeFormat, m_textureWidth, m_textureHeight, 0, loadFormat, type, NULL);
 
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
         if (mipmap == TRUE)
         {
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

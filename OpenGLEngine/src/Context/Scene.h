@@ -29,6 +29,30 @@ public:
         const std::string& materialFile,
         Trans* modelTrans);
 
+    inline void AddDirectionalLight(
+        const Math::Vector3& direction,
+        const Math::Vector3& color)
+    {
+        //m_pSceneLights.push_back(new DirectionalLight(direction, color));
+    }
+
+    inline void AddPointLight(
+        const Math::Vector3& pos,
+        const Math::Vector3& color,
+        const float          radius)
+    {
+        //m_pSceneLights.push_back(new PointLight(pos, color, radius));
+    }
+
+    inline void AddSpotLight(
+        const Math::Vector3& pos,
+        const Math::Vector3& color,
+        const float          innerRadius,
+        const float          outerRadius)
+    {
+        //m_pSceneLights.push_back(new SpotLight(pos, color, innerRadius, outerRadius));
+    }
+
     void addProspectiveCamera(
         const glm::vec3& pos,
         const glm::vec3& center,
@@ -104,8 +128,6 @@ public:
 
     inline void EnableRealtimeLightProbe() { enableRealtimeLightProbe = TRUE; }
 
-    DirectionalLight m_directionalLight;
-
 private:
     BOOL initializePhongRendering();
 
@@ -141,6 +163,16 @@ private:
 
     GLint  success;
     GLchar compileLog[512];
+
+    // Scene lights
+    struct SceneLights
+    {
+        UINT   count;
+        Light* pLights;
+    };
+
+    std::vector<Light*> m_pSceneLights;
+    //DirectionalLight m_directionalLight;
 
     // Shadow map test
     BOOL initializeShadowMap();

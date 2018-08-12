@@ -6,7 +6,7 @@
 Scene::Scene(Setting* pSetting)
     : m_pSetting(pSetting),
       m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)),
+      // m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)),
       // m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCameraIndex(0),
@@ -22,6 +22,9 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.roughness = 0.2f;
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
+
+    // Test
+    m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
 }
 
 BOOL Scene::initialize()
@@ -82,7 +85,7 @@ BOOL Scene::initialize()
     }
 
     // Light Probe
-    m_pLightProbe = new LightProbe(this, Math::Vector3(5.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
+    m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
     m_pLightProbe->initialize();
 
     // Test
@@ -162,11 +165,15 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(1.0f));
+        // m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(1.0f));
+        static_cast<DirectionalLight*>(m_pSceneLights[0])->
+            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-1.0f));
+        // m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-1.0f));
+        static_cast<DirectionalLight*>(m_pSceneLights[0])->
+            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -238,13 +245,13 @@ void Scene::preDraw()
 
     m_uniformBufferMgr.updateUniformBufferData(
         m_directionalLightUniformBufferIndex,
-        m_directionalLight.getDataSize(),
-        m_directionalLight.getDataPtr());
+        static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
+        static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
 
     m_uniformBufferMgr.updateUniformBufferData(
         m_pointLightUniformBufferIndex,
-        m_pointLight.getDataSize(),
-        m_pointLight.getDataPtr());
+        m_pointLight.GetDataSize(),
+        m_pointLight.GetDataPtr());
 
     if (useGlobalMaterial == TRUE)
     {
@@ -254,9 +261,8 @@ void Scene::preDraw()
             m_globalPbrMaterial.GetCookTorranceMaterialData());
     }
 
-    if ((m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING) && 
-        (enableRealtimeLightProbe == TRUE ||
-         m_pLightProbe->IsFirstDraw() == TRUE))
+    if (enableRealtimeLightProbe     == TRUE ||
+        m_pLightProbe->IsFirstDraw() == TRUE)
     {
         m_pLightProbe->draw();
 
@@ -298,28 +304,50 @@ void Scene::postDraw()
 
 Scene::~Scene()
 {
-    for (Model* model : m_pSceneModelList)
+    for (Model* pModel : m_pSceneModelList)
     {
-        SafeDelete(model);
+        SafeDelete(pModel);
     }
     m_pSceneModelList.clear();
+
+    for (Light* pLight : m_pSceneLights)
+    {
+        switch (pLight->m_lightType)
+        {
+            case LightType::DIRECTIONAL_LIGHT:
+                SafeDelete(static_cast<DirectionalLight*>(pLight));
+                break;
+            case LightType::POINT_LIGHT:
+                SafeDelete(static_cast<PointLight*>(pLight));
+                break;
+            case LightType::SPOT_LIGHT:
+                SafeDelete(static_cast<SpotLight*>(pLight));
+                break;
+            default:
+                printf("Invalid light type!\n");
+                SafeDelete(pLight);
+
+                assert(FALSE);
+                break;
+        }
+    }
 
     for (Camera* pCamera : m_pCameraList)
     {
         switch (pCamera->GetCameraType())
         {
-        case CameraType::PROSPECTIVE_CAM:
-            SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
-            break;
-        case CameraType::ORTHOGRAPHIC_CAM:
-            SafeDelete(static_cast<OrthographicCamera*>(pCamera));
-            break;
-        default:
-            printf("Invalid camera type");
-            assert(FALSE);
+            case CameraType::PROSPECTIVE_CAM:
+                SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
+                break;
+            case CameraType::ORTHOGRAPHIC_CAM:
+                SafeDelete(static_cast<OrthographicCamera*>(pCamera));
+                break;
+            default:
+                printf("Invalid camera type!\n");
+                SafeDelete(pCamera);
 
-            SafeDelete(pCamera);
-            break;
+                assert(FALSE);
+                break;
         }
     }
     m_pCameraList.clear();
@@ -328,21 +356,21 @@ Scene::~Scene()
     {
         switch (pTexture->GetTextureType())
         {
-        case TextureType::TEXTURE_2D:
-            SafeDelete(static_cast<Texture2D*>(pTexture));
-            break;
-        case TextureType::TEXTURE_3D:
-            SafeDelete(static_cast<Texture3D*>(pTexture));
-            break;
-        case TextureType::TEXTURE_CUBEBOX:
-            SafeDelete(static_cast<Cubemap*>(pTexture));
-            break;
-        default:
-            printf("Invalid texture type!\n");
-            SafeDelete(pTexture);
+            case TextureType::TEXTURE_2D:
+                SafeDelete(static_cast<Texture2D*>(pTexture));
+                break;
+            case TextureType::TEXTURE_3D:
+                SafeDelete(static_cast<Texture3D*>(pTexture));
+                break;
+            case TextureType::TEXTURE_CUBEBOX:
+                SafeDelete(static_cast<Cubemap*>(pTexture));
+                break;
+            default:
+                printf("Invalid texture type!\n");
+                SafeDelete(pTexture);
 
-            assert(FALSE);
-            break;
+                assert(FALSE);
+                break;
         }
     }
     m_pTextureList.clear();
@@ -351,6 +379,7 @@ Scene::~Scene()
     SafeDelete(m_pGBuffer);
     SafeDelete(m_pSsao);
     SafeDelete(m_pSkybox);
+    SafeDelete(m_pLightProbe);
 }
 
 void Scene::setSceneShader(
@@ -367,7 +396,7 @@ BOOL Scene::initializeShadowMap()
     // TODO: Finish multi-sampled shadow map
     // Reverted the multi-sampled shadow map here, needs to fix the issue.
     m_pShadowMap = new ShadowMap(
-        this, static_cast<Light*>(&m_directionalLight), m_pSetting->width * 2, m_pSetting->height * 2,
+        this, m_pSceneLights[0], m_pSetting->width * 2, m_pSetting->height * 2,
         /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
 
     result = m_pShadowMap->initialize();
@@ -377,7 +406,7 @@ BOOL Scene::initializeShadowMap()
 
 void Scene::shadowPass()
 {
-    m_pShadowMap->update(&m_directionalLight);
+    m_pShadowMap->update(m_pSceneLights[0]);
 
     glCullFace(GL_FRONT);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
@@ -417,8 +446,8 @@ BOOL Scene::initializePhongRendering()
     // Directional light ubo
     m_directionalLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-            m_directionalLight.getDataSize(),
-            m_directionalLight.getDataPtr());
+            static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
+            static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
@@ -428,8 +457,8 @@ BOOL Scene::initializePhongRendering()
     // Point light ubo
     m_pointLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-            m_pointLight.getDataSize(),
-            m_pointLight.getDataPtr());
+            m_pointLight.GetDataSize(),
+            m_pointLight.GetDataPtr());
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_pointLightUniformBufferIndex,
@@ -609,6 +638,11 @@ void Scene::deferredDrawScene()
     {
         glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
         glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->GetViewMatrix()));
+
+        if (m_pLightProbe != NULL)
+        {
+            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE7);
+        }
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
