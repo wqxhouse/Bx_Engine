@@ -38,6 +38,8 @@ public:
 
     inline BOOL IsFirstDraw() const { return firstDraw; }
 
+    inline void SetProbeResolution(const UINT resolution) { m_probeResolution = resolution; }
+
     ProspectiveCamera* m_pCubemapCam[CUBE_MAP_FACE_NUM];
 
 private:
@@ -47,7 +49,7 @@ private:
 
     Framebuffer m_probeFbo;
 
-    UINT probeResolution;
+    UINT m_probeResolution;
 
     Math::Vector3 m_pos;
     float         m_nearClip;

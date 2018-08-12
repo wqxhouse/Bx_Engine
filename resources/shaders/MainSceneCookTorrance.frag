@@ -135,7 +135,7 @@ void main()
         
         outColor = vec4(radiance, 1.0f);
         
-        //outColor = vec4(environmentLight, 1.0f);
+        // outColor = vec4(environmentLight, 1.0f);
     }
     //else
     {

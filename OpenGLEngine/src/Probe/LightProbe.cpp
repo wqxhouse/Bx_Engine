@@ -27,7 +27,7 @@ LightProbe::LightProbe(
     const float          nearClip,
     const float          farClip)
     : m_pScene(pScene),
-      probeResolution(128),
+      m_probeResolution(128),
       m_pos(pos),
       m_nearClip(nearClip),
       m_farClip(farClip),
@@ -48,14 +48,14 @@ BOOL LightProbe::initialize()
 {
     BOOL result = TRUE;
 
-    m_pCubemap = new Cubemap(probeResolution);
+    m_pCubemap = new Cubemap(m_probeResolution);
 
     // TODO: Replace glm lib with Math lib
     for(UINT i = 0; i < CUBE_MAP_FACE_NUM; ++i)
     { 
         if (i != 2 && i != 3)
         { 
-            m_pCubemapCam[i] = 
+            m_pCubemapCam[i] =
                 new ProspectiveCamera(glm::vec3(m_pos.x, m_pos.y, m_pos.z),
                                       glm::vec3(m_pos.x, m_pos.y, m_pos.z) + lightProbeFrontVector[i],
                     // TODO: Figure out the reason of why we need to flip the camera (up to negative y)
@@ -135,7 +135,7 @@ void LightProbe::draw()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glViewport(0, 0, probeResolution, probeResolution);
+        glViewport(0, 0, m_probeResolution, m_probeResolution);
 
         m_pScene->draw(); // Render the light probe
 

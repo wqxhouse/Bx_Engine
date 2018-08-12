@@ -6,7 +6,7 @@
 Scene::Scene(Setting* pSetting)
     : m_pSetting(pSetting),
       m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
+      m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)),
       // m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCameraIndex(0),
@@ -82,9 +82,8 @@ BOOL Scene::initialize()
     }
 
     // Light Probe
-    m_pLightProbe = new LightProbe(this, Math::Vector3(), 0.1f, 1000.0f);
+    m_pLightProbe = new LightProbe(this, Math::Vector3(5.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
     m_pLightProbe->initialize();
-    // m_pLightProbe->draw();
 
     // Test
     /*m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[0]);
@@ -163,11 +162,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(1.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-1.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
