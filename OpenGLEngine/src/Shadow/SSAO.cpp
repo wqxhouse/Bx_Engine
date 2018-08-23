@@ -56,8 +56,7 @@ BOOL SSAO::initialize()
 
     if (result == FALSE)
     {
-        printf("Fail to compile SSAO shaders.\n");
-        assert(FALSE);
+        Shader::AssertErrors("Fail to compile SSAO shaders.\n");
     }
 
     for (size_t i = 0; i < m_sampleNum; ++i)

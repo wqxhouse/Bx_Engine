@@ -26,6 +26,11 @@ layout (std140) uniform gMaterialPBR
 
 uniform int materialType;
 
+uniform vec3 cameraPos;
+
+in vec3 posWorld;
+in vec3 normalWorld;
+
 in vec3 posView;
 in vec3 normalView;
 
@@ -103,8 +108,13 @@ void main()
             albedoTexture           = vec4(m_pbrMaterial.albedo, 1.0f);
             specularTexture         = vec4(m_pbrMaterial.roughness, m_pbrMaterial.metallic, m_pbrMaterial.fresnel, -1.0f);
 
-            // TODO: Calculate enviroment light
-            environmentLightTexture = vec3(0.0f, 0.0f, 0.0f);
+            // Store the world space reflection vector for sampling light probe
+            vec3 view       = normalize(cameraPos - posWorld);
+            vec3 normal     = normalize(normalWorld);
+
+            vec3 reflection = normalize(2 * dot(normal, view) * normal - view);
+
+            environmentLightTexture = normal;//reflection;
         }
         default:
             break;

@@ -106,8 +106,7 @@ BOOL GBuffer::initialize()
 
     if (result == FALSE)
     {
-        printf("Fail to compile GBuffer shaders.\n");
-        assert(FALSE);
+        Shader::AssertErrors("Fail to compile GBuffer shaders.\n");
     }
 
     m_gFramebuffer.createRenderbufferAttachment(
@@ -151,23 +150,24 @@ void GBuffer::drawGBuffer()
 
         Camera* pCam  = m_pScene->GetActivateCamera();
 
+        // TODO: Combine all trans matrix into ubo
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
-
-        // Test
-        glm::mat4 wv = pCam->GetViewMatrix() * worldTransMatrix;
-
-        glm::mat4 wvp = pCam->GetProjectionMatrix() * wv;
+        glm::mat4 wv               = pCam->GetViewMatrix() * worldTransMatrix;
+        glm::mat4 wvp              = pCam->GetProjectionMatrix() * wv;
 
         GLint lightTransLocation   = glGetUniformLocation(gShaderProgram, "lightTransWVP");
+
+        GLint worldLocation        = glGetUniformLocation(gShaderProgram, "worldMatrix");
+        GLint wvLocation           = glGetUniformLocation(gShaderProgram, "wv");
         GLint wvpLocation          = glGetUniformLocation(gShaderProgram, "wvp");
+
         GLint materialTypeLocation = glGetUniformLocation(gShaderProgram, "materialType");
 
-        GLuint wvLocation          = glGetUniformLocation(gShaderProgram, "wv");
-
         if (lightTransLocation   >= 0 &&
+            worldLocation        >= 0 &&
+            wvLocation           >= 0 &&
             wvpLocation          >= 0 &&
-            materialTypeLocation >= 0 &&
-            wvLocation           >= 0)
+            materialTypeLocation >= 0)
         {
             ShadowMap* pShadowMap = m_pScene->GetShadowMap();
 
@@ -175,9 +175,9 @@ void GBuffer::drawGBuffer()
                 pShadowMap->GetLightTransVP() * pModel->m_pTrans->GetTransMatrix();
             glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
-            glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));
-
-            glUniformMatrix4fv(wvLocation, 1, GL_FALSE, glm::value_ptr(wv));
+            glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(worldTransMatrix));
+            glUniformMatrix4fv(wvLocation,    1, GL_FALSE, glm::value_ptr(wv));
+            glUniformMatrix4fv(wvpLocation,   1, GL_FALSE, glm::value_ptr(wvp));
 
             if (useGlobalMaterial == FALSE)
             {
@@ -215,7 +215,7 @@ void GBuffer::drawGBuffer()
         }
         else
         {
-            printf("Can't find gBuffer shader uniform block location!");
+            printf("Can't find gBuffer shader uniform block location!\n");
             assert(FALSE);
         }
     }

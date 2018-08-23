@@ -139,8 +139,6 @@ void main()
         // Gamma correction
         radiance = gammaCorrection(radiance);
         outColor = vec4(radiance, 1.0f);
-        
-        // outColor = vec4(environmentLight, 1.0f);
     }
     //else
     {

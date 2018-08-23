@@ -86,9 +86,6 @@ void main()
     vec3 gTexCoord   = texture(texCoordTex, gBufferTexCoord).xyz;
     vec2 texCoord    = gTexCoord.xy;
 
-    // Get material data
-    vec3 environmentLight  = texture(environmentLightTex, gBufferTexCoord).xyz;
-
     vec4 gAlbedo = texture(albedoTex, gBufferTexCoord);
     vec3 albedo  = gAlbedo.xyz;
 
@@ -116,10 +113,13 @@ void main()
 
     if (ns > 0.0f)
     {
+        // Get material data
+        vec3 environmentLight  = texture(environmentLightTex, gBufferTexCoord).xyz;
+
         // Calculate diffuse color
         float NoL                = clamp(dot(normal, -dir), 0.0f, 1.0f);
         vec3 diffuseCoefficient  = albedo * NoL;
-        
+
         // Calculate specular color
         vec3 reflection           = normalize(2 * NoL * normal + dir);    
         float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
@@ -146,12 +146,18 @@ void main()
         // Shadow casting
         directLightRadiance *= shadowAttenuation;
         
-        vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
+        // vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
+        vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
         vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
         vec3 environmentLightRadiance =
             calCookTorranceRadiance(view, normal, -reflection, environmentLight, material, shadowSpecularAttenuation);
 
         radiance = directLightRadiance + environmentLightRadiance;
+
+        // Test
+        // reflection               = normalize(2 * dot(normal, view) * normal - view);
+        environmentLightRadiance = texture(lightProbeCubemap, reflection).xyz;
+        radiance                 = environmentLightRadiance;
     }
     
     // SSAO

@@ -16,6 +16,7 @@ Scene::Scene(Setting* pSetting)
       useGlobalMaterial(FALSE),
       m_pSsao(NULL),
       m_pSkybox(NULL),
+      m_pLightProbe(NULL),
       enableRealtimeLightProbe(FALSE)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
@@ -431,7 +432,7 @@ BOOL Scene::initializePhongRendering()
 
     if (status == FALSE)
     {
-        Shader::AssertErrors();
+        Shader::AssertErrors("Failed to compile main scene shader.");
     }
 
     /// UBOs initialization
@@ -596,7 +597,12 @@ BOOL Scene::initializeDeferredRendering()
 
     // G-Buffer shaders
     m_deferredRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
-    m_deferredRendingShader.linkProgram();
+    status = m_deferredRendingShader.linkProgram();
+
+    if (status == FALSE)
+    {
+        Shader::AssertErrors("Failed to compile deffered draw shader.");
+    }
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
@@ -669,7 +675,7 @@ BOOL Scene::initializePBRendering()
 
     if (status == FALSE)
     {
-        Shader::AssertErrors();
+        Shader::AssertErrors("Failed to compile PBR shader.");
     }
 
     m_uniformBufferMgr.bindUniformBuffer(
