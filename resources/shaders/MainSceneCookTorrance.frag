@@ -113,14 +113,13 @@ void main()
         vec3 normal     = normalize(normalWorld);
         vec3 dir        = normalize(m_directionalLight[0].dir);
         vec3 lightColor = m_directionalLight[0].lightBase.color;
-        
+
         vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
-        
+
         // Light Probe
         // 0 - 1 roughtness; 0 - 7 mipmap
         vec3 environmentLight = texture(lightProbeCubemap, reflection, m_cookTorranceMaterial.roughness * 7.0f).xyz;
-        // lightColor = environmentLight;
-        
+
         float shadowAttenuation         = castingShadow();
         float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
@@ -139,6 +138,8 @@ void main()
         // Gamma correction
         radiance = gammaCorrection(radiance);
         outColor = vec4(radiance, 1.0f);
+        
+        // outColor = vec4(gammaCorrection(environmentLightRadiance), 1.0f);
     }
     //else
     {

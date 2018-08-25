@@ -102,8 +102,8 @@ void main()
     vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
 
     // Transform light direction vector to view space
-    vec3 dir   = (viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
-    
+    vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
+
     /// Shading
     vec3 view       = normalize(eyePosView - posView);
     vec3 normal     = normalize(normalView);
@@ -132,6 +132,7 @@ void main()
         specularCoefficient  *= shadowSpecularAttenuation;
         vec3 phongShdingColor =
             clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
+
         /// Finish Shading
 
         phongShdingColor *= shadowAttenuation;
@@ -143,9 +144,9 @@ void main()
         float roughness = specular.x;
         float matellic  = specular.y;
         float fresnel   = specular.z;
-        
+
         CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
-        
+
         vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
         // Shadow casting
         directLightRadiance *= shadowAttenuation;
@@ -172,7 +173,7 @@ void main()
         // Test
         // reflection               = normalize(2 * dot(normal, view) * normal - view);
         // environmentLightRadiance = texture(lightProbeCubemap, reflection).xyz;
-        // radiance                 = reflection;
+        // radiance                    = environmentLightRadiance;
     }
     
     // SSAO
