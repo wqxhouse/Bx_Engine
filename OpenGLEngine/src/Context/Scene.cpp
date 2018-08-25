@@ -6,8 +6,6 @@
 Scene::Scene(Setting* pSetting)
     : m_pSetting(pSetting),
       m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      // m_directionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)),
-      // m_directionalLight(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 1.0f)),
       m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
       m_activeCameraIndex(0),
       m_uniformBufferMgr(128),
@@ -89,14 +87,6 @@ BOOL Scene::initialize()
     m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
     m_pLightProbe->initialize();
 
-    // Test
-    /*m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[0]);
-    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[1]);
-    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[2]);
-    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[3]);
-    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[4]);
-    m_pCameraList.push_back(m_pLightProbe->m_pCubemapCam[5]);*/
-
     return status;
 }
 
@@ -166,13 +156,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        // m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(1.0f));
         static_cast<DirectionalLight*>(m_pSceneLights[0])->
             rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        // m_directionalLight.rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-1.0f));
         static_cast<DirectionalLight*>(m_pSceneLights[0])->
             rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
@@ -537,8 +525,6 @@ void Scene::drawScene()
 
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
-
-        //m_pTextureList[0]->bindTexture(GL_TEXTURE0, sceneShaderProgram, "sampler", 0);
 
         glm::mat4 lightTransWVP  = m_pShadowMap->GetLightTransVP() *
                                    pModel->m_pTrans->GetTransMatrix();

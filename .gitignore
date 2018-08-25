@@ -67,6 +67,9 @@ OpenGLEngineTest/x64/*
 OpenGLTemplate/Debug/*
 OpenGLTemplate/Release/*
 OpenGLTemplate/x64/*
+MeshlessDeformation/Debug/*
+MeshlessDeformation/Release/*
+MeshlessDeformation/x64/*
 
 *.log
 *.tlog

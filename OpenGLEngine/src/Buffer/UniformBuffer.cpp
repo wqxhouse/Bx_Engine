@@ -39,8 +39,6 @@ UniformBuffer::UniformBuffer(
     m_uniformBufferIndex = glGetUniformBlockIndex(program, uniformBlockName);
     if (m_uniformBufferIndex != -1)
     {
-        //m_program               = program;
-        //m_uniformBlockName      = uniformBlockName;
         m_memberCount           = memberCount;
 
         glGetActiveUniformBlockiv(program, m_uniformBufferIndex,
@@ -99,7 +97,8 @@ UniformBuffer::~UniformBuffer()
     }
 }
 
-void UniformBuffer::update(const GLvoid * data)
+void UniformBuffer::update(
+    const GLvoid * data)
 {
     assert(data != NULL);
 
@@ -148,8 +147,6 @@ void UniformBuffer::update(
     m_uniformBufferIndex = glGetUniformBlockIndex(program, uniformBlockName);
     if (m_uniformBufferIndex != -1)
     {
-        //m_program          = program;
-        //m_uniformBlockName = uniformBlockName;
         m_memberCount      = memberCount;
 
         glGetActiveUniformBlockiv(program, m_uniformBufferIndex,
