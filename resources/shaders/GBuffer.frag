@@ -45,6 +45,10 @@ layout(location = 3) out vec4 albedoTexture;
 layout(location = 4) out vec4 specularTexture;
 layout(location = 5) out vec3 environmentLightTexture;
 
+// Test
+layout(location = 6) out vec3 posWorldTexture;
+layout(location = 7) out vec3 normalWorldTexture;
+
 float castingShadow()
 {
 	float shadowAttenuation = 1.0f;
@@ -84,12 +88,15 @@ float castingShadow()
 }
 
 void main()
-{    
+{
     float shadowAttenuation = castingShadow();
 
     posViewTexture     = vec4(posView, 1.0f);
     normalViewTexture  = normalView;
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
+    
+    posWorldTexture    = posWorld;
+    normalWorldTexture = normalWorld;
 
     switch (materialType)
     {
@@ -114,7 +121,7 @@ void main()
 
             vec3 reflection = normalize(2 * dot(normal, view) * normal - view);
 
-            environmentLightTexture = normal;//reflection;
+            environmentLightTexture = reflection;
         }
         default:
             break;

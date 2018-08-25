@@ -14,6 +14,10 @@ uniform sampler2D albedoTex;
 uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
 
+// Test
+uniform sampler2D posWorldTex;
+uniform sampler2D normalWorldTex;
+
 // SSAO Texture
 uniform sampler2D ssaoTex;
 
@@ -145,19 +149,30 @@ void main()
         vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
         // Shadow casting
         directLightRadiance *= shadowAttenuation;
+
+        /// Test
+        vec3 posWorld        = texture(posWorldTex, gBufferTexCoord).xyz;
+        vec3 normalWorld     = normalize(texture(normalWorldTex, gBufferTexCoord).xyz);
+        vec3 viewWorld       = normalize(eyePos - posWorld);
+        
+        vec3 reflectionWorld       = normalize(2 * dot(normalWorld, viewWorld) * normalWorld - viewWorld);
+        vec3 environmentLightWorld = texture(lightProbeCubemap, reflectionWorld, material.roughness * 7.0f).xyz;
+        /// Test End
         
         // vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
         vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
         vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
+        
+        vec3 reflectionView           = (viewMat * vec4(reflection, 0.0f)).xyz;
         vec3 environmentLightRadiance =
-            calCookTorranceRadiance(view, normal, -reflection, environmentLight, material, shadowSpecularAttenuation);
+            calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
 
         radiance = directLightRadiance + environmentLightRadiance;
 
         // Test
         // reflection               = normalize(2 * dot(normal, view) * normal - view);
-        environmentLightRadiance = texture(lightProbeCubemap, reflection).xyz;
-        radiance                 = environmentLightRadiance;
+        // environmentLightRadiance = texture(lightProbeCubemap, reflection).xyz;
+        // radiance                 = reflection;
     }
     
     // SSAO

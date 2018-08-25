@@ -101,6 +101,29 @@ BOOL GBuffer::initialize()
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
 
+    // Test
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
+                                              GL_COLOR_ATTACHMENT6,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGB32F,
+                                              GL_FLOAT,
+                                              GL_CLAMP_TO_BORDER,
+                                              FALSE);
+
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
+                                              GL_COLOR_ATTACHMENT7,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGB32F,
+                                              GL_FLOAT,
+                                              GL_CLAMP_TO_BORDER,
+                                              FALSE);
+
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     result = m_gShader.linkProgram();
 
@@ -156,6 +179,7 @@ void GBuffer::drawGBuffer()
         glm::mat4 wvp              = pCam->GetProjectionMatrix() * wv;
 
         GLint lightTransLocation   = glGetUniformLocation(gShaderProgram, "lightTransWVP");
+        GLint cameraPosLocation    = glGetUniformLocation(gShaderProgram, "cameraPos");
 
         GLint worldLocation        = glGetUniformLocation(gShaderProgram, "worldMatrix");
         GLint wvLocation           = glGetUniformLocation(gShaderProgram, "wv");
@@ -164,6 +188,7 @@ void GBuffer::drawGBuffer()
         GLint materialTypeLocation = glGetUniformLocation(gShaderProgram, "materialType");
 
         if (lightTransLocation   >= 0 &&
+            cameraPosLocation    >= 0 &&
             worldLocation        >= 0 &&
             wvLocation           >= 0 &&
             wvpLocation          >= 0 &&
@@ -171,7 +196,9 @@ void GBuffer::drawGBuffer()
         {
             ShadowMap* pShadowMap = m_pScene->GetShadowMap();
 
-            glm::mat4 lightTransWVP = 
+            glUniform3fv(cameraPosLocation, 1, glm::value_ptr(pCam->GetTrans().GetPos()));
+
+            glm::mat4 lightTransWVP =
                 pShadowMap->GetLightTransVP() * pModel->m_pTrans->GetTransMatrix();
             glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
@@ -245,6 +272,12 @@ void GBuffer::readGBuffer(
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE5)->
         bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex", 5);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE6)->
+        bindTexture(GL_TEXTURE6, shaderProgram, "posWorldTex", 6);
+
+    m_gFramebuffer.getTexturePtr(GL_TEXTURE7)->
+        bindTexture(GL_TEXTURE7, shaderProgram, "normalWorldTex", 7);
 }
 
 void GBuffer::readGBuffer(

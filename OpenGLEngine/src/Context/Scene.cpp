@@ -623,7 +623,7 @@ void Scene::deferredDrawScene()
     GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
     if (useSSAO() == TRUE)
     {
-        m_pSsao->bindSsaoTexture(GL_TEXTURE6, gShaderProgram, "ssaoTex", 6);
+        m_pSsao->bindSsaoTexture(GL_TEXTURE8, gShaderProgram, "ssaoTex", 8);
 
         glUniform1i(useSsaoLocation, 1);
     }
@@ -647,7 +647,7 @@ void Scene::deferredDrawScene()
 
         if (m_pLightProbe != NULL)
         {
-            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE7);
+            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE9);
         }
 
         glEnable(GL_BLEND);
