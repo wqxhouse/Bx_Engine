@@ -14,10 +14,6 @@ uniform sampler2D albedoTex;
 uniform sampler2D specularTex;
 uniform sampler2D environmentLightTex;
 
-// Test
-uniform sampler2D posWorldTex;
-uniform sampler2D normalWorldTex;
-
 // SSAO Texture
 uniform sampler2D ssaoTex;
 
@@ -104,16 +100,16 @@ void main()
     // Transform light direction vector to view space
     vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
 
-    /// Shading
-    vec3 view       = normalize(eyePosView - posView);
-    vec3 normal     = normalize(normalView);
-    vec3 lightColor = m_directionalLight[0].lightBase.color;
-
     // Casting shadow
     float shadowAttenuation   = gTexCoord.z;
     float shadowSpecularAttenuation = 1.0f;// ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
-    vec3 radiance;
+    /// Shading
+    vec3 radiance; // Final radiance for every pixel from hemisphere
+
+    vec3 view       = normalize(eyePosView - posView);
+    vec3 normal     = normalize(normalView);
+    vec3 lightColor = m_directionalLight[0].lightBase.color;
 
     if (ns > 0.0f)
     {
@@ -133,8 +129,6 @@ void main()
         vec3 phongShdingColor =
             clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
 
-        /// Finish Shading
-
         phongShdingColor *= shadowAttenuation;
         radiance = phongShdingColor;
     }
@@ -151,15 +145,6 @@ void main()
         // Shadow casting
         directLightRadiance *= shadowAttenuation;
 
-        /// Test
-        vec3 posWorld        = texture(posWorldTex, gBufferTexCoord).xyz;
-        vec3 normalWorld     = normalize(texture(normalWorldTex, gBufferTexCoord).xyz);
-        vec3 viewWorld       = normalize(eyePos - posWorld);
-        
-        vec3 reflectionWorld       = normalize(2 * dot(normalWorld, viewWorld) * normalWorld - viewWorld);
-        vec3 environmentLightWorld = texture(lightProbeCubemap, reflectionWorld, material.roughness * 7.0f).xyz;
-        /// Test End
-        
         // vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
         vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
         vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
@@ -169,13 +154,9 @@ void main()
             calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
 
         radiance = directLightRadiance + environmentLightRadiance;
-
-        // Test
-        // reflection               = normalize(2 * dot(normal, view) * normal - view);
-        // environmentLightRadiance = texture(lightProbeCubemap, reflection).xyz;
-        // radiance                    = environmentLightRadiance;
     }
-    
+    /// Finish Shading
+
     // SSAO
     float occlusion = texture(ssaoTex, gBufferTexCoord).r;
     if (useSsao == 1)

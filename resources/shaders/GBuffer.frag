@@ -45,25 +45,21 @@ layout(location = 3) out vec4 albedoTexture;
 layout(location = 4) out vec4 specularTexture;
 layout(location = 5) out vec3 environmentLightTexture;
 
-// Test
-layout(location = 6) out vec3 posWorldTexture;
-layout(location = 7) out vec3 normalWorldTexture;
-
 float castingShadow()
 {
 	float shadowAttenuation = 1.0f;
-	
+
 	// Shadow casting
 	vec3 posLight = posLightProj.xyz / posLightProj.w;
     posLight = posLight * 0.5f + 0.5f;
-	
+
     // Multisampling, need integer coordinate
     //posLight.x = posLight.x * 2560.0f;//m_shadowMapResolution.width;
     //posLight.y = posLight.y * 2560.0f;//m_shadowMapResolution.height;
-    
+
 	float depth = texture(shadowMapSampler, posLight.xy).r;
     /*float depth = 0.0f;
-    
+
     for (int i = 0; i < 4; ++i)
     {
         float pcfDepth = 0.0f;
@@ -78,12 +74,12 @@ float castingShadow()
         depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
     }
     depth *= 0.25f;*/
-	
+
 	if (depth < posLight.z - 0.000001f)
 	{
 		shadowAttenuation = 0.05f;
 	}
-	
+
 	return shadowAttenuation;
 }
 
@@ -94,9 +90,6 @@ void main()
     posViewTexture     = vec4(posView, 1.0f);
     normalViewTexture  = normalView;
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
-    
-    posWorldTexture    = posWorld;
-    normalWorldTexture = normalWorld;
 
     switch (materialType)
     {

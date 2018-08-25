@@ -101,29 +101,6 @@ BOOL GBuffer::initialize()
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
 
-    // Test
-    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
-                                              GL_COLOR_ATTACHMENT6,
-                                              m_width,
-                                              m_height,
-                                              1,
-                                              GL_RGBA,
-                                              GL_RGB32F,
-                                              GL_FLOAT,
-                                              GL_CLAMP_TO_BORDER,
-                                              FALSE);
-
-    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
-                                              GL_COLOR_ATTACHMENT7,
-                                              m_width,
-                                              m_height,
-                                              1,
-                                              GL_RGBA,
-                                              GL_RGB32F,
-                                              GL_FLOAT,
-                                              GL_CLAMP_TO_BORDER,
-                                              FALSE);
-
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     result = m_gShader.linkProgram();
 
@@ -272,12 +249,6 @@ void GBuffer::readGBuffer(
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE5)->
         bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex", 5);
-
-    m_gFramebuffer.getTexturePtr(GL_TEXTURE6)->
-        bindTexture(GL_TEXTURE6, shaderProgram, "posWorldTex", 6);
-
-    m_gFramebuffer.getTexturePtr(GL_TEXTURE7)->
-        bindTexture(GL_TEXTURE7, shaderProgram, "normalWorldTex", 7);
 }
 
 void GBuffer::readGBuffer(

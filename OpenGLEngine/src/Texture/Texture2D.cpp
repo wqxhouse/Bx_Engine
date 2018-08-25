@@ -105,7 +105,7 @@ void Texture2D::bindTexture(const GLenum       textureUnit,
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
 
-    //assert(textureLocation >= 0);
+    assert(textureLocation >= 0);
     
     GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
 

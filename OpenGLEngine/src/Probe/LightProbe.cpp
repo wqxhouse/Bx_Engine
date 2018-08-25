@@ -97,15 +97,12 @@ void LightProbe::update(
 
 void LightProbe::draw()
 {
-    // GLenum error = glGetError();
-
     Camera* pActiveCamera = m_pScene->GetActivateCamera();
 
     Math::Vector4& backColor = m_pScene->GetBackGroundColor();
 
     for (UINT i = 0; i < CUBE_MAP_FACE_NUM; ++i)
     {
-        //if (i == 2 || i == 3 || i == 1 || i == 5) continue;
         m_pScene->SetActiveCamera(m_pCubemapCam[i]);
 
         if (i == 0)

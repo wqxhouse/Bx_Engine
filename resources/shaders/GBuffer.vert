@@ -27,7 +27,7 @@ void main()
 {
     vec4 posWorldVec4 = worldMatrix * vec4(position, 1.0f);
     posWorld          = posWorldVec4.xyz / posWorldVec4.w;
-    
+
     normalWorld = (worldMatrix * vec4(normal, 0.0f)).xyz;
 
     vec4 posViewVec4 = wv * vec4(position, 1.0f);
@@ -36,8 +36,8 @@ void main()
     normalView   = (wv * vec4(normal, 0.0f)).xyz;
 
     fragTexCoord = texCoord;
-    
+
     posLightProj = lightTransWVP * vec4(position, 1.0f);
-    
+
     gl_Position  = wvp * vec4(position, 1.0f);
 }
