@@ -30,12 +30,15 @@ layout (std140) uniform pointLightUniformBlock
     PointLight m_pointLight;
 };
 
+layout (std140) uniform RenderingResolutionBlock
+{
+    uniform int resolutionWidth;
+    uniform int resolutionHeight;
+};
+
 uniform vec3 eyePos;
 
 uniform mat4 viewMat;
-
-//uniform uint screenWidth;
-//uniform uint screenHeight;
 
 out vec4 outColor;
 
@@ -68,8 +71,8 @@ vec2 calgBufferTexCoord()
     result = gl_FragCoord.xy;
     
     // TODO: Send screen size from setting
-    result.x /= 1280.0f;
-    result.y /= 720.0f;
+    result.x /= float(resolutionWidth); //1280.0f;
+    result.y /= float(resolutionHeight); //720.0f;
     
     return result;
 }
@@ -158,9 +161,9 @@ void main()
     /// Finish Shading
 
     // SSAO
-    float occlusion = texture(ssaoTex, gBufferTexCoord).r;
     if (useSsao == 1)
     {
+        float occlusion = texture(ssaoTex, gBufferTexCoord).r;
         radiance *= occlusion;
     }
     
@@ -169,3 +172,4 @@ void main()
     
     outColor = vec4(radiance, gAlbedo.w);
 }
+// End of MainSceneDefferedDraw.frag

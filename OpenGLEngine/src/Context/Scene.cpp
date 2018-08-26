@@ -22,6 +22,8 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
 
+    m_resolution = { m_pSetting->width, m_pSetting->height };
+
     // Test
     m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
 }
@@ -250,17 +252,14 @@ void Scene::preDraw()
             m_globalPbrMaterial.GetCookTorranceMaterialData());
     }
 
-    if (enableRealtimeLightProbe     == TRUE ||
-        m_pLightProbe->IsFirstDraw() == TRUE)
+    if (/*(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING) &&*/
+        (enableRealtimeLightProbe                      == TRUE                                ||
+         m_pLightProbe->IsFirstDraw()                  == TRUE))
     {
         m_pLightProbe->draw();
+    }
 
-        glViewport(0, 0, m_pSetting->width, m_pSetting->height);
-    }
-    else
-    {
-        glViewport(0, 0, m_pSetting->width, m_pSetting->height);
-    }
+    glViewport(0, 0, m_pSetting->width, m_pSetting->height);
 }
 
 void Scene::draw()
@@ -287,7 +286,6 @@ void Scene::draw()
             }
 
             assert(m_pSsao != NULL);
-
             m_pSsao->draw();
         }
 
@@ -297,6 +295,142 @@ void Scene::draw()
 
 void Scene::postDraw()
 {
+    // TODO: Post processing, font rendering
+}
+
+void Scene::drawScene()
+{
+    //Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
+
+#if 0
+    Vector3 camPos = activeCamPtr->GetTrans().GetPos();
+    printf("%f %f %f\n", camPos.x, camPos.y, camPos.z);
+#endif
+
+    GLuint sceneShaderProgram;
+    GLuint materialIndex;
+
+    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
+    {
+        Model* pModel = m_pSceneModelList[i];
+
+        if (useGlobalMaterial == FALSE)
+        {
+            MaterialType modelMaterialType = pModel->GetModelMaterialType();
+
+            switch (modelMaterialType)
+            {
+            case MaterialType::PHONG:
+                sceneShaderProgram = m_sceneShader.useProgram();
+                materialIndex = m_materialUniformBufferIndex;
+                break;
+            case MaterialType::COOKTORRANCE:
+                sceneShaderProgram = m_pbrShader.useProgram();
+                materialIndex = m_pbrMaterialUniformBufferIndex;
+                break;
+            default:
+                printf("Unsupport material!\n");
+                assert(FALSE);
+                break;
+            }
+
+            pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
+        }
+        else
+        {
+            sceneShaderProgram = m_pbrShader.useProgram();
+            materialIndex = m_pbrMaterialUniformBufferIndex;
+            pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
+        }
+
+        glm::mat4 transMatrix[4] =
+        {
+            pModel->m_pTrans->GetTransMatrix(),
+            m_pActiveCamera->GetViewMatrix(),
+            m_pActiveCamera->GetProjectionMatrix(),
+            glm::mat4()
+        };
+        transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
+
+        m_uniformBufferMgr.updateUniformBufferData(
+            m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
+
+        GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
+        glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
+
+        glm::mat4 lightTransWVP = m_pShadowMap->GetLightTransVP() *
+            pModel->m_pTrans->GetTransMatrix();
+
+        GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
+        glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
+
+        if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
+        {
+            m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+        }
+
+        if (m_pLightProbe != NULL)
+        {
+            m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE2);
+        }
+
+        pModel->draw();
+    }
+
+    Shader::FinishProgram();
+}
+
+void Scene::deferredDrawScene()
+{
+    assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
+
+    GLuint gShaderProgram = m_deferredRendingShader.useProgram();
+    m_pGBuffer->readGBuffer(gShaderProgram);
+
+    // Test
+    GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
+    if (useSSAO() == TRUE)
+    {
+        m_pSsao->bindSsaoTexture(GL_TEXTURE6, gShaderProgram, "ssaoTex", 6);
+
+        glUniform1i(useSsaoLocation, 1);
+    }
+    else
+    {
+        glUniform1i(useSsaoLocation, 0);
+
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
+
+    GLint eyeLocation = glGetUniformLocation(gShaderProgram, "eyePos");
+    GLint viewMatLocation = glGetUniformLocation(gShaderProgram, "viewMat");
+
+    if (eyeLocation >= 0 && viewMatLocation >= 0)
+    {
+        glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
+        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->GetViewMatrix()));
+
+        if (m_pLightProbe != NULL)
+        {
+            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE7);
+        }
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        m_pGBuffer->draw();
+        glDisable(GL_BLEND);
+    }
+    else
+    {
+        printf("Unable to get wvp matrix location in shader\n");
+        assert(FALSE);
+    }
+
+    Shader::FinishProgram();
 }
 
 Scene::~Scene()
@@ -474,88 +608,6 @@ BOOL Scene::initializePhongRendering()
     return status;
 }
 
-void Scene::drawScene()
-{
-    //Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
-
-#if 0
-    Vector3 camPos = activeCamPtr->GetTrans().GetPos();
-    printf("%f %f %f\n", camPos.x, camPos.y, camPos.z);
-#endif
-
-    GLuint sceneShaderProgram;
-    GLuint materialIndex;
-
-    for (size_t i = 0; i < m_pSceneModelList.size(); ++i)
-    {
-        Model* pModel = m_pSceneModelList[i];
-
-        if (useGlobalMaterial == FALSE)
-        {
-            MaterialType modelMaterialType = pModel->GetModelMaterialType();
-
-            switch (modelMaterialType)
-            {
-            case MaterialType::PHONG:
-                sceneShaderProgram = m_sceneShader.useProgram();
-                materialIndex = m_materialUniformBufferIndex;
-                break;
-            case MaterialType::COOKTORRANCE:
-                sceneShaderProgram = m_pbrShader.useProgram();
-                materialIndex = m_pbrMaterialUniformBufferIndex;
-                break;
-            default:
-                printf("Unsupport material!\n");
-                assert(FALSE);
-                break;
-            }
-
-            pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
-        }
-        else
-        {
-            sceneShaderProgram = m_pbrShader.useProgram();
-            materialIndex      = m_pbrMaterialUniformBufferIndex;
-            pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
-        }
-
-        glm::mat4 transMatrix[4] =
-        {
-            pModel->m_pTrans->GetTransMatrix(),
-            m_pActiveCamera->GetViewMatrix(),
-            m_pActiveCamera->GetProjectionMatrix(),
-            glm::mat4()
-        };
-        transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
-
-        m_uniformBufferMgr.updateUniformBufferData(
-            m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
-
-        GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
-        glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
-
-        glm::mat4 lightTransWVP  = m_pShadowMap->GetLightTransVP() *
-                                   pModel->m_pTrans->GetTransMatrix();
-
-        GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
-        glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
-
-        if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
-        {
-            m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
-        }
-
-        if (m_pLightProbe != NULL)
-        {
-            m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE2);
-        }
-
-        pModel->draw();
-    }
-
-    Shader::FinishProgram();
-}
-
 BOOL Scene::useSSAO()
 {
     BOOL result = TRUE;
@@ -603,60 +655,16 @@ BOOL Scene::initializeDeferredRendering()
         m_deferredRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
+    // Resolution ubo
+    m_resolutionUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Resolution), &m_resolution);
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_resolutionUniformBufferIndex,
+        m_deferredRendingShader.GetShaderProgram(),
+        "RenderingResolutionBlock");
+
     return status;
-}
-
-void Scene::deferredDrawScene()
-{
-    assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
-
-    GLuint gShaderProgram = m_deferredRendingShader.useProgram();
-    m_pGBuffer->readGBuffer(gShaderProgram);
-
-    // Test
-    GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
-    if (useSSAO() == TRUE)
-    {
-        m_pSsao->bindSsaoTexture(GL_TEXTURE6, gShaderProgram, "ssaoTex", 6);
-
-        glUniform1i(useSsaoLocation, 1);
-    }
-    else
-    {
-        glUniform1i(useSsaoLocation, 0);
-
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
-
-    GLint eyeLocation     = glGetUniformLocation(gShaderProgram, "eyePos");
-    GLint viewMatLocation = glGetUniformLocation(gShaderProgram, "viewMat");
-
-    if (eyeLocation >= 0 && viewMatLocation >= 0)
-    {
-        glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
-        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->GetViewMatrix()));
-
-        if (m_pLightProbe != NULL)
-        {
-            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE7);
-        }
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        m_pGBuffer->draw();
-        glDisable(GL_BLEND);
-    }
-    else
-    {
-        printf("Unable to get wvp matrix location in shader\n");
-        assert(FALSE);
-    }
-
-    Shader::FinishProgram();
 }
 
 BOOL Scene::initializePBRendering()

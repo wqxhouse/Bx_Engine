@@ -14,7 +14,7 @@ out vec2 fragTexCoord;
 
 void main()
 {
-	fragColor = vec3(1.0f, 0.0f, 0.0f);//vertexColor;
+	fragColor = vec3(1.0f, 0.0f, 0.0f);
 	fragNormal = normal;
 	fragTexCoord = texCoord;
 	

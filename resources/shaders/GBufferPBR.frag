@@ -1,5 +1,5 @@
 /*
-    GBuffer.frag
+    GBufferPBR.frag
 */
 #version 440 core
 
@@ -78,3 +78,4 @@ void main()
     albedoTexture      = m_Material.albedo;
     specularTexture    = vec3(m_Material.roughness, m_Material.metallic, m_Material.fresnel);
 }
+// End GBufferPBR.frag

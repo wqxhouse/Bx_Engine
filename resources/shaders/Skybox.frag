@@ -14,3 +14,5 @@ void main()
 {
     outColor = texture(skyboxCubemap, skyboxTextureSampler);
 }
+
+// End of Skybox.frag

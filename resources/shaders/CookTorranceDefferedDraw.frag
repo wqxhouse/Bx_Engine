@@ -138,3 +138,4 @@ void main()
     
     outColor = vec4(radiance, 1.0f);
 }
+// End of MainSceneDefferedDraw.frag

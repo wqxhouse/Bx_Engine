@@ -1,3 +1,6 @@
+/*
+    MainSceneCookTorrance.frag
+*/
 #version 440 core
 
 #include <Light.hglsl>
@@ -146,3 +149,4 @@ void main()
         //outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
     }
 }
+// End MainSceneCookTorrance.frag

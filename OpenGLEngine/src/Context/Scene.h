@@ -129,6 +129,12 @@ public:
     inline void EnableRealtimeLightProbe() { enableRealtimeLightProbe = TRUE; }
 
 private:
+    struct Resolution
+    {
+        UINT width;
+        UINT height;
+    } m_resolution;
+
     BOOL initializePhongRendering();
 
     void drawScene();
@@ -155,6 +161,7 @@ private:
     UniformBufferMgr m_uniformBufferMgr;
 
     // UBO index
+    GLuint m_resolutionUniformBufferIndex;
     GLuint m_transUniformbufferIndex;
     GLuint m_directionalLightUniformBufferIndex;
     GLuint m_pointLightUniformBufferIndex;
@@ -199,4 +206,6 @@ private:
     // Light Probe
     LightProbe* m_pLightProbe;
     BOOL enableRealtimeLightProbe;
+
+    friend void LightProbe::draw();
 };

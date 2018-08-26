@@ -41,3 +41,4 @@ void main()
 
     gl_Position  = wvp * vec4(position, 1.0f);
 }
+// End of GBuffer.vert

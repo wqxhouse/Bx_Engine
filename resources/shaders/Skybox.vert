@@ -17,3 +17,5 @@ void main()
     vec4 fragPos = wvp * vec4(position, 1.0f);
     gl_Position = fragPos.xyww; // Set z to w for keep the z to 1.0f, which is the far clip
 }
+
+// End of Skybox.vert

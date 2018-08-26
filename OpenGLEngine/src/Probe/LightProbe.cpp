@@ -99,8 +99,6 @@ void LightProbe::draw()
 {
     Camera* pActiveCamera = m_pScene->GetActivateCamera();
 
-    Math::Vector4& backColor = m_pScene->GetBackGroundColor();
-
     for (UINT i = 0; i < CUBE_MAP_FACE_NUM; ++i)
     {
         m_pScene->SetActiveCamera(m_pCubemapCam[i]);
@@ -125,21 +123,97 @@ void LightProbe::draw()
             m_probeFbo.attachCubemap(
                 GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], 1, FALSE);
         }
+        // Render the light probe
+        if (m_pScene->GetSetting()->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
+        {
+            m_probeFbo.drawFramebuffer();
 
-        m_probeFbo.drawFramebuffer();
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glViewport(0, 0, m_probeResolution, m_probeResolution);
 
-        glViewport(0, 0, m_probeResolution, m_probeResolution);
+            m_pScene->draw();
 
-        m_pScene->draw(); // Render the light probe
+            m_probeFbo.finishDrawFramebuffer();
+        }
+        else
+        {
+            glViewport(0, 0, m_pScene->GetSetting()->width, m_pScene->GetSetting()->height);
 
-        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+            m_pScene->m_pGBuffer->drawGBuffer();
 
-        m_probeFbo.finishDrawFramebuffer();
+            /// NOTE: No need to enable SSAO for light probe
+
+            m_probeFbo.drawFramebuffer();
+
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            glViewport(0, 0, m_probeResolution, m_probeResolution);
+
+            if (m_pScene->m_skyboxImages.size() == 6)
+            {
+                m_pScene->m_pSkybox->draw();
+            }
+
+            GLuint gShaderProgram = m_pScene->m_deferredRendingShader.useProgram();
+            m_pScene->m_pGBuffer->readGBuffer(gShaderProgram);
+
+            GLint eyeLocation     = glGetUniformLocation(gShaderProgram, "eyePos");
+            GLint viewMatLocation = glGetUniformLocation(gShaderProgram, "viewMat");
+            GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
+
+            if (eyeLocation     >= 0 &&
+                viewMatLocation >= 0 &&
+                useSsaoLocation >= 0)
+            {
+                Camera* pCam = m_pScene->GetActivateCamera();
+
+                glUniform3fv(eyeLocation, 1, glm::value_ptr(pCam->GetTrans().GetPos()));
+                glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(pCam->GetViewMatrix()));
+
+                // Disable SSAO
+                glUniform1i(useSsaoLocation, 0);
+
+                // Store the original render resolution
+                Scene::Resolution resolution = m_pScene->m_resolution;
+
+                m_pScene->m_resolution = { m_probeResolution, m_probeResolution };
+
+                m_pScene->m_uniformBufferMgr.updateUniformBufferData(
+                    m_pScene->m_resolutionUniformBufferIndex,
+                    sizeof(Scene::Resolution),
+                    &(m_pScene->m_resolution));
+
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                m_pScene->m_pGBuffer->draw();
+
+                m_probeFbo.finishDrawFramebuffer();
+
+                glDisable(GL_BLEND);
+
+                // Retrive the resolution data back
+                m_pScene->m_resolution = resolution;
+
+                m_pScene->m_uniformBufferMgr.updateUniformBufferData(
+                    m_pScene->m_resolutionUniformBufferIndex,
+                    sizeof(Scene::Resolution),
+                    &(m_pScene->m_resolution));
+            }
+        }
     }
 
+    // Generating mipmaps for light probe
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_pCubemap->GetTextureHandle());
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    glViewport(0, 0, m_pScene->GetSetting()->width, m_pScene->GetSetting()->height);
+
+    // Return the activate camera back
     m_pScene->SetActiveCamera(pActiveCamera);
 }
 
