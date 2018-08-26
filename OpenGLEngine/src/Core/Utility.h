@@ -23,7 +23,15 @@ struct CallbackInfo
 	CallbackInfo()
 		:cursorPosCallBack()
 	{
-		memset(keyboardCallBack, 0, 1024 * sizeof(int));
+        // TODO: Figure out why this memset cause issue
+        // High possibility: Memory confliction? Must find out the reason.
+
+		// memset(keyboardCallBack, 0, 1024 * sizeof(int));
+
+        /*for (int i = 0; i < 1024; ++i)
+        {
+            keyboardCallBack[i] = 0;
+        }*/
 	}
 };
 
