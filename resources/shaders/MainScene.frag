@@ -20,6 +20,11 @@ uniform sampler2D shadowMapSampler;
 
 uniform samplerCube lightProbeCubemap;
 
+uniform shadowMapResolutionUniformBlock
+{
+    Resolution m_shadowMapResolution;
+};
+
 layout (std140) uniform directionalLightUniformBlock
 {
     DirectionalLight m_directionalLight;
@@ -33,11 +38,6 @@ layout (std140) uniform pointLightUniformBlock
 layout (std140) uniform material
 {
 	PhongMaterial m_phongMaterial;
-};
-
-uniform shadowMapResolutionUniformBlock
-{
-    ShadowMapResolution m_shadowMapResolution;
 };
 
 uniform vec3 eyePos;

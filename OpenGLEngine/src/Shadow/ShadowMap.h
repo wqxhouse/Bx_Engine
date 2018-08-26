@@ -3,6 +3,7 @@
 #include "../Buffer/Framebuffer.h"
 #include "../Shader/Shader.h"
 #include "../Camera/Camera.h"
+#include "../Context/Setting.h"
 
 class Light;
 class Scene;
@@ -44,16 +45,12 @@ private:
     Framebuffer m_shadowMapFramebuffer;
     Shader      m_shadowMapShader;
 
-    GLuint m_shadowResolutionUniformBufferIndex;
-    UINT   m_sceneWidth;
-    UINT   m_sceneHeight;
-
     Scene*  m_pScene;
     Light*  m_pLight;
     Camera* m_pLightCamera;
 
-    UINT m_shadowMapWidth;
-    UINT m_shadowMapHeight;
+    GLuint     m_shadowResolutionUniformBufferIndex; // Shadow resolution UBO
+    Resolution m_shadowResolution;                   // Shadow resolution data block
 
     UINT m_shadowMapSamples;
 };

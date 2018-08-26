@@ -24,9 +24,12 @@ layout (std140) uniform pointLightUniformBlock
     PointLight m_pointLight;
 };
 
+layout (std140) uniform RenderingResolutionBlock
+{
+    Resolution resolution;
+};
+
 uniform vec3 eyePos;
-//uniform uint screenWidth;
-//uniform uint screenHeight;
 
 out vec4 outColor;
 
@@ -71,12 +74,10 @@ float castingShadow()
 vec2 calgBufferTexCoord()
 {
     vec2 result;
-    
+
     result = gl_FragCoord.xy;
-    
-    // TODO: Send screen size from setting
-    result.x /= 1280.0f;
-    result.y /= 720.0f;
+    result.x /= float(resolution.width);
+    result.y /= float(resolution.height);
     
     return result;
 }

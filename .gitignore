@@ -77,3 +77,4 @@ MeshlessDeformation/x64/*
 #libs
 extern/glew-2.0.0/build/*
 extern/glfw-3.2.1/bin/*
+lib/*

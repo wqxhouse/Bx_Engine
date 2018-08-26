@@ -10,18 +10,18 @@ ShadowMap::ShadowMap(
     const UINT samples)
     : m_pScene(pScene),
       m_pLight(pLight),
-      m_shadowMapWidth(depthTexWidth),
-      m_shadowMapHeight(depthTexWidth),
       m_shadowMapSamples(samples)
-{ }
+{
+    m_shadowResolution = { depthTexWidth, depthTexWidth };
+}
 
 ShadowMap::~ShadowMap()
 { }
 
 BOOL ShadowMap::initialize()
 {
-    float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
-    float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
+    float halfWidth  = static_cast<float>(m_shadowResolution.width) * 0.0009f;
+    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.0009f;
 
     float offset = -0.0f;
 
@@ -34,8 +34,8 @@ BOOL ShadowMap::initialize()
 
     m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                                       GL_DEPTH_ATTACHMENT,
-                                                      m_shadowMapWidth,
-                                                      m_shadowMapHeight,
+                                                      m_shadowResolution.width,
+                                                      m_shadowResolution.height,
                                                       m_shadowMapSamples,
                                                       GL_DEPTH_COMPONENT,
                                                       GL_DEPTH_COMPONENT,
@@ -70,12 +70,10 @@ BOOL ShadowMap::initialize()
     // Bind shadow resolution with shadow map
     UniformBufferMgr* pUniformBufMgr = m_pScene->GetUniformBufferMgr();
 
-    UINT shadowMapResolution[2] = { m_shadowMapWidth, m_shadowMapHeight };
-
     m_shadowResolutionUniformBufferIndex =
         pUniformBufMgr->createUniformBuffer(GL_STATIC_DRAW,
-                                            sizeof(shadowMapResolution),
-                                            shadowMapResolution);
+                                            sizeof(Resolution),
+                                            &m_shadowResolution);
 
     return hs;
 }
@@ -89,8 +87,8 @@ void ShadowMap::update(Light* pLight)
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
     float lightPosScale = 5.0f;
-    float halfWidth = static_cast<float>(m_shadowMapWidth) * 0.0009f;
-    float halfHeight = static_cast<float>(m_shadowMapHeight) * 0.0009f;
+    float halfWidth = static_cast<float>(m_shadowResolution.width) * 0.0009f;
+    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.0009f;
 
     m_pLightCamera->setCamTrans(-glmLightDir * lightPosScale, glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
@@ -103,7 +101,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
     m_shadowMapFramebuffer.drawFramebuffer();
 
     glClear(GL_DEPTH_BUFFER_BIT);
-    glViewport(0, 0, m_shadowMapWidth, m_shadowMapWidth);
+    glViewport(0, 0, m_shadowResolution.width, m_shadowResolution.height);
 
     size_t modelSize = pScene->GetModelSize();
 

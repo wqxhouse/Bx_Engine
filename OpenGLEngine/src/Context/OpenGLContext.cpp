@@ -23,7 +23,11 @@ void OpenGLContext::initialize()
 
     glfwWindowHint(GLFW_SAMPLES, setting.m_graphicsSetting.antialasing); // 4x MSAA
 
-    window = glfwCreateWindow(setting.width, setting.height, "OpenGL Template", nullptr, nullptr);
+    window = glfwCreateWindow(setting.resolution.width,
+                              setting.resolution.height,
+                              "BXS OpenGL Engine",
+                              nullptr,
+                              nullptr);
     if (window == nullptr)
     {
         printf("Fail to create GLFW window.\n");
@@ -64,7 +68,7 @@ void OpenGLContext::initialize()
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    glViewport(0, 0, setting.width, setting.height);
+    glViewport(0, 0, setting.resolution.width, setting.resolution.height);
 
 #if _DEBUG
     printf("Success initialize OpenGL.\n");

@@ -39,8 +39,8 @@ BOOL SSAO::initialize()
     BOOL result = TRUE;
 
     // Create ssao texture and attach to framebuffer
-    m_pSsaoTexture = new Texture2D(m_pSetting->width,
-                                   m_pSetting->height,
+    m_pSsaoTexture = new Texture2D(m_pSetting->resolution.width,
+                                   m_pSetting->resolution.height,
                                    1,
                                    GL_RGB,
                                    GL_RGB32F,

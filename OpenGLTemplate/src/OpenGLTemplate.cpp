@@ -25,10 +25,10 @@ void OpenGLTemplate::createDefaultScene()
 {
     Scene* pScene = m_context.GetScene();
 
-    const float aspectRadio = static_cast<float>(m_pSetting->width) / static_cast<float>(m_pSetting->height);
+    const float aspectRadio = static_cast<float>(m_pSetting->resolution.width) / static_cast<float>(m_pSetting->resolution.height);
 
-    float halfWidth = static_cast<float>(m_pSetting->width * 2) * 0.002f;
-    float halfHeight = static_cast<float>(m_pSetting->width * 2) * 0.002f;
+    float halfWidth  = static_cast<float>(m_pSetting->resolution.width * 2) * 0.002f;
+    float halfHeight = static_cast<float>(m_pSetting->resolution.width * 2) * 0.002f;
 
     //Vector3 lightDir = pScene->m_directionalLight.getDir();
     //glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
@@ -63,20 +63,20 @@ void OpenGLTemplate::createDefaultScene()
     /*pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
     new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
     
-    pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-        new Trans(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-    //Model* pModel = pScene->GetModelPtr(0);
+    //pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+    //    new Trans(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    ////Model* pModel = pScene->GetModelPtr(0);
 
-    pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    //pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+    //    new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
-    /*pScene->addModel(
+    pScene->addModel(
         "../resources/models/cornellbox/CornellBox-Sphere.obj",
         "../resources/models/cornellbox/CornellBox-Sphere.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     //pScene->GetModelPtr(0)->m_pTrans->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
 

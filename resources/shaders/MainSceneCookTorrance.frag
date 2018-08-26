@@ -17,10 +17,15 @@ in vec4 posLightProj;
 in vec3 lightProbeSampler;
 
 uniform sampler2D sampler;
-uniform sampler2D shadowMapSampler;
-//uniform sampler2DMS shadowMapSampler;
+//uniform sampler2D shadowMapSampler;
+uniform sampler2DMS shadowMapSampler;
 
 uniform samplerCube lightProbeCubemap;
+
+uniform shadowMapResolutionUniformBlock
+{
+    Resolution m_shadowMapResolution;
+};
 
 layout (std140) uniform directionalLightUniformBlock
 {
@@ -37,11 +42,6 @@ layout (std140) uniform material
 	PhongMaterial m_phongMaterial;
 };
 
-uniform shadowMapResolutionUniformBlock
-{
-    ShadowMapResolution m_shadowMapResolution;
-};
-
 uniform vec3 eyePos;
 
 out vec4 outColor;
@@ -55,15 +55,16 @@ float castingShadow()
     posLight = posLight * 0.5f + 0.5f;
 	
     // Multisampling, need integer coordinate
-    //posLight.x = posLight.x * 2560.0f; // m_shadowMapResolution.width;
-    //posLight.y = posLight.y * 2560.0f; // m_shadowMapResolution.height;
+    posLight.x = posLight.x * m_shadowMapResolution.width;
+    posLight.y = posLight.y * m_shadowMapResolution.height;
 
-	float depth = texture(shadowMapSampler, posLight.xy).r;
-    /*float depth = 0.0f;
+	// float depth = texture(shadowMapSampler, posLight.xy).r;
+    float depth = 0.0f;
     
     for (int i = 0; i < 4; ++i)
-    {
-        float pcfDepth = 0.0f;
+    {        
+        depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+        /*float pcfDepth = 0.0f;
         for (int j = -1; j < 1; ++j)
         {
             for(int k = -1; k < 1; ++k)
@@ -72,13 +73,14 @@ float castingShadow()
                 pcfDepth += ((tempPcfDepth < posLight.z - 0.000001f) ? 0.0f : tempPcfDepth);
             }
         }
-        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
+        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f*/
     }
-    depth *= 0.25f;*/
+
+    depth *= 0.25f;
 	
 	if (depth < posLight.z - 0.0001f)
 	{
-		shadowAttenuation = 0.0f;
+		shadowAttenuation = 0.05f;
 	}
 	
 	return shadowAttenuation;

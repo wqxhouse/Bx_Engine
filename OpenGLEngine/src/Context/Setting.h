@@ -22,6 +22,12 @@ enum Antialasing
     ELTRA = 0x00000008,
 };
 
+struct Resolution
+{
+    UINT width;
+    UINT height;
+};
+
 struct AmbientOcclutionSetting
 {
     enum AmbientOcclusion
@@ -68,8 +74,7 @@ struct GraphicsSetting
 
 struct Setting
 {
-	unsigned int width = 1280;
-    unsigned int height = 720;
+    Resolution resolution = { 1280, 720 };
 
 	float fov = 45.0f;
 

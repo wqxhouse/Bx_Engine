@@ -139,7 +139,7 @@ void LightProbe::draw()
         }
         else
         {
-            glViewport(0, 0, m_pScene->GetSetting()->width, m_pScene->GetSetting()->height);
+            glViewport(0, 0, m_pScene->GetSetting()->resolution.width, m_pScene->GetSetting()->resolution.height);
 
             m_pScene->m_pGBuffer->drawGBuffer();
 
@@ -177,14 +177,13 @@ void LightProbe::draw()
                 glUniform1i(useSsaoLocation, 0);
 
                 // Store the original render resolution
-                Scene::Resolution resolution = m_pScene->m_resolution;
-
-                m_pScene->m_resolution = { m_probeResolution, m_probeResolution };
+                Resolution resolution            = m_pScene->m_pSetting->resolution;
+                m_pScene->m_pSetting->resolution = { m_probeResolution, m_probeResolution };
 
                 m_pScene->m_uniformBufferMgr.updateUniformBufferData(
                     m_pScene->m_resolutionUniformBufferIndex,
-                    sizeof(Scene::Resolution),
-                    &(m_pScene->m_resolution));
+                    sizeof(Resolution),
+                    &(m_pScene->m_pSetting->resolution));
 
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -196,12 +195,12 @@ void LightProbe::draw()
                 glDisable(GL_BLEND);
 
                 // Retrive the resolution data back
-                m_pScene->m_resolution = resolution;
+                m_pScene->m_pSetting->resolution = resolution;
 
                 m_pScene->m_uniformBufferMgr.updateUniformBufferData(
                     m_pScene->m_resolutionUniformBufferIndex,
-                    sizeof(Scene::Resolution),
-                    &(m_pScene->m_resolution));
+                    sizeof(Resolution),
+                    &(m_pScene->m_pSetting->resolution));
             }
         }
     }
@@ -211,7 +210,7 @@ void LightProbe::draw()
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    glViewport(0, 0, m_pScene->GetSetting()->width, m_pScene->GetSetting()->height);
+    glViewport(0, 0, m_pScene->GetSetting()->resolution.width, m_pScene->GetSetting()->resolution.height);
 
     // Return the activate camera back
     m_pScene->SetActiveCamera(pActiveCamera);

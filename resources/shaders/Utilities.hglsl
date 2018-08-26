@@ -1,9 +1,9 @@
 // GLSL Utilities Header
 
-struct ShadowMapResolution
+struct Resolution
 {
-    float width;
-    float height;
+    int width;
+    int height;
 };
 
 vec3 gammaCorrection(const vec3 color)

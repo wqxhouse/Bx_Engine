@@ -6,12 +6,12 @@
 #include <Material.hglsl>
 #include <Utilities.hglsl>
 
-uniform sampler2D shadowMapSampler;
-//uniform sampler2DMS shadowMapSampler;
+//uniform sampler2D shadowMapSampler;
+uniform sampler2DMS shadowMapSampler;
 
-layout (std140) uniform shadowMapResolutionUniformBlock
+layout (std140) uniform ShadowMapResolutionUniformBlock
 {
-    ShadowMapResolution m_shadowMapResolution;
+    Resolution m_shadowMapResolution;
 };
 
 layout (std140) uniform gMaterial
@@ -54,15 +54,19 @@ float castingShadow()
     posLight = posLight * 0.5f + 0.5f;
 
     // Multisampling, need integer coordinate
-    //posLight.x = posLight.x * 2560.0f;//m_shadowMapResolution.width;
-    //posLight.y = posLight.y * 2560.0f;//m_shadowMapResolution.height;
+    posLight.x = posLight.x * m_shadowMapResolution.width;
+    posLight.y = posLight.y * m_shadowMapResolution.height;
 
-	float depth = texture(shadowMapSampler, posLight.xy).r;
-    /*float depth = 0.0f;
+    // TODO: Added control for enable/disable shadow anti-alasing.
+    
+	//float depth = texture(shadowMapSampler, posLight.xy).r;
+    float depth = 0.0f;
 
     for (int i = 0; i < 4; ++i)
-    {
-        float pcfDepth = 0.0f;
+    {        
+        depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+
+        /*float pcfDepth = 0.0f;
         for (int j = -1; j < 1; ++j)
         {
             for(int k = -1; k < 1; ++k)
@@ -71,9 +75,9 @@ float castingShadow()
                 pcfDepth += ((tempPcfDepth < posLight.z - 0.000001f) ? 0.0f : tempPcfDepth);
             }
         }
-        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
+        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f*/
     }
-    depth *= 0.25f;*/
+    depth *= 0.25f;
 
 	if (depth < posLight.z - 0.000001f)
 	{

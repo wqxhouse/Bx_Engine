@@ -32,8 +32,7 @@ layout (std140) uniform pointLightUniformBlock
 
 layout (std140) uniform RenderingResolutionBlock
 {
-    uniform int resolutionWidth;
-    uniform int resolutionHeight;
+    Resolution resolution;
 };
 
 uniform vec3 eyePos;
@@ -67,13 +66,11 @@ vec3 calCookTorranceRadiance(
 vec2 calgBufferTexCoord()
 {
     vec2 result;
-    
+
     result = gl_FragCoord.xy;
-    
-    // TODO: Send screen size from setting
-    result.x /= float(resolutionWidth); //1280.0f;
-    result.y /= float(resolutionHeight); //720.0f;
-    
+    result.x /= float(resolution.width);
+    result.y /= float(resolution.height);
+
     return result;
 }
 

@@ -129,12 +129,6 @@ public:
     inline void EnableRealtimeLightProbe() { enableRealtimeLightProbe = TRUE; }
 
 private:
-    struct Resolution
-    {
-        UINT width;
-        UINT height;
-    } m_resolution;
-
     BOOL initializePhongRendering();
 
     void drawScene();

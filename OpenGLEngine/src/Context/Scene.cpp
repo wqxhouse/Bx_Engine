@@ -22,8 +22,6 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
 
-    m_resolution = { m_pSetting->width, m_pSetting->height };
-
     // Test
     m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
 }
@@ -32,22 +30,7 @@ BOOL Scene::initialize()
 {
     BOOL status = TRUE;
 
-    status = initializePhongRendering();
-    if (status == FALSE)
-    {
-        printf("Failed to initialize main scene Phong Rendering!\n");
-        assert(FALSE);
-    }
-
-    // PBR rendering initialization
-    status = initializePBRendering();
-    if (status == FALSE)
-    {
-        printf("Failed to initialize main scene PBRendering!\n");
-        assert(FALSE);
-    }
-
-    // Shadow map test
+    // Shadow map initialization
     status = initializeShadowMap();
     if (status == FALSE)
     {
@@ -55,14 +38,27 @@ BOOL Scene::initialize()
         assert(FALSE);
     }
 
-    // Shadow map resolution ubo
-    /*m_uniformBufferMgr.bindUniformBuffer(
-        m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
-        m_sceneShader.GetShaderProgram(),
-        "shadowMapResolutionUniformBlock"
-    );*/
+    // Forward Phong rendering initialization
+    status = initializePhongRendering();
+    if (status == FALSE)
+    {
+        printf("Failed to initialize main scene Phong Rendering!\n");
+        assert(FALSE);
+    }
 
-    // Deferred shading test
+    // Forward PBR rendering initialization
+    status = initializePBRendering();
+    if (status == FALSE)
+    {
+        printf("Failed to initialize main scene PBRendering!\n");
+        assert(FALSE);
+    }
+
+    // Create resolution ubo
+    m_resolutionUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Resolution), &(m_pSetting->resolution));
+
+    // Deferred shading initialization
     if (m_pSetting->m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
     {
         status = initializeDeferredRendering();
@@ -259,7 +255,7 @@ void Scene::preDraw()
         m_pLightProbe->draw();
     }
 
-    glViewport(0, 0, m_pSetting->width, m_pSetting->height);
+    glViewport(0, 0, m_pSetting->resolution.width, m_pSetting->resolution.height);
 }
 
 void Scene::draw()
@@ -524,11 +520,11 @@ BOOL Scene::initializeShadowMap()
 {
     BOOL result = TRUE;
 
-    // TODO: Finish multi-sampled shadow map
-    // Reverted the multi-sampled shadow map here, needs to fix the issue.
-    m_pShadowMap = new ShadowMap(
-        this, m_pSceneLights[0], m_pSetting->width * 2, m_pSetting->height * 2,
-        /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
+    m_pShadowMap = new ShadowMap(this,
+                                 m_pSceneLights[0],
+                                 m_pSetting->resolution.width * 2,
+                                 m_pSetting->resolution.height * 2,
+                                 m_pSetting->m_graphicsSetting.antialasing);
 
     result = m_pShadowMap->initialize();
 
@@ -603,28 +599,70 @@ BOOL Scene::initializePhongRendering()
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
-    ///
+
+    // Shadow map resolution ubo
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
+        m_sceneShader.GetShaderProgram(),
+        "shadowMapResolutionUniformBlock");
+    /// UBOs initialization end
 
     return status;
 }
 
-BOOL Scene::useSSAO()
+BOOL Scene::initializePBRendering()
 {
-    BOOL result = TRUE;
-    AmbientOcclutionSetting ambientOcclutionSetting =
-        m_pSetting->m_graphicsSetting.ambientOcclutionSetting;
+    BOOL status = TRUE;
 
-    result = ((ambientOcclutionSetting.ambientOcclusion !=
-               AmbientOcclutionSetting::AmbientOcclusion::NONE) ? TRUE : FALSE);
+    // PBR shader
+    m_pbrShader.setShaderFiles("MainScene.vert", "MainSceneCookTorrance.frag");
+    status = m_pbrShader.linkProgram();
 
-    return result;
+    if (status == FALSE)
+    {
+        Shader::AssertErrors("Failed to compile PBR shader.");
+    }
+
+    /// UBOs initialization
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_transUniformbufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "transUniformBlock");
+
+    // Directional light ubo
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_directionalLightUniformBufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "directionalLightUniformBlock");
+
+    // Point light ubo
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pointLightUniformBufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "pointLightUniformBlock");
+
+    m_pbrMaterialUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(
+            GL_DYNAMIC_DRAW, CookTorranceMaterial::GetOpaqueCookTorranceMaterialDataSize(), NULL);
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pbrMaterialUniformBufferIndex, m_pbrShader.GetShaderProgram(), "CookTorranceMaterialUniformBlock");
+
+    // Shadow map resolution ubo
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
+        m_pbrShader.GetShaderProgram(),
+        "shadowMapResolutionUniformBlock");
+    /// UBOs initialization end
+
+    return status;
 }
 
 BOOL Scene::initializeDeferredRendering()
 {
     BOOL status = TRUE;
 
-    m_pGBuffer = new GBuffer(this, m_pSetting->width, m_pSetting->height);
+    m_pGBuffer = new GBuffer(this, m_pSetting->resolution.width, m_pSetting->resolution.height);
     status = m_pGBuffer->initialize();
     
     if (useGlobalMaterial == TRUE)
@@ -650,59 +688,23 @@ BOOL Scene::initializeDeferredRendering()
         Shader::AssertErrors("Failed to compile deffered draw shader.");
     }
 
+    /// UBOs initialization
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
         m_deferredRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
-
-    // Resolution ubo
-    m_resolutionUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Resolution), &m_resolution);
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_resolutionUniformBufferIndex,
         m_deferredRendingShader.GetShaderProgram(),
         "RenderingResolutionBlock");
 
-    return status;
-}
-
-BOOL Scene::initializePBRendering()
-{
-    BOOL status = TRUE;
-
-    // PBR shader
-    m_pbrShader.setShaderFiles("MainScene.vert", "MainSceneCookTorrance.frag");
-    status = m_pbrShader.linkProgram();
-
-    if (status == FALSE)
-    {
-        Shader::AssertErrors("Failed to compile PBR shader.");
-    }
-
+    // Shadow map resolution ubo
     m_uniformBufferMgr.bindUniformBuffer(
-        m_transUniformbufferIndex,
-        m_pbrShader.GetShaderProgram(),
-        "transUniformBlock");
-
-    // Directional light ubo
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
-        m_pbrShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
-
-    // Point light ubo
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_pointLightUniformBufferIndex,
-        m_pbrShader.GetShaderProgram(),
-        "pointLightUniformBlock");
-
-    m_pbrMaterialUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(
-            GL_DYNAMIC_DRAW, CookTorranceMaterial::GetOpaqueCookTorranceMaterialDataSize(), NULL);
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_pbrMaterialUniformBufferIndex, m_pbrShader.GetShaderProgram(), "CookTorranceMaterialUniformBlock");
+        m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
+        m_deferredRendingShader.GetShaderProgram(),
+        "shadowMapResolutionUniformBlock");
+    /// UBOs initialization end
 
     return status;
 }
@@ -833,4 +835,16 @@ void Scene::disableSceneLocalMaterial()
     {
         pModel->UseGlobalMaterial();
     }
+}
+
+BOOL Scene::useSSAO()
+{
+    BOOL result = TRUE;
+    AmbientOcclutionSetting ambientOcclutionSetting =
+        m_pSetting->m_graphicsSetting.ambientOcclutionSetting;
+
+    result = ((ambientOcclutionSetting.ambientOcclusion !=
+        AmbientOcclutionSetting::AmbientOcclusion::NONE) ? TRUE : FALSE);
+
+    return result;
 }
