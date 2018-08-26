@@ -23,7 +23,7 @@ struct CallbackInfo
 	CallbackInfo()
 		:cursorPosCallBack()
 	{
-		memset(keyboardCallBack, 0, 1024 * sizeof(int));
+		 memset(keyboardCallBack, 0, 1024 * sizeof(int));
 	}
 };
 
