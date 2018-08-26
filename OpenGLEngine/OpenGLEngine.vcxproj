@@ -87,7 +87,7 @@
     </ClCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName)_d.lib"
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/E</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -118,7 +118,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName).lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName).lib"
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)bin\lib\OpenGLEngine\include\" /Y/D/E</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>

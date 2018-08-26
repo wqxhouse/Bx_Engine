@@ -169,7 +169,7 @@ private:
     GLuint m_pbrMaterialUniformBufferIndex;
 
     GLint  success;
-    GLchar compileLog[512];
+    GLchar compileLog[1024];
 
     // Scene lights
     struct SceneLights
