@@ -30,6 +30,4 @@ private:
 
 	unsigned int fbWidth = 0u;
 	unsigned int fbHeight = 0u;
-
-	CallbackInfo callbackInfo;
 };

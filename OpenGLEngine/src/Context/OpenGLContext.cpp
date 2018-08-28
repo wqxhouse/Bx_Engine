@@ -5,7 +5,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
 OpenGLContext::OpenGLContext(Setting* pSetting)
-    :callbackInfo(), m_scene(pSetting)
+    : m_scene(pSetting)
 {
     this->setting = setting;
 
