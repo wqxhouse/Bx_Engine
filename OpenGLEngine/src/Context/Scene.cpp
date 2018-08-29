@@ -383,22 +383,6 @@ void Scene::deferredDrawScene()
     GLuint gShaderProgram = m_deferredRendingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
 
-    // Test
-    GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
-    if (useSSAO() == TRUE)
-    {
-        m_pSsao->bindSsaoTexture(GL_TEXTURE6, gShaderProgram, "ssaoTex", 6);
-
-        glUniform1i(useSsaoLocation, 1);
-    }
-    else
-    {
-        glUniform1i(useSsaoLocation, 0);
-
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
     Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
 
     GLint eyeLocation = glGetUniformLocation(gShaderProgram, "eyePos");
@@ -411,7 +395,23 @@ void Scene::deferredDrawScene()
 
         if (m_pLightProbe != NULL)
         {
-            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE7);
+            m_pLightProbe->readLightProbe(gShaderProgram, "lightProbeCubemap", GL_TEXTURE6);
+        }
+
+        // Test
+        GLint useSsaoLocation = glGetUniformLocation(gShaderProgram, "useSsao");
+        if (useSSAO() == TRUE)
+        {
+            m_pSsao->bindSsaoTexture(GL_TEXTURE7, gShaderProgram, "ssaoTex", 7);
+
+            glUniform1i(useSsaoLocation, 1);
+        }
+        else
+        {
+            glUniform1i(useSsaoLocation, 0);
+
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
 
         glEnable(GL_BLEND);
@@ -524,7 +524,7 @@ BOOL Scene::initializeShadowMap()
                                  m_pSceneLights[0],
                                  m_pSetting->resolution.width * 2,
                                  m_pSetting->resolution.height * 2,
-                                 m_pSetting->m_graphicsSetting.antialasing);
+                                 /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
 
     result = m_pShadowMap->initialize();
 

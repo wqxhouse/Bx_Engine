@@ -43,11 +43,6 @@ BOOL ShadowMap::initialize()
                                                       GL_CLAMP_TO_EDGE,
                                                       FALSE);
 
-    GLfloat boarder[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    Texture2D* pDepthTexture = static_cast<Texture2D*>(m_shadowMapFramebuffer.getTexturePtr(GL_TEXTURE0));
-
-    pDepthTexture->setBoarderColor(boarder);
-
     glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMapFramebuffer.getFramebufferHandle());
 
     glDrawBuffer(GL_NONE);

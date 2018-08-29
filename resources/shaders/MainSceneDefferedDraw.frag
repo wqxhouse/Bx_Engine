@@ -7,18 +7,19 @@
 #include <Utilities.hglsl>
 #include <BRDF.hglsl>
 
-uniform sampler2D posTex;
-uniform sampler2D normalTex;
-uniform sampler2D texCoordTex;
-uniform sampler2D albedoTex;
-uniform sampler2D specularTex;
-uniform sampler2D environmentLightTex;
-
-// SSAO Texture
-uniform sampler2D ssaoTex;
+layout(location = 0) uniform sampler2D posTex;
+layout(location = 1) uniform sampler2D normalTex;
+layout(location = 2) uniform sampler2D texCoordTex;
+layout(location = 3) uniform sampler2D albedoTex;
+layout(location = 4) uniform sampler2D specularTex;
+layout(location = 5) uniform sampler2D environmentLightTex;
 
 // Lightprobe cubemap
-uniform samplerCube lightProbeCubemap;
+layout(location = 6) uniform samplerCube lightProbeCubemap;
+
+// SSAO Texture
+layout(location = 7) uniform sampler2D ssaoTex;
+
 
 layout (std140) uniform directionalLightUniformBlock
 {
