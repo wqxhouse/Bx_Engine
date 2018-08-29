@@ -5,9 +5,10 @@
 
 enum LightType
 {
-    DIRECTIONAL_LIGHT = 0,
-    POINT_LIGHT       = 1,
-    SPOT_LIGHT        = 2,
+    DIRECTIONAL_LIGHT = 0x0,
+    POINT_LIGHT       = 0x1,
+    SPOT_LIGHT        = 0x2,
+    AREA_LIGHT        = 0x3
 };
 
 class Light
@@ -16,22 +17,19 @@ public:
 	Light(const LightType lightType, const Math::Vector3& color);
 	~Light();
 
-    //inline LightType     GetLightType()      const { return m_lightType;                            }
+    inline LightType     GetLightType()      const { return m_lightType;                            }
     inline Math::Vector3 GetLightColor()     const { return m_color;                                }
-    inline Math::Vector4 GetLightColorVec4() const { return m_color_vec4;                           }
-    inline void*         GetDataPtr()              { return reinterpret_cast<void*>(&m_color_vec4); }
-
-    LightType m_lightType;
-
+    inline Math::Vector4 GetLightColorVec4() const { return m_light_vec4;                           }
+    inline void*         GetDataPtr()              { return reinterpret_cast<void*>(&m_light_vec4); }
 protected:
     union
     {
         struct
         {
-            Math::Vector3 m_color; // Light color
-            float colorPadding;
+            Math::Vector3 m_color;     // Light color
+            LightType     m_lightType; // Light type
         };
-        Math::Vector4 m_color_vec4;
+        Math::Vector4 m_light_vec4;
     };
 
 private:

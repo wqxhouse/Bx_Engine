@@ -145,7 +145,7 @@ void ShadowMap::readShadowMap(
 
 void ShadowMap::initializeLightCamera()
 {
-    switch (m_pLight->m_lightType)
+    switch (m_pLight->GetLightType())
     {
     case LightType::DIRECTIONAL_LIGHT:
     {

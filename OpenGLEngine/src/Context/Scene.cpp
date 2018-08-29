@@ -439,7 +439,7 @@ Scene::~Scene()
 
     for (Light* pLight : m_pSceneLights)
     {
-        switch (pLight->m_lightType)
+        switch (pLight->GetLightType())
         {
             case LightType::DIRECTIONAL_LIGHT:
                 SafeDelete(static_cast<DirectionalLight*>(pLight));

@@ -27,8 +27,16 @@ namespace Math
         {}
 
         Vector4(const Vector3& v, float w)
-            : m_v3(v), W(w)
+            : m_v3(v), m_w(w)
         {}
+
+        Vector4(float x, const Vector3& v)
+        {
+            X = x;
+            Y = v.x;
+            Z = v.y;
+            W = v.z;
+        }
 
         Vector4(const Vector3& v)
             : m_v3(v)
