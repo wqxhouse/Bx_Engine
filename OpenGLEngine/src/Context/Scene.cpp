@@ -24,6 +24,12 @@ Scene::Scene(Setting* pSetting)
 
     // Test
     m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
+
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 }
 
 BOOL Scene::initialize()
@@ -694,6 +700,14 @@ BOOL Scene::initializeDeferredRendering()
         m_deferredRendingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
+    // Light Ubo
+    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_lightMgr.GetLightDataHandle(),
+        m_deferredRendingShader.GetShaderProgram(),
+        "lightArrayUniformBlock");
+
+    // Resolution ubo
     m_uniformBufferMgr.bindUniformBuffer(
         m_resolutionUniformBufferIndex,
         m_deferredRendingShader.GetShaderProgram(),

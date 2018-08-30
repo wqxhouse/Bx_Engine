@@ -20,10 +20,10 @@ ShadowMap::~ShadowMap()
 
 BOOL ShadowMap::initialize()
 {
-    float halfWidth  = static_cast<float>(m_shadowResolution.width) * 0.0009f;
-    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.0009f;
+    float halfWidth  = static_cast<float>(m_shadowResolution.width) * 0.01f;
+    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.01f;
 
-    float offset = -0.0f;
+    float offset = 0.0f;
 
     m_pLightCamera = new OrthographicCamera(
         glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
@@ -82,8 +82,8 @@ void ShadowMap::update(Light* pLight)
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
     float lightPosScale = 5.0f;
-    float halfWidth = static_cast<float>(m_shadowResolution.width) * 0.0009f;
-    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.0009f;
+    // float halfWidth = static_cast<float>(m_shadowResolution.width) * 0.0001f;
+    // float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.0001f;
 
     m_pLightCamera->setCamTrans(-glmLightDir * lightPosScale, glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }

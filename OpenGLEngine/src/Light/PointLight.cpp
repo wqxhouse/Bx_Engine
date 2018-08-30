@@ -14,3 +14,16 @@ PointLight::~PointLight()
 {
 
 }
+
+void PointLight::translate(
+    const Math::Vector3& transVector)
+{
+    m_position += transVector;
+}
+
+void PointLight::rotate(
+    const Math::Vector3& axis,
+    const float angle)
+{
+    m_position = Math::rotate(m_position, axis, angle);
+}
