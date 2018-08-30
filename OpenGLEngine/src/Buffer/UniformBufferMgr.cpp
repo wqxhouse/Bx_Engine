@@ -48,6 +48,27 @@ UINT UniformBufferMgr::createUniformBuffer(
     return uniformBufferBindIndex;
 }
 
+void UniformBufferMgr::recreateUniformBuffer(
+    const UINT uboHandle,
+    const GLenum  usage,
+    const GLsizei dataSize,
+    const GLvoid* data)
+{
+    assert(uboHandle < m_pUniformBindBlockList.size());
+
+    if (uboHandle < m_pUniformBindBlockList.size())
+    {
+        UniformBuffer* oldUniformBuffer = m_pUniformBindBlockList[uboHandle];
+
+        SafeDelete(oldUniformBuffer);
+        oldUniformBuffer = NULL;
+
+        UniformBuffer* newUniformBuffer = new UniformBuffer(uboHandle, usage, dataSize, data);
+
+        m_pUniformBindBlockList[uboHandle] = newUniformBuffer;
+    }
+}
+
 void UniformBufferMgr::bindUniformBuffer(
     const UINT    uniformBufferBindIndex,
     const GLuint  program,

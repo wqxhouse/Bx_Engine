@@ -42,7 +42,7 @@ enum AllocateMode
 
 inline void SafeRelease(void* ptr, AllocateMode allocateMode)
 {
-	if (ptr != nullptr)
+	if (ptr != NULL)
 	{
 		switch (allocateMode)
 		{
@@ -60,7 +60,7 @@ inline void SafeRelease(void* ptr, AllocateMode allocateMode)
 template<typename T>
 inline void SafeFree(T* ptr)
 {
-	if (ptr != nullptr)
+	if (ptr != NULL)
 	{
 		free(ptr);
 	}
@@ -69,7 +69,7 @@ inline void SafeFree(T* ptr)
 template<typename T>
 inline void SafeDelete(T* ptr)
 {
-	if (ptr != nullptr)
+	if (ptr != NULL)
 	{
 		delete ptr;
 	}
@@ -77,7 +77,7 @@ inline void SafeDelete(T* ptr)
 
 inline void SafeDeleteArray(void *ptr)
 {
-    if (ptr != nullptr)
+    if (ptr != NULL)
     {
         delete[] ptr;
     }

@@ -23,6 +23,12 @@ public:
         const GLsizei dataSize,
         const GLvoid* data);
 
+    void recreateUniformBuffer(
+        const UINT uboHandle,
+        const GLenum  usage,
+        const GLsizei dataSize,
+        const GLvoid* data);
+
     void bindUniformBuffer(
         const UINT    uniformBufferBindIndex,
         const GLuint  program,

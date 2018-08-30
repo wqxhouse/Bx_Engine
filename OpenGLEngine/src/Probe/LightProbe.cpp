@@ -157,7 +157,7 @@ void LightProbe::draw()
                 m_pScene->m_pSkybox->draw();
             }
 
-            GLuint gShaderProgram = m_pScene->m_deferredRendingShader.useProgram();
+            GLuint gShaderProgram = m_pScene->m_deferredRenderingShader.useProgram();
             m_pScene->m_pGBuffer->readGBuffer(gShaderProgram);
 
             GLint eyeLocation     = glGetUniformLocation(gShaderProgram, "eyePos");

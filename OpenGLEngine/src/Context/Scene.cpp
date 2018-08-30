@@ -24,6 +24,12 @@ Scene::Scene(Setting* pSetting)
 
     // Test
     m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
+
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 }
 
 BOOL Scene::initialize()
@@ -380,7 +386,7 @@ void Scene::deferredDrawScene()
 {
     assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
 
-    GLuint gShaderProgram = m_deferredRendingShader.useProgram();
+    GLuint gShaderProgram = m_deferredRenderingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
 
     Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
@@ -680,8 +686,8 @@ BOOL Scene::initializeDeferredRendering()
     }
 
     // G-Buffer shaders
-    m_deferredRendingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
-    status = m_deferredRendingShader.linkProgram();
+    m_deferredRenderingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
+    status = m_deferredRenderingShader.linkProgram();
 
     if (status == FALSE)
     {
@@ -691,18 +697,26 @@ BOOL Scene::initializeDeferredRendering()
     /// UBOs initialization
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
-        m_deferredRendingShader.GetShaderProgram(),
+        m_deferredRenderingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
+    // Light Ubo
+    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_lightMgr.GetLightDataHandle(),
+        m_deferredRenderingShader.GetShaderProgram(),
+        "lightArrayUniformBlock");
+
+    // Resolution ubo
     m_uniformBufferMgr.bindUniformBuffer(
         m_resolutionUniformBufferIndex,
-        m_deferredRendingShader.GetShaderProgram(),
+        m_deferredRenderingShader.GetShaderProgram(),
         "RenderingResolutionBlock");
 
     // Shadow map resolution ubo
     m_uniformBufferMgr.bindUniformBuffer(
         m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
-        m_deferredRendingShader.GetShaderProgram(),
+        m_deferredRenderingShader.GetShaderProgram(),
         "shadowMapResolutionUniformBlock");
     /// UBOs initialization end
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Model/Model.h"
-#include "../Light/Light.h"
+#include "../Light/LightMgr.h"
 #include "../Buffer/UniformBufferMgr.h"
 #include "../Shadow/ShadowMap.h"
 #include "../Buffer/GBuffer.h"
@@ -34,6 +34,7 @@ public:
         const Math::Vector3& color)
     {
         //m_pSceneLights.push_back(new DirectionalLight(direction, color));
+        m_lightMgr.addDirectionalLight(direction, color);
     }
 
     inline void AddPointLight(
@@ -42,6 +43,7 @@ public:
         const float          radius)
     {
         //m_pSceneLights.push_back(new PointLight(pos, color, radius));
+        m_lightMgr.addPointLight(pos, color, radius);
     }
 
     inline void AddSpotLight(
@@ -51,6 +53,7 @@ public:
         const float          outerRadius)
     {
         //m_pSceneLights.push_back(new SpotLight(pos, color, innerRadius, outerRadius));
+        m_lightMgr.addSpotLight(pos, color, innerRadius, outerRadius);
     }
 
     void addProspectiveCamera(
@@ -135,21 +138,40 @@ private:
 
 	Setting* m_pSetting;
 
+    GLint  success;
+    GLchar compileLog[1024];
+
     Vector4 m_backgroundColor;
+    
+    // Shaders
+    Shader m_sceneShader;
+    Shader m_deferredRenderingShader;
 
-    PointLight m_pointLight;
+    Shader m_pbrShader;
 
+    // Scene objects (ex. Camera, model, texture, light)
     std::vector<Camera*> m_pCameraList;
     UINT m_activeCameraIndex;
     Camera* m_pActiveCamera;
 
-	std::vector<Model*>   m_pSceneModelList;
-	std::vector<Texture*> m_pTextureList;
+    std::vector<Model*>   m_pSceneModelList;
+    std::vector<Texture*> m_pTextureList;
 
-    Shader m_sceneShader;
-    Shader m_deferredRendingShader;
+    LightMgr m_lightMgr;
 
-    Shader m_pbrShader;
+    // TODO: Remove these light (All lights are managed in light manager)
+
+    // Scene lights
+    struct SceneLights
+    {
+        UINT   count;
+        Light* pLights;
+    };
+
+    std::vector<Light*> m_pSceneLights;
+    //DirectionalLight m_directionalLight;
+
+    PointLight m_pointLight;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
@@ -161,19 +183,6 @@ private:
     GLuint m_pointLightUniformBufferIndex;
     GLuint m_materialUniformBufferIndex;
     GLuint m_pbrMaterialUniformBufferIndex;
-
-    GLint  success;
-    GLchar compileLog[1024];
-
-    // Scene lights
-    struct SceneLights
-    {
-        UINT   count;
-        Light* pLights;
-    };
-
-    std::vector<Light*> m_pSceneLights;
-    //DirectionalLight m_directionalLight;
 
     // Shadow map test
     BOOL initializeShadowMap();

@@ -23,12 +23,17 @@ layout(location = 7) uniform sampler2D ssaoTex;
 
 layout (std140) uniform directionalLightUniformBlock
 {
-    DirectionalLight m_directionalLight[MAX_LIGHT_NUM];
+    DirectionalLight m_directionalLight_1[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform pointLightUniformBlock
 {
     PointLight m_pointLight;
+};
+
+layout (std140) uniform lightArrayUniformBlock
+{
+    Light m_light[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform RenderingResolutionBlock
@@ -98,8 +103,12 @@ void main()
     vec4 eyePosVec4 = viewMat * vec4(eyePos, 1.0f);
     vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
 
+    DirectionalLight m_directionalLight;
+    m_directionalLight.lightBase = m_light[0].lightBase;
+    m_directionalLight.dir = m_light[0].data[0].xyz;
+    
     // Transform light direction vector to view space
-    vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
+    vec3 dir   = normalize(viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
 
     // Casting shadow
     float shadowAttenuation   = gTexCoord.z;
@@ -110,7 +119,7 @@ void main()
 
     vec3 view       = normalize(eyePosView - posView);
     vec3 normal     = normalize(normalView);
-    vec3 lightColor = m_directionalLight[0].lightBase.color;
+    vec3 lightColor = m_directionalLight.lightBase.color;
 
     if (ns > 0.0f)
     {

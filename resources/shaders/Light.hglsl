@@ -6,15 +6,23 @@
 
 struct LightBase
 {
-    vec3 color;
-    int  type;
+    vec3  color;
+    float type;
+};
+
+struct Light
+{
+    LightBase lightBase;
+    
+    vec4 data[2];
 };
 
 struct DirectionalLight
 {
     LightBase lightBase;
 
-    vec3 dir;
+    vec3 dir; float padding;
+    vec4 padding2;
 };
 
 struct PointLight
@@ -23,6 +31,7 @@ struct PointLight
 
     vec3  pos;
     float radius;
+    vec4 padding;
 };
 
 struct SpotLight
