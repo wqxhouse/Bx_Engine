@@ -12,7 +12,15 @@ public:
 
     void createLightUbo(UniformBufferMgr* m_pUboMgr);
 
-    void updateLightUbo(UniformBufferMgr* m_pUboMgr);
+    void updateLightUbo(
+        UniformBufferMgr* m_pUboMgr,
+        const GLuint      shaderProgram,
+        const GLchar*     uniformBufferBlockName);
+
+    void bindLightUbo(
+        UniformBufferMgr* m_pUboMgr,
+        const GLuint      shaderProgram,
+        const GLchar*     uniformBufferBlockName);
 
     void translateLight(
         const UINT           index,
@@ -72,7 +80,8 @@ private:
         {
             UINT isRecreateLightUbo : 1;
             UINT isUpdateLightUbo   : 1;
-            UINT reserve            : 30;
+            UINT isBindLightUbo     : 1;
+            UINT reserve            : 29;
         } bitField;
     }m_lightFlags;
 };

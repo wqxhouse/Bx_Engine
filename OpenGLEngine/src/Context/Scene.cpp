@@ -23,14 +23,8 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.fresnel   = 1.0f;
 
     // Test
-    m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
-
+    //m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
     m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    //m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
-    /*m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));*/
 }
 
 BOOL Scene::initialize()
@@ -60,6 +54,9 @@ BOOL Scene::initialize()
         printf("Failed to initialize main scene PBRendering!\n");
         assert(FALSE);
     }
+
+    // Create light ubo
+    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
 
     // Create resolution ubo
     m_resolutionUniformBufferIndex =
@@ -161,13 +158,15 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        static_cast<DirectionalLight*>(m_pSceneLights[0])->
-            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        /*static_cast<DirectionalLight*>(m_pSceneLights[0])->
+            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));*/
+        m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        static_cast<DirectionalLight*>(m_pSceneLights[0])->
-            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        /*static_cast<DirectionalLight*>(m_pSceneLights[0])->
+            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));*/
+        m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -237,7 +236,13 @@ void Scene::preDraw()
         shadowPass();
     }
 
-    m_uniformBufferMgr.updateUniformBufferData(
+    /// Updating UBO data
+    m_lightMgr.updateLightUbo(
+        &m_uniformBufferMgr,
+        m_deferredRenderingShader.GetShaderProgram(),
+        "lightArrayUniformBlock");
+
+    /*m_uniformBufferMgr.updateUniformBufferData(
         m_directionalLightUniformBufferIndex,
         static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
         static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
@@ -245,7 +250,7 @@ void Scene::preDraw()
     m_uniformBufferMgr.updateUniformBufferData(
         m_pointLightUniformBufferIndex,
         m_pointLight.GetDataSize(),
-        m_pointLight.GetDataPtr());
+        m_pointLight.GetDataPtr());*/
 
     if (useGlobalMaterial == TRUE)
     {
@@ -254,10 +259,10 @@ void Scene::preDraw()
             m_globalPbrMaterial.GetOpaqueCookTorranceMaterialDataSize(),
             m_globalPbrMaterial.GetCookTorranceMaterialData());
     }
+    /// End updating UBO data
 
-    if (/*(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING) &&*/
-        (enableRealtimeLightProbe                      == TRUE                                ||
-         m_pLightProbe->IsFirstDraw()                  == TRUE))
+    if (enableRealtimeLightProbe     == TRUE ||
+        m_pLightProbe->IsFirstDraw() == TRUE)
     {
         m_pLightProbe->draw();
     }
@@ -444,7 +449,7 @@ Scene::~Scene()
     }
     m_pSceneModelList.clear();
 
-    for (Light* pLight : m_pSceneLights)
+    /*for (Light* pLight : m_pSceneLights)
     {
         switch (pLight->GetLightType())
         {
@@ -464,7 +469,7 @@ Scene::~Scene()
                 assert(FALSE);
                 break;
         }
-    }
+    }*/
 
     for (Camera* pCamera : m_pCameraList)
     {
@@ -528,7 +533,7 @@ BOOL Scene::initializeShadowMap()
     BOOL result = TRUE;
 
     m_pShadowMap = new ShadowMap(this,
-                                 m_pSceneLights[0],
+                                 /*m_pSceneLights[0],*/ m_lightMgr.GetLight(0),
                                  m_pSetting->resolution.width * 2,
                                  m_pSetting->resolution.height * 2,
                                  /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
@@ -540,7 +545,7 @@ BOOL Scene::initializeShadowMap()
 
 void Scene::shadowPass()
 {
-    m_pShadowMap->update(m_pSceneLights[0]);
+    m_pShadowMap->update(/*m_pSceneLights[0]*/ m_lightMgr.GetLight(0));
 
     glCullFace(GL_FRONT);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
@@ -578,7 +583,7 @@ BOOL Scene::initializePhongRendering()
         "transUniformBlock");
 
     // Directional light ubo
-    m_directionalLightUniformBufferIndex =
+    /*m_directionalLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
                                                static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
                                                static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
@@ -586,7 +591,7 @@ BOOL Scene::initializePhongRendering()
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
         m_sceneShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
+        "directionalLightUniformBlock");*/
 
     // Point light ubo
     m_pointLightUniformBufferIndex =
@@ -701,10 +706,9 @@ BOOL Scene::initializeDeferredRendering()
         m_deferredRenderingShader.GetShaderProgram(),
         "directionalLightUniformBlock");
 
-    // Light Ubo
-    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_lightMgr.GetLightDataHandle(),
+    // Bind Light Ubo
+    m_lightMgr.bindLightUbo(
+        &m_uniformBufferMgr,
         m_deferredRenderingShader.GetShaderProgram(),
         "lightArrayUniformBlock");
 
