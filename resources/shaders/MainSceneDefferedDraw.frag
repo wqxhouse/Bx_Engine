@@ -20,10 +20,9 @@ layout(location = 6) uniform samplerCube lightProbeCubemap;
 // SSAO Texture
 layout(location = 7) uniform sampler2D ssaoTex;
 
-
 layout (std140) uniform directionalLightUniformBlock
 {
-    DirectionalLight m_directionalLight_1[MAX_LIGHT_NUM];
+    DirectionalLight m_directionalLight[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform pointLightUniformBlock
@@ -105,20 +104,22 @@ void main()
 
     DirectionalLight m_directionalLight;
     m_directionalLight.lightBase = m_light[0].lightBase;
-    m_directionalLight.dir = m_light[0].data[0].xyz;
+    m_directionalLight.dir = m_light[0].data[0].xyz;/**/
     
     // Transform light direction vector to view space
+    // vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
     vec3 dir   = normalize(viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
 
     // Casting shadow
-    float shadowAttenuation   = gTexCoord.z;
-    float shadowSpecularAttenuation = 1.0f;// ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
+    float shadowAttenuation = gTexCoord.z;
+    float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
     /// Shading
     vec3 radiance; // Final radiance for every pixel from hemisphere
 
     vec3 view       = normalize(eyePosView - posView);
     vec3 normal     = normalize(normalView);
+    // vec3 lightColor = m_directionalLight[0].lightBase.color;
     vec3 lightColor = m_directionalLight.lightBase.color;
 
     if (ns > 0.0f)

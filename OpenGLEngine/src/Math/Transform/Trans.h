@@ -194,14 +194,12 @@ private:
 
         struct
         {
-        public:
             UINT transFlag    : 1;
             UINT posFlag      : 1;
             UINT scaleFlag    : 1;
             UINT rotationFlag : 1;
             UINT viewFlag     : 1;
-        private:
             UINT reserve      : 27;
-        }bits;
+        } bits;
     }m_transFlags;
 };

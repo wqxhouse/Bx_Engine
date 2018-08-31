@@ -48,12 +48,13 @@ public:
 
     inline void AddSpotLight(
         const Math::Vector3& pos,
+        const Math::Vector3& dir,
         const Math::Vector3& color,
         const float          innerRadius,
         const float          outerRadius)
     {
         //m_pSceneLights.push_back(new SpotLight(pos, color, innerRadius, outerRadius));
-        m_lightMgr.addSpotLight(pos, color, innerRadius, outerRadius);
+        m_lightMgr.addSpotLight(pos, dir, color, innerRadius, outerRadius);
     }
 
     void addProspectiveCamera(

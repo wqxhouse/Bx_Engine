@@ -34,6 +34,7 @@ public:
 
     void addSpotLight(
         const Math::Vector3& position,
+        const Math::Vector3& direction,
         const Math::Vector3& color,
         float radius_in,
         float radius_out);
@@ -44,7 +45,7 @@ public:
 
     inline UINT GetLightDataSize() const { return GetLightCount() * sizeof(LightData); }
 
-    inline Light* GetLight(const UINT index) 
+    inline Light* GetLight(const UINT index)
     {
         return reinterpret_cast<Light*>(&(m_lightList[index]));
     }
@@ -57,9 +58,21 @@ public:
 private:
     struct LightData
     {
-        Math::Vector4 data[3];
+        Math::Vector4 data[4];
     };
 
     GLuint                 m_lightUboHandle;
     std::vector<LightData> m_lightList;
+
+    union LightFlags
+    {
+        UINT flags;
+
+        struct
+        {
+            UINT isRecreateLightUbo : 1;
+            UINT isUpdateLightUbo   : 1;
+            UINT reserve            : 30;
+        } bitField;
+    }m_lightFlags;
 };

@@ -19,26 +19,36 @@ public:
 	Light(const LightType lightType, const Math::Vector3& color);
 	~Light();
 
-    // TODO: Debug
-    //virtual void translate(Math::Vector3 transVector) {}
-    //virtual void rotate(const Math::Vector3& axis, const float angle) {}
+    virtual void translate(const Math::Vector3& transVector) {}
+    virtual void rotate(const Math::Vector3& axis, const float angle) {}
 
-    inline LightType     GetLightType()      const { return m_lightType;                            }
-    inline Math::Vector3 GetLightColor()     const { return m_color;                                }
-    inline Math::Vector4 GetLightColorVec4() const { return m_light_vec4;                           }
-    inline void*         GetDataPtr()              { return reinterpret_cast<void*>(&m_light_vec4); }
+    inline LightType     GetLightType()      const { return m_lightType;                              }
+    inline Math::Vector3 GetLightColor()     const { return m_color;                                  }
+    inline Math::Vector4 GetLightColorVec4() const { return m_light_vec4;                             }
+    inline void*         GetDataPtr()              { return reinterpret_cast<void*>(&m_light_vec4);   }
+
+    inline BOOL          IsLightEnable()     const { return ((enableLight == TRUE_F) ? TRUE : FALSE); }
+    inline void          EnableLight()             { enableLight = TRUE_F;                            }
+    inline void          DisableLight()            { enableLight = FALSE_F;                           }
+
+/// Light data1
 protected:
+    float     padding;     // Padding
+
+    LightType m_lightType; // Light type
+    BOOL_F    enableLight; // Check if light enabled
+
+/// Light data2
+private:
     union
     {
         struct
         {
             Math::Vector3 m_color;     // Light color
-            LightType     m_lightType; // Light type
+            float         padding;
         };
         Math::Vector4 m_light_vec4;
     };
-
-private:
 };
 
 class DirectionalLight : public Light
@@ -99,6 +109,7 @@ class SpotLight : public Light
 public:
 	SpotLight(
         const Math::Vector3& position,
+        const Math::Vector3& direction,
         const Math::Vector3& color,
         float radius_in,
         float radius_out);
@@ -117,17 +128,17 @@ private:
 
         struct
         {
-            Math::Vector3 m_position; // Light position
-            float         padding;
-
+            Math::Vector3 m_position;  // Light position
             float m_radius_in;
+
+            Math::Vector3 m_direction; // Light direction
             float m_radius_out;
-            float reserve[2];
         };
     };
 
 public:
-	inline Math::Vector3  GetPos()           const { return m_position; }
+	inline Math::Vector3  GetPos()           const { return m_position;      }
+    inline Math::Vector3  GetDirection()     const { return m_direction;     }
     inline Math::Vector4* GetSpotLightData()       { return &(m_v4[0]);      }
 
     inline float GetInnerRadius() const { return m_radius_in; }

@@ -6,8 +6,12 @@
 
 struct LightBase
 {
-    vec3  color;
+    vec2  padding1;
     float type;
+    float enable;
+    
+    vec3  color;
+    float padding2;
 };
 
 struct Light

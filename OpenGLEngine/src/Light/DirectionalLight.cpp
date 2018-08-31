@@ -3,10 +3,10 @@
 DirectionalLight::DirectionalLight(
     const Math::Vector3& direction,
     const Math::Vector3& color)
-	:Light(DIRECTIONAL_LIGHT, color)
+	: Light(DIRECTIONAL_LIGHT, color)
 {
 	m_direction      = Math::Vector3::Normalize(direction);
-    m_direction_vec4 = Math::Vector4(m_direction, 1.0f);
+    m_direction_vec4 = Math::Vector4(m_direction, 0.0f);
 }
 
 DirectionalLight::~DirectionalLight()

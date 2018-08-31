@@ -26,10 +26,11 @@ Scene::Scene(Setting* pSetting)
     m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
 
     m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    //m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+    /*m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
     m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
     m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));*/
 }
 
 BOOL Scene::initialize()
@@ -579,8 +580,8 @@ BOOL Scene::initializePhongRendering()
     // Directional light ubo
     m_directionalLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-            static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
-            static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
+                                               static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
+                                               static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_directionalLightUniformBufferIndex,
@@ -590,8 +591,8 @@ BOOL Scene::initializePhongRendering()
     // Point light ubo
     m_pointLightUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-            m_pointLight.GetDataSize(),
-            m_pointLight.GetDataPtr());
+                                               m_pointLight.GetDataSize(),
+                                               m_pointLight.GetDataPtr());
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_pointLightUniformBufferIndex,
