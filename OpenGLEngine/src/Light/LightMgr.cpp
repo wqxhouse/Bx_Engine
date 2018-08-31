@@ -1,7 +1,9 @@
 #include "LightMgr.h"
 
+#define UNCREATED_LIGHT_UBO_HANDLE 0xFFFFFFFF
+
 LightMgr::LightMgr()
-    : m_lightUboHandle(0xFFFFFFFF)
+    : m_lightUboHandle(UNCREATED_LIGHT_UBO_HANDLE)
 {
     m_lightFlags.flags = 0;
 }
@@ -12,21 +14,50 @@ LightMgr::~LightMgr()
 }
 
 void LightMgr::createLightUbo(
-    UniformBufferMgr* m_pUboMgr)
+    UniformBufferMgr* pUboMgr)
 {
-    m_lightUboHandle =
-        m_pUboMgr->createUniformBuffer(GL_DYNAMIC_DRAW,
+    if (m_lightUboHandle == UNCREATED_LIGHT_UBO_HANDLE)
+    { 
+        m_lightUboHandle =
+            pUboMgr->createUniformBuffer(GL_DYNAMIC_DRAW,
+                                         GetLightDataSize(),
+                                         GetLightData());
+    }
+    else
+    {
+        pUboMgr->recreateUniformBuffer(m_lightUboHandle,
+                                       GL_DYNAMIC_DRAW,
                                        GetLightDataSize(),
                                        GetLightData());
+    }
 }
 
 void LightMgr::updateLightUbo(
-    UniformBufferMgr* m_pUboMgr)
+    UniformBufferMgr* pUboMgr,
+    const GLuint      shaderProgram,
+    const GLchar*     uniformBufferBlockName)
 {
-    m_pUboMgr->updateUniformBufferData(
-        m_lightUboHandle, GetLightDataSize(), GetLightData());
+    if (m_lightFlags.bitField.isRecreateLightUbo == TRUE)
+    {
+        createLightUbo(pUboMgr);
+        bindLightUbo(pUboMgr, shaderProgram, uniformBufferBlockName);
+    }
+    else if (m_lightFlags.bitField.isUpdateLightUbo == TRUE)
+    {
+        pUboMgr->updateUniformBufferData(
+            m_lightUboHandle, GetLightDataSize(), GetLightData());
+    }
 
+    // Reset flags
     m_lightFlags.flags = 0;
+}
+
+void LightMgr::bindLightUbo(
+    UniformBufferMgr* m_pUboMgr,
+    const GLuint      shaderProgram,
+    const GLchar*     uniformBufferBlockName)
+{
+    m_pUboMgr->bindUniformBuffer(m_lightUboHandle, shaderProgram, uniformBufferBlockName);
 }
 
 void LightMgr::translateLight(
@@ -34,6 +65,8 @@ void LightMgr::translateLight(
     const Math::Vector3& transVector)
 {
     Light* pLight = reinterpret_cast<Light*>(&(m_lightList[index]));
+
+    assert(pLight != NULL);
 
     if (pLight != NULL)
     {
@@ -49,6 +82,8 @@ void LightMgr::rotateLight(
     const float          angle)
 {
     Light* pLight = reinterpret_cast<Light*>(&(m_lightList[index]));
+
+    assert(pLight != NULL);
 
     if (pLight != NULL)
     {

@@ -169,7 +169,7 @@ private:
         Light* pLights;
     };
 
-    std::vector<Light*> m_pSceneLights;
+    //std::vector<Light*> m_pSceneLights;
     //DirectionalLight m_directionalLight;
 
     PointLight m_pointLight;

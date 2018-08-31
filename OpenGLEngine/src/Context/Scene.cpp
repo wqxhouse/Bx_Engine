@@ -23,19 +23,19 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.fresnel   = 1.0f;
 
     // Test
-    m_pSceneLights.push_back(new DirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f)));
-
     m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    //m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
-    /*m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));*/
 }
 
 BOOL Scene::initialize()
 {
-    BOOL status = TRUE;
+    BOOL status = TRUE;    
+
+    // Create light ubo
+    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
+
+    // Create resolution ubo
+    m_resolutionUniformBufferIndex =
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Resolution), &(m_pSetting->resolution));
 
     // Shadow map initialization
     status = initializeShadowMap();
@@ -60,10 +60,6 @@ BOOL Scene::initialize()
         printf("Failed to initialize main scene PBRendering!\n");
         assert(FALSE);
     }
-
-    // Create resolution ubo
-    m_resolutionUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Resolution), &(m_pSetting->resolution));
 
     // Deferred shading initialization
     if (m_pSetting->m_graphicsSetting.renderingMethod != FORWARD_RENDERING)
@@ -161,13 +157,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        static_cast<DirectionalLight*>(m_pSceneLights[0])->
-            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        static_cast<DirectionalLight*>(m_pSceneLights[0])->
-            rotate(Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -237,15 +231,11 @@ void Scene::preDraw()
         shadowPass();
     }
 
-    m_uniformBufferMgr.updateUniformBufferData(
-        m_directionalLightUniformBufferIndex,
-        static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
-        static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
-
-    m_uniformBufferMgr.updateUniformBufferData(
-        m_pointLightUniformBufferIndex,
-        m_pointLight.GetDataSize(),
-        m_pointLight.GetDataPtr());
+    /// Updating UBO data
+    m_lightMgr.updateLightUbo(
+        &m_uniformBufferMgr,
+        m_deferredRenderingShader.GetShaderProgram(),
+        "lightArrayUniformBlock");
 
     if (useGlobalMaterial == TRUE)
     {
@@ -254,10 +244,10 @@ void Scene::preDraw()
             m_globalPbrMaterial.GetOpaqueCookTorranceMaterialDataSize(),
             m_globalPbrMaterial.GetCookTorranceMaterialData());
     }
+    /// End updating UBO data
 
-    if (/*(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING) &&*/
-        (enableRealtimeLightProbe                      == TRUE                                ||
-         m_pLightProbe->IsFirstDraw()                  == TRUE))
+    if (enableRealtimeLightProbe     == TRUE ||
+        m_pLightProbe->IsFirstDraw() == TRUE)
     {
         m_pLightProbe->draw();
     }
@@ -444,28 +434,6 @@ Scene::~Scene()
     }
     m_pSceneModelList.clear();
 
-    for (Light* pLight : m_pSceneLights)
-    {
-        switch (pLight->GetLightType())
-        {
-            case LightType::DIRECTIONAL_LIGHT:
-                SafeDelete(static_cast<DirectionalLight*>(pLight));
-                break;
-            case LightType::POINT_LIGHT:
-                SafeDelete(static_cast<PointLight*>(pLight));
-                break;
-            case LightType::SPOT_LIGHT:
-                SafeDelete(static_cast<SpotLight*>(pLight));
-                break;
-            default:
-                printf("Invalid light type!\n");
-                SafeDelete(pLight);
-
-                assert(FALSE);
-                break;
-        }
-    }
-
     for (Camera* pCamera : m_pCameraList)
     {
         switch (pCamera->GetCameraType())
@@ -528,7 +496,7 @@ BOOL Scene::initializeShadowMap()
     BOOL result = TRUE;
 
     m_pShadowMap = new ShadowMap(this,
-                                 m_pSceneLights[0],
+                                 m_lightMgr.GetLight(0),
                                  m_pSetting->resolution.width * 2,
                                  m_pSetting->resolution.height * 2,
                                  /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
@@ -540,7 +508,7 @@ BOOL Scene::initializeShadowMap()
 
 void Scene::shadowPass()
 {
-    m_pShadowMap->update(m_pSceneLights[0]);
+    m_pShadowMap->update(m_lightMgr.GetLight(0));
 
     glCullFace(GL_FRONT);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
@@ -577,27 +545,10 @@ BOOL Scene::initializePhongRendering()
         m_sceneShader.GetShaderProgram(),
         "transUniformBlock");
 
-    // Directional light ubo
-    m_directionalLightUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-                                               static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataSize(),
-                                               static_cast<DirectionalLight*>(m_pSceneLights[0])->GetDataPtr());
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
+    m_lightMgr.bindLightUbo(
+        &m_uniformBufferMgr,
         m_sceneShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
-
-    // Point light ubo
-    m_pointLightUniformBufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW,
-                                               m_pointLight.GetDataSize(),
-                                               m_pointLight.GetDataPtr());
-
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_pointLightUniformBufferIndex,
-        m_sceneShader.GetShaderProgram(),
-        "pointLightUniformBlock");
+        "lightArrayUniformBlock");
 
     // Material ubo
     m_materialUniformBufferIndex =
@@ -636,17 +587,10 @@ BOOL Scene::initializePBRendering()
         m_pbrShader.GetShaderProgram(),
         "transUniformBlock");
 
-    // Directional light ubo
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
+    m_lightMgr.bindLightUbo(
+        &m_uniformBufferMgr,
         m_pbrShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
-
-    // Point light ubo
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_pointLightUniformBufferIndex,
-        m_pbrShader.GetShaderProgram(),
-        "pointLightUniformBlock");
+        "lightArrayUniformBlock");
 
     m_pbrMaterialUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(
@@ -696,15 +640,10 @@ BOOL Scene::initializeDeferredRendering()
     }
 
     /// UBOs initialization
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_directionalLightUniformBufferIndex,
-        m_deferredRenderingShader.GetShaderProgram(),
-        "directionalLightUniformBlock");
 
-    // Light Ubo
-    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
-    m_uniformBufferMgr.bindUniformBuffer(
-        m_lightMgr.GetLightDataHandle(),
+    // Bind Light Ubo
+    m_lightMgr.bindLightUbo(
+        &m_uniformBufferMgr,
         m_deferredRenderingShader.GetShaderProgram(),
         "lightArrayUniformBlock");
 

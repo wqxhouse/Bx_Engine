@@ -27,14 +27,9 @@ uniform shadowMapResolutionUniformBlock
     Resolution m_shadowMapResolution;
 };
 
-layout (std140) uniform directionalLightUniformBlock
+layout (std140) uniform lightArrayUniformBlock
 {
-    DirectionalLight m_directionalLight[MAX_LIGHT_NUM];
-};
-
-layout (std140) uniform pointLightUniformBlock
-{
-    PointLight m_pointLight;
+    Light m_light[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform material
@@ -81,9 +76,9 @@ float castingShadow()
 
     depth *= 0.25f;*/
 	
-	if (depth < posLight.z - 0.0001f)
+	if (depth < posLight.z - 0.000001f)
 	{
-		shadowAttenuation = 0.05f;
+		shadowAttenuation = 0.0f;
 	}
 	
 	return shadowAttenuation;
@@ -109,18 +104,17 @@ vec3 calCookTorranceRadiance(
 
 void main()
 {
-    //vec3  dis     = posWorld - m_pointLight.pos;
-    //float dis2    = dot(dis, dis);
-    //float radius2 = m_pointLight.radius * m_pointLight.radius;
-    
-    //vec3 dir      = normalize(dis);
-    
-    //if (dis2 <= radius2)
-    {
+	vec3 radiance;
+	for (int i = 0; i < 1; ++i)
+	{
+		DirectionalLight m_directionalLight;
+		m_directionalLight.lightBase = m_light[i].lightBase;
+		m_directionalLight.dir = m_light[i].data[i].xyz;
+		
         vec3 view       = normalize(eyePos - posWorld);
         vec3 normal     = normalize(normalWorld);
-        vec3 dir        = normalize(m_directionalLight[0].dir);
-        vec3 lightColor = m_directionalLight[0].lightBase.color;
+        vec3 dir        = normalize(m_directionalLight.dir);
+        vec3 lightColor = m_directionalLight.lightBase.color;
 
         vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
 
@@ -141,17 +135,11 @@ void main()
 
         // TODO: Indirect radiance
         // Combine the direct radiance and environmentLightRadiance
-        vec3 radiance = lightRadiance + environmentLightRadiance;
-        
-        // Gamma correction
-        radiance = gammaCorrection(radiance);
-        outColor = vec4(radiance, 1.0f);
-        
-        // outColor = vec4(gammaCorrection(environmentLightRadiance), 1.0f);
+        radiance += lightRadiance + environmentLightRadiance;
     }
-    //else
-    {
-        //outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-    }
+
+    // Gamma correction
+    radiance = gammaCorrection(radiance);
+    outColor = vec4(radiance, 1.0f);
 }
 // End MainSceneCookTorrance.frag

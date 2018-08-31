@@ -20,16 +20,6 @@ layout(location = 6) uniform samplerCube lightProbeCubemap;
 // SSAO Texture
 layout(location = 7) uniform sampler2D ssaoTex;
 
-layout (std140) uniform directionalLightUniformBlock
-{
-    DirectionalLight m_directionalLight[MAX_LIGHT_NUM];
-};
-
-layout (std140) uniform pointLightUniformBlock
-{
-    PointLight m_pointLight;
-};
-
 layout (std140) uniform lightArrayUniformBlock
 {
     Light m_light[MAX_LIGHT_NUM];
@@ -102,70 +92,74 @@ void main()
     vec4 eyePosVec4 = viewMat * vec4(eyePos, 1.0f);
     vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
 
-    DirectionalLight m_directionalLight;
-    m_directionalLight.lightBase = m_light[0].lightBase;
-    m_directionalLight.dir = m_light[0].data[0].xyz;/**/
-    
-    // Transform light direction vector to view space
-    // vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
-    vec3 dir   = normalize(viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
-
-    // Casting shadow
-    float shadowAttenuation = gTexCoord.z;
-    float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
-
     /// Shading
     vec3 radiance; // Final radiance for every pixel from hemisphere
+	
+	// Loop all lights
+	for (int i = 0; i < 1; ++i)
+	{
+		DirectionalLight m_directionalLight;
+		m_directionalLight.lightBase = m_light[i].lightBase;
+		m_directionalLight.dir = m_light[i].data[i].xyz;/**/
+		
+		// Transform light direction vector to view space
+		// vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
+		vec3 dir   = normalize(viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
 
-    vec3 view       = normalize(eyePosView - posView);
-    vec3 normal     = normalize(normalView);
-    // vec3 lightColor = m_directionalLight[0].lightBase.color;
-    vec3 lightColor = m_directionalLight.lightBase.color;
+		// Casting shadow
+		float shadowAttenuation = gTexCoord.z;
+		float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
-    if (ns > 0.0f)
-    {
-        // Get material data
-        vec3 environmentLight  = texture(environmentLightTex, gBufferTexCoord).xyz;
+		vec3 view       = normalize(eyePosView - posView);
+		vec3 normal     = normalize(normalView);
+		// vec3 lightColor = m_directionalLight[0].lightBase.color;
+		vec3 lightColor = m_directionalLight.lightBase.color;
 
-        // Calculate diffuse color
-        float NoL                = clamp(dot(normal, -dir), 0.0f, 1.0f);
-        vec3 diffuseCoefficient  = albedo * NoL;
+		if (ns > 0.0f)
+		{
+			// Get material data
+			vec3 environmentLight  = texture(environmentLightTex, gBufferTexCoord).xyz;
 
-        // Calculate specular color
-        vec3 reflection           = normalize(2 * NoL * normal + dir);    
-        float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
-        vec3 specularCoefficient  = specular * pow(VoR, ns);
+			// Calculate diffuse color
+			float NoL                = clamp(dot(normal, -dir), 0.0f, 1.0f);
+			vec3 diffuseCoefficient  = albedo * NoL;
 
-        specularCoefficient  *= shadowSpecularAttenuation;
-        vec3 phongShdingColor =
-            clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
+			// Calculate specular color
+			vec3 reflection           = normalize(2 * NoL * normal + dir);    
+			float VoR                 = clamp(dot(view, reflection), 0.0f, 1.0f);    
+			vec3 specularCoefficient  = specular * pow(VoR, ns);
 
-        phongShdingColor *= shadowAttenuation;
-        radiance = phongShdingColor;
-    }
-    else
-    {
-        // Get material data
-        float roughness = specular.x;
-        float matellic  = specular.y;
-        float fresnel   = specular.z;
+			specularCoefficient  *= shadowSpecularAttenuation;
+			vec3 phongShdingColor =
+				clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
 
-        CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
+			phongShdingColor *= shadowAttenuation;
+			radiance += phongShdingColor;
+		}
+		else
+		{
+			// Get material data
+			float roughness = specular.x;
+			float matellic  = specular.y;
+			float fresnel   = specular.z;
 
-        vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
-        // Shadow casting
-        directLightRadiance *= shadowAttenuation;
+			CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
 
-        // vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
-        vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
-        vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
-        
-        vec3 reflectionView           = (viewMat * vec4(reflection, 0.0f)).xyz;
-        vec3 environmentLightRadiance =
-            calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
+			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
+			// Shadow casting
+			directLightRadiance *= shadowAttenuation;
 
-        radiance = directLightRadiance + environmentLightRadiance;
-    }
+			// vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
+			vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
+			vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
+			
+			vec3 reflectionView           = (viewMat * vec4(reflection, 0.0f)).xyz;
+			vec3 environmentLightRadiance =
+				calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
+
+			radiance += directLightRadiance + environmentLightRadiance;
+		}
+	}
     /// Finish Shading
 
     // SSAO

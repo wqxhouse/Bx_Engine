@@ -25,14 +25,9 @@ uniform shadowMapResolutionUniformBlock
     Resolution m_shadowMapResolution;
 };
 
-layout (std140) uniform directionalLightUniformBlock
+layout (std140) uniform lightArrayUniformBlock
 {
-    DirectionalLight m_directionalLight;
-};
-
-layout (std140) uniform pointLightUniformBlock
-{
-    PointLight m_pointLight;
+    Light m_light[MAX_LIGHT_NUM];
 };
 
 layout (std140) uniform material
@@ -84,56 +79,46 @@ float castingShadow()
 
 void main()
 {
-    vec3 view       = normalize(eyePos - posWorld);
-    vec3 dir        = m_directionalLight.dir;
-    vec3 lightColor = m_directionalLight.lightBase.color;
-    
-    float NoL = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
-    vec3 reflection = normalize(2 * NoL * normalWorld + dir);
-    
-    float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
-    
-    float specularCoefficient = pow(VoR, m_phongMaterial.ks.w);
-    
-    float shadowAttenuation = castingShadow();
-    float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
+	for (int i = 0; i < 1; ++i)
+	{
+		DirectionalLight m_directionalLight;
+		m_directionalLight.lightBase = m_light[i].lightBase;
+		m_directionalLight.dir = m_light[i].data[i].xyz;
+		
+		vec3 view       = normalize(eyePos - posWorld);
+		vec3 dir        = m_directionalLight.dir;
+		vec3 lightColor = m_directionalLight.lightBase.color;
+		
+		float NoL = clamp(dot(normalWorld, -dir), 0.0f, 1.0f);
+		vec3 reflection = normalize(2 * NoL * normalWorld + dir);
+		
+		float VoR = clamp(dot(view, reflection), 0.0f, 1.0f);
+		
+		float specularCoefficient = pow(VoR, m_phongMaterial.ks.w);
+		
+		float shadowAttenuation = castingShadow();
+		float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
-    vec4 texColor = texture(sampler, fragTexCoord);
-    
-    // Light Probe
-    vec3 environmentLight = texture(lightProbeCubemap, normalWorld).xyz;    
-    lightColor += environmentLight;
-    
-    vec3 diffuseColor = clamp(NoL * m_phongMaterial.kd * lightColor, 0.0f, 1.0f);
-    vec3 specColor    = clamp(specularCoefficient * m_phongMaterial.ks.xyz * lightColor, 0.0f, 1.0f);
-    
-    // Shadow casting(specular)
-    specColor *= shadowSpecularAttenuation;
-    
-    vec3 outColorVec3 = clamp(((m_phongMaterial.ka + diffuseColor + specColor) * lightColor), 0.0f, 1.0f);// * texColor;
-    
-    // Shadow casting
-    outColorVec3 *= shadowAttenuation;
-    
-    // Gamma correction
-    outColorVec3 = gammaCorrection(outColorVec3);
-    
-    outColor = vec4(outColorVec3, 1.0f);
-    
-    //vec3  dis     = posWorld - m_pointLight.pos;
-    //float dis2    = dot(dis, dis);
-    //float radius2 = m_pointLight.radius * m_pointLight.radius;
-    
-    //vec3 dir      = normalize(dis);
-    
-    //if (dis2 <= radius2)
-    //{
-        //vec3 lightColor = m_pointLight.lightBase.color;
-        
-        
-    //}
-    //else
-    //{
-        //outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-    //}
+		vec4 texColor = texture(sampler, fragTexCoord);
+		
+		// Light Probe
+		vec3 environmentLight = texture(lightProbeCubemap, normalWorld).xyz;    
+		lightColor += environmentLight;
+		
+		vec3 diffuseColor = clamp(NoL * m_phongMaterial.kd * lightColor, 0.0f, 1.0f);
+		vec3 specColor    = clamp(specularCoefficient * m_phongMaterial.ks.xyz * lightColor, 0.0f, 1.0f);
+		
+		// Shadow casting(specular)
+		specColor *= shadowSpecularAttenuation;
+		
+		vec3 outColorVec3 = clamp(((m_phongMaterial.ka + diffuseColor + specColor) * lightColor), 0.0f, 1.0f);// * texColor;
+		
+		// Shadow casting
+		outColorVec3 *= shadowAttenuation;
+		
+		// Gamma correction
+		outColorVec3 = gammaCorrection(outColorVec3);
+		
+		outColor = vec4(outColorVec3, 1.0f);
+    }
 }
