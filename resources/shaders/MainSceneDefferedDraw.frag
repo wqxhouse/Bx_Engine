@@ -34,10 +34,11 @@ uniform vec3 eyePos;
 
 uniform mat4 viewMat;
 
-out vec4 outColor;
-
 // Test
 uniform int useSsao;
+uniform int lightNum;
+
+out vec4 outColor;
 
 vec3 calCookTorranceRadiance(
     const vec3                 view,
@@ -96,11 +97,11 @@ void main()
     vec3 radiance; // Final radiance for every pixel from hemisphere
 	
 	// Loop all lights
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < lightNum; ++i)
 	{
 		DirectionalLight m_directionalLight;
 		m_directionalLight.lightBase = m_light[i].lightBase;
-		m_directionalLight.dir = m_light[i].data[i].xyz;/**/
+		m_directionalLight.dir = m_light[i].data[0].xyz;/**/
 		
 		// Transform light direction vector to view space
 		// vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
@@ -113,7 +114,7 @@ void main()
 		vec3 view       = normalize(eyePosView - posView);
 		vec3 normal     = normalize(normalView);
 		// vec3 lightColor = m_directionalLight[0].lightBase.color;
-		vec3 lightColor = m_directionalLight.lightBase.color;
+		vec3 lightColor = m_light[i].lightBase.color;
 
 		if (ns > 0.0f)
 		{
@@ -148,16 +149,20 @@ void main()
 			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
 			// Shadow casting
 			directLightRadiance *= shadowAttenuation;
+			radiance += directLightRadiance;
 
-			// vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
-			vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
-			vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
-			
-			vec3 reflectionView           = (viewMat * vec4(reflection, 0.0f)).xyz;
-			vec3 environmentLightRadiance =
-				calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
+            if (i == 0)
+            {
+                // vec3 reflection               = normalize(2 * dot(normal, view) * normal - view);
+                vec3 reflection               = texture(environmentLightTex, gBufferTexCoord).xyz;
+                vec3 environmentLight         = texture(lightProbeCubemap, reflection, material.roughness * 7.0f).xyz;
+                
+                vec3 reflectionView           = (viewMat * vec4(reflection, 0.0f)).xyz;
+                vec3 environmentLightRadiance =
+                    calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
 
-			radiance += directLightRadiance + environmentLightRadiance;
+                radiance += environmentLightRadiance;
+            }
 		}
 	}
     /// Finish Shading

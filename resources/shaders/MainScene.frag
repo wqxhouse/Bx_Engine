@@ -37,6 +37,8 @@ layout (std140) uniform material
 
 uniform vec3 eyePos;
 
+uniform int lightNum;
+
 out vec4 outColor;
 
 float castingShadow()
@@ -79,11 +81,11 @@ float castingShadow()
 
 void main()
 {
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < lightNum; ++i)
 	{
 		DirectionalLight m_directionalLight;
 		m_directionalLight.lightBase = m_light[i].lightBase;
-		m_directionalLight.dir = m_light[i].data[i].xyz;
+		m_directionalLight.dir = m_light[i].data[0].xyz;
 		
 		vec3 view       = normalize(eyePos - posWorld);
 		vec3 dir        = m_directionalLight.dir;

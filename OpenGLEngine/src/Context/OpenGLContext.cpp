@@ -8,8 +8,6 @@ OpenGLContext::OpenGLContext(Setting* pSetting)
     : m_scene(pSetting)
 {
     this->setting = setting;
-
-    initialize();
 }
 
 void OpenGLContext::initialize()

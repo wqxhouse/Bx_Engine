@@ -23,12 +23,12 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.fresnel   = 1.0f;
 
     // Test
-    m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    //m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 }
 
 BOOL Scene::initialize()
 {
-    BOOL status = TRUE;    
+    BOOL status = TRUE;
 
     // Create light ubo
     m_lightMgr.createLightUbo(&m_uniformBufferMgr);
@@ -357,6 +357,16 @@ void Scene::drawScene()
         GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
+        GLint lightNumLocation = glGetUniformLocation(sceneShaderProgram, "lightNum");
+        if (lightNumLocation >= 0)
+        {
+            glUniform1i(lightNumLocation, m_lightMgr.GetLightCount());
+        }
+        else
+        {
+            printf("Can't find light number uniform. \n");
+        }
+
         if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
         {
             m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
@@ -409,6 +419,16 @@ void Scene::deferredDrawScene()
 
             glActiveTexture(GL_TEXTURE7);
             glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+        GLint lightNumLocation = glGetUniformLocation(gShaderProgram, "lightNum");
+        if (lightNumLocation >= 0)
+        {
+            glUniform1i(lightNumLocation, m_lightMgr.GetLightCount());
+        }
+        else
+        {
+            printf("Can't find light number uniform. \n");
         }
 
         glEnable(GL_BLEND);

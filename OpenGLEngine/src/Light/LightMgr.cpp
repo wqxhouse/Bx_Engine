@@ -30,6 +30,8 @@ void LightMgr::createLightUbo(
                                        GetLightDataSize(),
                                        GetLightData());
     }
+
+    m_lightFlags.bitField.isRecreateLightUbo = FALSE;
 }
 
 void LightMgr::updateLightUbo(

@@ -8,13 +8,13 @@ public:
 	OpenGLContext(Setting* pSetting);
 	~OpenGLContext();
 
+    void initialize();
     void run();
 
     inline GLFWwindow* GetWindow() const { return window;   }
     inline Scene*      GetScene()        { return &m_scene; }
 
 private:
-	void initialize();
 #if _DEBUG
 	GLint success;
 	GLchar compileLog[512];

@@ -20,8 +20,8 @@ ShadowMap::~ShadowMap()
 
 BOOL ShadowMap::initialize()
 {
-    float halfWidth  = static_cast<float>(m_shadowResolution.width)  * 0.01f;
-    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.01f;
+    float halfWidth  = static_cast<float>(m_shadowResolution.width)  * 0.005f;
+    float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.005f;
 
     float offset = 0.0f;
 
