@@ -99,13 +99,46 @@ void main()
 	// Loop all lights
 	for (int i = 0; i < lightNum; ++i)
 	{
-		DirectionalLight m_directionalLight;
-		m_directionalLight.lightBase = m_light[i].lightBase;
-		m_directionalLight.dir = m_light[i].data[0].xyz;/**/
-		
-		// Transform light direction vector to view space
-		// vec3 dir   = normalize(viewMat * vec4(m_directionalLight[0].dir, 0.0f)).xyz;
-		vec3 dir   = normalize(viewMat * vec4(m_directionalLight.dir, 0.0f)).xyz;
+		vec3 lightColor = m_light[i].lightBase.color;
+
+        vec3 dir;
+        switch(int(m_light[i].lightBase.type))
+        {
+            case 0: // Directional Light
+            {
+                // Transform light direction vector to view space
+                dir = normalize(viewMat * vec4(m_light[i].data[0].xyz, 0.0f)).xyz;
+                break;
+            }
+            case 1: // Point Light
+            {
+                float radius  = m_light[i].data[0].w;
+                float radius2 = radius * radius;
+
+                // Transform light position vector to view space
+                vec4 lightViewPosVec4 = viewMat * vec4(m_light[i].data[0].xyz, 1.0f);
+                vec3 lightViewPos     = lightViewPosVec4.xyz / lightViewPosVec4.w;
+
+                vec3  dirVector = posView - lightViewPos;
+                float dis2      = dot(dirVector, dirVector);
+
+                // Pixel is outside the range of point light, discard
+                if (dis2 > radius2) { continue; }
+
+                dir = normalize(dirVector);
+
+                // Debug
+                dir = m_light[i].data[0].xyz;
+
+                break;
+            }
+            case 2: // Spot Light
+            {
+                break;
+            }
+            default:
+                break;
+        }
 
 		// Casting shadow
 		float shadowAttenuation = gTexCoord.z;
@@ -113,8 +146,6 @@ void main()
 
 		vec3 view       = normalize(eyePosView - posView);
 		vec3 normal     = normalize(normalView);
-		// vec3 lightColor = m_directionalLight[0].lightBase.color;
-		vec3 lightColor = m_light[i].lightBase.color;
 
 		if (ns > 0.0f)
 		{
@@ -161,7 +192,7 @@ void main()
                 vec3 environmentLightRadiance =
                     calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
 
-                radiance += environmentLightRadiance;
+                // radiance += environmentLightRadiance;
             }
 		}
 	}

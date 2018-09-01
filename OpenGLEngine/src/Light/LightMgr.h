@@ -80,8 +80,7 @@ private:
         {
             UINT isRecreateLightUbo : 1;
             UINT isUpdateLightUbo   : 1;
-            UINT isBindLightUbo     : 1;
-            UINT reserve            : 29;
+            UINT reserve            : 30;
         } bitField;
     }m_lightFlags;
 };
