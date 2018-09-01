@@ -158,6 +158,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Effect\Skybox.h" />
     <ClInclude Include="src\Light\Light.h" />
     <ClInclude Include="src\Light\LightMgr.h" />
+    <ClInclude Include="src\Light\LightProbe.h" />
     <ClInclude Include="src\Material\Material.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix2x2.h" />
@@ -177,7 +178,6 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Model\Primitives\Cube.h" />
     <ClInclude Include="src\Model\Primitives\Primitive.h" />
     <ClInclude Include="src\Model\Primitives\Quad.h" />
-    <ClInclude Include="src\Probe\LightProbe.h" />
     <ClInclude Include="src\Shader\Shader.h" />
     <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Shadow\ShadowMap.h" />
@@ -204,6 +204,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Light\DirectionalLight.cpp" />
     <ClCompile Include="src\Light\Light.cpp" />
     <ClCompile Include="src\Light\LightMgr.cpp" />
+    <ClCompile Include="src\Light\LightProbe.cpp" />
     <ClCompile Include="src\Light\PointLight.cpp" />
     <ClCompile Include="src\Light\SpotLight.cpp" />
     <ClCompile Include="src\Material\Material.cpp" />
@@ -217,7 +218,6 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Model\Primitives\Cube.cpp" />
     <ClCompile Include="src\Model\Primitives\Primitive.cpp" />
     <ClCompile Include="src\Model\Primitives\Quad.cpp" />
-    <ClCompile Include="src\Probe\LightProbe.cpp" />
     <ClCompile Include="src\Shader\Shader.cpp" />
     <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Shadow\ShadowMap.cpp" />

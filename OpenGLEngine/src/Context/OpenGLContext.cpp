@@ -24,9 +24,10 @@ void OpenGLContext::initialize()
     window = glfwCreateWindow(setting.resolution.width,
                               setting.resolution.height,
                               "BXS OpenGL Engine",
-                              nullptr,
-                              nullptr);
-    if (window == nullptr)
+                              // glfwGetPrimaryMonitor(), // Full Screen
+                              NULL,
+                              NULL);
+    if (window == NULL)
     {
         printf("Fail to create GLFW window.\n");
         glfwTerminate();

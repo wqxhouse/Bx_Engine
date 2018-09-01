@@ -7,7 +7,7 @@
 #include "../Buffer/GBuffer.h"
 #include "../Shadow/SSAO.h"
 #include "../Effect/Skybox.h"
-#include "../Probe/LightProbe.h"
+#include "../Light/LightProbe.h"
 
 #include "Setting.h"
 

@@ -6,7 +6,7 @@
 void RunObjLoaderTest()
 {
 	ObjModelLoader loader;
-	Model *pModel = nullptr;
+	Model *pModel = NULL;
 
 	string objPath = "C:/Study_SSD/Graphics/OpenGLTemplate/Resources/model/Cube/cube.obj";
 		//"C:/Study_SSD/Graphics/OpenGLTemplate/Resources/model/sphere.obj";

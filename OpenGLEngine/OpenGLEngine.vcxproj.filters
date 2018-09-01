@@ -52,9 +52,6 @@
     <Filter Include="src\Effect">
       <UniqueIdentifier>{ae9c5671-ecc6-480d-887d-7d9f5e3eeacb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Probe">
-      <UniqueIdentifier>{da6b7e85-6d55-4f00-abad-12ea226a7ae7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector3.h">
@@ -183,10 +180,10 @@
     <ClInclude Include="src\Math\Matrix2x2.h">
       <Filter>src\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Probe\LightProbe.h">
-      <Filter>src\Probe</Filter>
-    </ClInclude>
     <ClInclude Include="src\Light\LightMgr.h">
+      <Filter>src\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Light\LightProbe.h">
       <Filter>src\Light</Filter>
     </ClInclude>
   </ItemGroup>
@@ -308,10 +305,10 @@
     <ClCompile Include="src\Model\Primitives\Primitive.cpp">
       <Filter>src\Model\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="src\Probe\LightProbe.cpp">
-      <Filter>src\Probe</Filter>
-    </ClCompile>
     <ClCompile Include="src\Light\LightMgr.cpp">
+      <Filter>src\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light\LightProbe.cpp">
       <Filter>src\Light</Filter>
     </ClCompile>
   </ItemGroup>
