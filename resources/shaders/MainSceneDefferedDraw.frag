@@ -188,7 +188,7 @@ void main()
                 vec3 environmentLightRadiance =
                     calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
 
-                radiance += environmentLightRadiance;
+                // radiance += environmentLightRadiance;
             }
 		}
 	}
