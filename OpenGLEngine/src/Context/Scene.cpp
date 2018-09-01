@@ -18,7 +18,7 @@ Scene::Scene(Setting* pSetting)
       enableRealtimeLightProbe(FALSE)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
-    m_globalPbrMaterial.roughness = 0.2f;
+    m_globalPbrMaterial.roughness = 0.5f;
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
 
