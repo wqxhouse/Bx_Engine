@@ -81,7 +81,7 @@ float castingShadow()
     }
     depth *= 0.25f;*/
 
-	if (depth < posLight.z - 0.000005f)
+	if (depth < posLight.z - 0.000009f)
 	{
 		shadowAttenuation = 0.0f;
 	}

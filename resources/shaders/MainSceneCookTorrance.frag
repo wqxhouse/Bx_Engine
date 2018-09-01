@@ -114,12 +114,40 @@ void main()
         
 	for (int i = 0; i < lightNum; ++i)
 	{
-		DirectionalLight m_directionalLight;
-		m_directionalLight.lightBase = m_light[i].lightBase;
-		m_directionalLight.dir = m_light[i].data[0].xyz;
-		
-        vec3 dir        = normalize(m_directionalLight.dir);
-        vec3 lightColor = m_directionalLight.lightBase.color;
+        vec3 lightColor = m_light[i].lightBase.color;
+
+		vec3 dir;
+        switch(m_light[i].lightBase.type)
+        {
+            case 0: // Directional Light
+            {
+                // Transform light direction vector to view space
+                dir = normalize(m_light[i].data[0].xyz);
+                break;
+            }
+            case 1: // Point Light
+            {
+                float radius  = m_light[i].data[0].w;
+                float radius2 = radius * radius;
+
+                // Transform light position vector to view space
+                vec3  dirVector = posWorld - m_light[i].data[0].xyz;
+                float dis2      = dot(dirVector, dirVector);
+
+                // Pixel is outside the range of point light, discard
+                if (dis2 > radius2) { continue; }
+
+                dir = normalize(dirVector);
+
+                break;
+            }
+            case 2: // Spot Light
+            {
+                break;
+            }
+            default:
+                break;
+        }
 
         float shadowAttenuation         = castingShadow();
         //float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
