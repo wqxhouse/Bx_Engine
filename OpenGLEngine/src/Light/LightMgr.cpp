@@ -111,7 +111,7 @@ void LightMgr::addDirectionalLight(
 void LightMgr::addPointLight(
     const Math::Vector3& position,
     const Math::Vector3& color,
-    float radius)
+    const float radius)
 {
     PointLight pointLight(position, color, radius);
 
@@ -126,10 +126,11 @@ void LightMgr::addSpotLight(
     const Math::Vector3& position,
     const Math::Vector3& direction,
     const Math::Vector3& color,
-    float radius_in,
-    float radius_out)
+    const float          distance,
+    const float          in_angle,
+    const float          out_angle)
 {
-    SpotLight spotLight(position, direction, color, radius_in, radius_out);
+    SpotLight spotLight(position, direction, color, distance, in_angle, out_angle);
 
     LightData lightData = *(reinterpret_cast<LightData*>(&spotLight));
 

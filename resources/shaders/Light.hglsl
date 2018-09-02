@@ -42,10 +42,9 @@ struct SpotLight
 {
     LightBase lightBase;
     
-    vec3  pos; float posPadding;
-    
-    // vec4 radiusData
+    vec3  pos;
     float innerRadius;
+    
+    vec3  direction;
     float outerRadius;
-    vec2  padding;
 };

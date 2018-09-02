@@ -95,6 +95,7 @@ void main()
 
     /// Shading
     vec3 radiance; // Final radiance for every pixel from hemisphere
+    float attenuation = 1.0f; // Attenuations for radiance
 	
 	// Loop all lights
 	for (int i = 0; i < lightNum; ++i)
@@ -130,6 +131,24 @@ void main()
             }
             case 2: // Spot Light
             {
+                vec3  lightDir      = normalize(viewMat * vec4(m_light[i].data[1].xyz, 0.0f)).xyz;
+                float innerCosTheta = m_light[i].data[0].w;
+                float outerCosTheta = m_light[i].data[1].w;
+                
+                // Transform light position vector to view space
+                vec4 lightViewPosVec4 = viewMat * vec4(m_light[i].data[0].xyz, 1.0f);
+                vec3 lightViewPos     = lightViewPosVec4.xyz / lightViewPosVec4.w;
+                
+                vec3 dirVector = posView - lightViewPos;
+                dir            = normalize(dirVector);
+                
+                float cosTheta = dot(lightDir, dir);
+
+                // Pixel is outside the range of spot light, discard
+                if      (cosTheta < outerCosTheta) { continue; }
+                // Pixel is between the inner and outer theta range, add attenuation effect
+                else if (cosTheta < innerCosTheta) { attenuation = 0.8f; }
+
                 break;
             }
             default:
@@ -162,7 +181,7 @@ void main()
 				clamp(((environmentLight + diffuseCoefficient + specularCoefficient) * lightColor), 0.0f, 1.0f);
 
 			phongShdingColor *= shadowAttenuation;
-			radiance += phongShdingColor;
+			radiance += phongShdingColor * attenuation;
 		}
 		else
 		{
@@ -176,7 +195,7 @@ void main()
 			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
 			// Shadow casting
 			directLightRadiance *= shadowAttenuation;
-			radiance += directLightRadiance;
+			radiance += directLightRadiance * attenuation;
 
             if (i == 0)
             {

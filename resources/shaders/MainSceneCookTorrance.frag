@@ -111,6 +111,8 @@ void main()
     vec3 normal     = normalize(normalWorld);
 
     vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
+    
+    float attenuation = 1.0f;
         
 	for (int i = 0; i < lightNum; ++i)
 	{
@@ -143,6 +145,31 @@ void main()
             }
             case 2: // Spot Light
             {
+                vec3  lightDir      = normalize(m_light[i].data[1].xyz);
+                float innerCosTheta = m_light[i].data[0].w;
+                float outerCosTheta = m_light[i].data[1].w;
+                
+                vec3  dirVector = posWorld - m_light[i].data[0].xyz;                
+                dir             = normalize(dirVector);
+                
+                float cosTheta = dot(lightDir, dir);
+                
+                // Pixel is outside the range of spot light, discard
+                if      (cosTheta < outerCosTheta) { continue; }
+                // Pixel is between the inner and outer theta range, add attenuation effect
+                else if (cosTheta < innerCosTheta) { attenuation = 0.8f; }
+
+                // TODO: Distance check
+                // float dis2      = dot(dirVector, dirVector);
+                // float cosTheta2 = cosTheta * cosTheta;
+                // dis2           *= cosTheta2;
+                // 
+                // float range  = m_light[i].lightBase.padding1.y;
+                // float range2 = range * range;
+
+                // Pixel is outside the range of spot light, discard
+                // if (dis2 > range2) { continue; }
+                
                 break;
             }
             default:
@@ -157,7 +184,7 @@ void main()
         // Shadow casting
         // lightRadiance *= shadowAttenuation;
         
-        radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance);
+        radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance * attenuation);
     }
 
     // Light Probe

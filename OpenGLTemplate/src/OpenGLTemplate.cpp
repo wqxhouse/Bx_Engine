@@ -26,9 +26,13 @@ void OpenGLTemplate::createDefaultScene()
     Scene* pScene = m_context.GetScene();
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
-    pScene->AddPointLight(Vector3(0.0f, 5.0f, -5.0f), Vector3(0.5f, 0.0f, 0.0f), 10.0f);
+    pScene->AddSpotLight(
+        Vector3(0.0f, 2.0f, 2.0f), Vector3(0.0f, -1.0f, -2.0f), Vector3(1.0f, 0.0f, 0.0f), 5.0f,
+        Math::Radians(75.0f), Math::Radians(90.0f));
+
+    /*pScene->AddPointLight(Vector3(0.0f, 5.0f, -5.0f), Vector3(0.5f, 0.0f, 0.0f), 10.0f);
     pScene->AddPointLight(Vector3(5.0f, 5.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 10.0f);
-    pScene->AddPointLight(Vector3(-5.0f, 5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 10.0f);
+    pScene->AddPointLight(Vector3(-5.0f, 5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 10.0f);*/
 
     /*pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.0f, 0.0f));
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f,  1.0f), Vector3(0.0f, 0.5f, 0.0f));

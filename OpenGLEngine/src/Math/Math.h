@@ -2,8 +2,20 @@
 
 #include "Quaternion.h"
 
+#ifndef PI_DIVIDE_ONE_HUNDRED_EIGHTEEN
+#define PI_DIVIDE_ONE_HUNDRED_EIGHTEEN 0.017453292f
+#endif // PI_DIVIDE_180
+
+#ifndef ONE_HUNDRED_EIGHTEEN_DIVIDE_PI
+#define ONE_HUNDRED_EIGHTEEN_DIVIDE_PI 57.29577951f
+#endif // 180_DIVIDE_PI
+
 namespace Math
 {
+    float Radians(const float degree);
+
+    float Degree(const float radiance);
+
 	Vector3 rotate(const Vector3& direction, const Vector3& axis, float angle);
 
 	Vector3 rotate(const Vector3& direction, const Vector3& axis, float angle1, float angle2, float u);

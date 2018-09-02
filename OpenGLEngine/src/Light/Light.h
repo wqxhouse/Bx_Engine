@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Core/OpenGLPCH.h"
 #include "../Math/Math.h"
+#include "../Shadow/ShadowMap.h"
 
 enum LightType
 {
@@ -33,7 +33,7 @@ public:
 
 /// Light data1
 protected:
-    float     padding;     // Padding
+    float     reserve;     // Padding
 
     LightType m_lightType; // Light type
     BOOL_F    enableLight; // Check if light enabled
@@ -44,8 +44,8 @@ private:
     {
         struct
         {
-            Math::Vector3 m_color;     // Light color
-            float         padding;
+            Math::Vector3 m_color;      // Light color
+            ShadowMap*    m_pShadowMap; // Shadow map pointer
         };
         Math::Vector4 m_light_vec4;
     };
@@ -57,7 +57,6 @@ public:
 	DirectionalLight(const Math::Vector3& direction, const Math::Vector3& color);
 	~DirectionalLight();
 
-    void translate(Math::Vector3 transVector) {}
     void rotate(const Math::Vector3& axis, const float angle);
 
     static inline UINT GetDataSize() { return (sizeof(DirectionalLight));  }
@@ -85,7 +84,6 @@ public:
 	~PointLight();
 
     void translate(const Math::Vector3& transVector);
-    void rotate(const Math::Vector3& axis, const float angle);
 
     static inline UINT GetDataSize() { return (sizeof(PointLight)); }
 
@@ -111,12 +109,13 @@ public:
         const Math::Vector3& position,
         const Math::Vector3& direction,
         const Math::Vector3& color,
-        float radius_in,
-        float radius_out);
+        float distance,
+        float in_angle,
+        float out_angle);
 
 	~SpotLight();
 
-    void translate(Math::Vector3 transVector);
+    void translate(const Math::Vector3& transVector);
     void rotate(const Math::Vector3& axis, const float angle);
 
     static inline UINT GetDataSize() { return (sizeof(SpotLight)); }
@@ -129,10 +128,10 @@ private:
         struct
         {
             Math::Vector3 m_position;  // Light position
-            float m_radius_in;
+            float m_in_cosTheta;
 
             Math::Vector3 m_direction; // Light direction
-            float m_radius_out;
+            float m_out_cosTheta;
         };
     };
 
@@ -141,8 +140,11 @@ public:
     inline Math::Vector3  GetDirection()     const { return m_direction;     }
     inline Math::Vector4* GetSpotLightData()       { return &(m_v4[0]);      }
 
-    inline float GetInnerRadius() const { return m_radius_in; }
-    inline float GetOuterRadius() const { return m_radius_out; }
+    inline float GetInnerAngleRadians() const { return std::acos(m_in_cosTheta)  * 2.0f; }
+    inline float GetOuterAngleRadians() const { return std::acos(m_out_cosTheta) * 2.0f; }
+
+    inline float GetInnerAngleDegree() const  { return Math::Degree(GetInnerAngleRadians()); }
+    inline float GetOuterAngleDegree() const  { return Math::Degree(GetOuterAngleRadians()); }
 };
 
 //TODO: other kinds of lights
