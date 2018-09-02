@@ -4,7 +4,10 @@
 
 namespace Math
 {
-	Vector3 rotate(const Vector3& direction, const Vector3& axis, float angle)
+	Vector3 rotate(
+        const Vector3& direction,
+        const Vector3& axis,
+        float          angle)
 	{
 		Quaternion q(axis, angle);
 		Vector4 v(direction, 0.0f);
@@ -14,8 +17,11 @@ namespace Math
 		return result.m_v;
 	}
 
-	Vector3 rotate(const Vector3& direction, const Vector3 & axis,
-		           float angle1, float angle2, float u)
+	Vector3 rotate(const Vector3& direction,
+                   const Vector3& axis,
+		           float          angle1,
+                   float          angle2,
+                   float          u)
 	{
 		Quaternion q1(axis, angle1);
 		Quaternion q2(axis, angle2);
@@ -28,7 +34,10 @@ namespace Math
 		return result.m_v;
 	}
 
-	Vector3 rotate(const Vector3& direction, const std::vector<Vector3>& axisList, const std::vector<float> angles)
+	Vector3 rotate(
+        const Vector3& direction,
+        const std::vector<Vector3>& axisList,
+        const std::vector<float> angles)
 	{
 		assert(axisList.size() != angles.size());
 

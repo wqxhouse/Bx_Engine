@@ -143,6 +143,11 @@ void main()
             }
             case 2: // Spot Light
             {
+                vec3 lightDir = m_light[i].data[1].xyz;
+                
+                dir = normalize(posWorld - m_light[i].data[0].xyz);
+                
+                
                 break;
             }
             default:

@@ -33,7 +33,6 @@ public:
         const Math::Vector3& direction,
         const Math::Vector3& color)
     {
-        //m_pSceneLights.push_back(new DirectionalLight(direction, color));
         m_lightMgr.addDirectionalLight(direction, color);
     }
 
@@ -42,7 +41,6 @@ public:
         const Math::Vector3& color,
         const float          radius)
     {
-        //m_pSceneLights.push_back(new PointLight(pos, color, radius));
         m_lightMgr.addPointLight(pos, color, radius);
     }
 
@@ -50,11 +48,11 @@ public:
         const Math::Vector3& pos,
         const Math::Vector3& dir,
         const Math::Vector3& color,
-        const float          innerRadius,
-        const float          outerRadius)
+        const float          distance,
+        const float          innerAngle,
+        const float          outerAngle)
     {
-        //m_pSceneLights.push_back(new SpotLight(pos, color, innerRadius, outerRadius));
-        m_lightMgr.addSpotLight(pos, dir, color, innerRadius, outerRadius);
+        m_lightMgr.addSpotLight(pos, dir, color, distance, innerAngle, outerAngle);
     }
 
     void addProspectiveCamera(

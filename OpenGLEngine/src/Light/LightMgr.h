@@ -38,14 +38,15 @@ public:
     void addPointLight(
         const Math::Vector3& position,
         const Math::Vector3& color,
-        float radius);
+        const float radius);
 
     void addSpotLight(
         const Math::Vector3& position,
         const Math::Vector3& direction,
         const Math::Vector3& color,
-        float radius_in,
-        float radius_out);
+        const float          distance,
+        const float          in_angle,
+        const float          out_angle);
 
     inline GLuint GetLightDataHandle() const { return m_lightUboHandle; }
 
