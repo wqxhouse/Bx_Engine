@@ -7,6 +7,8 @@
 
 #define MAX_LIGHT_NUM 128
 
+#define MAX_LIGHT_NUM 128
+
 class LightMgr
 {
 public:

@@ -24,9 +24,3 @@ Light::~Light()
 {
     SafeDelete(m_pShadowMap);
 }
-
-void Light::initializeShadow(Scene* pScene)
-{
-    // m_pShadowMap = new ShadowMap(pScene, this);
-    m_pShadowMap->initialize();
-}

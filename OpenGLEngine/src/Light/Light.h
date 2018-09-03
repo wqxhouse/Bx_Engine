@@ -19,8 +19,6 @@ public:
 	Light(const LightType lightType, const Math::Vector3& color);
 	~Light();
 
-    void initializeShadow(Scene* pScene);
-
     virtual void translate(const Math::Vector3& transVector) {}
     virtual void rotate(const Math::Vector3& axis, const float angle) {}
 

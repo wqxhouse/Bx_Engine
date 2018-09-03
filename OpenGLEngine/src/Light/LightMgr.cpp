@@ -12,14 +12,6 @@ LightMgr::LightMgr(Scene* pScene)
 
 LightMgr::~LightMgr()
 {
-    //for (size_t i = 0; i < m_lightList.size(); i++)
-    //{
-    //    Light* pLight = GetLight(i);
-
-    //    // TODO: Avoiding manually release the shadow map here
-    //    SafeDelete(pLight->GetShadowMap());
-    //}
-
     m_lightList.clear();
 }
 
