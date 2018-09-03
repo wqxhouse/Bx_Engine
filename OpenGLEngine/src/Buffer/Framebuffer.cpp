@@ -54,6 +54,35 @@ void Framebuffer::createFramebufferTexture2D(
     m_framebufferAttachmentsList.push_back(attachmentType);
 }
 
+//void Framebuffer::createFramebufferTexture3D(
+//    const GLenum texUnit,
+//    const GLenum attachmentType,
+//    const UINT   texWidth,
+//    const UINT   texHeight,
+//    const UINT   layers,
+//    const UINT   samples,
+//    const GLenum loadFormat,
+//    const GLenum storeFormat,
+//    const GLenum texDataType,
+//    const GLenum wrapMethod,
+//    const BOOL   mipmap)
+//{
+//    Texture3D* pTexture3D = new Texture3D(
+//        texWidth, texHeight, layers, samples, loadFormat, storeFormat, texDataType, wrapMethod, mipmap);
+//
+//    UINT texIndex = getTextureIndex(texUnit);
+//
+//    m_pAttachedTextures[texIndex] = pTexture3D;
+//
+//    glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+//
+//    glFramebufferTexture3D()
+//
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//
+//    m_framebufferAttachmentsList.push_back(attachmentType);
+//}
+
 void Framebuffer::createRenderbufferAttachment(
     const FboRenderbufferAttachmentType attachmentType,
     const UINT                          m_depthBufWidth,
@@ -117,11 +146,8 @@ void Framebuffer::attachTexture2D(
     }
     else
     {
-        /*glFramebufferTexture2D(
-            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture2D->GetTextureHandle(), 0);*/
-
-        // TODO: Multi-sampled texture2D
-        assert(FALSE);
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture2D->GetTextureHandle(), 0);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -129,16 +155,54 @@ void Framebuffer::attachTexture2D(
     m_framebufferAttachmentsList.push_back(attachmentType);
 }
 
+void Framebuffer::attachTexture3D(
+    const GLenum texUnit,
+    const GLenum attachmentType,
+    Texture3D*   pTexture3D,
+    const UINT   layer)
+{
+    UINT texIndex = getTextureIndex(texUnit);
+    m_pAttachedTextures[texIndex] = pTexture3D;
+
+    UINT samples = pTexture3D->GetSampleNumber();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+
+    if (samples < 2)
+    {
+        assert(pTexture3D->GetSampleNumber() == 1);
+
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture3D->GetTextureHandle(), 0);
+    }
+    else
+    {
+        assert(pTexture3D->GetSampleNumber() > 1);
+
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture3D->GetTextureHandle(), 0);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // TODO: Use hash map
+    if (layer == 0)
+    {
+        m_framebufferAttachmentsList.push_back(attachmentType);
+    }
+}
+
 void Framebuffer::attachCubemap(
     const GLenum texUnit,
     const GLenum attachmentType,
     Cubemap*     pCubemap,
     const GLenum cubeface,
-    const UINT   samples,
     const BOOL   addDrawBuffer)
 {
     UINT texIndex = getTextureIndex(texUnit);
     m_pAttachedTextures[texIndex] = pCubemap;
+
+    UINT samples = pCubemap->GetSampleNumber();
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
 

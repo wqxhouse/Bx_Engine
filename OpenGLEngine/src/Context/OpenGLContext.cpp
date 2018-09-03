@@ -91,7 +91,7 @@ void OpenGLContext::run()
         deltaTime = curTime - prevTime;
         prevTime = curTime;
 
-        printf("Second per frame: %f\n FPS: %f\n", deltaTime, 1.0f / deltaTime);
+        //printf("Second per frame: %f\n FPS: %f\n", deltaTime, 1.0f / deltaTime);
 
         glfwPollEvents();
 

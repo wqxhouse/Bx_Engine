@@ -33,7 +33,7 @@ public:
         const Math::Vector3& direction,
         const Math::Vector3& color)
     {
-        m_lightMgr.addDirectionalLight(direction, color);
+        m_pLightMgr->addDirectionalLight(direction, color);
     }
 
     inline void AddPointLight(
@@ -41,7 +41,7 @@ public:
         const Math::Vector3& color,
         const float          radius)
     {
-        m_lightMgr.addPointLight(pos, color, radius);
+        m_pLightMgr->addPointLight(pos, color, radius);
     }
 
     inline void AddSpotLight(
@@ -52,7 +52,7 @@ public:
         const float          innerAngle,
         const float          outerAngle)
     {
-        m_lightMgr.addSpotLight(pos, dir, color, distance, innerAngle, outerAngle);
+        m_pLightMgr->addSpotLight(pos, dir, color, distance, innerAngle, outerAngle);
     }
 
     void addProspectiveCamera(
@@ -105,7 +105,7 @@ public:
     inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;         }
     inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex;      }
 
-    inline ShadowMap* GetShadowMap()                 const { return m_pShadowMap;                         }
+    inline ShadowMap* GetShadowMap()                 const { return m_pLightMgr->GetLight(0)->GetShadowMap(); }
 
     inline GBuffer*   GetGBuffer()                   const { return m_pGBuffer;                           }
 
@@ -156,21 +156,8 @@ private:
     std::vector<Model*>   m_pSceneModelList;
     std::vector<Texture*> m_pTextureList;
 
-    LightMgr m_lightMgr;
-
-    // TODO: Remove these light (All lights are managed in light manager)
-
-    // Scene lights
-    struct SceneLights
-    {
-        UINT   count;
-        Light* pLights;
-    };
-
-    //std::vector<Light*> m_pSceneLights;
-    //DirectionalLight m_directionalLight;
-
-    PointLight m_pointLight;
+    // Scene lights manager
+    LightMgr* m_pLightMgr;
 
     // Uniform buffer and managers
     UniformBufferMgr m_uniformBufferMgr;
@@ -184,9 +171,7 @@ private:
     GLuint m_pbrMaterialUniformBufferIndex;
 
     // Shadow map test
-    BOOL initializeShadowMap();
     void shadowPass();
-    ShadowMap* m_pShadowMap;
 
     // Deferred shading
     BOOL initializeDeferredRendering();

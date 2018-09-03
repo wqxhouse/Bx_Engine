@@ -25,6 +25,9 @@ Cubemap::Cubemap(
 {
     m_textureWidth = m_textureHeight = texSize;
 
+    m_samples = samples;
+    m_mipmap  = mipmap;
+
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
 
     for (size_t i = 0; i < CUBE_MAP_FACE_NUM; ++i)
@@ -52,12 +55,16 @@ Cubemap::Cubemap(
 
 Cubemap::Cubemap(
     const std::vector<std::string>& textureFile,
+    const UINT                      samples,
     const GLenum                    format,    
     const GLenum                    type,
     const BOOL                      mipmap)
     : Texture(TEXTURE_CUBEBOX)
 {
     assert(textureFile.size() == CUBE_MAP_FACE_NUM);
+
+    m_samples = samples;
+    m_mipmap  = mipmap;
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
 

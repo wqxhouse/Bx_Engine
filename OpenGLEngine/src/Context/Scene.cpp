@@ -6,10 +6,9 @@
 Scene::Scene(Setting* pSetting)
     : m_pSetting(pSetting),
       m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
-      m_pointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 10.0f),
+      m_pLightMgr(NULL),
       m_activeCameraIndex(0),
       m_uniformBufferMgr(128),
-      m_pShadowMap(NULL),
       m_pGBuffer(NULL),
       useGlobalMaterial(FALSE),
       m_pSsao(NULL),
@@ -21,29 +20,78 @@ Scene::Scene(Setting* pSetting)
     m_globalPbrMaterial.roughness = 0.5f;
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
+}
 
-    // Test
-    //m_lightMgr.addDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+Scene::~Scene()
+{
+    for (Model* pModel : m_pSceneModelList)
+    {
+        SafeDelete(pModel);
+    }
+    m_pSceneModelList.clear();
+
+    for (Camera* pCamera : m_pCameraList)
+    {
+        switch (pCamera->GetCameraType())
+        {
+        case CameraType::PROSPECTIVE_CAM:
+            SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
+            break;
+        case CameraType::ORTHOGRAPHIC_CAM:
+            SafeDelete(static_cast<OrthographicCamera*>(pCamera));
+            break;
+        default:
+            printf("Invalid camera type!\n");
+            SafeDelete(pCamera);
+
+            assert(FALSE);
+            break;
+        }
+    }
+    m_pCameraList.clear();
+
+    for (Texture* pTexture : m_pTextureList)
+    {
+        switch (pTexture->GetTextureType())
+        {
+        case TextureType::TEXTURE_2D:
+            SafeDelete(static_cast<Texture2D*>(pTexture));
+            break;
+        case TextureType::TEXTURE_3D:
+            SafeDelete(static_cast<Texture3D*>(pTexture));
+            break;
+        case TextureType::TEXTURE_CUBEBOX:
+            SafeDelete(static_cast<Cubemap*>(pTexture));
+            break;
+        default:
+            printf("Invalid texture type!\n");
+            SafeDelete(pTexture);
+
+            assert(FALSE);
+            break;
+        }
+    }
+    m_pTextureList.clear();
+
+    SafeDelete(m_pLightMgr);
+    SafeDelete(m_pGBuffer);
+    SafeDelete(m_pSsao);
+    SafeDelete(m_pSkybox);
+    SafeDelete(m_pLightProbe);
 }
 
 BOOL Scene::initialize()
 {
     BOOL status = TRUE;
 
+    m_pLightMgr = new LightMgr(this);
+
     // Create light ubo
-    m_lightMgr.createLightUbo(&m_uniformBufferMgr);
+    m_pLightMgr->createLightUbo(&m_uniformBufferMgr);
 
     // Create resolution ubo
     m_resolutionUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Resolution), &(m_pSetting->resolution));
-
-    // Shadow map initialization
-    status = initializeShadowMap();
-    if (status == FALSE)
-    {
-        printf("Failed to initialize shadow map!\n");
-        assert(FALSE);
-    }
 
     // Forward Phong rendering initialization
     status = initializePhongRendering();
@@ -157,11 +205,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        m_lightMgr.rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -232,7 +280,7 @@ void Scene::preDraw()
     }
 
     /// Updating UBO data
-    m_lightMgr.updateLightUbo(
+    m_pLightMgr->updateLightUbo(
         &m_uniformBufferMgr,
         m_deferredRenderingShader.GetShaderProgram(),
         "lightArrayUniformBlock");
@@ -351,30 +399,33 @@ void Scene::drawScene()
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
 
-        glm::mat4 lightTransWVP = m_pShadowMap->GetLightTransVP() *
-            pModel->m_pTrans->GetTransMatrix();
+        // Test
+        ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
+
+        glm::mat4 lightTransWVP = pShadowMap->GetLightTransVP() *
+                                  pModel->m_pTrans->GetTransMatrix();
 
         GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
         glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
-        GLint lightNumLocation = glGetUniformLocation(sceneShaderProgram, "lightNum");
-        if (lightNumLocation >= 0)
-        {
-            glUniform1i(lightNumLocation, m_lightMgr.GetLightCount());
-        }
-        else
-        {
-            printf("Can't find light number uniform. \n");
-        }
-
         if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
         {
-            m_pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+            pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
         }
 
         if (m_pLightProbe != NULL)
         {
             m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE2);
+        }
+
+        GLint lightNumLocation = glGetUniformLocation(sceneShaderProgram, "lightNum");
+        if (lightNumLocation >= 0)
+        {
+            glUniform1i(lightNumLocation, m_pLightMgr->GetLightCount());
+        }
+        else
+        {
+            printf("Can't find light number uniform. \n");
         }
 
         pModel->draw();
@@ -424,7 +475,7 @@ void Scene::deferredDrawScene()
         GLint lightNumLocation = glGetUniformLocation(gShaderProgram, "lightNum");
         if (lightNumLocation >= 0)
         {
-            glUniform1i(lightNumLocation, m_lightMgr.GetLightCount());
+            glUniform1i(lightNumLocation, m_pLightMgr->GetLightCount());
         }
         else
         {
@@ -446,64 +497,6 @@ void Scene::deferredDrawScene()
     Shader::FinishProgram();
 }
 
-Scene::~Scene()
-{
-    for (Model* pModel : m_pSceneModelList)
-    {
-        SafeDelete(pModel);
-    }
-    m_pSceneModelList.clear();
-
-    for (Camera* pCamera : m_pCameraList)
-    {
-        switch (pCamera->GetCameraType())
-        {
-            case CameraType::PROSPECTIVE_CAM:
-                SafeDelete(static_cast<ProspectiveCamera*>(pCamera));
-                break;
-            case CameraType::ORTHOGRAPHIC_CAM:
-                SafeDelete(static_cast<OrthographicCamera*>(pCamera));
-                break;
-            default:
-                printf("Invalid camera type!\n");
-                SafeDelete(pCamera);
-
-                assert(FALSE);
-                break;
-        }
-    }
-    m_pCameraList.clear();
-
-    for (Texture* pTexture : m_pTextureList)
-    {
-        switch (pTexture->GetTextureType())
-        {
-            case TextureType::TEXTURE_2D:
-                SafeDelete(static_cast<Texture2D*>(pTexture));
-                break;
-            case TextureType::TEXTURE_3D:
-                SafeDelete(static_cast<Texture3D*>(pTexture));
-                break;
-            case TextureType::TEXTURE_CUBEBOX:
-                SafeDelete(static_cast<Cubemap*>(pTexture));
-                break;
-            default:
-                printf("Invalid texture type!\n");
-                SafeDelete(pTexture);
-
-                assert(FALSE);
-                break;
-        }
-    }
-    m_pTextureList.clear();
-
-    SafeDelete(m_pShadowMap);
-    SafeDelete(m_pGBuffer);
-    SafeDelete(m_pSsao);
-    SafeDelete(m_pSkybox);
-    SafeDelete(m_pLightProbe);
-}
-
 void Scene::setSceneShader(
     char* const vertexShaderFile,
     char* const fragmentShaderFile)
@@ -511,31 +504,18 @@ void Scene::setSceneShader(
     m_sceneShader.setShaderFiles(vertexShaderFile, fragmentShaderFile);
 }
 
-BOOL Scene::initializeShadowMap()
-{
-    BOOL result = TRUE;
-
-    m_pShadowMap = new ShadowMap(this,
-                                 m_lightMgr.GetLight(0),
-                                 m_pSetting->resolution.width * 2,
-                                 m_pSetting->resolution.height * 2,
-                                 /*m_pSetting->m_graphicsSetting.antialasing*/ 1);
-
-    result = m_pShadowMap->initialize();
-
-    return result;
-}
-
 void Scene::shadowPass()
 {
-    m_pShadowMap->update(m_lightMgr.GetLight(0));
+    ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
+
+    pShadowMap->update(m_pLightMgr->GetLight(0));
 
     glCullFace(GL_FRONT);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
         glDepthFunc(GL_NEVER);
     }
-    m_pShadowMap->drawShadowMap(this);
+    pShadowMap->drawShadowMap(this);
     glCullFace(GL_BACK);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
@@ -565,7 +545,7 @@ BOOL Scene::initializePhongRendering()
         m_sceneShader.GetShaderProgram(),
         "transUniformBlock");
 
-    m_lightMgr.bindLightUbo(
+    m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,
         m_sceneShader.GetShaderProgram(),
         "lightArrayUniformBlock");
@@ -579,10 +559,10 @@ BOOL Scene::initializePhongRendering()
         m_materialUniformBufferIndex, m_sceneShader.GetShaderProgram(), "material");
 
     // Shadow map resolution ubo
-    m_uniformBufferMgr.bindUniformBuffer(
+    /*m_uniformBufferMgr.bindUniformBuffer(
         m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
         m_sceneShader.GetShaderProgram(),
-        "shadowMapResolutionUniformBlock");
+        "shadowMapResolutionUniformBlock");*/
     /// UBOs initialization end
 
     return status;
@@ -607,7 +587,7 @@ BOOL Scene::initializePBRendering()
         m_pbrShader.GetShaderProgram(),
         "transUniformBlock");
 
-    m_lightMgr.bindLightUbo(
+    m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,
         m_pbrShader.GetShaderProgram(),
         "lightArrayUniformBlock");
@@ -620,10 +600,10 @@ BOOL Scene::initializePBRendering()
         m_pbrMaterialUniformBufferIndex, m_pbrShader.GetShaderProgram(), "CookTorranceMaterialUniformBlock");
 
     // Shadow map resolution ubo
-    m_uniformBufferMgr.bindUniformBuffer(
+    /*m_uniformBufferMgr.bindUniformBuffer(
         m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
         m_pbrShader.GetShaderProgram(),
-        "shadowMapResolutionUniformBlock");
+        "shadowMapResolutionUniformBlock");*/
     /// UBOs initialization end
 
     return status;
@@ -662,7 +642,7 @@ BOOL Scene::initializeDeferredRendering()
     /// UBOs initialization
 
     // Bind Light Ubo
-    m_lightMgr.bindLightUbo(
+    m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,
         m_deferredRenderingShader.GetShaderProgram(),
         "lightArrayUniformBlock");
@@ -674,10 +654,10 @@ BOOL Scene::initializeDeferredRendering()
         "RenderingResolutionBlock");
 
     // Shadow map resolution ubo
-    m_uniformBufferMgr.bindUniformBuffer(
+    /*m_uniformBufferMgr.bindUniformBuffer(
         m_pShadowMap->GetShadowResolutionUniformBufferIndex(),
         m_deferredRenderingShader.GetShaderProgram(),
-        "shadowMapResolutionUniformBlock");
+        "shadowMapResolutionUniformBlock");*/
     /// UBOs initialization end
 
     return status;
@@ -731,7 +711,7 @@ void Scene::addTexture(
     {
     case GL_TEXTURE_2D:
         m_pTextureList.push_back(
-            new Texture2D(textureFile, format, type, wrapMethod, mipmap));
+            new Texture2D(textureFile, 1 /*TODO: Multi-sampled texture*/, format, type, wrapMethod, mipmap));
         break;
     case GL_TEXTURE_3D:
         // TODO

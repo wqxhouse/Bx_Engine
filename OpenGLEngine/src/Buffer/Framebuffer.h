@@ -29,6 +29,19 @@ public:
         const GLenum wrapMethod = GL_CLAMP,
         const BOOL   mipmap     = GL_FALSE);
 
+    /*void createFramebufferTexture3D(
+        const GLenum texUnit,
+        const GLenum attachmentType,
+        const UINT   texWidth,
+        const UINT   texHeight,
+        const UINT   layers,
+        const UINT   samples,
+        const GLenum loadFormat,
+        const GLenum storeFormat,
+        const GLenum texDataType,
+        const GLenum wrapMethod = GL_CLAMP,
+        const BOOL   mipmap     = GL_FALSE);*/
+
     void createRenderbufferAttachment(
         const FboRenderbufferAttachmentType attachmentType,
         const UINT                          m_depthBufWidth,
@@ -40,12 +53,17 @@ public:
         Texture2D*   pTexture2D,
         const UINT   samples);
 
+    void attachTexture3D(
+        const GLenum texUnit,
+        const GLenum attachmentType,
+        Texture3D*   pTexture3D,
+        const UINT   layer);
+
     void attachCubemap(
         const GLenum texUnit,
         const GLenum attachmentType,
         Cubemap*     pCubemap,
         const GLenum cubeface,
-        const UINT   samples,
         const BOOL   addDrawBuffer = FALSE);
 
     void drawFramebuffer();

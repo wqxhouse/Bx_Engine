@@ -181,6 +181,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Shader\Shader.h" />
     <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Shadow\ShadowMap.h" />
+    <ClInclude Include="src\Shadow\ShadowMgr.h" />
     <ClInclude Include="src\Shadow\SSAO.h" />
     <ClInclude Include="src\Texture\Texture.h" />
   </ItemGroup>
@@ -221,6 +222,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Shader\Shader.cpp" />
     <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Shadow\ShadowMap.cpp" />
+    <ClCompile Include="src\Shadow\ShadowMgr.cpp" />
     <ClCompile Include="src\Shadow\SSAO.cpp" />
     <ClCompile Include="src\Texture\Texture.cpp" />
     <ClCompile Include="src\Texture\Texture2D.cpp" />

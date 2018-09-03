@@ -3,16 +3,18 @@
 #include "../Context/Scene.h"
 
 ShadowMap::ShadowMap(
-    Scene*     pScene,         ///< Pointer to the scene
-    Light*     pLight,         ///< The light be casted shadow
-    const UINT depthTexWidth,
-    const UINT depthTexHeight,
-    const UINT samples)
+    Scene*     pScene,  ///< Pointer to the scene
+    Light*     pLight)  ///< The light be casted shadow
     : m_pScene(pScene),
-      m_pLight(pLight),
-      m_shadowMapSamples(samples)
+      m_pLight(pLight)
 {
-    m_shadowResolution = { depthTexWidth, depthTexWidth };
+    Setting* pSetting = pScene->GetSetting();
+
+    m_shadowResolution = pSetting->m_graphicsSetting.shadowResolution;
+    m_shadowMapSamples = 1;
+
+    // TODO: Multi-sampled shadow map
+    // m_shadowMapSamples = pSetting->m_graphicsSetting.antialasing;
 }
 
 ShadowMap::~ShadowMap()
@@ -147,25 +149,25 @@ void ShadowMap::initializeLightCamera()
 {
     switch (m_pLight->GetLightType())
     {
-    case LightType::DIRECTIONAL_LIGHT:
-    {
-        update(m_pLight);
+        case LightType::DIRECTIONAL_LIGHT:
+        {
+            update(m_pLight);
 
-        break;
-    }
-    case LightType::POINT_LIGHT:
-    {
-        // TODO
-        break;
-    }
-    case LightType::SPOT_LIGHT:
-    {
-        // TODO
-        break;
-    }
-    default:
-        printf("Unsupport light type.\n");
-        assert(FALSE);
-        break;
+            break;
+        }
+        case LightType::POINT_LIGHT:
+        {
+            // TODO
+            break;
+        }
+        case LightType::SPOT_LIGHT:
+        {
+            // TODO
+            break;
+        }
+        default:
+            printf("Unsupport light type.\n");
+            assert(FALSE);
+            break;
     }
 }

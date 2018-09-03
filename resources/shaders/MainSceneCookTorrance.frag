@@ -22,10 +22,10 @@ uniform sampler2D shadowMapSampler;
 
 uniform samplerCube lightProbeCubemap;
 
-uniform shadowMapResolutionUniformBlock
+/*uniform shadowMapResolutionUniformBlock
 {
     Resolution m_shadowMapResolution;
-};
+};*/
 
 layout (std140) uniform lightArrayUniformBlock
 {
