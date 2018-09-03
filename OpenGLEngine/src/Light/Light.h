@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Math/Math.h"
-#include "../Shadow/ShadowMap.h"
+#include "../Shadow/ShadowMgr.h"
 
 enum LightType
 {
@@ -19,8 +19,12 @@ public:
 	Light(const LightType lightType, const Math::Vector3& color);
 	~Light();
 
+    void initializeShadow(Scene* pScene);
+
     virtual void translate(const Math::Vector3& transVector) {}
     virtual void rotate(const Math::Vector3& axis, const float angle) {}
+
+    virtual inline Math::Vector3 GetDir() { return Math::Vector3(); }
 
     inline LightType     GetLightType()      const { return m_lightType;                              }
     inline Math::Vector3 GetLightColor()     const { return m_color;                                  }
@@ -30,6 +34,9 @@ public:
     inline BOOL          IsLightEnable()     const { return ((enableLight == TRUE_F) ? TRUE : FALSE); }
     inline void          EnableLight()             { enableLight = TRUE_F;                            }
     inline void          DisableLight()            { enableLight = FALSE_F;                           }
+
+    // Test
+    inline ShadowMap*   GetShadowMap()      const  { return m_pShadowMap; }
 
 /// Light data1
 protected:
@@ -137,7 +144,7 @@ private:
 
 public:
 	inline Math::Vector3  GetPos()           const { return m_position;      }
-    inline Math::Vector3  GetDirection()     const { return m_direction;     }
+    inline Math::Vector3  GetDir()           const { return m_direction;     }
     inline Math::Vector4* GetSpotLightData()       { return &(m_v4[0]);      }
 
     inline float GetInnerAngleRadians() const { return std::acos(m_in_cosTheta)  * 2.0f; }

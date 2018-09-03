@@ -4,10 +4,12 @@
 
 #include "../Buffer/UniformBufferMgr.h"
 
+#define MAX_LIGHT_NUM 128
+
 class LightMgr
 {
 public:
-    LightMgr();
+    LightMgr(Scene* pScene);
     ~LightMgr();
 
     void createLightUbo(UniformBufferMgr* m_pUboMgr);
@@ -69,6 +71,8 @@ private:
     {
         Math::Vector4 data[4];
     };
+
+    Scene*                 m_pScene; // Pointer to the scene
 
     GLuint                 m_lightUboHandle;
     std::vector<LightData> m_lightList;

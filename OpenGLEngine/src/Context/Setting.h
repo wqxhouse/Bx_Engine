@@ -51,7 +51,9 @@ struct GraphicsSetting
 {
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
     Antialasing antialasing         = Antialasing::HIGH;
+
     BOOL shadowCasting              = TRUE;
+    Resolution shadowResolution     = { 2560, 2560 };
 
     inline void EnableSSAO()
     {

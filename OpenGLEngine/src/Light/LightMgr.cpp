@@ -2,14 +2,23 @@
 
 #define UNCREATED_LIGHT_UBO_HANDLE 0xFFFFFFFF
 
-LightMgr::LightMgr()
-    : m_lightUboHandle(UNCREATED_LIGHT_UBO_HANDLE)
+LightMgr::LightMgr(Scene* pScene)
+    : m_pScene(pScene),
+      m_lightUboHandle(UNCREATED_LIGHT_UBO_HANDLE)
 {
     m_lightFlags.flags = 0;
 }
 
 LightMgr::~LightMgr()
 {
+    for (size_t i = 0; i < m_lightList.size(); i++)
+    {
+        Light* pLight = GetLight(i);
+
+        // TODO: Avoiding manually release the shadow map here
+        SafeDelete(pLight->GetShadowMap());
+    }
+
     m_lightList.clear();
 }
 
@@ -102,6 +111,8 @@ void LightMgr::addDirectionalLight(
     DirectionalLight directionalLight(direction, color);
 
     LightData lightData = *(reinterpret_cast<LightData*>(&directionalLight));
+    Light*    pLight    = reinterpret_cast<Light*>(&lightData);
+    pLight->initializeShadow(m_pScene);
 
     m_lightList.push_back(lightData);
 
@@ -114,8 +125,11 @@ void LightMgr::addPointLight(
     const float radius)
 {
     PointLight pointLight(position, color, radius);
+    pointLight.initializeShadow(m_pScene);
 
     LightData lightData = *(reinterpret_cast<LightData*>(&pointLight));
+    Light*    pLight    = reinterpret_cast<Light*>(&lightData);
+    pLight->initializeShadow(m_pScene);
 
     m_lightList.push_back(lightData);
 
@@ -131,8 +145,11 @@ void LightMgr::addSpotLight(
     const float          out_angle)
 {
     SpotLight spotLight(position, direction, color, distance, in_angle, out_angle);
+    spotLight.initializeShadow(m_pScene);
 
     LightData lightData = *(reinterpret_cast<LightData*>(&spotLight));
+    Light*    pLight    = reinterpret_cast<Light*>(&lightData);
+    pLight->initializeShadow(m_pScene);
 
     m_lightList.push_back(lightData);
 

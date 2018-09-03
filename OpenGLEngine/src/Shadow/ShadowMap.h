@@ -13,10 +13,7 @@ class ShadowMap
 public:
     ShadowMap(
         Scene*     pScene,
-        Light*     pLight,         ///< The light be casted shadow
-        const UINT depthTexWidth,
-        const UINT depthTexHeight,
-        const UINT samples);
+        Light*     pLight); ///< The light be casted shadow
     ~ShadowMap();
 
     BOOL initialize();

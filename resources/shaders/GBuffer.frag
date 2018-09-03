@@ -9,10 +9,10 @@
 uniform sampler2D shadowMapSampler;
 //uniform sampler2DMS shadowMapSampler;
 
-layout (std140) uniform ShadowMapResolutionUniformBlock
+/*layout (std140) uniform ShadowMapResolutionUniformBlock
 {
     Resolution m_shadowMapResolution;
-};
+};*/
 
 layout (std140) uniform gMaterial
 {

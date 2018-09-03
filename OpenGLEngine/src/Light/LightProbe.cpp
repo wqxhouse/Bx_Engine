@@ -108,20 +108,20 @@ void LightProbe::draw()
             if (firstDraw == TRUE)
             {
                 m_probeFbo.attachCubemap(
-                    GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], 1, TRUE);
+                    GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], TRUE);
 
                 firstDraw = FALSE;
             }
             else
             {
                 m_probeFbo.attachCubemap(
-                    GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], 1, FALSE);
+                    GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], FALSE);
             }
         }
         else
         {
             m_probeFbo.attachCubemap(
-                GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], 1, FALSE);
+                GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], FALSE);
         }
         // Render the light probe
         if (m_pScene->GetSetting()->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
@@ -144,6 +144,8 @@ void LightProbe::draw()
             m_pScene->m_pGBuffer->drawGBuffer();
 
             /// NOTE: No need to enable SSAO for light probe
+
+            // TODO: Disable shadow
 
             m_probeFbo.drawFramebuffer();
 

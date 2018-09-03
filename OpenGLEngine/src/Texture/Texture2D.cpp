@@ -18,13 +18,13 @@ Texture2D::Texture2D(
     const BOOL   mipmap,
     const void*  data)
     : Texture(TEXTURE_2D),
-      m_samples(samples),
       m_textureData(NULL)
 {
     m_textureWidth  = texWidth;
     m_textureHeight = texHeight;
 
-    m_mipmap = mipmap;
+    m_samples = samples;
+    m_mipmap  = mipmap;
 
     GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
 
@@ -52,13 +52,15 @@ Texture2D::Texture2D(
 
 Texture2D::Texture2D(
     const std::string& textureFile,
+    const UINT         samples,
     const GLenum       format,
     const GLenum       type,
     const GLenum       wrapMethod,
     const BOOL         mipmap)
     : Texture(TEXTURE_2D)
 {
-    m_mipmap = mipmap;
+    m_samples = samples;
+    m_mipmap  = mipmap;
 
     glBindTexture(GL_TEXTURE_2D, m_textureHandle);
     m_textureData = stbi_load(textureFile.data(),
