@@ -285,9 +285,9 @@ void Scene::preDraw()
     }
 
     /// Updating UBO data
-    m_pLightMgr->updateLightUbo(
-        m_deferredRenderingShader.GetShaderProgram(),
-        "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_sceneShader.GetShaderProgram(), "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_pbrShader.GetShaderProgram(), "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_deferredRenderingShader.GetShaderProgram(), "lightArrayUniformBlock");
 
     if (useGlobalMaterial == TRUE)
     {

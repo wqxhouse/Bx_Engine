@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Quaternion.h"
+#include "Matrix4x4.h"
 
 #ifndef PI_DIVIDE_ONE_HUNDRED_EIGHTEEN
 #define PI_DIVIDE_ONE_HUNDRED_EIGHTEEN 0.017453292f

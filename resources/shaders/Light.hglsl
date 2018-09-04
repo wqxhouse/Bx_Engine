@@ -1,7 +1,7 @@
 // Light header file
 
 #ifndef MAX_LIGHT_NUM
-#define MAX_LIGHT_NUM 128
+#define MAX_LIGHT_NUM 16
 #endif
 
 struct LightBase
@@ -12,6 +12,8 @@ struct LightBase
     
     vec3  color;
     float padding2;
+
+    mat4  lightTransVP;
 };
 
 struct Light

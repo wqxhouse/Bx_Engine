@@ -65,6 +65,8 @@ private:
         };
         Math::Vector4 m_light_vec4;
     };
+
+    Math::Mat4 m_lightTransVP; // Light VP trans matrix for shadow casting
 };
 
 class DirectionalLight : public Light

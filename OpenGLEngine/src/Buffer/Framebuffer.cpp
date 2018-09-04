@@ -167,15 +167,12 @@ void Framebuffer::attachTexture3D(
     UINT samples = pTexture3D->GetSampleNumber();
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
-
+    GLenum error = glGetError();
     if (samples < 2)
     {
         assert(pTexture3D->GetSampleNumber() == 1);
 
-        /*glFramebufferTexture2D(
-            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture3D->GetTextureHandle(), 0);*/
-
-        glFramebufferTextureLayer(GL_FRAMEBUFFER, attachmentType, pTexture3D->GetTextureHandle(), 0, layer);
+        glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, attachmentType, pTexture3D->GetTextureHandle(), 0, layer);
     }
     else
     {
