@@ -17,7 +17,7 @@ Scene::Scene(Setting* pSetting)
       enableRealtimeLightProbe(FALSE)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
-    m_globalPbrMaterial.roughness = 0.5f;
+    m_globalPbrMaterial.roughness = 0.3f;
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
 }
@@ -472,6 +472,25 @@ void Scene::deferredDrawScene()
             glBindTexture(GL_TEXTURE_2D, 0);
         }
 
+        // Casting shadow map
+        ShadowMap* pShadowMap = GetShadowMap();
+
+        GLint lightTransLocation = glGetUniformLocation(gShaderProgram, "lightTransVP");
+
+        if (lightTransLocation >= 0)
+        {
+            glm::mat4 lightTransVP = pShadowMap->GetLightTransVP();
+            glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransVP));
+
+            pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
+        }
+        else
+        {
+            printf("Can't find shadow vp matrix.\n");
+            assert(false);
+        }
+
+        // Light Number
         GLint lightNumLocation = glGetUniformLocation(gShaderProgram, "lightNum");
         if (lightNumLocation >= 0)
         {
@@ -480,6 +499,7 @@ void Scene::deferredDrawScene()
         else
         {
             printf("Can't find light number uniform. \n");
+            assert(false);
         }
 
         glEnable(GL_BLEND);

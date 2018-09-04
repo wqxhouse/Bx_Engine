@@ -23,7 +23,7 @@ BOOL GBuffer::initialize()
 {
     BOOL result = TRUE;
 
-    // Position view buffer
+    // Position world buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                               GL_COLOR_ATTACHMENT0,
                                               m_width,
@@ -47,7 +47,7 @@ BOOL GBuffer::initialize()
                                               m_width,
                                               m_height,
                                               1,
-                                              GL_RGBA,
+                                              GL_RGB,
                                               GL_RGB32F,
                                               GL_FLOAT,
                                               GL_CLAMP_TO_BORDER,
@@ -59,8 +59,8 @@ BOOL GBuffer::initialize()
                                               m_width,
                                               m_height,
                                               1,
-                                              GL_RGBA,
-                                              GL_RGB32F,
+                                              GL_RG,
+                                              GL_RG32F,
                                               GL_FLOAT,
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
@@ -95,11 +95,34 @@ BOOL GBuffer::initialize()
                                               m_width,
                                               m_height,
                                               1,
-                                              GL_RGBA,
+                                              GL_RGB,
                                               GL_RGB32F,
                                               GL_FLOAT,
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
+
+    // Position view buffer
+    m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
+                                              GL_COLOR_ATTACHMENT6,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RGBA,
+                                              GL_RGBA32F,
+                                              GL_FLOAT,
+                                              GL_CLAMP_TO_BORDER,
+                                              FALSE);
+
+    /*m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
+                                              GL_COLOR_ATTACHMENT7,
+                                              m_width,
+                                              m_height,
+                                              1,
+                                              GL_RED_INTEGER,
+                                              GL_R32I,
+                                              GL_UNSIGNED_INT,
+                                              GL_CLAMP_TO_BORDER,
+                                              FALSE);*/
 
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     result = m_gShader.linkProgram();
@@ -155,7 +178,6 @@ void GBuffer::drawGBuffer()
         glm::mat4 wv               = pCam->GetViewMatrix() * worldTransMatrix;
         glm::mat4 wvp              = pCam->GetProjectionMatrix() * wv;
 
-        GLint lightTransLocation   = glGetUniformLocation(gShaderProgram, "lightTransWVP");
         GLint cameraPosLocation    = glGetUniformLocation(gShaderProgram, "cameraPos");
 
         GLint worldLocation        = glGetUniformLocation(gShaderProgram, "worldMatrix");
@@ -164,20 +186,13 @@ void GBuffer::drawGBuffer()
 
         GLint materialTypeLocation = glGetUniformLocation(gShaderProgram, "materialType");
 
-        if (lightTransLocation   >= 0 &&
-            cameraPosLocation    >= 0 &&
+        if (cameraPosLocation    >= 0 &&
             worldLocation        >= 0 &&
             wvLocation           >= 0 &&
             wvpLocation          >= 0 &&
             materialTypeLocation >= 0)
         {
-            ShadowMap* pShadowMap = m_pScene->GetShadowMap();
-
             glUniform3fv(cameraPosLocation, 1, glm::value_ptr(pCam->GetTrans().GetPos()));
-
-            glm::mat4 lightTransWVP =
-                pShadowMap->GetLightTransVP() * pModel->m_pTrans->GetTransMatrix();
-            glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
 
             glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(worldTransMatrix));
             glUniformMatrix4fv(wvLocation,    1, GL_FALSE, glm::value_ptr(wv));
@@ -212,8 +227,6 @@ void GBuffer::drawGBuffer()
                 pModel->updateMaterial(m_pScene->GetUniformBufferMgr(),
                     m_pScene->GetPBRMaterialUniformBufferIndex());
             }
-
-            pShadowMap->readShadowMap(GL_TEXTURE0, gShaderProgram, "shadowMapSampler", 0);
 
             pModel->draw();
         }

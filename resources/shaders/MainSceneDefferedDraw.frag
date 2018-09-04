@@ -20,6 +20,15 @@ layout(location = 6) uniform samplerCube lightProbeCubemap;
 // SSAO Texture
 layout(location = 7) uniform sampler2D ssaoTex;
 
+// Shadow map
+layout (location = 8) uniform sampler2D shadowMapSampler;
+//layout (location = 8) uniform sampler2DMS shadowMapSampler;
+
+/*layout (std140) uniform ShadowMapResolutionUniformBlock
+{
+    Resolution m_shadowMapResolution;
+};*/
+
 layout (std140) uniform lightArrayUniformBlock
 {
     Light m_light[MAX_LIGHT_NUM];
@@ -34,28 +43,72 @@ uniform vec3 eyePos;
 
 uniform mat4 viewMat;
 
+uniform mat4 lightTransVP;
+
 // Test
 uniform int useSsao;
 uniform int lightNum;
 
 out vec4 outColor;
 
+float castingShadow(vec4 posLightProj)
+{
+	float shadowAttenuation = 1.0f;
+
+	vec3 posLight = posLightProj.xyz / posLightProj.w;
+    posLight = posLight * 0.5f + 0.5f;
+
+	// TODO: Added control for enable/disable shadow anti-alasing.
+
+	float depth = texture(shadowMapSampler, posLight.xy).r;
+
+    // Multisampling, need integer coordinate
+    /*
+    float depth = 0.0f;
+
+    posLight.x = posLight.x * m_shadowMapResolution.width;
+    posLight.y = posLight.y * m_shadowMapResolution.height;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
+
+        float pcfDepth = 0.0f;
+        for (int j = -1; j < 1; ++j)
+        {
+            for(int k = -1; k < 1; ++k)
+            {
+                float tempPcfDepth = texelFetch(shadowMapSampler, ivec2(posLight.xy) + ivec2(j, k), i).r;
+                pcfDepth += ((tempPcfDepth < posLight.z - 0.000001f) ? 0.0f : tempPcfDepth);
+            }
+        }
+        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
+    }
+    depth *= 0.25f;*/
+
+	if (depth < posLight.z - 0.000009f)
+	{
+		shadowAttenuation = 0.0f;
+	}
+
+	return shadowAttenuation;
+}
+
 vec3 calCookTorranceRadiance(
     const vec3                 view,
     const vec3                 normal,
     const vec3                 lightDir,
     const vec3                 lightColor,
-    const CookTorranceMaterial material,
-    const float                shadowSpecularAttenuation)
+    const CookTorranceMaterial material)
 {
     vec3 L = -lightDir;
-    
+
     float NoL = clamp(dot(normal, L), 0.0f, 1.0f);
-    
+
     vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, material, 1.0f);
-    
+
     vec3 radiance = brdf * lightColor * NoL;
-    
+
     return radiance;
 }
 
@@ -76,7 +129,10 @@ void main()
 
     // Sample from G-Buffer
     // Get mesh data
-    vec3 posView    = texture(posTex, gBufferTexCoord).xyz;
+    vec4 posWorldVec4 = texture(posTex, gBufferTexCoord);
+
+    vec4 posViewVec4 = viewMat * posWorldVec4;
+    vec3 posView    = posViewVec4.xyz / posViewVec4.w;
     vec3 normalView = texture(normalTex, gBufferTexCoord).xyz;
 
     vec3 gTexCoord   = texture(texCoordTex, gBufferTexCoord).xyz;
@@ -92,6 +148,10 @@ void main()
     // Transform eye position to view space
     vec4 eyePosVec4 = viewMat * vec4(eyePos, 1.0f);
     vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
+
+    // Shadow casting
+    vec4  posLightProj      = lightTransVP * posWorldVec4;
+    float shadowAttenuation = castingShadow(posLightProj);
 
     /// Shading
     vec3 radiance; // Final radiance for every pixel from hemisphere
@@ -156,8 +216,8 @@ void main()
         }
 
 		// Casting shadow
-		float shadowAttenuation = gTexCoord.z;
-		float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
+		// float shadowAttenuation = gTexCoord.z;
+		float shadowSpecularAttenuation = 1.0f;//((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
 		vec3 view       = normalize(eyePosView - posView);
 		vec3 normal     = normalize(normalView);
@@ -192,7 +252,7 @@ void main()
 
 			CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
 
-			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material, shadowSpecularAttenuation);
+			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material);
 			// Shadow casting
 			directLightRadiance *= shadowAttenuation;
 			radiance += directLightRadiance * attenuation;
@@ -205,7 +265,7 @@ void main()
                 
                 vec3 reflectionView           = (viewMat * vec4(reflection, 0.0f)).xyz;
                 vec3 environmentLightRadiance =
-                    calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material, shadowSpecularAttenuation);
+                    calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material);
 
                 radiance += environmentLightRadiance;
             }

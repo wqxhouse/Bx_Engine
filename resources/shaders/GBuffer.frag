@@ -6,14 +6,6 @@
 #include <Material.hglsl>
 #include <Utilities.hglsl>
 
-uniform sampler2D shadowMapSampler;
-//uniform sampler2DMS shadowMapSampler;
-
-/*layout (std140) uniform ShadowMapResolutionUniformBlock
-{
-    Resolution m_shadowMapResolution;
-};*/
-
 layout (std140) uniform gMaterial
 {
 	PhongMaterial m_phongMaterial;
@@ -28,6 +20,7 @@ uniform int materialType;
 
 uniform vec3 cameraPos;
 
+in vec4 posWorldVec4;
 in vec3 posWorld;
 in vec3 normalWorld;
 
@@ -38,64 +31,26 @@ in vec2 fragTexCoord;
 
 in vec4 posLightProj;
 
-layout(location = 0) out vec4 posViewTexture;
+// layout(location = 0) out vec4 posViewTexture;
+layout(location = 0) out vec4 posWorldTexture;
 layout(location = 1) out vec3 normalViewTexture;
-layout(location = 2) out vec3 texCoordTexture;
+layout(location = 2) out vec2 texCoordTexture;
 layout(location = 3) out vec4 albedoTexture;
 layout(location = 4) out vec4 specularTexture;
 layout(location = 5) out vec3 environmentLightTexture;
+layout(location = 6) out vec4 posViewTexture;
 
-float castingShadow()
-{
-	float shadowAttenuation = 1.0f;
-
-	// Shadow casting
-	vec3 posLight = posLightProj.xyz / posLightProj.w;
-    posLight = posLight * 0.5f + 0.5f;
-    
-    // TODO: Added control for enable/disable shadow anti-alasing.
-    
-	float depth = texture(shadowMapSampler, posLight.xy).r;
-
-    // Multisampling, need integer coordinate
-    /*    
-    float depth = 0.0f;
-    
-    posLight.x = posLight.x * m_shadowMapResolution.width;
-    posLight.y = posLight.y * m_shadowMapResolution.height;
-
-    for (int i = 0; i < 4; ++i)
-    {
-        depth += texelFetch(shadowMapSampler, ivec2(posLight.xy), i).r;
-
-        float pcfDepth = 0.0f;
-        for (int j = -1; j < 1; ++j)
-        {
-            for(int k = -1; k < 1; ++k)
-            {
-                float tempPcfDepth = texelFetch(shadowMapSampler, ivec2(posLight.xy) + ivec2(j, k), i).r;
-                pcfDepth += ((tempPcfDepth < posLight.z - 0.000001f) ? 0.0f : tempPcfDepth);
-            }
-        }
-        depth += (pcfDepth * 0.111111f); // pcfDepth / 9.0f
-    }
-    depth *= 0.25f;*/
-
-	if (depth < posLight.z - 0.000009f)
-	{
-		shadowAttenuation = 0.0f;
-	}
-
-	return shadowAttenuation;
-}
+uniform int modelIndex;
 
 void main()
 {
-    float shadowAttenuation = castingShadow();
+    //float shadowAttenuation = 1.0f; //castingShadow();
 
-    posViewTexture     = vec4(posView, 1.0f);
+    // posViewTexture     = vec4(posView, 1.0f);
+    posWorldTexture    = posWorldVec4; //vec4(posWorld, 1.0f);
     normalViewTexture  = normalView;
-    texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);
+    texCoordTexture    = fragTexCoord;
+    posViewTexture     = vec4(posView, 1.0f);
 
     switch (materialType)
     {

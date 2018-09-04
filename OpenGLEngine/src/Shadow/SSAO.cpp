@@ -127,7 +127,7 @@ void SSAO::draw()
 
     GBuffer* pGBuffer = m_pScene->GetGBuffer();
 
-    pGBuffer->readGBuffer(ssaoShaderProgram, "posTex", GL_TEXTURE0);
+    pGBuffer->readGBuffer(ssaoShaderProgram, "posTex", GL_TEXTURE6);
     pGBuffer->readGBuffer(ssaoShaderProgram, "normalTex", GL_TEXTURE1);
     pGBuffer->readGBuffer(ssaoShaderProgram, "texCoordTex", GL_TEXTURE2);
 

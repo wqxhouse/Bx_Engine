@@ -13,6 +13,7 @@ uniform mat4 wvp;
 
 uniform mat4 lightTransWVP;
 
+out vec4 posWorldVec4;
 out vec3 posWorld;
 out vec3 normalWorld;
 
@@ -25,8 +26,8 @@ out vec4 posLightProj;
 
 void main()
 {
-    vec4 posWorldVec4 = worldMatrix * vec4(position, 1.0f);
-    posWorld          = posWorldVec4.xyz / posWorldVec4.w;
+    posWorldVec4 = worldMatrix * vec4(position, 1.0f);
+    posWorld     = posWorldVec4.xyz / posWorldVec4.w;
 
     normalWorld = (worldMatrix * vec4(normal, 0.0f)).xyz;
 
