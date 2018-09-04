@@ -34,7 +34,7 @@ BOOL ShadowMap::initialize()
                         -halfHeight + offset,
                          halfHeight + offset), 0.1f, 10000.0f);
 
-    m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
+    /*m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                                       GL_DEPTH_ATTACHMENT,
                                                       m_shadowResolution.width,
                                                       m_shadowResolution.height,
@@ -50,7 +50,7 @@ BOOL ShadowMap::initialize()
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 
     m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
 
@@ -114,7 +114,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
     assert(m_pLightCamera != NULL);
 
     m_shadowMapShader.useProgram();
-    m_shadowMapFramebuffer.drawFramebuffer();
+    //m_shadowMapFramebuffer.drawFramebuffer();
 
     glClear(GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, m_shadowResolution.width, m_shadowResolution.height);
@@ -146,15 +146,12 @@ void ShadowMap::drawShadowMap(Scene* pScene)
         }
     }
 
-    m_shadowMapFramebuffer.finishDrawFramebuffer();
-
-    glDrawBuffer(GL_FRONT);
-    glReadBuffer(GL_FRONT);
+    //m_shadowMapFramebuffer.finishDrawFramebuffer();
 
     Shader::FinishProgram();
 }
 
-void ShadowMap::readShadowMap(
+/*void ShadowMap::readShadowMap(
     const GLenum       texUnit,
     const GLuint       shaderProgram,
     const std::string& samplerName,
@@ -162,7 +159,7 @@ void ShadowMap::readShadowMap(
 {
     m_shadowMapFramebuffer.getTexturePtr(GL_TEXTURE0)->
         bindTexture(texUnit, shaderProgram, samplerName, samplerIndex);
-}
+}*/
 
 void ShadowMap::initializeLightCamera()
 {

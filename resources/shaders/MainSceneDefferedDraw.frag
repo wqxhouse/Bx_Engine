@@ -21,7 +21,7 @@ layout(location = 6) uniform samplerCube lightProbeCubemap;
 layout(location = 7) uniform sampler2D ssaoTex;
 
 // Shadow map
-layout (location = 8) uniform sampler2D shadowMapSampler;
+//layout (location = 8) uniform sampler2DArray shadowMapSampler;
 //layout (location = 8) uniform sampler2DMS shadowMapSampler;
 
 /*layout (std140) uniform ShadowMapResolutionUniformBlock
@@ -60,7 +60,8 @@ float castingShadow(vec4 posLightProj)
 
 	// TODO: Added control for enable/disable shadow anti-alasing.
 
-	float depth = texture(shadowMapSampler, posLight.xy).r;
+    float depth = 1.0f;
+	//float depth = texture(shadowMapSampler, vec3(posLight.xy, 0.0f)).r;
 
     // Multisampling, need integer coordinate
     /*

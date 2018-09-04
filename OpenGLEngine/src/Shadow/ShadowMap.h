@@ -19,11 +19,11 @@ public:
     BOOL initialize();
     void update(Light* pLight);
     void drawShadowMap(Scene* pScene);
-    void readShadowMap(
+    /*void readShadowMap(
         const GLenum       texUnit,
         const GLuint       shaderProgram,
         const std::string& samplerName,
-        const UINT         samplerIndex);
+        const UINT         samplerIndex);*/
 
     inline glm::mat4 GetLightTransVP()
     {
@@ -39,7 +39,7 @@ public:
 private:
     void initializeLightCamera();
 
-    Framebuffer m_shadowMapFramebuffer;
+    // Framebuffer m_shadowMapFramebuffer;
     Shader      m_shadowMapShader;
 
     Scene*  m_pScene;

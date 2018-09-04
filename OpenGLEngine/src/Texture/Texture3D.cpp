@@ -23,11 +23,12 @@ Texture3D::Texture3D(
         const void*  data)
     : Texture(TEXTURE_3D)
 {
-    m_textureWidth = texWidth;
-    m_textureHeight= texHeight;
-    m_textureLayer = layers;
-    m_samples      = samples;
-    m_mipmap       = mipmap;
+    m_textureWidth    = texWidth;
+    m_textureHeight   = texHeight;
+    m_textureLayer    = layers;
+    m_samples         = samples;
+    m_textureDataType = type;
+    m_mipmap          = mipmap;
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureHandle);
     glTexImage3D(
@@ -37,6 +38,8 @@ Texture3D::Texture3D(
     {
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 
         glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
     }
@@ -44,6 +47,8 @@ Texture3D::Texture3D(
     {
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
     }
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, wrapMethod);
