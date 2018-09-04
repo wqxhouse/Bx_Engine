@@ -31,7 +31,8 @@ BOOL ShadowMgr::initialize()
                                      GL_DEPTH_COMPONENT,
                                      GL_FLOAT,
                                      GL_CLAMP_TO_EDGE,
-                                     FALSE, NULL);
+                                     FALSE,
+                                     NULL);
 
     if (m_pShadowTexture == NULL)
     {
@@ -49,6 +50,8 @@ void ShadowMgr::createShadowMap(
 
     pLight->AttachShadowMap(pShadowMap);
     pShadowMap->initialize();
+
+    pLight->UpdateLightTrans();
 }
 
 void ShadowMgr::updateShadowMap(
@@ -92,7 +95,8 @@ void ShadowMgr::castShadow(
 
 void ShadowMgr::castShadowAll()
 {
-    for (size_t i = 0; i < m_pShadowMapList.size(); ++i)
+    size_t size = m_pShadowMapList.size();
+    for (size_t i = 0; i < size; ++i)
     {
         castShadow(i);
     }

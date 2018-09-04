@@ -5,7 +5,7 @@
 #include "../Buffer/UniformBufferMgr.h"
 #include "../Shadow/ShadowMgr.h"
 
-#define MAX_LIGHT_NUM 32
+#define MAX_LIGHT_NUM 16
 
 class LightMgr
 {
@@ -61,6 +61,8 @@ public:
 
     inline Light* GetLight(const UINT index)
     {
+        assert(index < m_lightList.size());
+
         return reinterpret_cast<Light*>(&(m_lightList[index]));
     }
 
@@ -76,7 +78,9 @@ private:
 
     struct LightData
     {
-        Math::Vector4 data[4];
+        Math::Vector4 lightBaseData[2];
+        Math::Mat4    m_lightTransVP;
+        Math::Vector4 lightData[2];
     };
 
     Scene*                 m_pScene; // Pointer to the scene

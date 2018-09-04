@@ -210,11 +210,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        m_pLightMgr->rotateLight(1, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        m_pLightMgr->rotateLight(1, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -279,15 +279,10 @@ void Scene::preDraw()
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
-    {
-        shadowPass();
-    }
-
     /// Updating UBO data
-    m_pLightMgr->updateLightUbo(
-        m_deferredRenderingShader.GetShaderProgram(),
-        "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_sceneShader.GetShaderProgram(), "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_pbrShader.GetShaderProgram(), "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_deferredRenderingShader.GetShaderProgram(), "lightArrayUniformBlock");
 
     if (useGlobalMaterial == TRUE)
     {
@@ -298,6 +293,13 @@ void Scene::preDraw()
     }
     /// End updating UBO data
 
+    /// Casting shadow
+    if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
+    {
+        shadowPass();
+    }
+
+    /// Casting light radiance on light probes
     if (enableRealtimeLightProbe     == TRUE ||
         m_pLightProbe->IsFirstDraw() == TRUE)
     {
@@ -404,20 +406,22 @@ void Scene::drawScene()
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
 
         // Test
-        ShadowMap* pShadowMap = GetShadowMap();
-
-        glm::mat4 lightTransWVP = pShadowMap->GetLightTransVP() *
-                                  pModel->m_pTrans->GetTransMatrix();
-
-        GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
-        glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
-
-        if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
-        {
-            // pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
-            m_pLightMgr->GetShadowMgr()->
+        m_pLightMgr->GetShadowMgr()->
                 readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
-        }
+        //ShadowMap* pShadowMap = GetShadowMap();
+
+        //glm::mat4 lightTransWVP = pShadowMap->GetLightTransVP() *
+        //                          pModel->m_pTrans->GetTransMatrix();
+
+        //GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
+        //glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
+
+        //if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
+        //{
+        //    // pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+        //    m_pLightMgr->GetShadowMgr()->
+        //        readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+        //}
 
         if (m_pLightProbe != NULL)
         {
@@ -479,24 +483,27 @@ void Scene::deferredDrawScene()
         }
 
         // Casting shadow map
-        ShadowMap* pShadowMap = GetShadowMap();
-
-        GLint lightTransLocation = glGetUniformLocation(gShaderProgram, "lightTransVP");
-
-        if (lightTransLocation >= 0)
-        {
-            glm::mat4 lightTransVP = pShadowMap->GetLightTransVP();
-            glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransVP));
-
-            //pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
-            m_pLightMgr->GetShadowMgr()->
+        m_pLightMgr->GetShadowMgr()->
                 readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
-        }
-        else
-        {
-            printf("Can't find shadow vp matrix.\n");
-            assert(false);
-        }
+
+        //ShadowMap* pShadowMap = GetShadowMap();
+
+        //GLint lightTransLocation = glGetUniformLocation(gShaderProgram, "lightTransVP");
+
+        //if (lightTransLocation >= 0)
+        //{
+        //    glm::mat4 lightTransVP = pShadowMap->GetLightTransVP();
+        //    glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransVP));
+
+        //    //pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
+        //    m_pLightMgr->GetShadowMgr()->
+        //        readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
+        //}
+        //else
+        //{
+        //    printf("Can't find shadow vp matrix.\n");
+        //    assert(false);
+        //}
 
         // Light Number
         GLint lightNumLocation = glGetUniformLocation(gShaderProgram, "lightNum");

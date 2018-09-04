@@ -21,23 +21,23 @@ uniform transUniformBlock
     Trans m_trans;
 };
 
-uniform mat4 lightTransWVP;
+// uniform mat4 lightTransWVP;
 
-out vec3 posWorld;
+out vec4 posWorldVec4;
 out vec3 normalWorld;
 out vec2 fragTexCoord;
 
-out vec4 posLightProj;
+// out vec4 posLightProj;
 
 out vec3 lightProbeSampler;
 
 void main()
 {
-	posWorld     = (m_trans.world * vec4(position, 1.0f)).xyz;
+	posWorldVec4 = (m_trans.world * vec4(position, 1.0f));
 	normalWorld  = (m_trans.world * vec4(normal, 0.0f)).xyz;
 	fragTexCoord = texCoord;
 	
-	posLightProj = lightTransWVP * vec4(position, 1.0f);
+	// posLightProj = lightTransWVP * vec4(position, 1.0f);
     
     lightProbeSampler = position;//vec3(position.x, position.y, position.z);
     

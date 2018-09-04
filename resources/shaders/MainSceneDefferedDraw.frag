@@ -43,7 +43,7 @@ uniform vec3 eyePos;
 
 uniform mat4 viewMat;
 
-uniform mat4 lightTransVP;
+// uniform mat4 lightTransVP;
 
 // Test
 uniform int useSsao;
@@ -51,7 +51,7 @@ uniform int lightNum;
 
 out vec4 outColor;
 
-float castingShadow(vec4 posLightProj)
+float castingShadow(vec4 posLightProj, float i)
 {
 	float shadowAttenuation = 1.0f;
 
@@ -61,7 +61,7 @@ float castingShadow(vec4 posLightProj)
 	// TODO: Added control for enable/disable shadow anti-alasing.
 
     //float depth = 1.0f;
-	float depth = texture(shadowMapSampler, vec3(posLight.xy, 1.0f)).r;
+	float depth = texture(shadowMapSampler, vec3(posLight.xy, i)).r;
 
     // Multisampling, need integer coordinate
     /*
@@ -150,10 +150,6 @@ void main()
     vec4 eyePosVec4 = viewMat * vec4(eyePos, 1.0f);
     vec3 eyePosView = eyePosVec4.xyz / eyePosVec4.w;
 
-    // Shadow casting
-    vec4  posLightProj      = lightTransVP * posWorldVec4;
-    float shadowAttenuation = castingShadow(posLightProj);
-
     /// Shading
     vec3 radiance; // Final radiance for every pixel from hemisphere
     float attenuation = 1.0f; // Attenuations for radiance
@@ -161,6 +157,10 @@ void main()
 	// Loop all lights
 	for (int i = 0; i < lightNum; ++i)
 	{
+		// Shadow casting
+		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+		float shadowAttenuation = castingShadow(posLightProj, float(i));
+		
 		vec3 lightColor = m_light[i].lightBase.color;
 
         vec3 dir;

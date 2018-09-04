@@ -47,15 +47,26 @@ public:
 
     inline ShadowMap*    GetShadowMap()      const { return m_pShadowMap; }
 
-/// Light data1
+    inline void UpdateLightTrans()
+    {        
+        if (m_pShadowMap != NULL)
+        {
+            m_lightTransVP = m_pShadowMap->GetLightTransVP();
+        }
+    }
+
 protected:
+/// Light data1
+///{
     float     reserve;     // Padding
 
     LightType m_lightType; // Light type
     BOOL_F    enableLight; // Check if light enabled
+///}
 
+private:    
 /// Light data2
-private:
+///{
     union
     {
         struct
@@ -65,6 +76,12 @@ private:
         };
         Math::Vector4 m_light_vec4;
     };
+///}
+
+/// Light data3
+///{
+    Math::Mat4 m_lightTransVP; // Light VP trans matrix for shadow casting
+///}
 };
 
 class DirectionalLight : public Light

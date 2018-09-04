@@ -18,4 +18,5 @@ void DirectionalLight::rotate(
     const float angle)
 {
     m_direction = Math::rotate(m_direction, axis, angle);
+    UpdateLightTrans();
 }

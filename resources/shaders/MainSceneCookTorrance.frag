@@ -8,11 +8,11 @@
 #include <Utilities.hglsl>
 #include <BRDF.hglsl>
 
-in vec3 posWorld;
+in vec4 posWorldVec4;
 in vec3 normalWorld;
 in vec2 fragTexCoord;
 
-in vec4 posLightProj;
+// in vec4 posLightProj;
 
 in vec3 lightProbeSampler;
 
@@ -44,7 +44,7 @@ uniform int lightNum;
 
 out vec4 outColor;
 
-float castingShadow()
+float castingShadow(vec4 posLightProj, float i)
 {
 	float shadowAttenuation = 1.0f;
 	
@@ -52,7 +52,7 @@ float castingShadow()
 	vec3 posLight = posLightProj.xyz / posLightProj.w;
     posLight = posLight * 0.5f + 0.5f;
 
-	float depth = texture(shadowMapSampler, vec3(posLight.xy, 1.0f)).r;
+	float depth = texture(shadowMapSampler, vec3(posLight.xy, i)).r;
     
     // TODO: Enable multi-sampled shadow map
     
@@ -79,7 +79,7 @@ float castingShadow()
 
     depth *= 0.25f;*/
 	
-	if (depth < posLight.z - 0.000005f)
+	if (depth < posLight.z - 0.000009f)
 	{
 		shadowAttenuation = 0.0f;
 	}
@@ -108,6 +108,7 @@ void main()
 {
 	vec3 radiance;
     
+	vec3 posWorld   = posWorldVec4.xyz / posWorldVec4.w;
     vec3 view       = normalize(eyePos - posWorld);
     vec3 normal     = normalize(normalWorld);
 
@@ -176,8 +177,9 @@ void main()
             default:
                 break;
         }
-
-        float shadowAttenuation         = castingShadow();
+		
+		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+        float shadowAttenuation = castingShadow(posLightProj, float(i));
         //float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
         vec3 lightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor);

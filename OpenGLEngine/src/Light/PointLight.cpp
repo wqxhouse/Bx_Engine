@@ -19,4 +19,5 @@ void PointLight::translate(
     const Math::Vector3& transVector)
 {
     m_position += transVector;
+    UpdateLightTrans();
 }

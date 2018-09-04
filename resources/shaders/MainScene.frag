@@ -8,14 +8,14 @@
 #include <Material.hglsl>
 #include <Utilities.hglsl>
 
-in vec3 posWorld;
+in vec4 posWorldVec4;
 in vec3 normalWorld;
 in vec2 fragTexCoord;
 
-in vec4 posLightProj;
+//in vec4 posLightProj;
 
 uniform sampler2D sampler;
-uniform sampler2D shadowMapSampler;
+uniform sampler2DArray shadowMapSampler;
 //uniform sampler2DMS shadowMapSampler;
 
 uniform samplerCube lightProbeCubemap;
@@ -41,7 +41,7 @@ uniform int lightNum;
 
 out vec4 outColor;
 
-float castingShadow()
+float castingShadow(vec4 posLightProj, float i)
 {
 	float shadowAttenuation = 1.0f;
 	
@@ -53,7 +53,7 @@ float castingShadow()
     //posLight.x = posLight.x * 2560.0f; // m_shadowMapResolution.width;
     //posLight.y = posLight.y * 2560.0f; // m_shadowMapResolution.height;
     
-	float depth = texture(shadowMapSampler, posLight.xy).r;
+	float depth = texture(shadowMapSampler, vec3(posLight.xy, i)).r;
     /*float depth = 0.0f;
     
     for (int i = 0; i < 4; ++i)
@@ -81,6 +81,8 @@ float castingShadow()
 
 void main()
 {
+	vec3 posWorld   = posWorldVec4.xyz / posWorldVec4.w;
+
 	for (int i = 0; i < lightNum; ++i)
 	{
 		DirectionalLight m_directionalLight;
@@ -98,7 +100,8 @@ void main()
 		
 		float specularCoefficient = pow(VoR, m_phongMaterial.ks.w);
 		
-		float shadowAttenuation = castingShadow();
+		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+		float shadowAttenuation = castingShadow(posLightProj, float(i));
 		float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
 		vec4 texColor = texture(sampler, fragTexCoord);
@@ -124,3 +127,5 @@ void main()
 		outColor = vec4(outColorVec3, 1.0f);
     }
 }
+
+// End of MainScene.frag

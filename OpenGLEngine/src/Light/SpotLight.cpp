@@ -29,6 +29,7 @@ void SpotLight::translate(
     const Math::Vector3& transVector)
 {
     m_position += transVector;
+    UpdateLightTrans();
 }
 
 void SpotLight::rotate(
@@ -36,4 +37,5 @@ void SpotLight::rotate(
     const float angle)
 {
     m_direction = Math::rotate(m_direction, axis, angle);
+    UpdateLightTrans();
 }
