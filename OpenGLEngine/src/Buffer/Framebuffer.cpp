@@ -172,15 +172,19 @@ void Framebuffer::attachTexture3D(
     {
         assert(pTexture3D->GetSampleNumber() == 1);
 
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture3D->GetTextureHandle(), 0);
+        /*glFramebufferTexture2D(
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, pTexture3D->GetTextureHandle(), 0);*/
+
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, attachmentType, pTexture3D->GetTextureHandle(), 0, layer);
     }
     else
     {
-        assert(pTexture3D->GetSampleNumber() > 1);
+        /*assert(pTexture3D->GetSampleNumber() > 1);
 
         glFramebufferTexture2D(
-            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture3D->GetTextureHandle(), 0);
+            GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D_MULTISAMPLE, pTexture3D->GetTextureHandle(), 0);*/
+        // TODO
+        assert(false);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

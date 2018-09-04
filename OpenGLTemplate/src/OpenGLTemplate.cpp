@@ -27,6 +27,7 @@ void OpenGLTemplate::createDefaultScene()
 
     Scene* pScene = m_context.GetScene();
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
     pScene->AddSpotLight(
         Vector3(0.0f, 2.0f, 2.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.5f, 0.0f, 0.0f), 5.0f,

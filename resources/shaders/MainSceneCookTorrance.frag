@@ -17,7 +17,8 @@ in vec4 posLightProj;
 in vec3 lightProbeSampler;
 
 uniform sampler2D sampler;
-uniform sampler2D shadowMapSampler;
+uniform sampler2DArray shadowMapSampler;
+//uniform sampler2D shadowMapSampler;
 //uniform sampler2DMS shadowMapSampler;
 
 uniform samplerCube lightProbeCubemap;
@@ -51,7 +52,7 @@ float castingShadow()
 	vec3 posLight = posLightProj.xyz / posLightProj.w;
     posLight = posLight * 0.5f + 0.5f;
 
-	float depth = texture(shadowMapSampler, posLight.xy).r;
+	float depth = texture(shadowMapSampler, vec3(posLight.xy, 1.0f)).r;
     
     // TODO: Enable multi-sampled shadow map
     
@@ -184,7 +185,7 @@ void main()
         // Shadow casting
         // lightRadiance *= shadowAttenuation;
         
-        radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance * attenuation);
+        radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance);
     }
 
     // Light Probe

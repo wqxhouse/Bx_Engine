@@ -21,7 +21,7 @@ layout(location = 6) uniform samplerCube lightProbeCubemap;
 layout(location = 7) uniform sampler2D ssaoTex;
 
 // Shadow map
-//layout (location = 8) uniform sampler2DArray shadowMapSampler;
+layout (location = 8) uniform sampler2DArray shadowMapSampler;
 //layout (location = 8) uniform sampler2DMS shadowMapSampler;
 
 /*layout (std140) uniform ShadowMapResolutionUniformBlock
@@ -60,8 +60,8 @@ float castingShadow(vec4 posLightProj)
 
 	// TODO: Added control for enable/disable shadow anti-alasing.
 
-    float depth = 1.0f;
-	//float depth = texture(shadowMapSampler, vec3(posLight.xy, 0.0f)).r;
+    //float depth = 1.0f;
+	float depth = texture(shadowMapSampler, vec3(posLight.xy, 1.0f)).r;
 
     // Multisampling, need integer coordinate
     /*
@@ -256,7 +256,7 @@ void main()
 			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material);
 			// Shadow casting
 			directLightRadiance *= shadowAttenuation;
-			radiance += directLightRadiance * attenuation;
+			radiance += directLightRadiance;
 
             if (i == 0)
             {

@@ -5,7 +5,7 @@
 #include "../Buffer/UniformBufferMgr.h"
 #include "../Shadow/ShadowMgr.h"
 
-#define MAX_LIGHT_NUM 16
+#define MAX_LIGHT_NUM 32
 
 class LightMgr
 {

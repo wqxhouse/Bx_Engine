@@ -70,19 +70,16 @@ void ShadowMgr::castShadow(
     {
         glDepthFunc(GL_NEVER);
     }
-    GLenum error = glGetError();
     m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_DEPTH_ATTACHMENT, m_pShadowTexture, i);
-    error = glGetError();
     m_shadowFbo.drawFramebuffer();
-    error = glGetError();
 
-    /*glDrawBuffer(GL_NONE);
+    glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
     pShadowMap->drawShadowMap(m_pScene);
 
     glDrawBuffer(GL_FRONT);
-    glReadBuffer(GL_FRONT);*/
+    glReadBuffer(GL_FRONT);
 
     glCullFace(GL_BACK);
     if (pSetting->m_graphicsSetting.shadowCasting == FALSE)

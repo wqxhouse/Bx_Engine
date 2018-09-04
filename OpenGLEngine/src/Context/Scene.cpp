@@ -210,11 +210,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        m_pLightMgr->rotateLight(1, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        m_pLightMgr->rotateLight(1, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -404,7 +404,7 @@ void Scene::drawScene()
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
 
         // Test
-        ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
+        ShadowMap* pShadowMap = GetShadowMap();
 
         glm::mat4 lightTransWVP = pShadowMap->GetLightTransVP() *
                                   pModel->m_pTrans->GetTransMatrix();
@@ -489,8 +489,8 @@ void Scene::deferredDrawScene()
             glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransVP));
 
             //pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
-            /*m_pLightMgr->GetShadowMgr()->
-                readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);*/
+            m_pLightMgr->GetShadowMgr()->
+                readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
         }
         else
         {
@@ -534,7 +534,7 @@ void Scene::setSceneShader(
 
 void Scene::shadowPass()
 {
-    ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
+    ShadowMap* pShadowMap = GetShadowMap();
 
     m_pLightMgr->updateLightShadow();
     m_pLightMgr->castShadow();
