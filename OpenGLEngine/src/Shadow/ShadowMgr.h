@@ -12,7 +12,7 @@ public:
     ShadowMgr(Scene* pScene);
     ~ShadowMgr();
 
-    void initialize();
+    BOOL initialize();
     void createShadowMap(Light* pLight);
     void updateShadowMap(const UINT i, Light* pLight);
     void castShadow(const UINT i);

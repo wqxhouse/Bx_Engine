@@ -15,12 +15,14 @@ public:
     LightMgr(Scene* pScene);
     ~LightMgr();
 
-    void createLightUbo(UniformBufferMgr* m_pUboMgr);
+    BOOL initialize();
+    void castShadow();
 
     void updateLightUbo(
-        UniformBufferMgr* m_pUboMgr,
         const GLuint      shaderProgram,
         const GLchar*     uniformBufferBlockName);
+
+    void updateLightShadow();
 
     void bindLightUbo(
         UniformBufferMgr* m_pUboMgr,
@@ -70,6 +72,8 @@ public:
     }
 
 private:
+    void createLightUbo(UniformBufferMgr* m_pUboMgr);
+
     struct LightData
     {
         Math::Vector4 data[4];

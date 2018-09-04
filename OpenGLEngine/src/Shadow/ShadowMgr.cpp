@@ -16,14 +16,23 @@ ShadowMgr::~ShadowMgr()
     }
 }
 
-void ShadowMgr::initialize()
+BOOL ShadowMgr::initialize()
 {
+    BOOL status = TRUE;
+
     Setting* pSetting = m_pScene->GetSetting();
 
     // Create texture2D array with x,y and layers
     m_pTexture3D = new Texture3D(pSetting->m_graphicsSetting.shadowResolution.width,
                                  pSetting->m_graphicsSetting.shadowResolution.height,
                                  MAX_SHADOW_NUM);
+
+    if (m_pTexture3D == NULL)
+    {
+        status = FALSE;
+    }
+
+    return status;
 }
 
 void ShadowMgr::createShadowMap(
@@ -47,7 +56,7 @@ void ShadowMgr::updateShadowMap(
 void ShadowMgr::castShadow(
     const UINT i)   ///< Index of light for shadow
 {
-    Setting  * pSetting   = m_pScene->GetSetting();
+    Setting*   pSetting   = m_pScene->GetSetting();
     ShadowMap* pShadowMap = m_pShadowMapList[i];
 
     glCullFace(GL_FRONT);
@@ -56,7 +65,7 @@ void ShadowMgr::castShadow(
         glDepthFunc(GL_NEVER);
     }
 
-    m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pTexture3D, i);
+    m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_DEPTH_ATTACHMENT, m_pTexture3D, i);
     m_shadowFbo.drawFramebuffer();
 
     pShadowMap->drawShadowMap(m_pScene);

@@ -79,14 +79,33 @@ void ShadowMap::update(Light* pLight)
 {
     m_pLight = pLight;
 
-    DirectionalLight* pDirectionalLight = static_cast<DirectionalLight*>(m_pLight);
-    Vector3 lightDir = pDirectionalLight->GetDir();
+    Vector3 lightDir;
+
+    switch (pLight->GetLightType())
+    {
+        case LightType::DIRECTIONAL_LIGHT:
+        {
+            DirectionalLight* pDirectionalLight = static_cast<DirectionalLight*>(m_pLight);
+            lightDir = pDirectionalLight->GetDir();
+            break;
+        }
+        case LightType::POINT_LIGHT: 
+            break;
+        case LightType::SPOT_LIGHT:
+        {
+            SpotLight* pSpotLight = static_cast<SpotLight*>(m_pLight);
+            lightDir = pSpotLight->GetDir();
+            break;
+        }
+        default:
+            printf("Unknown light type!\n");
+            assert(false);
+            break;
+    }
+
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
     float lightPosScale = 5.0f;
-    // float halfWidth = static_cast<float>(m_shadowResolution.width) * 0.0001f;
-    // float halfHeight = static_cast<float>(m_shadowResolution.height) * 0.0001f;
-
     m_pLightCamera->setCamTrans(-glmLightDir * lightPosScale, glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 

@@ -145,12 +145,6 @@ BOOL GBuffer::initialize()
         m_gShader.GetShaderProgram(),
         "gMaterialPBR");
 
-    /*m_pScene->GetUniformBufferMgr()->bindUniformBuffer(
-        m_pScene->GetShadowMap()->GetShadowResolutionUniformBufferIndex(),
-        m_gShader.GetShaderProgram(),
-        "shadowMapResolutionUniformBlock"
-    );*/
-
     // G-Buffer Quad initialize
     m_gQuad.initialize();
 

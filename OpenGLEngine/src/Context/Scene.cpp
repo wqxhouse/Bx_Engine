@@ -87,7 +87,12 @@ BOOL Scene::initialize()
     m_pLightMgr = new LightMgr(this);
 
     // Create light ubo
-    m_pLightMgr->createLightUbo(&m_uniformBufferMgr);
+    status = m_pLightMgr->initialize();
+    if (status == FALSE)
+    {
+        printf("Failed to initialize light manager!\n");
+        assert(FALSE);
+    }
 
     // Create resolution ubo
     m_resolutionUniformBufferIndex =
@@ -281,7 +286,6 @@ void Scene::preDraw()
 
     /// Updating UBO data
     m_pLightMgr->updateLightUbo(
-        &m_uniformBufferMgr,
         m_deferredRenderingShader.GetShaderProgram(),
         "lightArrayUniformBlock");
 
@@ -528,7 +532,7 @@ void Scene::shadowPass()
 {
     ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
 
-    pShadowMap->update(m_pLightMgr->GetLight(0));
+    m_pLightMgr->updateLightShadow();
 
     glCullFace(GL_FRONT);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)

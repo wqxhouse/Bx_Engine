@@ -1,4 +1,5 @@
 #include "LightMgr.h"
+#include "../Context/Scene.h"
 
 #define UNCREATED_LIGHT_UBO_HANDLE 0xFFFFFFFF
 
@@ -13,6 +14,21 @@ LightMgr::LightMgr(Scene* pScene)
 LightMgr::~LightMgr()
 {
     m_lightList.clear();
+}
+
+BOOL LightMgr::initialize()
+{
+    BOOL status = TRUE;
+
+    createLightUbo(m_pScene->GetUniformBufferMgr());
+
+    status = m_shadowMgr.initialize();
+
+    return status;
+}
+
+void LightMgr::castShadow()
+{
 }
 
 void LightMgr::createLightUbo(
@@ -37,10 +53,11 @@ void LightMgr::createLightUbo(
 }
 
 void LightMgr::updateLightUbo(
-    UniformBufferMgr* pUboMgr,
     const GLuint      shaderProgram,
     const GLchar*     uniformBufferBlockName)
 {
+    UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
+
     if (m_lightFlags.bitField.isRecreateLightUbo == TRUE)
     {
         createLightUbo(pUboMgr);
@@ -54,6 +71,14 @@ void LightMgr::updateLightUbo(
 
     // Reset flags
     m_lightFlags.flags = 0;
+}
+
+void LightMgr::updateLightShadow()
+{
+    for (size_t i = 0; i < m_lightList.size(); ++i)
+    {
+        m_shadowMgr.updateShadowMap(static_cast<int>(i), GetLight(static_cast<int>(i)));
+    }
 }
 
 void LightMgr::bindLightUbo(
