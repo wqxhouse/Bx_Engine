@@ -414,7 +414,9 @@ void Scene::drawScene()
 
         if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
         {
-            pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+            // pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+            m_pLightMgr->GetShadowMgr()->
+                readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
         }
 
         if (m_pLightProbe != NULL)
@@ -486,7 +488,9 @@ void Scene::deferredDrawScene()
             glm::mat4 lightTransVP = pShadowMap->GetLightTransVP();
             glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransVP));
 
-            pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
+            //pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
+            /*m_pLightMgr->GetShadowMgr()->
+                readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);*/
         }
         else
         {
@@ -533,8 +537,9 @@ void Scene::shadowPass()
     ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
 
     m_pLightMgr->updateLightShadow();
+    m_pLightMgr->castShadow();
 
-    glCullFace(GL_FRONT);
+    /*glCullFace(GL_FRONT);
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
         glDepthFunc(GL_NEVER);
@@ -544,7 +549,7 @@ void Scene::shadowPass()
     if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
         glDepthFunc(GL_LEQUAL);
-    }
+    }*/
 }
 
 BOOL Scene::initializePhongRendering()

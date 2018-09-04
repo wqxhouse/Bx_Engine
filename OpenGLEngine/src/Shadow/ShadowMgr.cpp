@@ -3,13 +3,13 @@
 
 ShadowMgr::ShadowMgr(Scene* pScene)
     : m_pScene(pScene),
-      m_pTexture3D(NULL)
+      m_pShadowTexture(NULL)
 {
 }
 
 ShadowMgr::~ShadowMgr()
 {
-    SafeDelete(m_pTexture3D);
+    //SafeDelete(m_pShadowTexture);
     for (ShadowMap* pShadowMap : m_pShadowMapList)
     {
         SafeDelete(pShadowMap);
@@ -23,11 +23,17 @@ BOOL ShadowMgr::initialize()
     Setting* pSetting = m_pScene->GetSetting();
 
     // Create texture2D array with x,y and layers
-    m_pTexture3D = new Texture3D(pSetting->m_graphicsSetting.shadowResolution.width,
-                                 pSetting->m_graphicsSetting.shadowResolution.height,
-                                 MAX_SHADOW_NUM);
+    m_pShadowTexture = new Texture3D(pSetting->m_graphicsSetting.shadowResolution.width,
+                                     pSetting->m_graphicsSetting.shadowResolution.height,
+                                     MAX_SHADOW_NUM,
+                                     1,                                         // Samples
+                                     GL_DEPTH_COMPONENT,
+                                     GL_DEPTH_COMPONENT,
+                                     GL_FLOAT,
+                                     GL_CLAMP_TO_EDGE,
+                                     FALSE, NULL);
 
-    if (m_pTexture3D == NULL)
+    if (m_pShadowTexture == NULL)
     {
         status = FALSE;
     }
@@ -64,11 +70,19 @@ void ShadowMgr::castShadow(
     {
         glDepthFunc(GL_NEVER);
     }
-
-    m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_DEPTH_ATTACHMENT, m_pTexture3D, i);
+    GLenum error = glGetError();
+    m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_DEPTH_ATTACHMENT, m_pShadowTexture, i);
+    error = glGetError();
     m_shadowFbo.drawFramebuffer();
+    error = glGetError();
+
+    /*glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
 
     pShadowMap->drawShadowMap(m_pScene);
+
+    glDrawBuffer(GL_FRONT);
+    glReadBuffer(GL_FRONT);*/
 
     glCullFace(GL_BACK);
     if (pSetting->m_graphicsSetting.shadowCasting == FALSE)
@@ -85,4 +99,13 @@ void ShadowMgr::castShadowAll()
     {
         castShadow(i);
     }
+}
+
+void ShadowMgr::readShadowMap(
+    const GLenum       texUnit,
+    const GLuint       shaderProgram,
+    const std::string& samplerName,
+    const UINT         samplerIndex)
+{
+    m_pShadowTexture->bindTexture(texUnit, shaderProgram, samplerName, samplerIndex);
 }

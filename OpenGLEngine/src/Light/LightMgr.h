@@ -5,9 +5,7 @@
 #include "../Buffer/UniformBufferMgr.h"
 #include "../Shadow/ShadowMgr.h"
 
-#define MAX_LIGHT_NUM 128
-
-#define MAX_LIGHT_NUM 128
+#define MAX_LIGHT_NUM 16
 
 class LightMgr
 {
@@ -70,6 +68,8 @@ public:
     { 
         return reinterpret_cast<void*>(const_cast<LightData*>(m_lightList.data()));
     }
+
+    inline ShadowMgr* GetShadowMgr() { return &m_shadowMgr; }
 
 private:
     void createLightUbo(UniformBufferMgr* m_pUboMgr);

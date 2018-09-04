@@ -19,13 +19,17 @@ public:
 
     void castShadowAll();
 
-    inline GLuint GetShadowMapsHandle() { return m_pTexture3D->GetTextureHandle(); }
+    void readShadowMap(
+        const GLenum       texUnit,
+        const GLuint       shaderProgram,
+        const std::string& samplerName,
+        const UINT         samplerIndex);
 
 private:
     Scene*      m_pScene;
 
     Framebuffer m_shadowFbo;
-    Texture3D*  m_pTexture3D;
+    Texture3D*  m_pShadowTexture;
 
     std::vector<ShadowMap*> m_pShadowMapList;
 };

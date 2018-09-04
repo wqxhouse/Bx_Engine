@@ -3,6 +3,8 @@
 #include "../Core/OpenGLPCH.h"
 #include "../Texture/Texture.h"
 
+#include <unordered_set>
+
 enum FboRenderbufferAttachmentType
 {
     FRAMEBUFFER_COLOR_RENDERBUFFER_ATTACHMENT,
@@ -87,4 +89,7 @@ private:
 
     std::vector<Texture*> m_pAttachedTextures;
     std::vector<GLenum>   m_framebufferAttachmentsList;
+
+    // TODO: Optimize
+    std::unordered_set<GLenum> m_framebufferAttachmentsSet;
 };

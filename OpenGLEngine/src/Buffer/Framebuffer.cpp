@@ -186,9 +186,10 @@ void Framebuffer::attachTexture3D(
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // TODO: Use hash map
-    if (layer == 0)
+    if (m_framebufferAttachmentsSet.find(attachmentType) == m_framebufferAttachmentsSet.end())
     {
         m_framebufferAttachmentsList.push_back(attachmentType);
+        m_framebufferAttachmentsSet.insert(attachmentType);
     }
 }
 

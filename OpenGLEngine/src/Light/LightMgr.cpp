@@ -29,6 +29,7 @@ BOOL LightMgr::initialize()
 
 void LightMgr::castShadow()
 {
+    m_shadowMgr.castShadow(0);
 }
 
 void LightMgr::createLightUbo(
