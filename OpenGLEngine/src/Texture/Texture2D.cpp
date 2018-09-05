@@ -69,26 +69,31 @@ Texture2D::Texture2D(
                               reinterpret_cast<int*>(&m_textureDataType),
                               STBI_rgb_alpha);
 
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight, 0, format, type, m_textureData);
+    assert(m_textureData != NULL);
 
-    if (m_mipmap == TRUE)
+    if (m_textureData != NULL)
     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, format, m_textureWidth, m_textureHeight, 0, format, type, m_textureData);
 
-        glGenerateMipmap(GL_TEXTURE_2D);
+        if (m_mipmap == TRUE)
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
-    else
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture2D::setBoarderColor(GLfloat borderColor[4])

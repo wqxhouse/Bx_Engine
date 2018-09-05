@@ -1,7 +1,14 @@
 #include "Quad.h"
 
-Quad::Quad()
+Quad::Quad(
+    const Math::Vector2& pos,
+    const float          size)
 {
+    for (size_t i = 0; i < 4; ++i)
+    {
+        m_quadVertices[i] = m_quadVertices[i] * size + Math::Vector3(pos.x, pos.y, 0.0f);
+    }
+
     m_verticesData     = &(m_quadVertices[0]);
     m_verticesDataSize = sizeof(m_quadVertices);
 

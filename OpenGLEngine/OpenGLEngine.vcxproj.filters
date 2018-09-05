@@ -189,6 +189,9 @@
     <ClInclude Include="src\Shadow\ShadowMgr.h">
       <Filter>src\Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\Text.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -316,6 +319,9 @@
     </ClCompile>
     <ClCompile Include="src\Shadow\ShadowMgr.cpp">
       <Filter>src\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Text.cpp">
+      <Filter>src\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

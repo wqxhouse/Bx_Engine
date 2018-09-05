@@ -5,7 +5,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
 OpenGLContext::OpenGLContext(Setting* pSetting)
-    : m_scene(pSetting)
 {
     this->setting = setting;
 }
@@ -73,7 +72,8 @@ void OpenGLContext::initialize()
     printf("Success initialize OpenGL.\n");
 #endif
 
-    assert(m_scene.initialize() == TRUE);
+    m_pScene = new Scene(&setting);
+    assert(m_pScene->initialize() == TRUE);
 
 #if _DEBUG
     printf("Success initialize render scene.\n");
@@ -95,12 +95,12 @@ void OpenGLContext::run()
 
         glfwPollEvents();
 
-        m_scene.update(deltaTime);
+        m_pScene->update(deltaTime);
 
         //Start Rendering
-        m_scene.preDraw();
-        m_scene.draw();
-        m_scene.postDraw();
+        m_pScene->preDraw();
+        m_pScene->draw();
+        m_pScene->postDraw();
 
         glfwSwapBuffers(window);
     }
@@ -110,6 +110,7 @@ void OpenGLContext::run()
 
 OpenGLContext::~OpenGLContext()
 {
+    SafeDelete(m_pScene);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)

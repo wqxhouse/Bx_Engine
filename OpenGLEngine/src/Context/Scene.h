@@ -8,6 +8,7 @@
 #include "../Shadow/SSAO.h"
 #include "../Effect/Skybox.h"
 #include "../Light/LightProbe.h"
+#include "../Core/Text.h"
 
 #include "Setting.h"
 
@@ -194,5 +195,10 @@ private:
     LightProbe* m_pLightProbe;
     BOOL enableRealtimeLightProbe;
 
+    // Text renderer
+    Text m_text;
+    std::string m_renderText;
+
+    // Friend functions
     friend void LightProbe::draw();
 };

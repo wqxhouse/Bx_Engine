@@ -18,7 +18,19 @@ namespace Math
 		~Vector2()
 		{}
 
-		float X;
-		float Y;
+        union
+        {
+            struct
+            {
+                float x;
+                float y;
+            };
+
+            struct
+            {
+                float X;
+                float Y;
+            };
+        };
 	};
 }

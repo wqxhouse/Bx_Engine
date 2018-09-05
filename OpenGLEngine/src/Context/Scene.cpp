@@ -141,13 +141,14 @@ BOOL Scene::initialize()
     m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
     m_pLightProbe->initialize();
 
+    // Text rendering
+    m_text.initialize();
+
     return status;
 }
 
 void Scene::update(float deltaTime)
 {
-    GLfloat timeValue = static_cast<GLfloat>(glfwGetTime());
-
     UINT cameraCount = m_pCameraList.size();
 
     assert(cameraCount > 0);
@@ -272,6 +273,8 @@ void Scene::update(float deltaTime)
     {
         DisableSSAO();
     }
+
+    m_renderText = std::to_string(deltaTime);
 }
 
 void Scene::preDraw()
@@ -342,7 +345,10 @@ void Scene::draw()
 
 void Scene::postDraw()
 {
-    // TODO: Post processing, font rendering
+    m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
+    m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
+
+    // TODO: Post processing
 }
 
 void Scene::drawScene()
@@ -351,7 +357,7 @@ void Scene::drawScene()
 
 #if 0
     Vector3 camPos = activeCamPtr->GetTrans().GetPos();
-    printf("%f %f %f\n", camPos.x, camPos.y, camPos.z);
+    printf("%f %f %f\n", camPos.8x, camPos.y, camPos.z);
 #endif
 
     GLuint sceneShaderProgram;

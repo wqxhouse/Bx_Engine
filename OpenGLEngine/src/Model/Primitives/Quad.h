@@ -6,7 +6,9 @@
 class Quad : public Primitive
 {
 public:
-    Quad();
+    Quad(
+        const Math::Vector2& pos  = Math::Vector2(),
+        const float          size = 1.0f);
     ~Quad();
 
 private:
@@ -14,8 +16,8 @@ private:
     {
         { -1.0f, -1.0f, 0.0f },
         {  1.0f, -1.0f, 0.0f },
-        { -1.0f, 1.0f, 0.0f },
-        {  1.0f, 1.0f, 1.0f }
+        { -1.0f,  1.0f, 0.0f },
+        {  1.0f,  1.0f, 0.0f }
     };
 
     UINT m_quadIndices[6] =

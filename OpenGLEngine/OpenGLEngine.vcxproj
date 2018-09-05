@@ -150,6 +150,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Context\OpenGLContext.h" />
     <ClInclude Include="src\Context\Scene.h" />
     <ClInclude Include="src\Context\Setting.h" />
+    <ClInclude Include="src\Core\Text.h" />
     <ClInclude Include="src\Core\OpenGLPCH.h" />
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
@@ -199,6 +200,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Context\Scene.cpp" />
     <ClCompile Include="src\Context\Setting.cpp" />
     <ClCompile Include="src\Core\OpenGLPCH.cpp" />
+    <ClCompile Include="src\Core\Text.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Effect\BlurEffect.cpp" />
     <ClCompile Include="src\Effect\Skybox.cpp" />

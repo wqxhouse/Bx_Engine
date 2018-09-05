@@ -12,7 +12,7 @@ public:
     void run();
 
     inline GLFWwindow* GetWindow() const { return window;   }
-    inline Scene*      GetScene()        { return &m_scene; }
+    inline Scene*      GetScene()        { return m_pScene; }
 
 private:
 #if _DEBUG
@@ -23,7 +23,7 @@ private:
 	Setting setting;
 
 	//TODO: Multiple Scenes
-	Scene m_scene;
+	Scene* m_pScene;
 
 	GLfloat prevTime = 0.0f;
 	GLfloat deltaTime = 0.0f;

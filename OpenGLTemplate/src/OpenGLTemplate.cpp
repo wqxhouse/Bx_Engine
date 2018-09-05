@@ -30,18 +30,18 @@ void OpenGLTemplate::createDefaultScene()
     pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
     pScene->AddSpotLight(
-        Vector3(0.0f, 2.0f, 2.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.5f, 0.0f, 0.0f), 5.0f,
-        Math::Radians(75.0f), Math::Radians(90.0f));
+        Vector3(0.0f, 3.0f, 2.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.5f, 0.0f, 0.0f), 5.0f,
+        Math::Radians(60.0f), Math::Radians(90.0f));
 
     pScene->AddSpotLight(
-        Vector3(2.0f, 2.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 5.0f,
-        Math::Radians(75.0f), Math::Radians(90.0f));
+        Vector3(2.0f, 3.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 5.0f,
+        Math::Radians(60.0f), Math::Radians(90.0f));
 
     pScene->AddSpotLight(
-        Vector3(-2.0f, 2.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 5.0f,
-        Math::Radians(75.0f), Math::Radians(90.0f));
+        Vector3(-2.0f, 3.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 5.0f,
+        Math::Radians(60.0f), Math::Radians(90.0f));
 
-    pScene->AddPointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(0.5f, 0.5f, 0.5f), 10.0f);
+    // pScene->AddPointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(0.5f, 0.5f, 0.5f), 10.0f);
 
     /*pScene->AddPointLight(Vector3(0.0f, 5.0f, -5.0f), Vector3(0.5f, 0.0f, 0.0f), 10.0f);
     pScene->AddPointLight(Vector3(5.0f, 5.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 10.0f);
@@ -53,6 +53,9 @@ void OpenGLTemplate::createDefaultScene()
 
     const float aspectRadio = static_cast<float>(m_pSetting->resolution.width) /
                               static_cast<float>(m_pSetting->resolution.height);
+
+    /*pScene->addProspectiveCamera(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+        glm::vec3(0, 0, 1.0f), 5.0f, aspectRadio, 0.1f, 1000.0f, 60.0f);*/
 
     /*float halfWidth  = static_cast<float>(m_pSetting->resolution.width * 2) * 0.002f;
     float halfHeight = static_cast<float>(m_pSetting->resolution.width * 2) * 0.002f;*/
