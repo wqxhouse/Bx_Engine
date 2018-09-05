@@ -32,6 +32,11 @@ public:
     inline void UseGlobalMaterial() { useGlobalMaterial = TRUE;  }
     inline void UseLocalMaterial()  { useGlobalMaterial = FALSE; }
 
+    inline Texture* GetGBufferTexture(const UINT i) const 
+    { 
+        return m_gFramebuffer.getTexturePtr(GL_TEXTURE0 + i);
+    }
+
 private:
     Scene*      m_pScene; // Pointer to the scene
 
