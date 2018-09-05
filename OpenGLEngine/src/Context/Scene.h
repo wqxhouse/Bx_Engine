@@ -8,6 +8,7 @@
 #include "../Shadow/SSAO.h"
 #include "../Effect/Skybox.h"
 #include "../Light/LightProbe.h"
+#include "../Model/Primitives/Sprite.h"
 
 #include "Setting.h"
 
@@ -125,10 +126,12 @@ public:
     inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
     
     BOOL useSSAO();
-    inline void EnableSSAO() { m_pSetting->m_graphicsSetting.EnableSSAO(); }
+    inline void EnableSSAO()  { m_pSetting->m_graphicsSetting.EnableSSAO(); }
     inline void DisableSSAO() { m_pSetting->m_graphicsSetting.DisableSSAO(); }
 
     inline void EnableRealtimeLightProbe() { enableRealtimeLightProbe = TRUE; }
+
+    inline void EnableDebug() { enableDebugDraw = TRUE; }
 
 private:
     BOOL initializePhongRendering();
@@ -193,6 +196,12 @@ private:
     // Light Probe
     LightProbe* m_pLightProbe;
     BOOL enableRealtimeLightProbe;
+
+    // Debug draws
+    void initializeDebug();
+    void debugDraw();
+    std::vector<Sprite*> m_pDebugSpriteList;
+    BOOL enableDebugDraw;
 
     friend void LightProbe::draw();
 };

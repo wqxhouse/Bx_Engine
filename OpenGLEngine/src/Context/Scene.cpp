@@ -14,7 +14,8 @@ Scene::Scene(Setting* pSetting)
       m_pSsao(NULL),
       m_pSkybox(NULL),
       m_pLightProbe(NULL),
-      enableRealtimeLightProbe(FALSE)
+      enableRealtimeLightProbe(FALSE),
+      enableDebugDraw(FALSE)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
     m_globalPbrMaterial.roughness = 0.3f;
@@ -78,6 +79,11 @@ Scene::~Scene()
     SafeDelete(m_pSsao);
     SafeDelete(m_pSkybox);
     SafeDelete(m_pLightProbe);
+
+    for (Sprite* pSprite : m_pDebugSpriteList)
+    {
+        SafeDelete(pSprite);
+    }
 }
 
 BOOL Scene::initialize()
@@ -140,6 +146,11 @@ BOOL Scene::initialize()
     // Light Probe
     m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
     m_pLightProbe->initialize();
+
+    if (enableDebugDraw == TRUE)
+    {
+        initializeDebug();
+    }
 
     return status;
 }
@@ -311,13 +322,21 @@ void Scene::preDraw()
 
 void Scene::draw()
 {
-    if (m_skyboxImages.size() == 6)
+    if (m_skyboxImages.size() == CUBE_MAP_FACE_NUM)
     {
         m_pSkybox->draw();
     }
 
     if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
     {
+        /*if (m_pSsao == NULL)
+        {
+            m_pSsao = new SSAO(this, m_pSetting);
+            m_pSsao->initialize();
+        }
+
+        assert(m_pSsao != NULL);
+        m_pSsao->draw();*/
         drawScene();
     }
     else
@@ -343,6 +362,8 @@ void Scene::draw()
 void Scene::postDraw()
 {
     // TODO: Post processing, font rendering
+
+    debugDraw();
 }
 
 void Scene::drawScene()
@@ -643,6 +664,32 @@ BOOL Scene::initializePBRendering()
     /// UBOs initialization end
 
     return status;
+}
+
+void Scene::initializeDebug()
+{
+    for(int i = 0; i < 5; ++i)
+    {        
+        m_pDebugSpriteList.push_back(new Sprite(this, Math::Vector3(50.0f, 600.0f - i * 100.0f, 0.0f), { 100.0f, 100.0f }));
+        m_pDebugSpriteList[i]->initialize();
+    }
+}
+
+void Scene::debugDraw()
+{
+    if (enableDebugDraw == TRUE)
+    {
+        if (m_pDebugSpriteList.size() == 0)
+        {
+            initializeDebug();
+        }
+
+        for(int i = 0; i < 5; ++i)
+        {
+            m_pDebugSpriteList[i]->BindTexture(static_cast<Texture2D*>(m_pGBuffer->GetGBufferTexture(i)));
+            m_pDebugSpriteList[i]->draw();
+        }
+    }
 }
 
 BOOL Scene::initializeDeferredRendering()
