@@ -79,7 +79,7 @@ float castingShadow(vec4 posLightProj, float i)
 
     depth *= 0.25f;*/
 	
-	if (depth < posLight.z - 0.000009f)
+	if (depth < posLight.z - 0.000001f)
 	{
 		shadowAttenuation = 0.0f;
 	}
@@ -187,7 +187,7 @@ void main()
         // Shadow casting
         // lightRadiance *= shadowAttenuation;
         
-        radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance);
+        radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance * attenuation);
     }
 
     // Light Probe

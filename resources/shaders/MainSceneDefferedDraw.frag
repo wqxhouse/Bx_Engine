@@ -87,7 +87,7 @@ float castingShadow(vec4 posLightProj, float i)
     }
     depth *= 0.25f;*/
 
-	if (depth < posLight.z - 0.000009f)
+	if (depth < posLight.z - 0.000001f)
 	{
 		shadowAttenuation = 0.0f;
 	}
@@ -254,9 +254,9 @@ void main()
 			CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
 
 			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material);
+
 			// Shadow casting
-			directLightRadiance *= shadowAttenuation;
-			radiance += directLightRadiance;
+			radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : (directLightRadiance * attenuation));
 
             if (i == 0)
             {

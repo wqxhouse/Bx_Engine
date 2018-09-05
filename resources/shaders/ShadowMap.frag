@@ -5,7 +5,7 @@
 
 void main()
 {
-    //gl_FragDepth = gl_FragCoord.z;
+    gl_FragDepth = gl_FragCoord.z;
 }
 
 // End of ShadowMap.frag

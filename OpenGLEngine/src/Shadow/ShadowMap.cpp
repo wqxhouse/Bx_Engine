@@ -27,12 +27,53 @@ BOOL ShadowMap::initialize()
 
     float offset = 0.0f;
 
-    m_pLightCamera = new OrthographicCamera(
-        glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
-        0.0f, Rectangle(-halfWidth + offset,
-                         halfWidth + offset,
-                        -halfHeight + offset,
-                         halfHeight + offset), 0.1f, 10000.0f);
+    switch (m_pLight->GetLightType())
+    {
+        case LightType::DIRECTIONAL_LIGHT:
+        {
+            m_pLightCamera = new OrthographicCamera(
+                glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
+                0.0f, Rectangle(-halfWidth  + offset,
+                                 halfWidth  + offset,
+                                -halfHeight + offset,
+                                 halfHeight + offset), 0.1f, 10000.0f);
+            break;
+        }
+        case LightType::POINT_LIGHT:
+        {
+            break;
+        }
+        case LightType::SPOT_LIGHT:
+        {
+            SpotLight* pSpotLight = static_cast<SpotLight*>(m_pLight);
+
+            Math::Vector3 pos = pSpotLight->GetPos();
+            Math::Vector3 dir = pSpotLight->GetDir();
+            Math::Vector3 center = pos + dir;
+
+            Math::Vector3 up(0.0f, 1.0f, 0.0f);
+            if (dir.y > 0.99f || dir.y < -0.99f)
+            {
+                up = Math::Vector3(0.0f, 0.0f, 1.0f);
+            }
+
+            m_pLightCamera = new ProspectiveCamera(
+                glm::vec3(pos.x, pos.y, pos.z),
+                glm::vec3(center.x, center.y, center.z),
+                glm::vec3(up.x, up.y, up.z),
+                0.0f,
+                static_cast<float>(m_shadowResolution.width) / static_cast<float>(m_shadowResolution.height),
+                0.1f,
+                1000.0f,
+                pSpotLight->GetOuterAngleDegree());
+
+            break;
+        }
+        default:
+            printf("Unknown light type!\n");
+            assert(false);
+            break;
+    }
 
     /*m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                                       GL_DEPTH_ATTACHMENT,
@@ -106,7 +147,7 @@ void ShadowMap::update(Light* pLight)
     glm::vec3 glmLightDir = glm::vec3(lightDir.x, lightDir.y, lightDir.z);
 
     float lightPosScale = 5.0f;
-    m_pLightCamera->setCamTrans(-glmLightDir * lightPosScale, glmLightDir, glm::vec3(0.0f, 1.0f, 0.0f));
+    m_pLightCamera->setCamTrans(-glmLightDir * lightPosScale, glmLightDir, m_pLightCamera->GetTrans().GetUp());
 }
 
 void ShadowMap::drawShadowMap(Scene* pScene)
@@ -121,7 +162,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
 
     size_t modelSize = pScene->GetModelSize();
 
-    glm::mat4 viewMatrix = m_pLightCamera->GetViewMatrix();
+    glm::mat4 viewMatrix     = m_pLightCamera->GetViewMatrix();
     glm::mat4 prospectMatrix = m_pLightCamera->GetProjectionMatrix();
 
     for (size_t i = 0; i < modelSize; ++i)
@@ -131,11 +172,11 @@ void ShadowMap::drawShadowMap(Scene* pScene)
         glm::mat4 worldMatrix    = pModel->m_pTrans->GetTransMatrix();
         glm::mat4 wvp            = prospectMatrix * viewMatrix * worldMatrix;
 
-        GLint tranMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
+        GLint transMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
 
-        if (tranMatrixLocation >= 0)
+        if (transMatrixLocation >= 0)
         {
-            glUniformMatrix4fv(tranMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
+            glUniformMatrix4fv(transMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
             pModel->drawModelPos();
         }
@@ -178,7 +219,7 @@ void ShadowMap::initializeLightCamera()
         }
         case LightType::SPOT_LIGHT:
         {
-            // TODO
+            update(m_pLight);
             break;
         }
         default:
