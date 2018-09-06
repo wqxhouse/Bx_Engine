@@ -245,8 +245,8 @@ void GBuffer::readGBuffer(
     m_gFramebuffer.getTexturePtr(GL_TEXTURE1)->
         bindTexture(GL_TEXTURE1, shaderProgram, "normalTex", 1);
 
-    m_gFramebuffer.getTexturePtr(GL_TEXTURE2)->
-        bindTexture(GL_TEXTURE2, shaderProgram, "texCoordTex", 2);
+    /*m_gFramebuffer.getTexturePtr(GL_TEXTURE2)->
+        bindTexture(GL_TEXTURE2, shaderProgram, "texCoordTex", 2);*/
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE3)->
         bindTexture(GL_TEXTURE3, shaderProgram, "albedoTex", 3);

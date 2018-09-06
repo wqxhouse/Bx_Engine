@@ -179,6 +179,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Model\Primitives\Cube.h" />
     <ClInclude Include="src\Model\Primitives\Primitive.h" />
     <ClInclude Include="src\Model\Primitives\Quad.h" />
+    <ClInclude Include="src\Model\Primitives\Sprite.h" />
     <ClInclude Include="src\Shader\Shader.h" />
     <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Shadow\ShadowMap.h" />
@@ -221,6 +222,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Model\Primitives\Cube.cpp" />
     <ClCompile Include="src\Model\Primitives\Primitive.cpp" />
     <ClCompile Include="src\Model\Primitives\Quad.cpp" />
+    <ClCompile Include="src\Model\Primitives\Sprite.cpp" />
     <ClCompile Include="src\Shader\Shader.cpp" />
     <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Shadow\ShadowMap.cpp" />

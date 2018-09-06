@@ -6,7 +6,7 @@ void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
 OpenGLContext::OpenGLContext(Setting* pSetting)
 {
-    this->setting = setting;
+    this->m_pSetting = pSetting;
 }
 
 void OpenGLContext::initialize()
@@ -18,10 +18,10 @@ void OpenGLContext::initialize()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    glfwWindowHint(GLFW_SAMPLES, setting.m_graphicsSetting.antialasing); // 4x MSAA
+    glfwWindowHint(GLFW_SAMPLES, m_pSetting->m_graphicsSetting.antialasing); // 4x MSAA
 
-    window = glfwCreateWindow(setting.resolution.width,
-                              setting.resolution.height,
+    window = glfwCreateWindow(m_pSetting->resolution.width,
+                              m_pSetting->resolution.height,
                               "BXS OpenGL Engine",
                               // glfwGetPrimaryMonitor(), // Full Screen
                               NULL,
@@ -66,13 +66,13 @@ void OpenGLContext::initialize()
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    glViewport(0, 0, setting.resolution.width, setting.resolution.height);
+    glViewport(0, 0, m_pSetting->resolution.width, m_pSetting->resolution.height);
 
 #if _DEBUG
     printf("Success initialize OpenGL.\n");
 #endif
 
-    m_pScene = new Scene(&setting);
+    m_pScene = new Scene(m_pSetting);
     assert(m_pScene->initialize() == TRUE);
 
 #if _DEBUG

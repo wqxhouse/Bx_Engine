@@ -20,7 +20,7 @@ private:
 	GLchar compileLog[512];
 #endif
 	GLFWwindow* window;
-	Setting setting;
+	Setting* m_pSetting;
 
 	//TODO: Multiple Scenes
 	Scene* m_pScene;

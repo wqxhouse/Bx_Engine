@@ -192,6 +192,9 @@
     <ClInclude Include="src\Core\Text.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Model\Primitives\Sprite.h">
+      <Filter>src\Model\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -322,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="src\Core\Text.cpp">
       <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Primitives\Sprite.cpp">
+      <Filter>src\Model\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
