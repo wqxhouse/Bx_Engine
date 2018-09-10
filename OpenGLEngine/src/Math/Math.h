@@ -2,6 +2,7 @@
 
 #include "Quaternion.h"
 #include "Matrix4x4.h"
+#include "Structures.h"
 
 #ifndef PI_DIVIDE_ONE_HUNDRED_EIGHTEEN
 #define PI_DIVIDE_ONE_HUNDRED_EIGHTEEN 0.017453292f
@@ -26,6 +27,22 @@ namespace Math
 	float Dot(const Quaternion& q1, const Quaternion& q2);
 
 	Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, const float u);
+
+    Mat4 viewMatrix(
+        const Vector3& eyePos,    ///< Eye(Camera) position
+        const Vector3& front,     ///< Front direction
+        const Vector3& up);       ///< World up vector
+
+    Mat4 prospectiveProjectionMatrix(
+        const float fov,             ///< Field of view (Important: Must be in radian)
+        const float invAspectRatio,  ///< Inverse aspect ratio (1 / aspectRatio = Height / Width)
+        const float nearClip,        ///< Near clip
+        const float farClip);        ///< Far clip
+
+    Mat4 orthographicProjectionMatrix(
+        const Rectangle& viewport,   ///< Viewport for the orthographic camera
+        const float      nearClip,   ///< Near clip
+        const float      farClip);    ///< Far clip
 
 	Quaternion operator*(const float& f, const Quaternion& q);
 

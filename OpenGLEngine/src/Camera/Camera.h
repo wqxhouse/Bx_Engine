@@ -88,7 +88,7 @@ public:
         const glm::vec3& center,
         const glm::vec3& up,
         const float      speed,
-        const Rectangle  viewport,
+        const Rectangle& viewport,
         const float      nearClip = 0.1f,
         const float      farClip  = 100.0f);
     ~OrthographicCamera();

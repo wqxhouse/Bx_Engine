@@ -46,9 +46,9 @@ namespace Math
 			Z = z;
 		}
 
-		float dot(const Vector3 &v)
+		float dot(const Vector3 &v) const
 		{
-			return X * v.X + Y * v.Y + Z * v.Z;
+			return x * v.x + y * v.y + z * v.z;
 		}
 
 		Vector3 crossProduct(const Vector3 &v)
@@ -104,7 +104,7 @@ namespace Math
 
 			return result;
 		}
-		
+
 		Vector3 operator+(const Vector3 &v)
 		{
 			return Vector3(X + v.X, Y + v.Y, Z + v.Z);

@@ -567,7 +567,7 @@ void Scene::setSceneShader(
 
 void Scene::shadowPass()
 {
-    ShadowMap* pShadowMap = GetShadowMap();
+    ShadowMap* pShadowMap = m_pLightMgr->GetLight(0)->GetShadowMap();
 
     m_pLightMgr->updateLightShadow();
     m_pLightMgr->castShadow();

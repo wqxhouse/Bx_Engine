@@ -77,7 +77,6 @@ namespace Math
 
         Vector3 ToVector3() const
         {
-            //TODO: Use other method to judge 0!
             if (w != 0)
             {
                 float inv_w = 1.0f / w;
@@ -85,7 +84,7 @@ namespace Math
             }
             else
             {
-                return Vector3(X, Y, Z);
+                return m_v3;
             }
         }
 
@@ -94,7 +93,7 @@ namespace Math
 
         static float dot(const Vector4 &v1, const Vector4 &v2)
         {
-            return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
+            return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
         }
 
         static Vector4 crossProduct(const Vector4 &v1, const Vector4 &v2)
@@ -105,7 +104,7 @@ namespace Math
 
             Vector3 res = Vector3::crossProduct(v3_1, v3_2);
 
-            Vector4 newVector4 = Vector4(res.X, res.Y, res.Z, 1.0f);
+            Vector4 newVector4 = Vector4(res, 1.0f);
 
             return newVector4;
         }
@@ -164,7 +163,7 @@ namespace Math
             return result;
         }
 
-        float operator[](int index)
+        float& operator[](int index)
         {
             switch (index)
             {

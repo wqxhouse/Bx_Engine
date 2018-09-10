@@ -1,4 +1,5 @@
 #include "Trans.h"
+#include "../Math.h"
 
 void Trans::initialize()
 {
@@ -8,6 +9,8 @@ void Trans::initialize()
     transMatrix = translationMatrix * scaleMatrix;
 
     viewMatrix = glm::lookAt(pos, pos + front, up);
+
+    Math::Mat4 testViewMat = Math::viewMatrix(pos, front, up);
     
     // TODO: Rotation matrix
 }

@@ -1,12 +1,12 @@
 #include "Camera.h"
-#include "../Math/Matrix4x4.h"
+#include "../Math/Math.h"
 
 OrthographicCamera::OrthographicCamera(
     const glm::vec3& pos,
     const glm::vec3& center,
     const glm::vec3& up,
     const float      speed,
-    const Rectangle  viewport,
+    const Rectangle& viewport,
     const float      nearClip,
     const float      farClip)
     : Camera(ORTHOGRAPHIC_CAM, pos, center, up, speed, nearClip, farClip),
@@ -15,6 +15,8 @@ OrthographicCamera::OrthographicCamera(
     m_projectionMatrix = glm::ortho(viewport.left, viewport.right,
                                     viewport.bottom, viewport.top,
                                     nearClip, farClip);
+
+    Math::Mat4 orthoMat = Math::orthographicProjectionMatrix(viewport, nearClip, farClip);
 }
 
 OrthographicCamera::~OrthographicCamera()
