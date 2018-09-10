@@ -1,6 +1,9 @@
 #include <assert.h>
 
 #include "Math.h"
+#include "Structures.h"
+
+#define PROJ_DIS 1.0f
 
 #define PROJ_DIS 1.0f
 
