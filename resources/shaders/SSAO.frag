@@ -51,11 +51,9 @@ void main()
     vec3 posView    = texture(posTex, gBufferTexCoord).xyz;
     vec3 normalView = texture(normalTex, gBufferTexCoord).xyz;
     
-    float occlusion = //float(testSampleNum);
-                      m_ssaoSample.sampleNum;
+    float occlusion = m_ssaoSample.sampleNum;
     
-    vec2 ssaoTexCoord = texCoord * tileDeminsion;
-    
+    vec2 ssaoTexCoord = texCoord * tileDeminsion;    
     vec3 randomVec = normalize(texture(noiseTex, ssaoTexCoord)).xyz;
     vec3 tangent   = normalize(randomVec - normalView * dot(normalView, randomVec)); // X axis
     vec3 biTangent = cross(normalView, tangent);                                     // Y axis
@@ -76,12 +74,11 @@ void main()
         
         vec3 depthPosWorld;
         vec3 depthPosView = depthGPosWorld.xyz;
-        float depth;
         
         if (depthGPosWorld.w > 0.99999f)
-        {
-            depth = depthPosView.z;
-            
+        {            
+            float depth = depthPosView.z;
+
             if (samplePos.z < depth + 0.001f) // occlusion
             {
                 occlusion -= 1.0f;

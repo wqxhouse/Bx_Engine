@@ -107,8 +107,6 @@ public:
     inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;         }
     inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex;      }
 
-    inline ShadowMap* GetShadowMap()                 const { return m_pLightMgr->GetLight(0)->GetShadowMap(); }
-
     inline GBuffer*   GetGBuffer()                   const { return m_pGBuffer;                           }
 
     inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;                  }

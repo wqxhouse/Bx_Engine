@@ -23,6 +23,20 @@ namespace Math
 			setMember(r0, r1, r2, r3);
 		}
 
+        Matrix4x4
+        (
+            const Vector3& r0, float f0,
+            const Vector3& r1, float f1,
+            const Vector3& r2, float f2,
+            const Vector3& r3, float f3
+        )
+        {
+            r[0] = Vector4(r0, f0);
+            r[1] = Vector4(r1, f1);
+            r[2] = Vector4(r2, f2);
+            r[3] = Vector4(r3, f3);
+        }
+
 		Matrix4x4(
 			float x11, float x12, float x13, float x14,
 			float x21, float x22, float x23, float x24,
@@ -108,14 +122,14 @@ namespace Math
 
 		float getMember(int x, int y) { return m[x][y]; }
 
-		Vector4Ptr product(const Vector4 &v)
+		Vector4 product(const Vector4 &v)
 		{
-			Vector4Ptr n_v = Vector4::New();
+			Vector4 n_v;
 
-			n_v->X += m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3] * v.W;
-			n_v->Y += m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3] * v.W;
-			n_v->Z += m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3] * v.W;
-			n_v->W += m[3][0] * v.X + m[3][1] * v.Y + m[3][2] * v.Z + m[3][3] * v.W;
+            n_v.x += Vector4::dot(r[0], v);
+			n_v.y += Vector4::dot(r[1], v);
+			n_v.z += Vector4::dot(r[2], v);
+			n_v.w += Vector4::dot(r[3], v);
 
 			return n_v;
 		}
@@ -146,12 +160,12 @@ namespace Math
             memcpy(m, &m2, sizeof(m2));
         }
 
-		Vector4Ptr operator[](int i)
+		Vector4& operator[](int i)
 		{
-			return Vector4::New(m[i][0], m[i][1], m[i][2], m[i][3]);
+            return r[i];
 		}
 
-		Vector4Ptr operator*=(const Vector4 &v)
+		Vector4 operator*=(const Vector4 &v)
 		{
 			return this->product(v);
 		}
@@ -167,14 +181,8 @@ namespace Math
 	private:
         union
         {
-            struct
-            {
-                Vector4 r1;
-                Vector4 r2;
-                Vector4 r3;
-                Vector4 r4;
-            };
-            float m[4][4];
+            Vector4 r[4];
+            float   m[4][4];
         };
 	};
 
