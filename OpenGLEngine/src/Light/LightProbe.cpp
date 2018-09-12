@@ -173,7 +173,7 @@ void LightProbe::draw()
                 Camera* pCam = m_pScene->GetActivateCamera();
 
                 glUniform3fv(eyeLocation, 1, glm::value_ptr(pCam->GetTrans().GetPos()));
-                glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(pCam->GetViewMatrix()));
+                glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(ToGLMMat4(pCam->GetViewMatrix())));
 
                 // Disable SSAO
                 glUniform1i(useSsaoLocation, 0);

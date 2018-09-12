@@ -1,8 +1,6 @@
 #include "Camera.h"
 #include "../Math/Math.h"
 
-using namespace Math;
-
 ProspectiveCamera::ProspectiveCamera(
     const glm::vec3& pos,
     const glm::vec3& center,
@@ -14,9 +12,9 @@ ProspectiveCamera::ProspectiveCamera(
     const float fov)
 	: Camera(CameraType::PROSPECTIVE_CAM, pos, center, up, speed, nearClip, farClip)
 {
-	this->m_projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
-    Math::Mat4 projectMat = Math::prospectiveProjectionMatrix(Math::Radians(fov), aspectRatio, nearClip, farClip);
-
+	m_projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
+    //Math::Mat4 projectMat = Math::prospectiveProjectionMatrix(Math::Radians(fov), aspectRatio, nearClip, farClip);
+    //m_projectionMatrix = projectMat;
 	this->fov = fov;
 }
 

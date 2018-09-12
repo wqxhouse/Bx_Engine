@@ -8,9 +8,7 @@ void Trans::initialize()
 
     transMatrix = translationMatrix * scaleMatrix;
 
-    viewMatrix = glm::lookAt(pos, pos + front, up);
-
-    Math::Mat4 testViewMat = Math::viewMatrix(pos, front, up);
+    viewMatrix = Math::viewMatrix(pos, front, up);
     
     // TODO: Rotation matrix
 }

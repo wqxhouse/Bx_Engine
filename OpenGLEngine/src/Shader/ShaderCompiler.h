@@ -39,7 +39,7 @@ private:
 	char* shaderPath;
 
 	// Parsing the shader file
-	void ShaderCompiler::combileShaderPathAndFile(
+	void combileShaderPathAndFile(
         const char*     path,
         const char*     file,
         OUT const char* filePath);

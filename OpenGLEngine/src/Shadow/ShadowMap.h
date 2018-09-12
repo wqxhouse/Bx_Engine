@@ -27,8 +27,8 @@ public:
 
     inline glm::mat4 GetLightTransVP()
     {
-        return m_pLightCamera->GetProjectionMatrix() *
-               m_pLightCamera->GetViewMatrix();
+        return ToGLMMat4(m_pLightCamera->GetProjectionMatrix()) *
+               ToGLMMat4(m_pLightCamera->GetViewMatrix());
     }
 
     inline GLuint GetShadowResolutionUniformBufferIndex() const

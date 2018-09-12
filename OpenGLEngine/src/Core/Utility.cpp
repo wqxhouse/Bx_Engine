@@ -36,3 +36,17 @@ std::vector<std::string> split(const std::string & str, char delim)
 
     return splitedStrings;
 }
+
+glm::mat4 ToGLMMat4(Math::Mat4 m)
+{
+    glm::mat4 result;
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            result[i][j] = m[i][j];
+        }
+    }
+
+    return result;
+}

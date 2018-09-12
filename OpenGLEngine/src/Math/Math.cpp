@@ -115,25 +115,30 @@ namespace Math
         const Vector3& front,     ///< Front direction
         const Vector3& up)        ///< World up vector
     {
+        Mat4 viewMat;
+
         Vector3 right = Vector3::Normalize(Vector3::crossProduct(front, up));
         Vector3 viewUp = Vector3::crossProduct(right, front);
 
-        Vector3 zAxis = Vector3(-front.x, -front.y, -front.z);
+        Vector3 nFront = Vector3::Normalize(front);
+        Vector3 back   = Vector3::Normalize(Vector3(-front.x, -front.y, -front.z));
 
-        Vector3 translate =
-        {
-            -right.dot(eyePos),
-            -viewUp.dot(eyePos),
-            front.dot(eyePos)   // -zAxis.dot(eyePos)
-        };
+        viewMat[0][0] = right[0];
+        viewMat[1][0] = right[1];
+        viewMat[2][0] = right[2];
+        viewMat[3][0] = -right.dot(eyePos);
 
-        Mat4 viewMat =
-        {
-            right,     0.0f,
-            viewUp,    0.0f,
-            zAxis,     0.0f,
-            translate, 1.0f
-        };
+        viewMat[0][1] = viewUp[0];
+        viewMat[1][1] = viewUp[1];
+        viewMat[2][1] = viewUp[2];
+        viewMat[3][1] = -viewUp.dot(eyePos);
+
+        viewMat[0][2] = back[0];
+        viewMat[1][2] = back[1];
+        viewMat[2][2] = back[2];
+        viewMat[3][2] = front.dot(eyePos); // -back.dot(eyePos)
+
+        viewMat[3][3] = 1.0f;
 
         return viewMat;
     }
