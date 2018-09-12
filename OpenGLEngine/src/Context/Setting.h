@@ -4,8 +4,9 @@
 
 enum PolyMode
 {
-	WIREFRAME = 0x00000000,
-	TRIANGLE  = 0x00000001,
+    POINT     = 0x00000000,
+	WIREFRAME = 0x00000001,
+	TRIANGLE  = 0x00000002,
 };
 
 enum RenderingMethod
@@ -53,7 +54,7 @@ struct GraphicsSetting
     Antialasing antialasing         = Antialasing::HIGH;
 
     BOOL shadowCasting              = TRUE;
-    Resolution shadowResolution     = { 2560, 2560 };
+    Resolution shadowResolution     = { 512, 512 };
 
     inline void EnableSSAO()
     {

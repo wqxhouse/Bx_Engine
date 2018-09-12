@@ -230,11 +230,29 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
     {
-        m_pSetting->m_graphicsSetting.shadowCasting = TRUE;
+        //m_pSetting->m_graphicsSetting.shadowCasting = TRUE;
+        m_pSetting->polyMode = PolyMode::POINT;
+        for (Model* pModel : m_pSceneModelList)
+        {
+            pModel->SetPolyMode(m_pSetting->polyMode);
+        }
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_X])
     {
-        m_pSetting->m_graphicsSetting.shadowCasting = FALSE;
+        //m_pSetting->m_graphicsSetting.shadowCasting = FALSE;
+        m_pSetting->polyMode = PolyMode::WIREFRAME;
+        for (Model* pModel : m_pSceneModelList)
+        {
+            pModel->SetPolyMode(m_pSetting->polyMode);
+        }
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_C])
+    {
+        m_pSetting->polyMode = PolyMode::TRIANGLE;
+        for (Model* pModel : m_pSceneModelList)
+        {
+            pModel->SetPolyMode(m_pSetting->polyMode);
+        }
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_G])
@@ -275,11 +293,11 @@ void Scene::update(float deltaTime)
         }
     }
 
-    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_C])
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_V])
     {
         EnableSSAO();
     }
-    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_V])
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_B])
     {
         DisableSSAO();
     }
@@ -363,9 +381,6 @@ void Scene::draw()
 
 void Scene::postDraw()
 {
-    m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
-    m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
-
     // TODO: Post processing
 
     debugDraw();
@@ -424,7 +439,7 @@ void Scene::drawScene()
             glm::mat4()
         };
         transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
-
+        
         m_uniformBufferMgr.updateUniformBufferData(
             m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
 
@@ -682,20 +697,74 @@ void Scene::initializeDebug()
 
 void Scene::debugDraw()
 {
-    if (enableDebugDraw == TRUE &&
-        m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING)
-    {
+    if (enableDebugDraw == TRUE)
+    {        
+        PolyMode polymode = m_pSceneModelList[0]->GetPolyMode();
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPointSize(1.0f);
+        
+        m_renderText = "SECONDS PER FRAME:" + m_renderText + "MS\n";
+        
+        switch (polymode)
+        {
+        case POINT:
+            m_renderText += "VERTICES";
+            break;
+        case WIREFRAME:
+            m_renderText += "MESH";
+            break;
+        case TRIANGLE:
+            m_renderText += "INTERPOLATED";
+            break;
+        }
+
+        m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
+        
         if (m_pDebugSpriteList.size() == 0)
         {
             initializeDebug();
         }
 
-        for(int i = 0; i < 5; ++i)
+        if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING)
         {
-            m_pDebugSpriteList[i]->BindTexture(static_cast<Texture2D*>(m_pGBuffer->GetGBufferTexture(i)));
-            m_pDebugSpriteList[i]->draw();
+            for(int i = 0; i < 5; ++i)
+            {
+                m_pDebugSpriteList[i]->BindTexture(static_cast<Texture2D*>(m_pGBuffer->GetGBufferTexture(i)));
+                m_pDebugSpriteList[i]->draw();
+            }
+        }
+
+        switch (polymode)
+        {
+        case POINT:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+            glPointSize(3.0f);
+            break;
+        case WIREFRAME:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glPointSize(1.0f);
+            break;
+        case TRIANGLE:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glPointSize(1.0f);
+            break;
+        default:
+            break;
         }
     }
+}
+
+void Scene::drawAxis()
+{
+    Vector3 m_Axis[3] = 
+    {
+        { 10.0f,  0.0f,  0.0f },
+        {  0.0f, 10.0f,  0.0f },
+        {  0.0f,  0.0f, 10.0f }
+    };
+
+    glDrawArrays(GL_LINE, )
 }
 
 BOOL Scene::initializeDeferredRendering()

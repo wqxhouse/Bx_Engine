@@ -2,8 +2,26 @@
 
 #include "../../Math/Vector3.h"
 
-Primitive::Primitive()
+Primitive::Primitive(const BxsPrimitiveType primitiveType)
 {
+    switch (primitiveType)
+    {
+        case BxsPrimitivePoint:
+            m_primitiveType  = GL_POINT;
+            m_primitiveCount = 1;
+            break;
+        case BxsPrimitiveLine:
+            m_primitiveType  = GL_LINE;
+            m_primitiveCount = 2;
+            break;
+        case BxsPrimitiveTriangle:
+            m_primitiveType  = GL_FILL;
+            m_primitiveCount = 3;
+            break;
+        default:
+            assert(false);
+            break;
+    }
 }
 
 Primitive::~Primitive()
@@ -27,7 +45,7 @@ void Primitive::initialize()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufObj);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indicesDataSize, m_indicesData, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Math::Vector3), 0);
+    glVertexAttribPointer(0, m_primitiveCount, GL_FLOAT, GL_FALSE, sizeof(Math::Vector3), 0);
 
     glBindVertexArray(0);
 }
@@ -36,6 +54,6 @@ void Primitive::draw()
 {
     glBindVertexArray(m_vertexArrayObj);
     glEnableVertexAttribArray(0);
-    glDrawElements(GL_TRIANGLES, m_indicesDataCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(m_primitiveType, m_indicesDataCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

@@ -5,7 +5,7 @@
 class Primitive
 {
 public:
-    Primitive();
+    Primitive(const BxsPrimitiveType primitiveType);
     ~Primitive();
 
     void initialize();
@@ -23,4 +23,7 @@ protected:
     void*  m_indicesData;
     size_t m_indicesDataSize;
     UINT   m_indicesDataCount;
+
+    GLenum m_primitiveType;
+    UINT   m_primitiveCount;
 };

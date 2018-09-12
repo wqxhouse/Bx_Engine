@@ -12,3 +12,11 @@
 
 #define TRUE_F  (1.0F)
 #define FALSE_F (0.0F)
+
+enum BxsPrimitiveType
+{
+    BxsPrimitivePoint,
+    BxsPrimitiveLine,
+    BxsPrimitiveTriangle,
+    BxsPrimitiveTriangleStrip
+};

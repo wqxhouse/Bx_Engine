@@ -46,6 +46,19 @@ public:
     inline void UseLocalMaterial (const UINT meshIndex) const { m_pMeshList[meshIndex]->UseLocalMaterial();  }
     inline void UseGlobalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseGlobalMaterial(); }
 
+    inline PolyMode GetPolyMode() const 
+    {
+        assert(m_pMeshList.size() > 0);
+        return m_pMeshList[0]->GetPolyMode(); 
+    }
+    inline void SetPolyMode(const PolyMode polymode)
+    {
+        for (Mesh* pMesh : m_pMeshList)
+        {
+            pMesh->SetPolyMode(polymode);
+        }
+    }
+
 	std::vector<Mesh*> m_pMeshList;
 
 	Trans* m_pTrans;

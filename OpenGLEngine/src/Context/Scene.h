@@ -203,8 +203,17 @@ private:
     // Debug draws
     void initializeDebug();
     void debugDraw();
+    void drawAxis();
     std::vector<Sprite*> m_pDebugSpriteList;
     BOOL enableDebugDraw;
+
+    // Demo variables
+    enum DrawSpace
+    {
+        WORLD,
+        VIEW,
+        PROJECT
+    }m_drawSpace;
 
 // Friend functions
     friend void LightProbe::draw();

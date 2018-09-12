@@ -113,18 +113,6 @@ void Mesh::initialize()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
                           sizeof(Vertex), (GLvoid*)(offsetof(Vertex, Vertex::texCoords)));
 
-    switch (m_polyMode)
-    {
-    case WIREFRAME:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        break;
-    case TRIANGLE:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_TRIANGLES);
-        break;
-    default:
-        break;
-    }
-
     // Unbind VAO
     glBindVertexArray(0);
 
@@ -149,6 +137,24 @@ void Mesh::drawMeshPos()
 
 void Mesh::draw()
 {
+    switch (m_polyMode)
+    {
+    case POINT:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+        glPointSize(3.0f);
+        break;
+    case WIREFRAME:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPointSize(1.0f);
+        break;
+    case TRIANGLE:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPointSize(1.0f);
+        break;
+    default:
+        break;
+    }
+
     if (useGlobalMaterial == FALSE)
     {
         assert(m_pUniformBufferMgr != NULL && m_pMaterial != NULL);

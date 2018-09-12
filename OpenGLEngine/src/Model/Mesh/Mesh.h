@@ -119,8 +119,11 @@ public:
 
     void setMaterial(Material* pMaterial);
 
-    inline void UseGlobalMaterial() { useGlobalMaterial = TRUE; }
+    inline void UseGlobalMaterial() { useGlobalMaterial = TRUE;  }
     inline void UseLocalMaterial()  { useGlobalMaterial = FALSE; }
+
+    inline PolyMode GetPolyMode() const { return m_polyMode; }
+    inline void SetPolyMode(PolyMode polymode) { m_polyMode = polymode; }
 
     //inline GLuint GetVertexBufferObj() const { return m_vertexBufferObj; }
 
