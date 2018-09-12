@@ -37,8 +37,8 @@ void Skybox::draw()
     if(wvpLocation >= 0)
     {
         Camera* pCam = m_pScene->GetActivateCamera();
-        glm::mat4 wvp = pCam->GetProjectionMatrix() *
-                        pCam->GetViewMatrix()       *
+        glm::mat4 wvp = ToGLMMat4(pCam->GetProjectionMatrix())      *
+                        ToGLMMat4(pCam->GetViewMatrix()) *
                         pCam->GetTrans().GetTransMatrix();
 
         glUniformMatrix4fv(wvpLocation, 1, GL_FALSE, glm::value_ptr(wvp));

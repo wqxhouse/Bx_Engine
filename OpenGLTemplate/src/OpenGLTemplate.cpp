@@ -53,8 +53,8 @@ void OpenGLTemplate::createDefaultScene()
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f,  1.0f), Vector3(0.0f, 0.5f, 0.0f));
     pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f,  1.0f), Vector3(0.0f, 0.0f, 0.5f));*/
 
-    const float aspectRadio = static_cast<float>(m_pSetting->resolution.width) /
-                              static_cast<float>(m_pSetting->resolution.height);
+    const float invAspectRadio = static_cast<float>(m_pSetting->resolution.height) /
+                                 static_cast<float>(m_pSetting->resolution.width);
 
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f),
         glm::vec3(0, 0, 1.0f), 5.0f, aspectRadio, 0.1f, 1000.0f, 60.0f);*/
@@ -73,8 +73,8 @@ void OpenGLTemplate::createDefaultScene()
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 15.0f, 10.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);*/
 
-    /*pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);*/
+    pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 90.0f);
 
     //pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 

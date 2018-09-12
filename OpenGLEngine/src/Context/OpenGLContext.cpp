@@ -92,9 +92,6 @@ void OpenGLContext::run()
         prevTime = curTime;
 
         //printf("Second per frame: %f\n FPS: %f\n", deltaTime, 1.0f / deltaTime);
-
-        glfwPollEvents();
-
         m_pScene->update(deltaTime);
 
         //Start Rendering
@@ -103,6 +100,7 @@ void OpenGLContext::run()
         m_pScene->postDraw();
 
         glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     glfwTerminate();

@@ -162,8 +162,8 @@ void ShadowMap::drawShadowMap(Scene* pScene)
 
     size_t modelSize = pScene->GetModelSize();
 
-    glm::mat4 viewMatrix     = m_pLightCamera->GetViewMatrix();
-    glm::mat4 prospectMatrix = m_pLightCamera->GetProjectionMatrix();
+    glm::mat4 viewMatrix     = ToGLMMat4(m_pLightCamera->GetViewMatrix());
+    glm::mat4 prospectMatrix = ToGLMMat4(m_pLightCamera->GetProjectionMatrix());
 
     for (size_t i = 0; i < modelSize; ++i)
     {

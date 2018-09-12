@@ -77,7 +77,7 @@ namespace Math
         {
             Vector3 result;
 
-            float lengthInv = 1.0f / (v.x * v.x + v.y * v.y + v.z * v.z);
+            float lengthInv = 1.0f / (std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z));
             result.x = v.x * lengthInv;
             result.y = v.y * lengthInv;
             result.z = v.z * lengthInv;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Core/OpenGLPCH.h"
-#include "../Quaternion.h"
+#include "../Math.h"
 
 // Translation class
 class Trans
@@ -70,11 +70,11 @@ public:
         return up;
     }
 
-	inline glm::mat4 GetViewMat()
+	inline Math::Mat4 GetViewMat()
 	{
         if (m_transFlags.bits.viewFlag == 1)
         {
-            viewMatrix = glm::lookAt(pos, pos + front, up);
+            viewMatrix = Math::viewMatrix(pos, front, up);
             m_transFlags.bits.viewFlag = 0;
         }
 		return viewMatrix;
@@ -185,7 +185,7 @@ private:
     glm::mat4 scaleMatrix;
     glm::mat4 rotationMatrix;
 
-    glm::mat4 viewMatrix;
+    Math::Mat4 viewMatrix;
 
     // Flags
     union TransFlags

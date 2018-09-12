@@ -33,9 +33,9 @@ public:
 
     inline CameraType GetCameraType() const { return m_cameraType; }
 
-    inline Trans     GetTrans()            const { return m_trans; }
-    inline glm::mat4 GetViewMatrix()             { return m_trans.GetViewMat(); }
-    inline glm::mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
+    inline Trans      GetTrans()            const { return m_trans; }
+    inline Math::Mat4 GetViewMatrix()             { return m_trans.GetViewMat(); }
+    inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
 
     void setCamTrans(
         const glm::vec3& pos,
@@ -47,7 +47,7 @@ protected:
 
     float speed;
 
-    glm::mat4 m_projectionMatrix;
+    Math::Mat4 m_projectionMatrix;
 
     glm::vec3 worldUp;
 
@@ -69,7 +69,7 @@ public:
         const glm::vec3& center,
         const glm::vec3& up,
         const float speed,
-        const float aspectRatio,
+        const float invAspectRatio,
         const float nearClip = 0.1f,
         const float farClip  = 100.0f,
         const float fov      = 45.0f);
@@ -97,5 +97,4 @@ public:
 
 private:
     Rectangle m_viewport;
-
 };

@@ -419,8 +419,8 @@ void Scene::drawScene()
         glm::mat4 transMatrix[4] =
         {
             pModel->m_pTrans->GetTransMatrix(),
-            m_pActiveCamera->GetViewMatrix(),
-            m_pActiveCamera->GetProjectionMatrix(),
+            ToGLMMat4(m_pActiveCamera->GetViewMatrix()),
+            ToGLMMat4(m_pActiveCamera->GetProjectionMatrix()),
             glm::mat4()
         };
         transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
@@ -485,7 +485,7 @@ void Scene::deferredDrawScene()
     if (eyeLocation >= 0 && viewMatLocation >= 0)
     {
         glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
-        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(activeCamPtr->GetViewMatrix()));
+        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(ToGLMMat4(activeCamPtr->GetViewMatrix())));
 
         if (m_pLightProbe != NULL)
         {

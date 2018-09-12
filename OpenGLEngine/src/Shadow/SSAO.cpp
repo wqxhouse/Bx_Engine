@@ -137,7 +137,7 @@ void SSAO::draw()
     {
         Camera* pActiveCam = m_pScene->GetActivateCamera();
 
-        const GLfloat* projMatData = glm::value_ptr(pActiveCam->GetProjectionMatrix());
+        const GLfloat* projMatData = glm::value_ptr(ToGLMMat4(pActiveCam->GetProjectionMatrix()));
         glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, projMatData);
     }
     else
