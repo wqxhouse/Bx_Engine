@@ -77,13 +77,32 @@ void OpenGLTemplate::createDefaultScene()
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);*/
 
     //pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
+    
+    pScene->addProspectiveCamera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 10000.0f, 90.0f);
 
     pScene->addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);
 
-    pScene->addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);
+    /*pScene->addOrthographicCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 5.0f,
+        Rectangle(0.0f, 1280.0f, 0.0f, 720.0f), 0.1f, 1000.0f);*/
 
+    float halfWidth = 2560.0f * 0.5f * 0.005f;
+    float halfHeight = 2560.0f * 0.5f * 0.005f;
+    float offset = 0.0f;
+
+    /*pScene->addOrthographicCamera(glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
+                                  5.0f, Rectangle(-halfWidth  + offset,
+                                                   halfWidth  + offset,
+                                                  -halfHeight + offset,
+                                                   halfHeight + offset), 0.1f, 10000.0f);*/
+    
+    
+    pScene->addProspectiveCamera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 10000.0f, 90.0f);
+
+    pScene->addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);
     //m_pLightCamera = new ProspectiveCamera(
     //    /*lightPos, lightPos + glmLightDir,*/
     //    glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0),

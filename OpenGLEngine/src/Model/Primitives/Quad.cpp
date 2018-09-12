@@ -3,6 +3,7 @@
 Quad::Quad(
     const Math::Vector2& pos,
     const float          size)
+    : Primitive(BxsPrimitiveTriangle)
 {
     for (size_t i = 0; i < 4; ++i)
     {

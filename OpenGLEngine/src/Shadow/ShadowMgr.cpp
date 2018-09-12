@@ -28,7 +28,7 @@ BOOL ShadowMgr::initialize()
                                      MAX_SHADOW_NUM,
                                      1,                                         // Samples
                                      GL_DEPTH_COMPONENT,
-                                     GL_DEPTH_COMPONENT,
+                                     GL_DEPTH_COMPONENT24,
                                      GL_FLOAT,
                                      GL_CLAMP_TO_EDGE,
                                      FALSE,

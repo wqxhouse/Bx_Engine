@@ -1,6 +1,7 @@
 #include "Cube.h"
 
 Cube::Cube()
+    : Primitive(BxsPrimitiveTriangle)
 {
     m_verticesData     = &(m_cubeVertices[0]);
     m_verticesDataSize = sizeof(m_cubeVertices);
