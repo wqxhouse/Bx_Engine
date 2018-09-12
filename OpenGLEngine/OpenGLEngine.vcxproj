@@ -177,6 +177,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
     <ClInclude Include="src\Model\Model.h" />
     <ClInclude Include="src\Model\Primitives\Cube.h" />
+    <ClInclude Include="src\Model\Primitives\Line.h" />
     <ClInclude Include="src\Model\Primitives\Primitive.h" />
     <ClInclude Include="src\Model\Primitives\Quad.h" />
     <ClInclude Include="src\Model\Primitives\Sprite.h" />
@@ -220,6 +221,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
     <ClCompile Include="src\Model\Model.cpp" />
     <ClCompile Include="src\Model\Primitives\Cube.cpp" />
+    <ClCompile Include="src\Model\Primitives\Line.cpp" />
     <ClCompile Include="src\Model\Primitives\Primitive.cpp" />
     <ClCompile Include="src\Model\Primitives\Quad.cpp" />
     <ClCompile Include="src\Model\Primitives\Sprite.cpp" />

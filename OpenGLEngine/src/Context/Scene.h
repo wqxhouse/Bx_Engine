@@ -10,6 +10,7 @@
 #include "../Light/LightProbe.h"
 #include "../Core/Text.h"
 #include "../Model/Primitives/Sprite.h"
+#include "../Model/Primitives/Line.h"
 
 #include "Setting.h"
 
@@ -143,6 +144,8 @@ private:
     GLchar compileLog[1024];
 
     Vector4 m_backgroundColor;
+
+    Mat4 m_trans;
     
     // Shaders
     Shader m_sceneShader;
@@ -203,8 +206,11 @@ private:
     // Debug draws
     void initializeDebug();
     void debugDraw();
-    void drawAxis();
     std::vector<Sprite*> m_pDebugSpriteList;
+
+    void drawAxis();
+    Line* m_axis[3];
+
     BOOL enableDebugDraw;
 
     // Demo variables

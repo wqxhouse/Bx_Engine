@@ -84,6 +84,11 @@ Scene::~Scene()
     {
         SafeDelete(pSprite);
     }
+
+    for (int i = 0; i < 3; ++i)
+    {
+        SafeDelete(m_axis[i]);
+    }
 }
 
 BOOL Scene::initialize()
@@ -149,6 +154,20 @@ BOOL Scene::initialize()
 
     // Text rendering
     m_text.initialize();
+
+    // Debug initialization
+    m_axis[0] = new Line(Vector3(), Vector3(10.0f, 0.0f, 0.0f));
+    m_axis[0]->SetLineColor(Vector3(1.0f, 0.0f, 0.0f));
+    m_axis[0]->initialize();
+
+    m_axis[1] = new Line(Vector3(), Vector3(0.0f, 10.0f, 0.0f));
+    m_axis[1]->SetLineColor(Vector3(0.0f, 1.0f, 0.0f));
+    m_axis[1]->initialize();
+
+    m_axis[2] = new Line(Vector3(), Vector3(0.0f, 0.0f, 10.0f));
+    m_axis[2]->SetLineColor(Vector3(0.0f, 0.0f, 1.0f));
+    m_axis[2]->initialize();
+
     if (enableDebugDraw == TRUE)
     {
         initializeDebug();
@@ -438,7 +457,7 @@ void Scene::drawScene()
             m_pActiveCamera->GetProjectionMatrix(),
             glm::mat4()
         };
-        transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
+        m_trans = transMatrix[3] = transMatrix[2] * transMatrix[1] * transMatrix[0];
         
         m_uniformBufferMgr.updateUniformBufferData(
             m_transUniformbufferIndex, sizeof(transMatrix), &(transMatrix[0]));
@@ -720,6 +739,7 @@ void Scene::debugDraw()
         }
 
         m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
+        drawAxis();
         
         if (m_pDebugSpriteList.size() == 0)
         {
@@ -757,14 +777,11 @@ void Scene::debugDraw()
 
 void Scene::drawAxis()
 {
-    Vector3 m_Axis[3] = 
+    for (Line* axis : m_axis)
     {
-        { 10.0f,  0.0f,  0.0f },
-        {  0.0f, 10.0f,  0.0f },
-        {  0.0f,  0.0f, 10.0f }
-    };
-
-    glDrawArrays(GL_LINE, )
+        axis->SetTransform(m_trans);
+        axis->draw();
+    }
 }
 
 BOOL Scene::initializeDeferredRendering()

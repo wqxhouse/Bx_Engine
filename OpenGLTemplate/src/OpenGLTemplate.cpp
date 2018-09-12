@@ -96,13 +96,7 @@ void OpenGLTemplate::createDefaultScene()
                                                    halfWidth  + offset,
                                                   -halfHeight + offset,
                                                    halfHeight + offset), 0.1f, 10000.0f);*/
-    
-    
-    pScene->addProspectiveCamera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 10000.0f, 90.0f);
 
-    pScene->addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);
     //m_pLightCamera = new ProspectiveCamera(
     //    /*lightPos, lightPos + glmLightDir,*/
     //    glm::vec3(0.0f, 10.0f, 0.1f), glm::vec3(0, 4, 0),

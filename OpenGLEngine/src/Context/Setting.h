@@ -54,7 +54,7 @@ struct GraphicsSetting
     Antialasing antialasing         = Antialasing::HIGH;
 
     BOOL shadowCasting              = TRUE;
-    Resolution shadowResolution     = { 512, 512 };
+    Resolution shadowResolution     = { 1024, 1024 };
 
     inline void EnableSSAO()
     {
