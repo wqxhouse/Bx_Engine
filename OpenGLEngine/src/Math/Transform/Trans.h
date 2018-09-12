@@ -159,6 +159,14 @@ public:
         m_transFlags.bits.rotationFlag = 1;
     }
 
+    inline void SetRotation(const float degree, glm::vec3 axis)
+    {
+        rotationMatrix = glm::rotate(glm::mat4(), degree, axis);
+
+        m_transFlags.bits.transFlag = 1;
+        m_transFlags.bits.rotationFlag = 1;
+    }
+
 private:
     void initialize();
 

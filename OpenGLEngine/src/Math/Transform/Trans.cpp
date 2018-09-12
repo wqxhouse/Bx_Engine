@@ -6,11 +6,16 @@ void Trans::initialize()
     translationMatrix = glm::translate(glm::mat4(), pos);
     scaleMatrix       = glm::scale(glm::mat4(), scale);
 
-    transMatrix = translationMatrix * scaleMatrix;
+    //glm::vec3 axis = glm::cross(front, glm::vec3(0.0f, 0.0f, 1.0f));
+    //float cosTheta = glm::dot(front, glm::vec3(0.0f, 0.0f, 1.0f));
+    //float theta = std::acos(cosTheta);    
+    //rotationMatrix = glm::rotate(glm::mat4(), theta, axis);
+
+    transMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 
     viewMatrix = glm::lookAt(pos, pos + front, up);
 
-    Math::Mat4 testViewMat = Math::viewMatrix(pos, front, up);
+    // Math::Mat4 testViewMat = Math::viewMatrix(pos, front, up);
     
     // TODO: Rotation matrix
 }

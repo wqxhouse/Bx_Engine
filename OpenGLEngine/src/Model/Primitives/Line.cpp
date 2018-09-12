@@ -1,6 +1,7 @@
 #include "Line.h"
 
 Line::Line(const Math::Vector3& p1, const Math::Vector3& p2)
+    : m_lineColor(1.0f, 1.0f, 1.0f)
 {
     m_lineData[0] = p1;
     m_lineData[1] = p2;

@@ -2,6 +2,7 @@
 
 #include "../Math/Transform/Trans.h"
 #include "../Math/Structures.h"
+#include "../Model/Primitives/Line.h"
 
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI          1.57079632f
@@ -42,6 +43,8 @@ public:
         const glm::vec3& center,
         const glm::vec3& up);
 
+    void drawFrustum(const Math::Mat4& trans);
+
 protected:
     Trans m_trans;
 
@@ -53,6 +56,8 @@ protected:
 
     glm::vec3 curFront;
     glm::vec3 curRight;
+
+    Line* m_pFrustumLines[12];
 
 private:
     CameraType m_cameraType;

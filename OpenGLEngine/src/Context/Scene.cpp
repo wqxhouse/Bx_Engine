@@ -15,7 +15,8 @@ Scene::Scene(Setting* pSetting)
       m_pSkybox(NULL),
       m_pLightProbe(NULL),
       enableRealtimeLightProbe(FALSE),
-      enableDebugDraw(FALSE)
+      enableDebugDraw(FALSE),
+      enableDebugLinesDraw(TRUE)
 {
     m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
     m_globalPbrMaterial.roughness = 0.3f;
@@ -739,8 +740,28 @@ void Scene::debugDraw()
         }
 
         m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
-        drawAxis();
-        
+
+        if (m_pActiveCamera == m_pCameraList[0])
+        {
+            enableDebugLinesDraw = TRUE;
+        }
+        else
+        {
+            enableDebugLinesDraw = FALSE;
+        }
+
+        if (enableDebugLinesDraw == TRUE)
+        {
+            drawAxis();
+
+            Camera* pCam = m_pCameraList[1];
+            Math::Mat4 cameraTrans = m_pActiveCamera->GetProjectionMatrix() *
+                m_pActiveCamera->GetViewMatrix() *
+                pCam->GetTrans().GetTransMatrix();
+
+            pCam->drawFrustum(cameraTrans);
+        }
+
         if (m_pDebugSpriteList.size() == 0)
         {
             initializeDebug();

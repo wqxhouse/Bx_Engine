@@ -212,6 +212,7 @@ private:
     Line* m_axis[3];
 
     BOOL enableDebugDraw;
+    BOOL enableDebugLinesDraw;
 
     // Demo variables
     enum DrawSpace

@@ -16,7 +16,7 @@ OrthographicCamera::OrthographicCamera(
                                     viewport.bottom, viewport.top,
                                     nearClip, farClip);
 
-    Math::Mat4 orthoMat = Math::orthographicProjectionMatrix(viewport, nearClip, farClip);
+    // Math::Mat4 orthoMat = Math::orthographicProjectionMatrix(viewport, nearClip, farClip);
 }
 
 OrthographicCamera::~OrthographicCamera()

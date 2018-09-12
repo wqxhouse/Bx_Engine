@@ -22,6 +22,10 @@ Camera::Camera(
 
 Camera::~Camera()
 {
+    for (Line* pLine : m_pFrustumLines)
+    {
+        SafeDelete(pLine);
+    }
 }
 
 void Camera::translate(glm::vec3 translate)
@@ -104,4 +108,16 @@ void Camera::setCamTrans(
     
     curFront = m_trans.GetFront();
     curRight = m_trans.GetRight();
+}
+
+void Camera::drawFrustum(const Math::Mat4& trans)
+{
+    for (Line* pLine : m_pFrustumLines)
+    {
+        if (pLine != NULL)
+        {
+            pLine->SetTransform(trans);
+            pLine->draw();
+        }
+    }
 }
