@@ -119,7 +119,7 @@ void Mesh::initialize()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         break;
     case TRIANGLE:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_TRIANGLES);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         break;
     default:
         break;

@@ -81,9 +81,6 @@ void ShadowMgr::castShadow(
 
     pShadowMap->drawShadowMap(m_pScene);
 
-    glDrawBuffer(GL_FRONT);
-    glReadBuffer(GL_FRONT);
-
     glCullFace(GL_BACK);
     if (pSetting->m_graphicsSetting.shadowCasting == FALSE)
     {
