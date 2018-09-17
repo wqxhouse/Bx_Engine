@@ -170,7 +170,7 @@ void GBuffer::drawGBuffer()
         // TODO: Combine all trans matrix into ubo
         glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
         glm::mat4 wv               = ToGLMMat4(pCam->GetViewMatrix()) * worldTransMatrix;
-        glm::mat4 wvp              = ToGLMMat4(pCam->GetProjectionMatrix() * wv);
+        glm::mat4 wvp              = ToGLMMat4(pCam->GetProjectionMatrix()) * wv;
 
         GLint cameraPosLocation    = glGetUniformLocation(gShaderProgram, "cameraPos");
 
