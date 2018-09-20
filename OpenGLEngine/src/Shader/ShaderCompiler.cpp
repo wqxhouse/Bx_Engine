@@ -7,7 +7,7 @@ ShaderCompiler::ShaderCompiler()
     char defaultPath[] = "../resources/shaders/\0";
     memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 #else
-    this->shaderPath = "../../resources/shaders/\0";
+    this->shaderPath = "../resources/shaders/\0";
     //memcpy(this->shaderPath, shaderPath, sizeof(shaderPath));
 #endif
 }

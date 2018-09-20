@@ -174,6 +174,8 @@ BOOL Scene::initialize()
         initializeDebug();
     }
 
+    lighting = 1;
+
     return status;
 }
 
@@ -183,26 +185,35 @@ void Scene::update(float deltaTime)
 
     assert(cameraCount > 0);
 
-#if _DEBUG
+
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_1])
     {
+        enableDebugDraw = TRUE;
         m_activeCameraIndex = 0;
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_2])
     {
+        enableDebugDraw = FALSE;
         m_activeCameraIndex = ((1 < cameraCount) ? 1 : m_activeCameraIndex);
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_3])
     {
-        m_activeCameraIndex = ((2 < cameraCount) ? 2 : m_activeCameraIndex);
+        // m_activeCameraIndex = ((2 < cameraCount) ? 2 : m_activeCameraIndex);
+        lighting = 0;
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_4])
     {
-        m_activeCameraIndex = ((3 < cameraCount) ? 3 : m_activeCameraIndex);
+        //m_activeCameraIndex = ((3 < cameraCount) ? 3 : m_activeCameraIndex);
+
+        if (m_pSetting->polyMode == PolyMode::TRIANGLE)
+        {
+            lighting = 1;
+        }
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_5])
     {
-        m_activeCameraIndex = ((4 < cameraCount) ? 4 : m_activeCameraIndex);
+        //m_activeCameraIndex = ((4 < cameraCount) ? 4 : m_activeCameraIndex);
+        
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_6])
     {
@@ -216,7 +227,10 @@ void Scene::update(float deltaTime)
     {
         m_activeCameraIndex = ((7 < cameraCount) ? 7 : m_activeCameraIndex);
     }
-#endif
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_0])
+    {
+        m_activeCameraIndex = ((7 < cameraCount) ? 7 : m_activeCameraIndex);
+    }
 
     m_pActiveCamera = m_pCameraList[m_activeCameraIndex];
     m_pActiveCamera->update(deltaTime);
@@ -250,6 +264,7 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
     {
+        lighting = 0;
         //m_pSetting->m_graphicsSetting.shadowCasting = TRUE;
         m_pSetting->polyMode = PolyMode::POINT;
         for (Model* pModel : m_pSceneModelList)
@@ -259,6 +274,7 @@ void Scene::update(float deltaTime)
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_X])
     {
+        lighting = 0;
         //m_pSetting->m_graphicsSetting.shadowCasting = FALSE;
         m_pSetting->polyMode = PolyMode::WIREFRAME;
         for (Model* pModel : m_pSceneModelList)
@@ -362,7 +378,7 @@ void Scene::preDraw()
 
 void Scene::draw()
 {
-    if (m_skyboxImages.size() == CUBE_MAP_FACE_NUM)
+    if (lighting == 1 && m_skyboxImages.size() == CUBE_MAP_FACE_NUM)
     {
         m_pSkybox->draw();
     }
@@ -465,6 +481,9 @@ void Scene::drawScene()
 
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
+
+        GLint lightingLocation = glGetUniformLocation(sceneShaderProgram, "lighting");
+        glUniform1i(lightingLocation, lighting);
 
         // Test
         m_pLightMgr->GetShadowMgr()->
@@ -724,18 +743,32 @@ void Scene::debugDraw()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glPointSize(1.0f);
         
-        m_renderText = "SECONDS PER FRAME:" + m_renderText + "MS\n";
+        //m_renderText = "SECONDS PER FRAME:" + m_renderText + "MS\n";
+        m_renderText  = "BXS RENDER ENGINE\n";
+
+        switch(m_pSetting->m_graphicsSetting.renderingMethod)
+        {
+            case RenderingMethod::FORWARD_RENDERING:
+                m_renderText += "RENDERING METHOD: FORWARD SHADING\n";
+                break;
+            case RenderingMethod::DEFERRED_RENDERING:
+                m_renderText += "RENDERING METHOD: DEFFERED SHADING\n";
+                break;
+            default:
+                break;
+        }
         
+        m_renderText += "RASTERIZATION STATE:";
         switch (polymode)
         {
         case POINT:
-            m_renderText += "VERTICES";
+            m_renderText += "VERTICES\n";
             break;
         case WIREFRAME:
-            m_renderText += "MESH";
+            m_renderText += "MESH\n";
             break;
         case TRIANGLE:
-            m_renderText += "INTERPOLATED";
+            m_renderText += "INTERPOLATED\n";
             break;
         }
 

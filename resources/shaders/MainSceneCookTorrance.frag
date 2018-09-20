@@ -42,6 +42,10 @@ uniform vec3 eyePos;
 
 uniform int lightNum;
 
+// Demo
+uniform int lighting;
+uniform vec3 solidColor;
+
 out vec4 outColor;
 
 float castingShadow(vec4 posLightProj, float i)
@@ -106,6 +110,12 @@ vec3 calCookTorranceRadiance(
 
 void main()
 {
+	if (lighting == 0)
+	{
+		outColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		return;
+	}
+
 	vec3 radiance;
     
 	vec3 posWorld   = posWorldVec4.xyz / posWorldVec4.w;

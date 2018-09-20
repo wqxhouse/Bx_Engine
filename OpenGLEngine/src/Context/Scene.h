@@ -222,6 +222,8 @@ private:
         PROJECT
     }m_drawSpace;
 
+    int lighting;
+
 // Friend functions
     friend void LightProbe::draw();
 };
