@@ -155,6 +155,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Core\PointerTypes.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
     <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Core\UtilityGL.h" />
     <ClInclude Include="src\Effect\BlurEffect.h" />
     <ClInclude Include="src\Effect\Skybox.h" />
     <ClInclude Include="src\Light\Light.h" />

@@ -195,6 +195,9 @@
     <ClInclude Include="src\Model\Primitives\Sprite.h">
       <Filter>src\Model\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\UtilityGL.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
