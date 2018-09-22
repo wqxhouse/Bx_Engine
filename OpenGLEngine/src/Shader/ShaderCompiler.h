@@ -17,13 +17,13 @@ public:
 
 	//Compile vertex and fragment shader, then link them
     BOOL compileShader(
-        const char*  vertexShaderPath,
-        const char*  vertexShaderFile,
-		const char*  fragmentShaderPath,
-        const char*  fragmentShaderFile,
-        OUT GLuint*  shaderProgram,
-        const unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
-        const unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
+        const char* vertexShaderPath,
+        const char* vertexShaderFile,
+		const char* fragmentShaderPath,
+        const char* fragmentShaderFile,
+        OUT GLuint* shaderProgram,
+        const UINT  vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
+        const UINT  fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
 
 	BOOL compileShader(
         const char*  const vertexShaderFile,
@@ -31,9 +31,14 @@ public:
         const char*  const geometryShaderFile,
         const char*  const tcsShaderFile,
         const char*  const tesShaderFile,
-        OUT GLuint*  shaderProgram,
-        const unsigned int vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
-        const unsigned int fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
+        OUT GLuint*        shaderProgram,
+        const UINT         vertexShaderSourceSize = DEFAULT_SHADER_SIZE,
+        const UINT         fragShaderSourceSize   = DEFAULT_SHADER_SIZE);
+
+    BOOL compileComputeShader(
+        const char* const computeShaderFile,
+        OUT   GLuint*     computeShaderProgram,
+        const UINT        computeShaderSourceSize = DEFAULT_SHADER_SIZE);
 
 private:
 	char* shaderPath;

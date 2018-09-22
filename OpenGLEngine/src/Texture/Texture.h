@@ -5,11 +5,6 @@
 
 #define CUBE_MAP_FACE_NUM 6
 
-enum TextureType
-{
-    TEXTURE_2D, TEXTURE_3D, TEXTURE_CUBEBOX
-};
-
 class Texture
 {
 public:

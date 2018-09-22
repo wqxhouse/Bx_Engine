@@ -6,11 +6,6 @@
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI          1.57079632f
 
-enum CameraType
-{
-    PROSPECTIVE_CAM, ORTHOGRAPHIC_CAM
-};
-
 class Camera
 {
 public:

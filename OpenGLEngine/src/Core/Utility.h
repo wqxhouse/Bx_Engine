@@ -7,6 +7,8 @@
 
 #include "../Math/Math.h"
 
+#define LOWER_UPPER_CASE_ASCII_DIFF 32
+
 struct CallbackInfo
 {
 	int keyboardCallBack[1024];
@@ -40,6 +42,9 @@ struct CallbackInfo
 void stringReplace(std::string* pStr, char src, char dst = ' ');
 
 std::vector<std::string> split(const std::string& str, char delim);
+
+std::string ToLowercase(const std::string& str);
+std::string ToUppercase(const std::string& str);
 
 // Test
 glm::mat4 ToGLMMat4(Math::Mat4 m);

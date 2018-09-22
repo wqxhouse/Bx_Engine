@@ -37,6 +37,38 @@ std::vector<std::string> split(const std::string & str, char delim)
     return splitedStrings;
 }
 
+std::string ToLowercase(const std::string & str)
+{
+    size_t strLength = str.length();
+
+    std::string result(strLength, ' ');
+    for (size_t i = 0; i < strLength; ++i)
+    {
+        if (str[i] >= 'A' && str[i] <= 'Z')
+        {
+            result[i] = str[i] + LOWER_UPPER_CASE_ASCII_DIFF;
+        }
+    }    
+
+    return result;
+}
+
+std::string ToUppercase(const std::string& str)
+{
+    size_t strLength = str.length();
+
+    std::string result(strLength, ' ');
+    for (size_t i = 0; i < strLength; ++i)
+    {
+        if (str[i] >= 'a' && str[i] <= 'z')
+        {
+            result[i] = str[i] - LOWER_UPPER_CASE_ASCII_DIFF;
+        }
+    }
+
+    return result;
+}
+
 glm::mat4 ToGLMMat4(Math::Mat4 m)
 {
     glm::mat4 result;

@@ -1,23 +1,9 @@
 #pragma once
 
 #include "../Math/Matrix4x4.h"
+#include "../Core/TypeDef.h"
 
 using namespace Math;
-
-enum MaterialType
-{
-	PHONG, ALBEDO, COOKTORRANCE
-};
-
-enum ShadingMethod
-{
-	Flat,
-	Gouraud,
-	Phong,
-	Blin_Phong,
-	PBR_LAMBERT,
-	PBR_COOK_TORRANCE
-};
 
 class Material
 {

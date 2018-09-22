@@ -7,7 +7,7 @@ ShaderCompiler::ShaderCompiler()
     char defaultPath[] = "../resources/shaders/\0";
     memcpy(this->shaderPath, defaultPath, sizeof(defaultPath));
 #else
-    this->shaderPath = "../../resources/shaders/\0";
+    this->shaderPath = "../resources/shaders/\0";
     //memcpy(this->shaderPath, shaderPath, sizeof(shaderPath));
 #endif
 }
@@ -201,39 +201,33 @@ const char* ShaderCompiler::getDefaultPath()
 }
 
 BOOL ShaderCompiler::compileShader(
-    const char* const  vertexShaderPath,
-    const char* const  vertexShaderFile,
-    const char* const  fragmentShaderPath,
-    const char* const  fragmentShaderFile,
-    OUT GLuint* const  shaderProgram,
-    const unsigned int vertexShaderSourceSize,
-    const unsigned int fragmentShaderSourceSize)
+    const char* vertexShaderPath,
+    const char* vertexShaderFile,
+    const char* fragmentShaderPath,
+    const char* fragmentShaderFile,
+    OUT GLuint* shaderProgram,
+    const UINT  vertexShaderSourceSize,
+    const UINT  fragShaderSourceSize)
 {
-    const char* vertexShaderFilePath = (const char*)malloc(256 * sizeof(char));
-    combileShaderPathAndFile(vertexShaderPath, vertexShaderFile, vertexShaderFilePath);
-
-    const char* fragmentShaderFilePath = (const char*)malloc(256 * sizeof(char));
-    combileShaderPathAndFile(fragmentShaderPath, fragmentShaderFile, fragmentShaderFilePath);
-
     setDefaultShaderPath(vertexShaderPath);
     
     BOOL hs = compileShader(
         vertexShaderFile, fragmentShaderFile, NULL, NULL, NULL,
         shaderProgram,
-        vertexShaderSourceSize, fragmentShaderSourceSize);
+        vertexShaderSourceSize, fragShaderSourceSize);
 
     return hs;
 }
 
 BOOL ShaderCompiler::compileShader(
-    const char* const  vertexShaderFile,
-    const char* const  fragmentShaderFile,
-    const char* const  geometryShaderFile,
-    const char* const  tcsShaderFile,
-    const char* const  tesShaderFile,
+    const char*  const vertexShaderFile,
+    const char*  const fragmentShaderFile,
+    const char*  const geometryShaderFile,
+    const char*  const tcsShaderFile,
+    const char*  const tesShaderFile,
     OUT GLuint*        shaderProgram,
-    const unsigned int vertexShaderSourceSize,
-    const unsigned int fragmentShaderSourceSize)
+    const UINT         vertexShaderSourceSize,
+    const UINT         fragShaderSourceSize)
 {
     BOOL result = TRUE;
 
@@ -267,7 +261,7 @@ BOOL ShaderCompiler::compileShader(
 
     /// Compile fragment(pixal) shader
     char* fragmentShaderSource = (char*)malloc(vertexShaderSourceSize * sizeof(char));
-    parseShaderFile(fragmentShaderFile, fragmentShaderSourceSize, fragmentShaderSource);
+    parseShaderFile(fragmentShaderFile, fragShaderSourceSize, fragmentShaderSource);
 
     GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
@@ -344,9 +338,50 @@ BOOL ShaderCompiler::compileShader(
 
     if (geometryShaderFile != NULL) { glDeleteShader(geometryShader); }
 
+
     SafeRelease(vertexShaderSource, MALLOC);
     SafeRelease(fragmentShaderSource, MALLOC);
     SafeRelease(geometryShaderSource, MALLOC);
+
+    return result;
+}
+
+BOOL ShaderCompiler::compileComputeShader(
+    const char* const computeShaderFile,
+    OUT   GLuint*     computeShaderProgram,
+    const UINT        computeShaderSourceSize)
+{
+    BOOL result = TRUE;
+
+    *computeShaderProgram = glCreateProgram();
+
+    GLint success = true;// Indicator of compile result
+    char compileLog[512];
+
+    // Create shader program
+    *computeShaderProgram = glCreateProgram();
+
+    /// Compile vertex shader
+    char* computeShaderSource = (char*)malloc(computeShaderSourceSize * sizeof(char));
+    parseShaderFile(computeShaderFile, computeShaderSourceSize, computeShaderSource);
+
+    GLuint computeShader = glCreateShader(GL_COMPUTE_SHADER);
+    glShaderSource(computeShader, 1, &computeShaderSource, NULL);
+    glCompileShader(computeShader);
+
+    glGetShaderiv(computeShader, GL_COMPILE_STATUS, &success);
+    if (success)
+    {
+        printf("\Compute shader is successly compiled.\n");
+    }
+    else
+    {
+        glGetShaderInfoLog(computeShader, 512, NULL, compileLog);
+        printf("\nFail to compile compute shader.\n%s\n", compileLog);
+        result = FALSE;
+    }
+
+    glAttachShader(*computeShaderProgram, computeShader);
 
     return result;
 }

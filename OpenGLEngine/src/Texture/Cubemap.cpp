@@ -21,7 +21,7 @@ Cubemap::Cubemap(
         const GLenum wrapMethod,
         const BOOL   mipmap,
         const void*  data)
-    : Texture(TEXTURE_CUBEBOX)
+    : Texture(TEXTURE_CUBEMAP)
 {
     m_textureWidth = m_textureHeight = texSize;
 
@@ -59,7 +59,7 @@ Cubemap::Cubemap(
     const GLenum                    format,    
     const GLenum                    type,
     const BOOL                      mipmap)
-    : Texture(TEXTURE_CUBEBOX)
+    : Texture(TEXTURE_CUBEMAP)
 {
     assert(textureFile.size() == CUBE_MAP_FACE_NUM);
 

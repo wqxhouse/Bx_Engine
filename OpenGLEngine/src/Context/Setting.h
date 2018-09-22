@@ -2,26 +2,6 @@
 
 #include "../Core/TypeDef.h"
 
-enum PolyMode
-{
-	WIREFRAME = 0x00000000,
-	TRIANGLE  = 0x00000001,
-};
-
-enum RenderingMethod
-{
-    FORWARD_RENDERING,
-    DEFERRED_RENDERING,
-};
-
-enum Antialasing
-{
-    NONE  = 0x00000000,
-    LOW   = 0x00000002,
-    HIGH  = 0x00000004,
-    ELTRA = 0x00000008,
-};
-
 struct Resolution
 {
     UINT width;
@@ -30,19 +10,6 @@ struct Resolution
 
 struct AmbientOcclutionSetting
 {
-    enum AmbientOcclusion
-    {
-        NONE, SSAO,
-    };
-
-    enum SSAO_Quality
-    {
-        LOW    = 0x00000004,
-        NORMAL = 0x0000000F,
-        HIGH   = 0x00000040,
-        ELTRA  = 0x000000F0,
-    };
-
     AmbientOcclusion ambientOcclusion;
     SSAO_Quality     ssaoQuality;
 };
@@ -50,27 +17,25 @@ struct AmbientOcclutionSetting
 struct GraphicsSetting
 {
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
-    Antialasing antialasing         = Antialasing::HIGH;
+    Antialasing antialasing         = Antialasing::AA_HIGH;
 
     BOOL shadowCasting              = TRUE;
     Resolution shadowResolution     = { 2560, 2560 };
 
     inline void EnableSSAO()
     {
-        ambientOcclutionSetting.ambientOcclusion =
-            AmbientOcclutionSetting::AmbientOcclusion::SSAO;
+        ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_SSAO;
     }
 
     inline void DisableSSAO()
     {
-        ambientOcclutionSetting.ambientOcclusion =
-            AmbientOcclutionSetting::AmbientOcclusion::NONE;
+        ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_NONE;
     }
 
     AmbientOcclutionSetting ambientOcclutionSetting = 
     { 
-        AmbientOcclutionSetting::AmbientOcclusion::SSAO, 
-        AmbientOcclutionSetting::SSAO_Quality::HIGH
+        AmbientOcclusion::AMBIENTOCCLUSION_SSAO,
+        SSAO_Quality::SSAO_HIGH
     };
 };
 
@@ -80,7 +45,7 @@ struct Setting
 
 	float fov = 45.0f;
 
-	PolyMode polyMode = PolyMode::TRIANGLE;
+	PolyMode polyMode = PolyMode::POLYMODE_FILL;
 
 	GraphicsSetting m_graphicsSetting;
 };

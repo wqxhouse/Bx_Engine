@@ -124,6 +124,8 @@ public:
 
     //inline GLuint GetVertexBufferObj() const { return m_vertexBufferObj; }
 
+    void AddTexture(const std::string& textureFile);
+
 	std::string m_name;
 	std::string m_materialName;
 
@@ -148,7 +150,7 @@ private:
 	bool findSimilarVertex(const std::map<Vertex, GLuint>& map,
                            const Vertex& vertex, GLuint* index);
 
-	PolyMode m_polyMode = TRIANGLE;
+	PolyMode m_polyMode = POLYMODE_FILL;
 
 	GLuint m_vertexArrayObj;  // VAO
 	GLuint m_vertexBufferObj; // VBO

@@ -76,7 +76,7 @@ void ObjModelLoader::LoadModel(
                         throw;
                     }
                 }
-                else if (vecPtr[1] == "Object")
+                else if (ToLowercase(vecPtr[1]) == "object")
                 {
                     if (tempMeshName == "")
                     {
@@ -93,11 +93,24 @@ void ObjModelLoader::LoadModel(
                             meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
                         }
 
+                        if (m_diffuseMap.length() > 0)
+                        {
+                            meshPtr->AddTexture(m_diffuseMap);
+                        }
+
+                        if (m_specMap.length() > 0)
+                        {
+                            meshPtr->AddTexture(m_specMap);
+                        }
+
                         modelPtr->m_pMeshList.push_back(meshPtr);
 
                         counter[3] = 0;
 
                         tempMeshName = vecPtr[2];
+
+                        m_diffuseMap.clear();
+                        m_specMap.clear();
                     }
                 }
                 else
@@ -117,8 +130,8 @@ void ObjModelLoader::LoadModel(
         if (counter[3] > 0)
         {
             Mesh* meshPtr = new Mesh(tempMeshName, tempMaterialName, counter,
-                posBuffer, normalBuffer, texCoords,
-                posIndices, normalIndices, texIndices);
+                                     posBuffer, normalBuffer, texCoords,
+                                     posIndices, normalIndices, texIndices);
 
             if (m_materialMap.find(tempMaterialName) != m_materialMap.end())
             {
@@ -316,6 +329,14 @@ void ObjModelLoader::loadMaterial(const string & materialFile)
                 else if (materialStrs[0] == "illum")
                 {
                     // TODO
+                }
+                else if (materialStrs[0] == "map_Ka")
+                {
+
+                }
+                else if (materialStrs[0] == "map_Kd")
+                {
+                    m_diffuseMap = materialStrs[1];
                 }
             }
         }

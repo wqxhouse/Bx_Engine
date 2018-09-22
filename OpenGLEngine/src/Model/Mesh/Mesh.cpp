@@ -115,10 +115,10 @@ void Mesh::initialize()
 
     switch (m_polyMode)
     {
-    case WIREFRAME:
+    case POLYMODE_WIREFRAME:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         break;
-    case TRIANGLE:
+    case POLYMODE_FILL:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         break;
     default:
@@ -133,6 +133,8 @@ void Mesh::initialize()
 
     glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufSize);
     Vertex* data = (Vertex*)glMapBufferRange(GL_ARRAY_BUFFER, 0, bufSize, GL_MAP_READ_BIT);*/
+
+    m_textureList.resize(MESH_TEXTURE_SIZE);
 }
 
 void Mesh::drawMeshPos()
@@ -211,10 +213,6 @@ void Mesh::updateVertexData()
 void* Mesh::mapVertexBufferData()
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
-    GLenum err = glGetError();
-    printf("%i\n", err);
-    
-
     GLint bufSize;
 
     glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufSize);
@@ -222,8 +220,6 @@ void* Mesh::mapVertexBufferData()
     GLvoid* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
     Vertex* data = (Vertex*)glMapBufferRange(GL_ARRAY_BUFFER, 0, bufSize, GL_MAP_READ_BIT);
-    err = glGetError();
-    printf("%i\n", err);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     return data;
@@ -241,6 +237,13 @@ void Mesh::setMaterial(
     {
         *m_pMaterial = *pMaterial;
     }
+}
+
+void Mesh::AddTexture(
+    const std::string& textureFile)
+{
+    Texture2D* pTexture = new Texture2D(textureFile);
+    m_textureList.push_back(pTexture);
 }
 
 void Mesh::updateMaterial(
@@ -262,15 +265,38 @@ Mesh::~Mesh()
     {
         switch (m_pMaterial->GetMaterialType())
         {
-        case PHONG:
-            SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
-            break;
-        case ALBEDO:
-            SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
-            break;
-        default:
-            SafeDelete(m_pMaterial);
-            break;
+            case PHONG:
+                SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
+                break;
+            case ALBEDO:
+                SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
+                break;
+            default:
+                SafeDelete(m_pMaterial);
+                break;
+        }
+    }
+
+    for (Texture* pTexture : m_textureList)
+    {
+        if (pTexture != NULL)
+        {
+            switch (pTexture->GetTextureType())
+            {
+                 case TEXTURE_2D:
+                     SafeDelete(static_cast<Texture2D*>(pTexture));
+                     break;
+                 case TEXTURE_3D:
+                     SafeDelete(static_cast<Texture3D*>(pTexture));
+                     break;
+                 case TEXTURE_CUBEMAP:
+                     SafeDelete(static_cast<Cubemap*>(pTexture));
+                     break;
+                 default:
+                     assert(false);
+                     SafeDelete(pTexture);
+                     break;
+            }
         }
     }
 }

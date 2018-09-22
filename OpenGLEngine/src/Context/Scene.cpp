@@ -61,7 +61,7 @@ Scene::~Scene()
         case TextureType::TEXTURE_3D:
             SafeDelete(static_cast<Texture3D*>(pTexture));
             break;
-        case TextureType::TEXTURE_CUBEBOX:
+        case TextureType::TEXTURE_CUBEMAP:
             SafeDelete(static_cast<Cubemap*>(pTexture));
             break;
         default:
@@ -887,7 +887,7 @@ BOOL Scene::useSSAO()
         m_pSetting->m_graphicsSetting.ambientOcclutionSetting;
 
     result = ((ambientOcclutionSetting.ambientOcclusion !=
-        AmbientOcclutionSetting::AmbientOcclusion::NONE) ? TRUE : FALSE);
+        AmbientOcclusion::AMBIENTOCCLUSION_NONE) ? TRUE : FALSE);
 
     return result;
 }

@@ -8,11 +8,6 @@ using namespace std;
 class ModelLoaderBase
 {
 public:
-	enum ModelFormat
-	{
-		OBJ, FBX
-	};
-
 	ModelLoaderBase();
 	void virtual LoadModel(const string &fileName);
 	~ModelLoaderBase();

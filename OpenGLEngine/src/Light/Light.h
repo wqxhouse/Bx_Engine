@@ -3,15 +3,6 @@
 #include "../Math/Math.h"
 #include "../Shadow/ShadowMgr.h"
 
-enum LightType
-{
-    DIRECTIONAL_LIGHT = 0x0,
-    POINT_LIGHT       = 0x1,
-    SPOT_LIGHT        = 0x2,
-    AREA_LIGHT        = 0x3,
-    UNKNOWN_LIGHT     = 0xffffffff
-};
-
 class Light
 {
 public:

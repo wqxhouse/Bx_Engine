@@ -38,4 +38,7 @@ private:
 	std::string tempMaterialName;
 
 	std::unordered_map<string, SpecularMaterial*> m_materialMap;
+
+    std::string m_diffuseMap;
+    std::string m_specMap;
 };
