@@ -108,16 +108,30 @@ Cubemap::~Cubemap()
 void Cubemap::bindTexture(
     const GLenum       textureUnit,
     const GLuint       shaderProgram,
-    const std::string& samplerName,
-    const int          samplerIndex)
+    const std::string& samplerName)
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
 
-    //assert(textureLocation >= 0);
+    assert(textureLocation >= 0);
 
     glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
-    glUniform1i(textureLocation, samplerIndex);
+    glUniform1i(textureLocation, textureUnit - GL_TEXTURE0);
+}
+
+void Cubemap::bindTexture(
+    const GLenum       textureUnit,
+    const GLuint       shaderProgram,
+    const std::string& samplerName,
+    const int          bindPosition)
+{
+    GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
+
+    assert(textureLocation >= 0);
+
+    glActiveTexture(textureUnit);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
+    glUniform1i(textureLocation, textureUnit - GL_TEXTURE0);
 }
 
 void Cubemap::update(

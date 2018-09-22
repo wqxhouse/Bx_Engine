@@ -99,7 +99,7 @@ void Text::RenderText(
 
             GLuint textShaderProgram = m_textShader.useProgram();
 
-            m_fontTexture.bindTexture(GL_TEXTURE0, textShaderProgram, "fontTex", 0);
+            m_fontTexture.bindTexture(GL_TEXTURE0, textShaderProgram, "fontTex");
 
             glBindVertexArray(m_vertexArrayObj);
 

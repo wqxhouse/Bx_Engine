@@ -79,5 +79,5 @@ void Sprite::BindTexture(
 {
     m_pSpriteTexture = pSpriteTexture;
 
-    m_pSpriteTexture->bindTexture(GL_TEXTURE0, m_spriteShader.GetShaderProgram(), "spriteTex", 0);
+    m_pSpriteTexture->bindTexture(GL_TEXTURE0, m_spriteShader.GetShaderProgram(), "spriteTex");
 }

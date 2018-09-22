@@ -28,6 +28,7 @@ void OpenGLTemplate::createDefaultScene()
     Scene* pScene = m_context.GetScene();
     pScene->EnableDebug();
 
+    /*pScene->AddDirectionalLight(Vector3(0.0f, -1.0f, 0.0f), Vector3(0.5f, 0.5f, 0.5f));*/
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
     pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
@@ -73,13 +74,13 @@ void OpenGLTemplate::createDefaultScene()
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 15.0f, 10.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f);*/
 
-    pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 90.0f);
+    /*pScene->addProspectiveCamera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0), 100.0f, invAspectRadio, 0.1f, 10000.0f, 90.0f);*/
 
     //pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
     pScene->addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);
+        glm::vec3(0, 1, 0), 10.0f, invAspectRadio, 0.1f, 1000.0f, 70.0f);
 
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
         glm::vec3(0, 1, 0), 5.0f, aspectRadio, 0.1f, 1000.0f, 70.0f);*/
@@ -99,6 +100,11 @@ void OpenGLTemplate::createDefaultScene()
 
     pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3( 3.0f, 0.0f,  0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
+        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3( 0.0f, 0.0f,  3.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
@@ -113,11 +119,10 @@ void OpenGLTemplate::createDefaultScene()
         new Trans(glm::vec3( 0.0f, 0.0f, -3.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3(-3.0f, 0.0f, -3.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+        
 
-    pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-    pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
-        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    /*pScene->addModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     /*pScene->addModel(
         "../resources/models/cornellbox/CornellBox-Sphere.obj",

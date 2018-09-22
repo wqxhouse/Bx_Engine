@@ -43,7 +43,7 @@ void BlurEffect::draw()
 
     m_blurFbo.drawFramebuffer();
     
-    m_pInputTexture->bindTexture(GL_TEXTURE0, blurShader, "inputTexture", 0);
+    m_pInputTexture->bindTexture(GL_TEXTURE0, blurShader, "inputTexture");
 
     m_pBlurQuad->draw();
 

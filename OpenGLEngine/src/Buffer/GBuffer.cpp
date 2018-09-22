@@ -240,22 +240,22 @@ void GBuffer::readGBuffer(
     const GLuint shaderProgram)
 {
     m_gFramebuffer.getTexturePtr(GL_TEXTURE0)->
-        bindTexture(GL_TEXTURE0, shaderProgram, "posTex", 0);
+        bindTexture(GL_TEXTURE0, shaderProgram, "posTex");
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE1)->
-        bindTexture(GL_TEXTURE1, shaderProgram, "normalTex", 1);
+        bindTexture(GL_TEXTURE1, shaderProgram, "normalTex");
 
     /*m_gFramebuffer.getTexturePtr(GL_TEXTURE2)->
-        bindTexture(GL_TEXTURE2, shaderProgram, "texCoordTex", 2);*/
+        bindTexture(GL_TEXTURE2, shaderProgram, "texCoordTex");*/
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE3)->
-        bindTexture(GL_TEXTURE3, shaderProgram, "albedoTex", 3);
+        bindTexture(GL_TEXTURE3, shaderProgram, "albedoTex");
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE4)->
-        bindTexture(GL_TEXTURE4, shaderProgram, "specularTex", 4);
+        bindTexture(GL_TEXTURE4, shaderProgram, "specularTex");
 
     m_gFramebuffer.getTexturePtr(GL_TEXTURE5)->
-        bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex", 5);
+        bindTexture(GL_TEXTURE5, shaderProgram, "environmentLightTex");
 }
 
 void GBuffer::readGBuffer(
@@ -266,7 +266,7 @@ void GBuffer::readGBuffer(
     assert(texUnit >= GL_TEXTURE0);
 
     m_gFramebuffer.getTexturePtr(texUnit)->
-        bindTexture(texUnit, shaderProgram, textureName, texUnit - GL_TEXTURE0);
+        bindTexture(texUnit, shaderProgram, textureName);
 }
 
 void GBuffer::draw()

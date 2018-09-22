@@ -105,10 +105,10 @@ void Texture2D::setBoarderColor(GLfloat borderColor[4])
     glBindTexture(glTextureType, 0);
 }
 
-void Texture2D::bindTexture(const GLenum       textureUnit,
-                            const GLuint       shaderProgram,
-                            const std::string& samplerName,
-                            const int          samplerIndex)
+void Texture2D::bindTexture(
+    const GLenum       textureUnit,
+    const GLuint       shaderProgram,
+    const std::string& samplerName)
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
 
@@ -118,7 +118,24 @@ void Texture2D::bindTexture(const GLenum       textureUnit,
 
     glActiveTexture(textureUnit);
     glBindTexture(glTextureType, m_textureHandle);
-    glUniform1i(textureLocation, samplerIndex);
+    glUniform1i(textureLocation, textureUnit - GL_TEXTURE0);
+}
+
+void Texture2D::bindTexture(
+    const GLenum       textureUnit,
+    const GLuint       shaderProgram,
+    const std::string& samplerName,
+    const int          index)
+{
+    GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
+
+    assert(textureLocation >= 0);
+
+    GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
+
+    glActiveTexture(textureUnit);
+    glBindTexture(glTextureType, m_textureHandle);
+    glUniform1i(textureLocation, textureUnit - GL_TEXTURE0);
 }
 
 void Texture2D::setTextureSampleMethod(

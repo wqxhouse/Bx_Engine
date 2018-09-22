@@ -224,5 +224,5 @@ void LightProbe::readLightProbe(
     const GLenum       texUnit)
 {
     m_probeFbo.getTexturePtr(GL_TEXTURE0)
-        ->bindTexture(texUnit, shaderProgram, textureName, texUnit - GL_TEXTURE0);
+        ->bindTexture(texUnit, shaderProgram, textureName);
 }

@@ -124,7 +124,9 @@ public:
 
     //inline GLuint GetVertexBufferObj() const { return m_vertexBufferObj; }
 
-    void AddTexture(const std::string& textureFile);
+    void AddTexture(
+        const std::string&           textureFile,
+        const MESH_TEXTURE_MAP_TYPES type);
 
 	std::string m_name;
 	std::string m_materialName;

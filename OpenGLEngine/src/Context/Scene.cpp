@@ -433,7 +433,7 @@ void Scene::drawScene()
 
         // Test
         m_pLightMgr->GetShadowMgr()->
-                readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
+                readShadowMap(GL_TEXTURE4, sceneShaderProgram, "shadowMapSampler", 4);
         //ShadowMap* pShadowMap = GetShadowMap();
 
         //glm::mat4 lightTransWVP = pShadowMap->GetLightTransVP() *
@@ -451,7 +451,7 @@ void Scene::drawScene()
 
         if (m_pLightProbe != NULL)
         {
-            m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE2);
+            m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE5);
         }
 
         GLint lightNumLocation = glGetUniformLocation(sceneShaderProgram, "lightNum");

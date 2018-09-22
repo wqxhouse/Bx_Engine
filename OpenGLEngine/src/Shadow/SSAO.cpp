@@ -147,7 +147,7 @@ void SSAO::draw()
     }
 
     m_ssaoFramebuffer.drawFramebuffer();
-    m_pNoiseTexture->bindTexture(GL_TEXTURE3, ssaoShaderProgram, "noiseTex", 3);
+    m_pNoiseTexture->bindTexture(GL_TEXTURE3, ssaoShaderProgram, "noiseTex");
     m_ssaoQuad.draw();
     m_ssaoFramebuffer.finishDrawFramebuffer();
 
@@ -168,7 +168,7 @@ void SSAO::bindSsaoTexture(
 {
     Texture2D* ssaoTexture = ((blurSSAO == TRUE) ? m_pBlurEffect->GetBlurTexture() : m_pSsaoTexture);
     
-    ssaoTexture->bindTexture(texUnit, program, texName, samplerIndex);
+    ssaoTexture->bindTexture(texUnit, program, texName);
 }
 
 void SSAO::unbindSsaoTexture()

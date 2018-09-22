@@ -187,7 +187,7 @@ void Mesh::draw()
             printf("Unsupport material!\n");
             assert(FALSE);
             break;
-        }        
+        }
     }
 
     glBindVertexArray(m_vertexArrayObj);
@@ -240,10 +240,12 @@ void Mesh::setMaterial(
 }
 
 void Mesh::AddTexture(
-    const std::string& textureFile)
+    const std::string&           textureFile,
+    const MESH_TEXTURE_MAP_TYPES type)
 {
     Texture2D* pTexture = new Texture2D(textureFile);
-    m_textureList.push_back(pTexture);
+
+    m_textureList[type] = pTexture;
 }
 
 void Mesh::updateMaterial(

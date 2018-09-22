@@ -73,7 +73,7 @@ enum TextureType
     TEXTURE_CUBEMAP
 };
 
-enum MESH_TEXTURE_TYPES
+enum MESH_TEXTURE_MAP_TYPES
 {
     DIFFUSE_MAP       = 0,
     SPECULAR_MAP      = 1,

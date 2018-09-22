@@ -95,12 +95,12 @@ void ObjModelLoader::LoadModel(
 
                         if (m_diffuseMap.length() > 0)
                         {
-                            meshPtr->AddTexture(m_diffuseMap);
+                            meshPtr->AddTexture(m_diffuseMap, DIFFUSE_MAP);
                         }
 
                         if (m_specMap.length() > 0)
                         {
-                            meshPtr->AddTexture(m_specMap);
+                            meshPtr->AddTexture(m_specMap, SPECULAR_MAP);
                         }
 
                         modelPtr->m_pMeshList.push_back(meshPtr);
@@ -136,6 +136,16 @@ void ObjModelLoader::LoadModel(
             if (m_materialMap.find(tempMaterialName) != m_materialMap.end())
             {
                 meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
+            }
+            
+            if (m_diffuseMap.length() > 0)
+            {
+                meshPtr->AddTexture(m_diffuseMap, DIFFUSE_MAP);
+            }
+
+            if (m_specMap.length() > 0)
+            {
+                meshPtr->AddTexture(m_specMap, SPECULAR_MAP);
             }
 
             modelPtr->m_pMeshList.push_back(meshPtr);

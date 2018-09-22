@@ -10,10 +10,14 @@ class Texture
 public:
     Texture(TextureType textureType);
 
-    virtual void bindTexture(const GLenum textureIndex,
-                             const GLuint shaderProgram,
+    virtual void bindTexture(const GLenum       textureUnit,
+                             const GLuint       shaderProgram,
+                             const std::string& samplerName) = 0;
+
+    virtual void bindTexture(const GLenum       textureUnit,
+                             const GLuint       shaderProgram,
                              const std::string& samplerName,
-                             const int index) = 0;
+                             const int          bindPosition) = 0;
 
     virtual void unbindTexture() = 0;
 
@@ -78,8 +82,13 @@ public:
     void bindTexture(
         const GLenum       textureUnit,
         const GLuint       shaderProgram,
+        const std::string& samplerName);
+
+    void bindTexture(
+        const GLenum       textureUnit,
+        const GLuint       shaderProgram,
         const std::string& samplerName,
-        const int          samplerIndex);
+        const int          bindPosition);
 
     void setTextureSampleMethod(
         const GLenum minSampleMethod,  // Nearest neighbor / Linear
@@ -122,8 +131,13 @@ public:
     void bindTexture(
         const GLenum       textureUnit,
         const GLuint       shaderProgram,
+        const std::string& samplerName);
+
+    void bindTexture(
+        const GLenum       textureUnit,
+        const GLuint       shaderProgram,
         const std::string& samplerName,
-        const int          samplerIndex);
+        const int          bindPosition);
 
     inline void unbindTexture();
 
@@ -158,8 +172,13 @@ public:
     void bindTexture(
         const GLenum       textureUnit,
         const GLuint       shaderProgram,
+        const std::string& samplerName);
+
+    void bindTexture(
+        const GLenum       textureUnit,
+        const GLuint       shaderProgram,
         const std::string& samplerName,
-        const int          samplerIndex);
+        const int          bindPosition);
 
     void update(
         const std::vector<std::string>& textureFile,

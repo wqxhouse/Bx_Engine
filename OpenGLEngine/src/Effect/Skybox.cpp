@@ -30,7 +30,7 @@ void Skybox::draw()
 
     GLuint shaderProgram = m_skyboxShader.useProgram();
 
-    m_skyboxCubemap.bindTexture(GL_TEXTURE0, shaderProgram, "skyboxCubemap", 0);
+    m_skyboxCubemap.bindTexture(GL_TEXTURE0, shaderProgram, "skyboxCubemap");
 
     GLuint wvpLocation = glGetUniformLocation(shaderProgram, "wvp");
 
