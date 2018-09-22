@@ -83,5 +83,5 @@ inline void SafeDeleteArray(void *ptr)
     }
 }
 
-#include "Utility.h"
+#include "UtilityGL.h"
 extern CallbackInfo callbackInfo;
