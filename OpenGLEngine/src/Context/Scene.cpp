@@ -675,7 +675,8 @@ void Scene::initializeDebug()
 {
     for(int i = 0; i < 5; ++i)
     {        
-        m_pDebugSpriteList.push_back(new Sprite(this, Math::Vector3(50.0f, 600.0f - i * 100.0f, 0.0f), { 100.0f, 100.0f }));
+        m_pDebugSpriteList.push_back(
+            new Sprite(this, Math::Vector3(50.0f, 600.0f - i * 100.0f, 0.0f), { 100.0f, 100.0f }));
         m_pDebugSpriteList[i]->initialize();
     }
 }

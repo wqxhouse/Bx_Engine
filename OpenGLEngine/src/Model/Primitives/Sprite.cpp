@@ -65,6 +65,13 @@ void Sprite::draw()
 {
     m_spriteShader.useProgram();
 
+    assert(m_pSpriteTexture != NULL);
+
+    if (m_pSpriteTexture != NULL)
+    {
+        m_pSpriteTexture->bindTexture(GL_TEXTURE0, m_spriteShader.GetShaderProgram(), "spriteTex");
+    }
+
     glBindVertexArray(m_vertexArrayObj);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -78,6 +85,4 @@ void Sprite::BindTexture(
     Texture2D* pSpriteTexture)
 {
     m_pSpriteTexture = pSpriteTexture;
-
-    m_pSpriteTexture->bindTexture(GL_TEXTURE0, m_spriteShader.GetShaderProgram(), "spriteTex");
 }
