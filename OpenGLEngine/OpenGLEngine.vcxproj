@@ -84,6 +84,7 @@
       <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)bin\lib\OpenGLEngine\$(Configuration)\$(ProjectName)_d.lib"
@@ -111,6 +112,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
       <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

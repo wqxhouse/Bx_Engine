@@ -113,7 +113,7 @@ public:
                                                                                                           
     inline SSAO* GetSSAO()                           const { return m_pSsao;                              }
                                                                                                           
-    inline Vector4 GetBackGroundColor()              const { return m_backgroundColor;                    }
+    inline Math::Vector4 GetBackGroundColor()        const { return m_backgroundColor;                    }
 
     void setSceneShader(
         char* const vertexShaderFile,
@@ -122,7 +122,7 @@ public:
     inline void SetActiveCamera(Camera* pCam) { m_pActiveCamera = pCam; }
     inline void SetActiveCameraIndex(const UINT activeCameraIndex) { m_activeCameraIndex = activeCameraIndex; }
 
-    inline void SetBackGroundColor(const Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
+    inline void SetBackGroundColor(const Math::Vector4& backgroundColor) {m_backgroundColor = backgroundColor; }
     
     BOOL useSSAO();
     inline void EnableSSAO()  { m_pSetting->m_graphicsSetting.EnableSSAO(); }
@@ -142,7 +142,7 @@ private:
     GLint  success;
     GLchar compileLog[1024];
 
-    Vector4 m_backgroundColor;
+    Math::Vector4 m_backgroundColor;
     
     // Shaders
     Shader m_sceneShader;

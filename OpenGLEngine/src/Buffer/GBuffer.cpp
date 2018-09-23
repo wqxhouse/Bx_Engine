@@ -175,7 +175,7 @@ void GBuffer::drawGBuffer()
         Camera* pCam  = m_pScene->GetActivateCamera();
 
         // TODO: Combine all trans matrix into ubo
-        glm::mat4 worldTransMatrix = pModel->m_pTrans->GetTransMatrix();
+        glm::mat4 worldTransMatrix = pModel->GetTrans()->GetTransMatrix();
         glm::mat4 wv               = ToGLMMat4(pCam->GetViewMatrix()) * worldTransMatrix;
         glm::mat4 wvp              = ToGLMMat4(pCam->GetProjectionMatrix()) * wv;
 
@@ -229,7 +229,7 @@ void GBuffer::drawGBuffer()
                     m_pScene->GetPBRMaterialUniformBufferIndex());
             }
 
-            pModel->draw();
+            pModel->draw(gShaderProgram);
         }
         else
         {

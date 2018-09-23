@@ -26,9 +26,9 @@ SpecularMaterial::SpecularMaterial(const std::string & materialName)
 
 SpecularMaterial::SpecularMaterial(
     const std::string& materialName,
-	const Vector3&     ka,
-    const Vector3&     kd,
-    const Vector3&     ks,
+	const Math::Vector3&     ka,
+    const Math::Vector3&     kd,
+    const Math::Vector3&     ks,
     float ns)
 	: Material(PHONG, materialName, 1.0f, 1.0f, false),
       m_specularMaterialData(0.0f)
@@ -41,9 +41,9 @@ SpecularMaterial::SpecularMaterial(
 
 SpecularMaterial::SpecularMaterial(
     const std::string& materialName,
-    const Vector3& ka,
-    const Vector3& kd,
-    const Vector3 & ks,
+    const Math::Vector3& ka,
+    const Math::Vector3& kd,
+    const Math::Vector3 & ks,
     float ns,
 	float refraction,
     float alpha,

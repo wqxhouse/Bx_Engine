@@ -19,28 +19,42 @@ Model::~Model()
 	}
 	m_pMeshList.clear();
 
+    for (Material* pMaterial : m_pMaterialSet)
+    {
+        SafeDelete(pMaterial);
+    }
+    m_pMaterialSet.clear();
+
+    for (MaterialMap* pMaterialMap : m_pMaterialMapSet)
+    {
+        SafeDelete(pMaterialMap);
+    }
+    m_pMaterialMapSet.clear();
+
     SafeDelete(m_pTrans);
 }
 
-void Model::drawModelPos()
+void Model::drawModelPos(
+    const GLuint shaderProgram)
 {
     m_pTrans->update();
 
     for (Mesh* pMesh : m_pMeshList)
     {
-        pMesh->drawMeshPos();
+        pMesh->drawMeshPos(shaderProgram);
     }
 
     glBindVertexArray(0);
 }
 
-void Model::draw()
+void Model::draw(
+    const GLuint shaderProgram)
 {
     m_pTrans->update();
 
     for (Mesh* pMesh : m_pMeshList)
     {
-        pMesh->draw();
+        pMesh->draw(shaderProgram);
     }
 
     glBindVertexArray(0);

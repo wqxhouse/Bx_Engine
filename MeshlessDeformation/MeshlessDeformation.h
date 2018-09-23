@@ -3,6 +3,8 @@
 #include <Context\OpenGLContext.h>
 #include "PhysicsSystem.h"
 
+using namespace Math;
+
 class MeshlessDeformation
 {
 public:

@@ -88,29 +88,14 @@ void ObjModelLoader::LoadModel(
                                                  posBuffer, normalBuffer, texCoords,
                                                  posIndices, normalIndices, texIndices);
 
-                        if (m_materialMap.find(tempMaterialName) != m_materialMap.end())
-                        {
-                            meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
-                        }
-
-                        if (m_diffuseMap.length() > 0)
-                        {
-                            meshPtr->AddTexture(m_diffuseMap, DIFFUSE_MAP);
-                        }
-
-                        if (m_specMap.length() > 0)
-                        {
-                            meshPtr->AddTexture(m_specMap, SPECULAR_MAP);
-                        }
-
-                        modelPtr->m_pMeshList.push_back(meshPtr);
+                        modelPtr->AddMesh(
+                            meshPtr, m_materialHashMap[tempMaterialName], m_materialTextureHashMap[tempMaterialName]);
 
                         counter[3] = 0;
 
                         tempMeshName = vecPtr[2];
 
-                        m_diffuseMap.clear();
-                        m_specMap.clear();
+                        tempMaterialName.clear();
                     }
                 }
                 else
@@ -133,22 +118,8 @@ void ObjModelLoader::LoadModel(
                                      posBuffer, normalBuffer, texCoords,
                                      posIndices, normalIndices, texIndices);
 
-            if (m_materialMap.find(tempMaterialName) != m_materialMap.end())
-            {
-                meshPtr->m_pMaterial = m_materialMap[tempMaterialName];
-            }
-            
-            if (m_diffuseMap.length() > 0)
-            {
-                meshPtr->AddTexture(m_diffuseMap, DIFFUSE_MAP);
-            }
-
-            if (m_specMap.length() > 0)
-            {
-                meshPtr->AddTexture(m_specMap, SPECULAR_MAP);
-            }
-
-            modelPtr->m_pMeshList.push_back(meshPtr);
+            modelPtr->AddMesh(
+                meshPtr, m_materialHashMap[tempMaterialName], m_materialTextureHashMap[tempMaterialName]);
         }
 
         inputStream.close();
@@ -301,21 +272,21 @@ void ObjModelLoader::loadMaterial(const string & materialFile)
             {
                 if (materialStrs[0] == "Ka")
                 {
-                    m_materialMap[tempMaterialName]->
+                    m_materialHashMap[tempMaterialName]->
                         ka.setData(stof(materialStrs[1]), 
                                    stof(materialStrs[2]), 
                                    stof(materialStrs[3]));
                 }
                 else if (materialStrs[0] == "Kd")
                 {
-                    m_materialMap[tempMaterialName]->
+                    m_materialHashMap[tempMaterialName]->
                         kd.setData(stof(materialStrs[1]),
                                    stof(materialStrs[2]),
                                    stof(materialStrs[3]));
                 }
                 else if (materialStrs[0] == "Ks")
                 {
-                    m_materialMap[tempMaterialName]->
+                    m_materialHashMap[tempMaterialName]->
                         ks.setData(stof(materialStrs[1]),
                                    stof(materialStrs[2]),
                                    stof(materialStrs[3]));
@@ -326,11 +297,12 @@ void ObjModelLoader::loadMaterial(const string & materialFile)
                 if (materialStrs[0] == "newmtl")
                 {
                     tempMaterialName = materialStrs[1];
-                    m_materialMap[materialStrs[1]] = new SpecularMaterial(tempMaterialName);
+                    m_materialHashMap[materialStrs[1]] = new SpecularMaterial(tempMaterialName);
+                    m_materialTextureHashMap[materialStrs[1]] = new MaterialMap();
                 }
                 else if (materialStrs[0] == "Ns") // Specular exponent
                 {
-                    m_materialMap[tempMaterialName]->ns = stof(materialStrs[1]);
+                    m_materialHashMap[tempMaterialName]->ns = stof(materialStrs[1]);
                 }
                 else if (materialStrs[0] == "Ni")
                 {
@@ -340,13 +312,13 @@ void ObjModelLoader::loadMaterial(const string & materialFile)
                 {
                     // TODO
                 }
-                else if (materialStrs[0] == "map_Ka")
-                {
-
-                }
                 else if (materialStrs[0] == "map_Kd")
                 {
-                    m_diffuseMap = materialStrs[1];
+                    m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.diffuseMap = new Texture2D(materialStrs[1]);
+                }
+                else if (materialStrs[0] == "map_Ks")
+                {
+                    m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.specMap = new Texture2D(materialStrs[1]);
                 }
             }
         }

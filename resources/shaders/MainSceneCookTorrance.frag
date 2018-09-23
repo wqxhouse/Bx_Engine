@@ -16,12 +16,16 @@ in vec2 fragTexCoord;
 
 in vec3 lightProbeSampler;
 
-uniform sampler2D sampler;
+uniform sampler2D diffuseMap;
+uniform sampler2D specMap;
+uniform sampler2D normalMap;
+uniform sampler2D lightMap;
+
 uniform sampler2DArray shadowMapSampler;
+uniform samplerCube lightProbeCubemap;
+
 //uniform sampler2D shadowMapSampler;
 //uniform sampler2DMS shadowMapSampler;
-
-uniform samplerCube lightProbeCubemap;
 
 /*uniform shadowMapResolutionUniformBlock
 {
@@ -188,6 +192,7 @@ void main()
         // lightRadiance *= shadowAttenuation;
         
         radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance * attenuation);
+        // radiance += lightRadiance;
     }
 
     // Light Probe
@@ -196,7 +201,9 @@ void main()
         
     // Fetch environmentLight
     vec3 environmentLightRadiance = calCookTorranceRadiance(view, normal, -reflection, environmentLight);
-    radiance += environmentLightRadiance;
+    //radiance += environmentLightRadiance;
+    
+    // radiance *= texture(diffuseMap, fragTexCoord).xyz;
     
     // Gamma correction
     radiance = gammaCorrection(radiance);

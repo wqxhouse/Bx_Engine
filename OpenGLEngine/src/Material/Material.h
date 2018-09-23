@@ -3,7 +3,7 @@
 #include "../Math/Matrix4x4.h"
 #include "../Core/TypeDef.h"
 
-using namespace Math;
+class Texture2D;
 
 class Material
 {
@@ -37,9 +37,9 @@ class SpecularMaterial : public Material
 public:
 	SpecularMaterial(const std::string& materialName);
 	SpecularMaterial(const std::string& materialName,
-		             const Vector3& ka, const Vector3& kd, const Vector3& ks, float ns);
+		             const Math::Vector3& ka, const Math::Vector3& kd, const Math::Vector3& ks, float ns);
 	SpecularMaterial(const std::string& materialName,
-		             const Vector3& ka, const Vector3& kd, const Vector3& ks,
+		             const Math::Vector3& ka, const Math::Vector3& kd, const Math::Vector3& ks,
 					 float ns, float refraction, float alpha, bool transparency);
 
 	~SpecularMaterial() {}
@@ -53,12 +53,12 @@ public:
     {
         struct
         {
-            Vector3 ka; float ka_padding;
-            Vector3 kd; float kd_padding;
-            Vector3 ks; float ns; // Vector4
-            Vector4 padding;
+            Math::Vector3 ka; float ka_padding;
+            Math::Vector3 kd; float kd_padding;
+            Math::Vector3 ks; float ns; // Vector4
+            Math::Vector4 padding;
         };
-        Mat4 m_specularMaterialData;
+        Math::Mat4 m_specularMaterialData;
     };
 };
 
@@ -68,7 +68,7 @@ public:
     // TODO: Load material from file
     CookTorranceMaterial()
         : Material(COOKTORRANCE, "", 1.0f, 1.0f, false),
-          albedoVector4(Vector4(1.0f)),
+          albedoVector4(Math::Vector4(1.0f)),
           roughness(0.5f),
           metallic(0.5f),
           fresnel(1.0f)
@@ -85,7 +85,7 @@ public:
 
     static inline size_t GetOpaqueCookTorranceMaterialDataSize()
     {
-        return 2 * sizeof(Vector4);
+        return 2 * sizeof(Math::Vector4);
     }
 
     void operator=(const CookTorranceMaterial& material)
@@ -99,12 +99,25 @@ public:
     {
         struct
         {
-            Vector3 albedo; float albedoPadding;
+            Math::Vector3 albedo; float albedoPadding;
         };
-        Vector4 albedoVector4;
+        Math::Vector4 albedoVector4;
     };
     float roughness;
     float metallic;
     float fresnel;
     float padding; // Vector4
+};
+
+union MaterialMap
+{
+    struct MaterialMapStruct
+    {
+        Texture2D* diffuseMap;
+        Texture2D* specMap;
+        Texture2D* normalMap;
+        Texture2D* lightMap;
+    }m_materialMapStruct;
+
+    Texture2D* m_materialMapTextures[4];
 };

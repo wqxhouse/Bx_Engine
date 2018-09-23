@@ -26,6 +26,7 @@ void OpenGLContext::initialize()
                               // glfwGetPrimaryMonitor(), // Full Screen
                               NULL,
                               NULL);
+
     if (window == NULL)
     {
         printf("Fail to create GLFW window.\n");
@@ -59,7 +60,7 @@ void OpenGLContext::initialize()
     glStencilMask(0xFF);
 
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
+    CHECK_GL_ERROR
     glfwGetFramebufferSize(window,
                            reinterpret_cast<int*>(&fbWidth),
                            reinterpret_cast<int*>(&fbHeight));
@@ -67,14 +68,14 @@ void OpenGLContext::initialize()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glViewport(0, 0, m_pSetting->resolution.width, m_pSetting->resolution.height);
-
+    CHECK_GL_ERROR
 #if _DEBUG
     printf("Success initialize OpenGL.\n");
 #endif
 
     m_pScene = new Scene(m_pSetting);
     assert(m_pScene->initialize() == TRUE);
-
+    CHECK_GL_ERROR
 #if _DEBUG
     printf("Success initialize render scene.\n");
 #endif
@@ -84,26 +85,26 @@ void OpenGLContext::run()
 {
     GLfloat prevTime = 0.0f;
     GLfloat deltaTime = 0.0f;
-    
+    CHECK_GL_ERROR
     while (!glfwWindowShouldClose(window))
     {
         GLfloat curTime = (GLfloat)glfwGetTime();
         deltaTime = curTime - prevTime;
         prevTime = curTime;
-
+        CHECK_GL_ERROR
         //printf("Second per frame: %f\n FPS: %f\n", deltaTime, 1.0f / deltaTime);
         m_pScene->update(deltaTime);
-
+        CHECK_GL_ERROR
         //Start Rendering
-        m_pScene->preDraw();
-        m_pScene->draw();
-        m_pScene->postDraw();
+        m_pScene->preDraw(); CHECK_GL_ERROR
+        m_pScene->draw(); CHECK_GL_ERROR
+        m_pScene->postDraw(); CHECK_GL_ERROR
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        glfwSwapBuffers(window); CHECK_GL_ERROR
+        glfwPollEvents(); CHECK_GL_ERROR
     }
 
-    glfwTerminate();
+    glfwTerminate(); CHECK_GL_ERROR
 }
 
 OpenGLContext::~OpenGLContext()

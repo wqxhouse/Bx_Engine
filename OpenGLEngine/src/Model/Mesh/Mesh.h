@@ -110,14 +110,21 @@ public:
         UniformBufferMgr* pUniformBufferMgr,
         const GLuint      materialBufferIndex);
 
-    void drawMeshPos();
-    void draw();
+    void drawMeshPos(const GLuint shaderProgram);
+    void draw(const GLuint shaderProgram);
 
     void updateVertexData();
 
     void* mapVertexBufferData();
 
     void setMaterial(Material* pMaterial);
+    inline void setMaterialMap(MaterialMap* pMaterialMap)
+    {
+        m_pMaterialMap = pMaterialMap;
+    }
+
+    inline Material*    GetMaterial()    { return m_pMaterial;    }
+    inline MaterialMap* GetMaterialMap() { return m_pMaterialMap; }
 
     inline void UseGlobalMaterial() { useGlobalMaterial = TRUE; }
     inline void UseLocalMaterial()  { useGlobalMaterial = FALSE; }
@@ -128,14 +135,8 @@ public:
         const std::string&           textureFile,
         const MESH_TEXTURE_MAP_TYPES type);
 
-	std::string m_name;
-	std::string m_materialName;
-
-	std::vector<Vertex>   m_vertexBuffer;
-	std::vector<GLuint>   m_indexBuffer;
-	std::vector<Texture*> m_textureList;
-
-	Material* m_pMaterial;
+    std::vector<Vertex>   m_vertexBuffer;
+    std::vector<GLuint>   m_indexBuffer;
 
 private:
 	void initialize();
@@ -153,6 +154,12 @@ private:
                            const Vertex& vertex, GLuint* index);
 
 	PolyMode m_polyMode = POLYMODE_FILL;
+
+    std::string m_name;
+    std::string m_materialName;
+
+    Material*             m_pMaterial;
+    MaterialMap*          m_pMaterialMap;
 
 	GLuint m_vertexArrayObj;  // VAO
 	GLuint m_vertexBufferObj; // VBO
