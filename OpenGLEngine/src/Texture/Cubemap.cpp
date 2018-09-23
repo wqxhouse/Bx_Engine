@@ -43,11 +43,11 @@ Cubemap::Cubemap(
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, wrapMethod);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, wrapMethod);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, wrapMethod);
+    }
 
-        if (mipmap == TRUE)
-        {
-            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-        }
+    if (mipmap == TRUE)
+    {
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     }
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -87,11 +87,11 @@ Cubemap::Cubemap(
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    }
 
-        if (mipmap == TRUE)
-        {
-            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-        }
+    if (mipmap == TRUE)
+    {
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     }
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
