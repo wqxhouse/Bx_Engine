@@ -18,7 +18,7 @@ inline BOOL CheckError()
 
     if (error != GL_NO_ERROR)
     {
-        printf("GL Error: %u\n", error);
+        printf("GL Error: %x\n", error);
         result = FALSE;
     }
 

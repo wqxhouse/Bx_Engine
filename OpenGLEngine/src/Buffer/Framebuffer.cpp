@@ -20,6 +20,7 @@ Framebuffer::~Framebuffer()
 void Framebuffer::createFramebufferTexture2D(
     const GLenum texUnit,
     const GLenum attachmentType,
+    const GLenum renderTarget,
     const UINT   texWidth,
     const UINT   texHeight,
     const UINT   samples,
@@ -51,7 +52,11 @@ void Framebuffer::createFramebufferTexture2D(
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    m_framebufferAttachmentsList.push_back(attachmentType);
+    if (m_framebufferAttachmentsSet.find(renderTarget) == m_framebufferAttachmentsSet.end())
+    {
+        m_framebufferAttachmentsList.push_back(renderTarget);
+        m_framebufferAttachmentsSet.insert(renderTarget);
+    }
 }
 
 //void Framebuffer::createFramebufferTexture3D(
@@ -131,7 +136,8 @@ void Framebuffer::attachTexture2D(
     const GLenum texUnit,
     const GLenum attachmentType,
     Texture2D*   pTexture2D,
-    const UINT   samples)
+    const UINT   samples,
+    const GLenum renderTarget)
 {
     UINT texIndex = getTextureIndex(texUnit);
 
@@ -152,14 +158,19 @@ void Framebuffer::attachTexture2D(
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    m_framebufferAttachmentsList.push_back(attachmentType);
+    if (m_framebufferAttachmentsSet.find(renderTarget) == m_framebufferAttachmentsSet.end())
+    {
+        m_framebufferAttachmentsList.push_back(renderTarget);
+        m_framebufferAttachmentsSet.insert(renderTarget);
+    }
 }
 
 void Framebuffer::attachTexture3D(
     const GLenum texUnit,
     const GLenum attachmentType,
     Texture3D*   pTexture3D,
-    const UINT   layer)
+    const UINT   layer,
+    const GLenum renderTarget)
 {
     UINT texIndex = getTextureIndex(texUnit);
     m_pAttachedTextures[texIndex] = pTexture3D;
@@ -186,11 +197,10 @@ void Framebuffer::attachTexture3D(
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    // TODO: Use hash map
-    if (m_framebufferAttachmentsSet.find(attachmentType) == m_framebufferAttachmentsSet.end())
+    if (m_framebufferAttachmentsSet.find(renderTarget) == m_framebufferAttachmentsSet.end())
     {
-        m_framebufferAttachmentsList.push_back(attachmentType);
-        m_framebufferAttachmentsSet.insert(attachmentType);
+        m_framebufferAttachmentsList.push_back(renderTarget);
+        m_framebufferAttachmentsSet.insert(renderTarget);
     }
 }
 
@@ -199,7 +209,7 @@ void Framebuffer::attachCubemap(
     const GLenum attachmentType,
     Cubemap*     pCubemap,
     const GLenum cubeface,
-    const BOOL   addDrawBuffer)
+    const GLenum renderTarget)
 {
     UINT texIndex = getTextureIndex(texUnit);
     m_pAttachedTextures[texIndex] = pCubemap;
@@ -220,16 +230,24 @@ void Framebuffer::attachCubemap(
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    if (addDrawBuffer == TRUE)
+    if (m_framebufferAttachmentsSet.find(renderTarget) == m_framebufferAttachmentsSet.end())
     {
-        m_framebufferAttachmentsList.push_back(attachmentType);
+        m_framebufferAttachmentsList.push_back(renderTarget);
+        m_framebufferAttachmentsSet.insert(renderTarget);
     }
 }
 
-void Framebuffer::drawFramebuffer()
+void Framebuffer::setRenderTargets()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
     glDrawBuffers(m_framebufferAttachmentsList.size(), m_framebufferAttachmentsList.data());
+}
+
+void Framebuffer::setRenderTargets(
+    const std::vector<GLenum>& renderTargets)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferHandle);
+    glDrawBuffers(renderTargets.size(), renderTargets.data());
 }
 
 void Framebuffer::readFramebuffer(

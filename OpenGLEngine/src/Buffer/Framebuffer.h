@@ -14,6 +14,7 @@ public:
     void createFramebufferTexture2D(
         const GLenum texUnit,
         const GLenum attachmentType,
+        const GLenum renderTarget,
         const UINT   texWidth,
         const UINT   texHeight,
         const UINT   samples,
@@ -45,22 +46,26 @@ public:
         const GLenum texUnit,
         const GLenum attachmentType,
         Texture2D*   pTexture2D,
-        const UINT   samples);
+        const UINT   samples,
+        const GLenum renderTarget);
 
     void attachTexture3D(
         const GLenum texUnit,
         const GLenum attachmentType,
         Texture3D*   pTexture3D,
-        const UINT   layer);
+        const UINT   layer,
+        const GLenum renderTarget);
 
     void attachCubemap(
         const GLenum texUnit,
         const GLenum attachmentType,
         Cubemap*     pCubemap,
         const GLenum cubeface,
-        const BOOL   addDrawBuffer = FALSE);
+        const GLenum renderTarget);
 
-    void drawFramebuffer();
+    void setRenderTargets();
+    void setRenderTargets(const std::vector<GLenum>& renderTargets);
+
     void readFramebuffer(
         const GLenum texUnit,
         const GLenum texType);

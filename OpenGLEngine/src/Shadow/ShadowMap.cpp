@@ -75,24 +75,6 @@ BOOL ShadowMap::initialize()
             break;
     }
 
-    /*m_shadowMapFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
-                                                      GL_DEPTH_ATTACHMENT,
-                                                      m_shadowResolution.width,
-                                                      m_shadowResolution.height,
-                                                      m_shadowMapSamples,
-                                                      GL_DEPTH_COMPONENT,
-                                                      GL_DEPTH_COMPONENT,
-                                                      GL_FLOAT,
-                                                      GL_CLAMP_TO_EDGE,
-                                                      FALSE);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMapFramebuffer.getFramebufferHandle());
-
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
-
     m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
 
     BOOL hs = m_shadowMapShader.linkProgram();

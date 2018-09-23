@@ -22,6 +22,7 @@ BOOL BlurEffect::initialize()
 
     m_blurFbo.createFramebufferTexture2D(GL_TEXTURE0,
                                          GL_COLOR_ATTACHMENT0,
+                                         GL_COLOR_ATTACHMENT0,
                                          m_pInputTexture->GetTextureWidth(),
                                          m_pInputTexture->GetTextureHeight(),
                                          1,
@@ -41,7 +42,7 @@ void BlurEffect::draw()
 {
     GLint blurShader = m_blurShader.useProgram();
 
-    m_blurFbo.drawFramebuffer();
+    m_blurFbo.setRenderTargets();
     
     m_pInputTexture->bindTexture(GL_TEXTURE0, blurShader, "inputTexture");
 

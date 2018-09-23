@@ -26,6 +26,7 @@ BOOL GBuffer::initialize()
     // Position world buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE0,
                                               GL_COLOR_ATTACHMENT0,
+                                              GL_COLOR_ATTACHMENT0,
                                               m_width,
                                               m_height,
                                               1,
@@ -44,6 +45,7 @@ BOOL GBuffer::initialize()
     // Normal view buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE1,
                                               GL_COLOR_ATTACHMENT1,
+                                              GL_COLOR_ATTACHMENT1,
                                               m_width,
                                               m_height,
                                               1,
@@ -55,6 +57,7 @@ BOOL GBuffer::initialize()
 
     // TexCoord0
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE2,
+                                              GL_COLOR_ATTACHMENT2,
                                               GL_COLOR_ATTACHMENT2,
                                               m_width,
                                               m_height,
@@ -68,6 +71,7 @@ BOOL GBuffer::initialize()
     // Albedo material
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE3,
                                               GL_COLOR_ATTACHMENT3,
+                                              GL_COLOR_ATTACHMENT3,
                                               m_width,
                                               m_height,
                                               1,
@@ -79,6 +83,7 @@ BOOL GBuffer::initialize()
 
     // Specular material
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE4,
+                                              GL_COLOR_ATTACHMENT4,
                                               GL_COLOR_ATTACHMENT4,
                                               m_width,
                                               m_height,
@@ -92,6 +97,7 @@ BOOL GBuffer::initialize()
     // Environment light
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE5,
                                               GL_COLOR_ATTACHMENT5,
+                                              GL_COLOR_ATTACHMENT5,
                                               m_width,
                                               m_height,
                                               1,
@@ -103,6 +109,7 @@ BOOL GBuffer::initialize()
 
     // Position view buffer
     m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE6,
+                                              GL_COLOR_ATTACHMENT6,
                                               GL_COLOR_ATTACHMENT6,
                                               m_width,
                                               m_height,
@@ -154,7 +161,7 @@ BOOL GBuffer::initialize()
 void GBuffer::drawGBuffer()
 {
     GLuint gShaderProgram = m_gShader.useProgram();
-    m_gFramebuffer.drawFramebuffer();
+    m_gFramebuffer.setRenderTargets();
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

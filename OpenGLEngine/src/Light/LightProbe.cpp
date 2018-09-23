@@ -103,30 +103,13 @@ void LightProbe::draw()
     {
         m_pScene->SetActiveCamera(m_pCubemapCam[i]);
 
-        if (i == 0)
-        {
-            if (firstDraw == TRUE)
-            {
-                m_probeFbo.attachCubemap(
-                    GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], TRUE);
+        m_probeFbo.attachCubemap(
+            GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], GL_COLOR_ATTACHMENT0);
 
-                firstDraw = FALSE;
-            }
-            else
-            {
-                m_probeFbo.attachCubemap(
-                    GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], FALSE);
-            }
-        }
-        else
-        {
-            m_probeFbo.attachCubemap(
-                GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], FALSE);
-        }
         // Render the light probe
         if (m_pScene->GetSetting()->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
         {
-            m_probeFbo.drawFramebuffer();
+            m_probeFbo.setRenderTargets();
 
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -147,7 +130,7 @@ void LightProbe::draw()
 
             // TODO: Disable shadow
 
-            m_probeFbo.drawFramebuffer();
+            m_probeFbo.setRenderTargets();
 
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

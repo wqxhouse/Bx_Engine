@@ -48,7 +48,7 @@ BOOL SSAO::initialize()
                                    GL_CLAMP_TO_BORDER,
                                    FALSE);
 
-    m_ssaoFramebuffer.attachTexture2D(GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pSsaoTexture, 1);
+    m_ssaoFramebuffer.attachTexture2D(GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pSsaoTexture, 1, GL_COLOR_ATTACHMENT0);
 
     // Compiler and link ssao shaders
     m_ssaoShader.setShaderFiles("SSAO.vert", "SSAO.frag");
@@ -146,7 +146,7 @@ void SSAO::draw()
         assert(FALSE);
     }
 
-    m_ssaoFramebuffer.drawFramebuffer();
+    m_ssaoFramebuffer.setRenderTargets();
     m_pNoiseTexture->bindTexture(GL_TEXTURE3, ssaoShaderProgram, "noiseTex");
     m_ssaoQuad.draw();
     m_ssaoFramebuffer.finishDrawFramebuffer();

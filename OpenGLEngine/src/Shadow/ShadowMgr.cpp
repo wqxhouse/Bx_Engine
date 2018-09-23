@@ -73,8 +73,8 @@ void ShadowMgr::castShadow(
     {
         glDepthFunc(GL_NEVER);
     }
-    m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_DEPTH_ATTACHMENT, m_pShadowTexture, i);
-    m_shadowFbo.drawFramebuffer();
+    m_shadowFbo.attachTexture3D(GL_TEXTURE0, GL_DEPTH_ATTACHMENT, m_pShadowTexture, i, GL_COLOR_ATTACHMENT0);
+    m_shadowFbo.setRenderTargets();
 
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
