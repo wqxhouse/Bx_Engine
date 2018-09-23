@@ -11,9 +11,9 @@
 
 inline BOOL CheckError()
 {
-#if _DEBUG
     BOOL result = TRUE;
 
+#if _DEBUG
     GLenum error = glGetError();
 
     if (error != GL_NO_ERROR)
@@ -24,8 +24,8 @@ inline BOOL CheckError()
 
     assert(error == GL_NO_ERROR);
 
-    return result;
 #endif
+    return result;
 }
 
 #define CHECK_GL_ERROR CheckError();

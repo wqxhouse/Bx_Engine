@@ -34,7 +34,7 @@ SSAO::~SSAO()
 
 BOOL SSAO::initialize()
 {
-    std::vector<Math::Vector4> m_ssaoSampleVectors(m_sampleNum, Vector4());
+    std::vector<Math::Vector4> m_ssaoSampleVectors(m_sampleNum, Math::Vector4());
 
     BOOL result = TRUE;
 

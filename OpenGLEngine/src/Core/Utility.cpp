@@ -37,11 +37,11 @@ std::vector<std::string> split(const std::string & str, char delim)
     return splitedStrings;
 }
 
-std::string ToLowercase(const std::string & str)
+std::string ToLowercase(const std::string& str)
 {
     size_t strLength = str.length();
 
-    std::string result(strLength, ' ');
+    std::string result(str);
     for (size_t i = 0; i < strLength; ++i)
     {
         if (str[i] >= 'A' && str[i] <= 'Z')
@@ -57,7 +57,7 @@ std::string ToUppercase(const std::string& str)
 {
     size_t strLength = str.length();
 
-    std::string result(strLength, ' ');
+    std::string result(str);
     for (size_t i = 0; i < strLength; ++i)
     {
         if (str[i] >= 'a' && str[i] <= 'z')

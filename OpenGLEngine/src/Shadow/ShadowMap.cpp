@@ -102,7 +102,7 @@ void ShadowMap::update(Light* pLight)
 {
     m_pLight = pLight;
 
-    Vector3 lightDir;
+    Math::Vector3 lightDir;
 
     switch (pLight->GetLightType())
     {
@@ -151,7 +151,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
     {
         Model* pModel = pScene->GetModelPtr(i);
 
-        glm::mat4 worldMatrix    = pModel->m_pTrans->GetTransMatrix();
+        glm::mat4 worldMatrix    = pModel->GetTrans()->GetTransMatrix();
         glm::mat4 wvp            = prospectMatrix * viewMatrix * worldMatrix;
 
         GLint transMatrixLocation = glGetUniformLocation(m_shadowMapShader.GetShaderProgram(), "wvp");
@@ -160,7 +160,7 @@ void ShadowMap::drawShadowMap(Scene* pScene)
         {
             glUniformMatrix4fv(transMatrixLocation, 1, GL_FALSE, glm::value_ptr(wvp));
 
-            pModel->drawModelPos();
+            pModel->drawModelPos(m_shadowMapShader.GetShaderProgram());
         }
         else
         {

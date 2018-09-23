@@ -84,7 +84,7 @@ void Texture3D::bindTexture(
 {
     GLint textureLocation = glGetUniformLocation(shaderProgram, samplerName.data());
 
-    assert(textureLocation >= 0);
+    // assert(textureLocation >= 0);
 
     glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureHandle);

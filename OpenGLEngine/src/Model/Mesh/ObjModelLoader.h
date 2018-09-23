@@ -37,8 +37,6 @@ private:
 	std::string tempMeshName;
 	std::string tempMaterialName;
 
-	std::unordered_map<string, SpecularMaterial*> m_materialMap;
-
-    std::string m_diffuseMap;
-    std::string m_specMap;
+	std::unordered_map<string, SpecularMaterial*> m_materialHashMap;
+    std::unordered_map<string, MaterialMap*> m_materialTextureHashMap;
 };

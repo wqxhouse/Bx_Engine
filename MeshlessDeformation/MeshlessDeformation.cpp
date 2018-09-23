@@ -16,7 +16,7 @@ void MeshlessDeformation::init()
 
     pScene  = m_context.GetScene();
 
-    m_pMesh = pScene->GetModelPtr(0)->m_pMeshList[0];
+    m_pMesh = pScene->GetModelPtr(0)->GetMesh(0);
 
     m_meshDataCount = m_pMesh->m_vertexBuffer.size();
     m_meshDataCountInv = 1.0f / static_cast<float>(m_meshDataCount);
@@ -70,7 +70,7 @@ void MeshlessDeformation::initScene()
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     Model* pModel = pScene->GetModelPtr(0);
-    Mesh* pMesh = pModel->m_pMeshList[0];
+    Mesh* pMesh = pModel->GetMesh(0);
 
     pScene->addTexture("../resources/textures/teaport/wall.jpg",
         GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_REPEAT, GL_TRUE);

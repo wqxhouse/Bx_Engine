@@ -17,7 +17,7 @@ Scene::Scene(Setting* pSetting)
       enableRealtimeLightProbe(FALSE),
       enableDebugDraw(FALSE)
 {
-    m_globalPbrMaterial.albedo    = Vector3(0.6f, 0.6f, 0.6f);
+    m_globalPbrMaterial.albedo    = Math::Vector3(0.6f, 0.6f, 0.6f);
     m_globalPbrMaterial.roughness = 0.3f;
     m_globalPbrMaterial.metallic  = 0.5f;
     m_globalPbrMaterial.fresnel   = 1.0f;
@@ -221,11 +221,11 @@ void Scene::update(float deltaTime)
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
     {
-        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
+        m_pLightMgr->rotateLight(0, Math::Vector3(0.0f, 1.0f, 0.0f), glm::radians(5.0f));
     }
     else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_L])
     {
-        m_pLightMgr->rotateLight(0, Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
+        m_pLightMgr->rotateLight(0, Math::Vector3(0.0f, 1.0f, 0.0f), glm::radians(-5.0f));
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Z])
@@ -364,11 +364,21 @@ void Scene::draw()
 void Scene::postDraw()
 {
     m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
+
+    glm::vec3 camPos = m_pActiveCamera->GetTrans().GetPos();
+    m_renderText += "CAMERA POSITION: (";
+    m_renderText += std::to_string(camPos.x);
+    m_renderText += ", ";
+    m_renderText += std::to_string(camPos.y);
+    m_renderText += ", ";
+    m_renderText += std::to_string(camPos.z);
+    m_renderText += ")\n";
+
     m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
 
     // TODO: Post processing
 
-    debugDraw();
+    //debugDraw();
 }
 
 void Scene::drawScene()
@@ -418,7 +428,7 @@ void Scene::drawScene()
 
         glm::mat4 transMatrix[4] =
         {
-            pModel->m_pTrans->GetTransMatrix(),
+            pModel->GetTrans()->GetTransMatrix(),
             ToGLMMat4(m_pActiveCamera->GetViewMatrix()),
             ToGLMMat4(m_pActiveCamera->GetProjectionMatrix()),
             glm::mat4()
@@ -431,7 +441,7 @@ void Scene::drawScene()
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
 
-        // Test
+
         m_pLightMgr->GetShadowMgr()->
                 readShadowMap(GL_TEXTURE4, sceneShaderProgram, "shadowMapSampler", 4);
         //ShadowMap* pShadowMap = GetShadowMap();
@@ -464,7 +474,7 @@ void Scene::drawScene()
             printf("Can't find light number uniform. \n");
         }
 
-        pModel->draw();
+        pModel->draw(sceneShaderProgram);
     }
 
     Shader::FinishProgram();
@@ -600,7 +610,7 @@ BOOL Scene::initializePhongRendering()
 
     /// UBOs initialization
     m_transUniformbufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Mat4) * 4, nullptr);
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Math::Mat4) * 4, nullptr);
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_transUniformbufferIndex,

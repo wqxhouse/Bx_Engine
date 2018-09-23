@@ -12,6 +12,7 @@ Mesh::Mesh(
     : m_name(name),
       m_materialName(materialFile),
       m_pMaterial(NULL),
+      m_pMaterialMap(NULL),
       useGlobalMaterial(FALSE)
 {
     initialize();
@@ -75,7 +76,7 @@ Mesh::Mesh(
     //Memory::MemoryPool::registerMemory<Mesh>(this);
 
     combineVertexData(counter, posBuf, normalBuf, texCoords, posIndices, normalIndices, texCoordIndices);
-    this->m_textureList = textures;
+    //this->m_textureList = textures;
 
     initialize();
 }
@@ -134,10 +135,11 @@ void Mesh::initialize()
     glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufSize);
     Vertex* data = (Vertex*)glMapBufferRange(GL_ARRAY_BUFFER, 0, bufSize, GL_MAP_READ_BIT);*/
 
-    m_textureList.resize(MESH_TEXTURE_SIZE);
+    // m_textureList.resize(MESH_TEXTURE_SIZE);
 }
 
-void Mesh::drawMeshPos()
+void Mesh::drawMeshPos(
+    const GLuint shaderProgram)
 {
     glBindVertexArray(m_vertexArrayObj);
 
@@ -149,7 +151,8 @@ void Mesh::drawMeshPos()
     glBindVertexArray(0);
 }
 
-void Mesh::draw()
+void Mesh::draw(
+    const GLuint shaderProgram)
 {
     if (useGlobalMaterial == FALSE)
     {
@@ -190,6 +193,11 @@ void Mesh::draw()
         }
     }
 
+    if (m_pMaterialMap->m_materialMapStruct.diffuseMap != NULL)
+    {
+        m_pMaterialMap->m_materialMapStruct.diffuseMap->bindTexture(GL_TEXTURE0, shaderProgram, "diffuseMap");
+    }
+
     glBindVertexArray(m_vertexArrayObj);
 
     glEnableVertexAttribArray(0);
@@ -228,14 +236,15 @@ void* Mesh::mapVertexBufferData()
 void Mesh::setMaterial(
     Material* pMaterial)
 {
-    if (pMaterial->GetMaterialType() != m_pMaterial->GetMaterialType())
+    if (m_pMaterial != NULL &&
+        pMaterial->GetMaterialType() != m_pMaterial->GetMaterialType())
     {
         SafeDelete(m_pMaterial);
         m_pMaterial = pMaterial;
     }
     else
     {
-        *m_pMaterial = *pMaterial;
+        m_pMaterial = pMaterial;
     }
 }
 
@@ -245,7 +254,7 @@ void Mesh::AddTexture(
 {
     Texture2D* pTexture = new Texture2D(textureFile);
 
-    m_textureList[type] = pTexture;
+    m_pMaterialMap->m_materialMapTextures[type] = pTexture;
 }
 
 void Mesh::updateMaterial(
@@ -263,44 +272,6 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &m_indexBufferObj);
 
     //Memory::MemoryPool::release<Mesh>(this);
-    if (m_pMaterial != NULL)
-    {
-        switch (m_pMaterial->GetMaterialType())
-        {
-            case PHONG:
-                SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
-                break;
-            case ALBEDO:
-                SafeDelete(static_cast<SpecularMaterial*>(m_pMaterial));
-                break;
-            default:
-                SafeDelete(m_pMaterial);
-                break;
-        }
-    }
-
-    for (Texture* pTexture : m_textureList)
-    {
-        if (pTexture != NULL)
-        {
-            switch (pTexture->GetTextureType())
-            {
-                 case TEXTURE_2D:
-                     SafeDelete(static_cast<Texture2D*>(pTexture));
-                     break;
-                 case TEXTURE_3D:
-                     SafeDelete(static_cast<Texture3D*>(pTexture));
-                     break;
-                 case TEXTURE_CUBEMAP:
-                     SafeDelete(static_cast<Cubemap*>(pTexture));
-                     break;
-                 default:
-                     assert(false);
-                     SafeDelete(pTexture);
-                     break;
-            }
-        }
-    }
 }
 
 void Mesh::combineVertexData(
