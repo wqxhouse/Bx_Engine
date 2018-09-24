@@ -52,6 +52,9 @@
     <Filter Include="src\Effect">
       <UniqueIdentifier>{ae9c5671-ecc6-480d-887d-7d9f5e3eeacb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Render">
+      <UniqueIdentifier>{89a61e0b-fc3a-4529-9942-c9968ded9295}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector3.h">
@@ -198,6 +201,9 @@
     <ClInclude Include="src\Core\UtilityGL.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Render\ForwardPlusRender.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -331,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="src\Model\Primitives\Sprite.cpp">
       <Filter>src\Model\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\ForwardPlusRender.cpp">
+      <Filter>src\Render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
