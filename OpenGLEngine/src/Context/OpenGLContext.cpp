@@ -60,7 +60,7 @@ void OpenGLContext::initialize()
     glStencilMask(0xFF);
 
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    
+
     glfwGetFramebufferSize(window,
                            reinterpret_cast<int*>(&fbWidth),
                            reinterpret_cast<int*>(&fbHeight));
@@ -68,14 +68,14 @@ void OpenGLContext::initialize()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glViewport(0, 0, m_pSetting->resolution.width, m_pSetting->resolution.height);
-    
+
 #if _DEBUG
     printf("Success initialize OpenGL.\n");
 #endif
 
     m_pScene = new Scene(m_pSetting);
     assert(m_pScene->initialize() == TRUE);
-    
+
 #if _DEBUG
     printf("Success initialize render scene.\n");
 #endif
@@ -85,13 +85,13 @@ void OpenGLContext::run()
 {
     GLfloat prevTime = 0.0f;
     GLfloat deltaTime = 0.0f;
-    
+
     while (!glfwWindowShouldClose(window))
     {
         GLfloat curTime = (GLfloat)glfwGetTime();
         deltaTime = curTime - prevTime;
         prevTime = curTime;
-        
+
         //printf("Second per frame: %f\n FPS: %f\n", deltaTime, 1.0f / deltaTime);
         m_pScene->update(deltaTime);
         
@@ -104,7 +104,7 @@ void OpenGLContext::run()
         glfwPollEvents(); 
     }
 
-    glfwTerminate(); 
+    glfwTerminate();
 }
 
 OpenGLContext::~OpenGLContext()
