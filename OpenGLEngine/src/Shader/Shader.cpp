@@ -33,6 +33,22 @@ BOOL Shader::linkProgram()
     return result;
 }
 
+BOOL Shader::compileComputeShader()
+{
+    BOOL result = TRUE;
+
+    if (m_computeShaderFile != NULL)
+    {
+        m_shaderCompiler.compileComputeShader(m_computeShaderFile, &m_shaderProgram);
+    }
+    else
+    {
+        result = FALSE;
+    }
+
+    return result;
+}
+
 GLuint Shader::useProgram()
 {
     glUseProgram(m_shaderProgram);

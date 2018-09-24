@@ -10,6 +10,7 @@
 #include "../Light/LightProbe.h"
 #include "../Core/Text.h"
 #include "../Model/Primitives/Sprite.h"
+#include "../Render/ForwardPlusRender.h"
 
 #include "Setting.h"
 
@@ -205,6 +206,9 @@ private:
     void debugDraw();
     std::vector<Sprite*> m_pDebugSpriteList;
     BOOL enableDebugDraw;
+
+    // Forward+
+    ForwardPlusRender* m_pForwardPlusRenderer;
 
 // Friend functions
     friend void LightProbe::draw();

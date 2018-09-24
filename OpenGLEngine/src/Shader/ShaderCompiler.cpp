@@ -372,7 +372,7 @@ BOOL ShaderCompiler::compileComputeShader(
     glGetShaderiv(computeShader, GL_COMPILE_STATUS, &success);
     if (success)
     {
-        printf("Compute shader is successly compiled.\n");
+        printf("\nCompute shader is successly compiled.\n");
     }
     else
     {

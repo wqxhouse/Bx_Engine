@@ -16,7 +16,11 @@ public:
         char* const tesShaderFile      = NULL,  //Optional
         char* const tcsShaderFile      = NULL); //Optional
 
+    inline void setComputeShader(char* const computeShaderFile) { m_computeShaderFile = computeShaderFile; }
+
     BOOL linkProgram();
+
+    BOOL compileComputeShader();
 
     GLuint useProgram();
 
@@ -43,4 +47,7 @@ private:
     char* m_geometryShaderFile;
     char* m_tesShaderFile;
     char* m_tcsShaderFile;
+
+    // TODO: Compute shader class
+    char* m_computeShaderFile;
 };
