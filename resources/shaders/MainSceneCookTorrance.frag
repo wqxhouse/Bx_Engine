@@ -119,9 +119,12 @@ void main()
     vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
     
     float attenuation = 1.0f;
-        
+
 	for (int i = 0; i < lightNum; ++i)
 	{
+        vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+        float shadowAttenuation = castingShadow(posLightProj, float(i));
+
         vec3 lightColor = m_light[i].lightBase.color;
 
 		vec3 dir;
@@ -131,6 +134,7 @@ void main()
             {
                 // Transform light direction vector to view space
                 dir = normalize(m_light[i].data[0].xyz);
+                shadowAttenuation = 1.0f;                
                 break;
             }
             case 1: // Point Light
@@ -141,6 +145,7 @@ void main()
                 // Transform light position vector to view space
                 vec3  dirVector = posWorld - m_light[i].data[0].xyz;
                 float dis2      = dot(dirVector, dirVector);
+                shadowAttenuation = 1.0f;
 
                 // Pixel is outside the range of point light, discard
                 if (dis2 > radius2) { continue; }
@@ -181,9 +186,6 @@ void main()
             default:
                 break;
         }
-		
-		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
-        float shadowAttenuation = castingShadow(posLightProj, float(i));
         //float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
         vec3 lightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor);
@@ -203,7 +205,7 @@ void main()
     vec3 environmentLightRadiance = calCookTorranceRadiance(view, normal, -reflection, environmentLight);
     //radiance += environmentLightRadiance;
     
-    // radiance *= texture(diffuseMap, fragTexCoord).xyz;
+    //radiance *= texture(diffuseMap, fragTexCoord).xyz;
     
     // Gamma correction
     radiance = gammaCorrection(radiance);

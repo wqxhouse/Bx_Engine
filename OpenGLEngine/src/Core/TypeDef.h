@@ -24,6 +24,7 @@ enum RenderingMethod
 {
     FORWARD_RENDERING,
     DEFERRED_RENDERING,
+    FORWARD_PLUS_RENDERING,
 };
 
 enum Antialasing

@@ -60,7 +60,6 @@ void OpenGLContext::initialize()
     glStencilMask(0xFF);
 
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
     glfwGetFramebufferSize(window,
                            reinterpret_cast<int*>(&fbWidth),
                            reinterpret_cast<int*>(&fbHeight));

@@ -1,7 +1,7 @@
 // Light header file
 
 #ifndef MAX_LIGHT_NUM
-#define MAX_LIGHT_NUM 16
+#define MAX_LIGHT_NUM 64
 #endif
 
 struct LightBase
