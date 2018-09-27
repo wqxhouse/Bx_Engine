@@ -39,7 +39,7 @@ BOOL Shader::compileComputeShader()
 
     if (m_computeShaderFile != NULL)
     {
-        m_shaderCompiler.compileComputeShader(m_computeShaderFile, &m_shaderProgram);
+        result = m_shaderCompiler.compileComputeShader(m_computeShaderFile, &m_shaderProgram);
     }
     else
     {

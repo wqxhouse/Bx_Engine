@@ -338,7 +338,6 @@ BOOL ShaderCompiler::compileShader(
 
     if (geometryShaderFile != NULL) { glDeleteShader(geometryShader); }
 
-
     SafeRelease(vertexShaderSource, MALLOC);
     SafeRelease(fragmentShaderSource, MALLOC);
     SafeRelease(geometryShaderSource, MALLOC);
@@ -352,8 +351,6 @@ BOOL ShaderCompiler::compileComputeShader(
     const UINT        computeShaderSourceSize)
 {
     BOOL result = TRUE;
-
-    *computeShaderProgram = glCreateProgram();
 
     GLint success = true;// Indicator of compile result
     char compileLog[512];
@@ -382,6 +379,30 @@ BOOL ShaderCompiler::compileComputeShader(
     }
 
     glAttachShader(*computeShaderProgram, computeShader);
+
+    // Link shaders into program
+    glLinkProgram(*computeShaderProgram);
+
+    int InfoLogLength;
+    glGetProgramiv(*computeShaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(*computeShaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
+
+    if (success)
+    {
+        printf("\nShader program is successly linked.\n");
+    }
+    else
+    {
+        glGetShaderInfoLog(*computeShaderProgram, InfoLogLength, NULL, &compileLog[0]);
+        printf("\nFail to link shaders in the program.\n");
+
+        std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+        glGetProgramInfoLog(*computeShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+        printf("%s\n", &ProgramErrorMessage[0]);
+        result = FALSE;
+    }
+
+    SafeRelease(computeShaderSource, MALLOC);
 
     return result;
 }
