@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Buffer/Framebuffer.h"
-#include "../Shader/Shader.h"
+#include "../Shader/GraphicsShader.h"
 #include "../Camera/Camera.h"
 #include "../Context/Setting.h"
 
@@ -40,7 +40,7 @@ private:
     void initializeLightCamera();
 
     // Framebuffer m_shadowMapFramebuffer;
-    Shader      m_shadowMapShader;
+    GraphicsShader m_shadowMapShader;
 
     Scene*  m_pScene;
     Light*  m_pLight;

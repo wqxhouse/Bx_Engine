@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../Shader/Shader.h"
+#include "../Shader/GraphicsShader.h"
+#include "../Shader/ComputeShader.h"
 #include "../Math/Vector4.h"
 
 class ForwardPlusRender
@@ -14,8 +15,8 @@ public:
     void draw();
 
 private:
-    Shader m_gridFrustumComputeShader;
-    Shader m_renderShader;
+    ComputeShader  m_gridFrustumComputeShader;
+    GraphicsShader m_renderShader;
 
     GLuint m_frustumVerticesSsbo;
 

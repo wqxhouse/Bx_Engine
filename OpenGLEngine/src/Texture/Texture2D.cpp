@@ -139,8 +139,8 @@ void Texture2D::bindTexture(
 }
 
 void Texture2D::setTextureSampleMethod(
-    const GLenum minSampleMethod,  // Nearest neighbor / Linear
-    const GLenum magSampleMethod)  // Nearest neighbor / Linear
+    const GLenum minSampleMethod,  // Nearest neighbor or Linear
+    const GLenum magSampleMethod)  // Nearest neighbor or Linear
 {
     GLenum glTextureType = ((m_samples < 2) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE);
 

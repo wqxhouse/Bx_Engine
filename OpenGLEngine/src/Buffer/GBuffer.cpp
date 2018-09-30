@@ -132,7 +132,7 @@ BOOL GBuffer::initialize()
                                               FALSE);*/
 
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
-    result = m_gShader.linkProgram();
+    result = m_gShader.compileShaderProgram();
 
     if (result == FALSE)
     {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Framebuffer.h"
-#include "../Shader/Shader.h"
+#include "../Shader/GraphicsShader.h"
 #include "../Math/Vector3.h"
 #include "../Material/Material.h"
 #include "../Model/Primitives/Quad.h"
@@ -38,10 +38,10 @@ public:
     }
 
 private:
-    Scene*      m_pScene; // Pointer to the scene
+    Scene*         m_pScene; // Pointer to the scene
 
-    Framebuffer m_gFramebuffer;
-    Shader      m_gShader;
+    Framebuffer    m_gFramebuffer;
+    GraphicsShader m_gShader;
 
     UINT m_width;
     UINT m_height;

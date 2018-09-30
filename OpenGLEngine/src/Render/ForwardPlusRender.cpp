@@ -18,8 +18,8 @@ BOOL ForwardPlusRender::initialize()
 {
     BOOL result = TRUE;
 
-    m_gridFrustumComputeShader.setComputeShader("GridFrustumsCompute.cs");
-    result = m_gridFrustumComputeShader.compileComputeShader(); 
+    m_gridFrustumComputeShader.setShader("GridFrustumsCompute.cs");
+    result = m_gridFrustumComputeShader.compileShaderProgram(); 
 
     assert(result == TRUE);
 

@@ -35,7 +35,7 @@ BOOL Sprite::initialize()
     BOOL status = TRUE;
 
     m_spriteShader.setShaderFiles("Sprite.vert", "Sprite.frag");
-    status = m_spriteShader.linkProgram();
+    status = m_spriteShader.compileShaderProgram();
     if (status != TRUE)
     {
         Shader::AssertErrors("Failed to compile sprite shader!\n");

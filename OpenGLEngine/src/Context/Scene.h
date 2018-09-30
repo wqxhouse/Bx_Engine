@@ -146,10 +146,10 @@ private:
     Math::Vector4 m_backgroundColor;
     
     // Shaders
-    Shader m_sceneShader;
-    Shader m_deferredRenderingShader;
+    GraphicsShader m_sceneShader;
+    GraphicsShader m_deferredRenderingShader;
 
-    Shader m_pbrShader;
+    GraphicsShader m_pbrShader;
 
     // Scene objects (ex. Camera, model, texture, light)
     std::vector<Camera*> m_pCameraList;

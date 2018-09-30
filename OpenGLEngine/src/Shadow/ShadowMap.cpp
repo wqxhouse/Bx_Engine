@@ -77,7 +77,7 @@ BOOL ShadowMap::initialize()
 
     m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
 
-    BOOL hs = m_shadowMapShader.linkProgram();
+    BOOL hs = m_shadowMapShader.compileShaderProgram();
     if (hs == TRUE)
     {
         initializeLightCamera();

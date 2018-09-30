@@ -15,7 +15,7 @@ BOOL Skybox::initialize()
     BOOL result = TRUE;
 
     m_skyboxShader.setShaderFiles("Skybox.vert", "Skybox.frag");
-    result = m_skyboxShader.linkProgram();
+    result = m_skyboxShader.compileShaderProgram();
 
     assert(result == TRUE);
 

@@ -7,20 +7,9 @@ class Shader
 public:
     Shader();
 
-    ~Shader();
+    virtual ~Shader();
 
-    void setShaderFiles(
-        char* const vertexShaderFile,
-        char* const fragmentShaderFile,
-        char* const geometryShaderFile = NULL,  //Optional
-        char* const tesShaderFile      = NULL,  //Optional
-        char* const tcsShaderFile      = NULL); //Optional
-
-    inline void setComputeShader(char* const computeShaderFile) { m_computeShaderFile = computeShaderFile; }
-
-    BOOL linkProgram();
-
-    BOOL compileComputeShader();
+    virtual BOOL compileShaderProgram() { return TRUE; }
 
     GLuint useProgram();
 
@@ -37,17 +26,7 @@ public:
 
     inline GLuint GetShaderProgram() const { return m_shaderProgram; }
 
-private:
-    GLuint m_shaderProgram;
-
+protected:
+    GLuint         m_shaderProgram;
     ShaderCompiler m_shaderCompiler;
-
-    char* m_vertexShaderFile;
-    char* m_fragmentShaderFile;
-    char* m_geometryShaderFile;
-    char* m_tesShaderFile;
-    char* m_tcsShaderFile;
-
-    // TODO: Compute shader class
-    char* m_computeShaderFile;
 };

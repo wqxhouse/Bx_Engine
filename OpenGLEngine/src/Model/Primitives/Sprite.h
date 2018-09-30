@@ -2,7 +2,7 @@
 
 #include "../../Math/Vector3.h"
 #include "../../Texture/Texture.h"
-#include "../../Shader/Shader.h"
+#include "../../Shader/GraphicsShader.h"
 #include "../../Context/Setting.h"
 
 struct RectangleSize
@@ -41,7 +41,7 @@ private:
     RectangleSize m_spriteSize;
     Texture2D*    m_pSpriteTexture;
 
-    Shader m_spriteShader;
+    GraphicsShader m_spriteShader;
 
     GLuint m_vertexArrayObj;
     GLuint m_vertexBufObj;
