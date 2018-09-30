@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Shader/Shader.h"
+#include "../Shader/GraphicsShader.h"
 #include "../Texture/Texture.h"
 #include "../Model/Primitives/Cube.h"
 
@@ -21,11 +21,11 @@ public:
     inline Cubemap GetSkyboxCubemap() const { return m_skyboxCubemap; }
 
 private:
-    Scene*  m_pScene; // Pointer to the render scene
+    Scene*         m_pScene; // Pointer to the render scene
 
-    Shader  m_skyboxShader;
+    GraphicsShader m_skyboxShader;
 
-    Cubemap m_skyboxCubemap;
+    Cubemap        m_skyboxCubemap;
 
-    Cube    m_skyboxCube;
+    Cube           m_skyboxCube;
 };

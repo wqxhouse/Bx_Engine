@@ -184,6 +184,8 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClInclude Include="src\Model\Primitives\Quad.h" />
     <ClInclude Include="src\Model\Primitives\Sprite.h" />
     <ClInclude Include="src\Render\ForwardPlusRender.h" />
+    <ClInclude Include="src\Shader\ComputeShader.h" />
+    <ClInclude Include="src\Shader\GraphicsShader.h" />
     <ClInclude Include="src\Shader\Shader.h" />
     <ClInclude Include="src\Shader\ShaderCompiler.h" />
     <ClInclude Include="src\Shadow\ShadowMap.h" />
@@ -228,6 +230,8 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Model\Primitives\Quad.cpp" />
     <ClCompile Include="src\Model\Primitives\Sprite.cpp" />
     <ClCompile Include="src\Render\ForwardPlusRender.cpp" />
+    <ClCompile Include="src\Shader\ComputeShader.cpp" />
+    <ClCompile Include="src\Shader\GraphicsShader.cpp" />
     <ClCompile Include="src\Shader\Shader.cpp" />
     <ClCompile Include="src\Shader\ShaderCompiler.cpp" />
     <ClCompile Include="src\Shadow\ShadowMap.cpp" />
@@ -237,6 +241,9 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Texture\Texture3D.cpp" />
     <ClCompile Include="src\Texture\Cubemap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -59,7 +59,7 @@ private:
     Texture2D* m_pNoiseTexture;
     std::vector<Math::Vector3> m_noiseTextureData;
 
-    Shader m_ssaoShader;
+    GraphicsShader m_ssaoShader;
 
     Quad m_ssaoQuad;
 

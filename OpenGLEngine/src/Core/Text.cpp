@@ -16,7 +16,7 @@ Text::~Text()
 void Text::initialize()
 {
     m_textShader.setShaderFiles("Text.vert", "Text.frag");
-    BOOL status = m_textShader.linkProgram();
+    BOOL status = m_textShader.compileShaderProgram();
 
     if (status == FALSE)
     {

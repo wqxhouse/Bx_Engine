@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Shader/Shader.h"
+#include "../Shader/GraphicsShader.h"
 #include "../Math/Vector3.h"
 #include "../Texture/Texture.h"
 
@@ -35,7 +35,7 @@ private:
         1, 3, 2
     };
 
-    Shader m_textShader;
+    GraphicsShader m_textShader;
 
     GLuint m_vertexArrayObj;
     GLuint m_vertexBufObj;

@@ -9,46 +9,6 @@ Shader::~Shader()
     glDeleteProgram(m_shaderProgram);
 }
 
-void Shader::setShaderFiles(
-    char* const vertexShaderFile,
-    char* const fragmentShaderFile,
-    char* const geometryShaderFile,
-    char* const tesShaderFile,
-    char* const tcsShaderFile)
-{
-    m_vertexShaderFile   = vertexShaderFile;
-    m_fragmentShaderFile = fragmentShaderFile;
-    m_geometryShaderFile = geometryShaderFile;
-    m_tesShaderFile      = tesShaderFile;
-    m_tcsShaderFile      = tcsShaderFile;
-}
-
-BOOL Shader::linkProgram()
-{
-    BOOL result = m_shaderCompiler.compileShader(
-            m_vertexShaderFile, m_fragmentShaderFile,
-            m_geometryShaderFile, m_tesShaderFile, m_tcsShaderFile, // Optional shader stages
-            &m_shaderProgram);
-
-    return result;
-}
-
-BOOL Shader::compileComputeShader()
-{
-    BOOL result = TRUE;
-
-    if (m_computeShaderFile != NULL)
-    {
-        result = m_shaderCompiler.compileComputeShader(m_computeShaderFile, &m_shaderProgram);
-    }
-    else
-    {
-        result = FALSE;
-    }
-
-    return result;
-}
-
 GLuint Shader::useProgram()
 {
     glUseProgram(m_shaderProgram);

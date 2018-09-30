@@ -608,7 +608,7 @@ BOOL Scene::initializePhongRendering()
 
     //Compile shaders
     m_sceneShader.setShaderFiles("MainScene.vert", "MainScene.frag");
-    status = m_sceneShader.linkProgram();
+    status = m_sceneShader.compileShaderProgram();
 
     if (status == FALSE)
     {
@@ -653,7 +653,7 @@ BOOL Scene::initializePBRendering()
 
     // PBR shader
     m_pbrShader.setShaderFiles("MainScene.vert", "MainSceneCookTorrance.frag");
-    status = m_pbrShader.linkProgram();
+    status = m_pbrShader.compileShaderProgram();
 
     if (status == FALSE)
     {
@@ -739,7 +739,7 @@ BOOL Scene::initializeDeferredRendering()
 
     // G-Buffer shaders
     m_deferredRenderingShader.setShaderFiles("MainSceneDefferedDraw.vert", "MainSceneDefferedDraw.frag");
-    status = m_deferredRenderingShader.linkProgram();
+    status = m_deferredRenderingShader.compileShaderProgram();
 
     if (status == FALSE)
     {

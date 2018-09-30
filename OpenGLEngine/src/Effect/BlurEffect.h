@@ -2,7 +2,7 @@
 
 #include "../Core/OpenGLPCH.h"
 #include "../Buffer/Framebuffer.h"
-#include "../Shader/Shader.h"
+#include "../Shader/GraphicsShader.h"
 #include "../Model/Primitives/Quad.h"
 
 class BlurEffect
@@ -22,10 +22,10 @@ public:
     }
 
 private:
-    Texture2D*  m_pInputTexture;
+    Texture2D*     m_pInputTexture;
 
-    Shader      m_blurShader;
-    Framebuffer m_blurFbo;
+    GraphicsShader m_blurShader;
+    Framebuffer    m_blurFbo;
 
-    Quad*       m_pBlurQuad;
+    Quad*          m_pBlurQuad;
 };

@@ -52,7 +52,7 @@ BOOL SSAO::initialize()
 
     // Compiler and link ssao shaders
     m_ssaoShader.setShaderFiles("SSAO.vert", "SSAO.frag");
-    result = m_ssaoShader.linkProgram();
+    result = m_ssaoShader.compileShaderProgram();
 
     if (result == FALSE)
     {
