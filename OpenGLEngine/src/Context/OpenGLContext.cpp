@@ -28,6 +28,8 @@ void OpenGLContext::initialize()
 
     GLFWmonitor* pMonitor = ((m_pSetting->fullScreen == TRUE) ? glfwGetPrimaryMonitor() : NULL);
 
+    setVSync(m_pSetting->vsync);
+
     window = glfwCreateWindow(m_pSetting->resolution.width,
                               m_pSetting->resolution.height,
                               "BXS OpenGL Engine",
