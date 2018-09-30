@@ -5,11 +5,12 @@
 #define DEFAULT_GROUP_SIZE_Z 1
 
 ComputeShader::ComputeShader()
-    : threadGroupChangeFlags(0)
+    : threadGroupChangeFlags(0),
+      useComputeVariableGroupSize(TRUE)
 {
-    groupSize[0] = DEFAULT_GROUP_SIZE_X;
-    groupSize[1] = DEFAULT_GROUP_SIZE_Y;
-    groupSize[2] = DEFAULT_GROUP_SIZE_Z;
+    m_groupSize[0] = DEFAULT_GROUP_SIZE_X;
+    m_groupSize[1] = DEFAULT_GROUP_SIZE_Y;
+    m_groupSize[2] = DEFAULT_GROUP_SIZE_Z;
 }
 
 ComputeShader::~ComputeShader()
@@ -36,7 +37,16 @@ void ComputeShader::compute()
 {
     useProgram();
 
-    glDispatchCompute(groupNum[0], groupNum[1], groupNum[2]);
+    if (useComputeVariableGroupSize == FALSE)
+    {
+        glDispatchCompute(m_groupNum[0], m_groupNum[1], m_groupNum[2]);
+    }
+    else
+    {
+        glDispatchComputeGroupSizeARB(m_groupNum[0], m_groupNum[1], m_groupNum[2],
+                                      m_groupSize[0], m_groupSize[1], m_groupSize[2]);
+    }
+
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     FinishProgram();
@@ -47,9 +57,9 @@ void ComputeShader::setTotalThreadSize(
     const UINT y,
     const UINT z)
 {
-    totalInvocationSize[0] = x;
-    totalInvocationSize[1] = y;
-    totalInvocationSize[2] = z;
+    m_totalInvocationSize[0] = x;
+    m_totalInvocationSize[1] = y;
+    m_totalInvocationSize[2] = z;
 }
 
 void ComputeShader::setThreadGroupSize(
@@ -57,18 +67,18 @@ void ComputeShader::setThreadGroupSize(
     const UINT y,
     const UINT z)
 {
-    groupSize[0] = x;
-    groupSize[1] = y;
-    groupSize[2] = z;
+    m_groupSize[0] = x;
+    m_groupSize[1] = y;
+    m_groupSize[2] = z;
 }
 
 void ComputeShader::calGroupNum()
 {
     if (threadGroupChangeFlags != 0)
     {
-        groupNum[0] = totalInvocationSize[0] / groupSize[0];
-        groupNum[1] = totalInvocationSize[1] / groupSize[1];
-        groupNum[2] = totalInvocationSize[2] / groupSize[2];
+        m_groupNum[0] = m_totalInvocationSize[0] / m_groupSize[0];
+        m_groupNum[1] = m_totalInvocationSize[1] / m_groupSize[1];
+        m_groupNum[2] = m_totalInvocationSize[2] / m_groupSize[2];
 
         threadGroupChangeFlags = 0;
     }
