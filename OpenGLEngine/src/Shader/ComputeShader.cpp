@@ -36,10 +36,7 @@ void ComputeShader::compute()
 {
     useProgram();
 
-    glDispatchComputeGroupSizeARB(
-        groupNum[0], groupNum[1], groupNum[2],
-        groupSize[0], groupSize[1], groupSize[2]
-    );
+    glDispatchCompute(groupNum[0], groupNum[1], groupNum[2]);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     FinishProgram();
