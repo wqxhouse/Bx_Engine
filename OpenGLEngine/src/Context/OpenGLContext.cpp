@@ -1,5 +1,9 @@
+#include <windows.h>
+
 #include "OpenGLContext.h"
 #include "../Model/Mesh/ObjModelLoader.h"
+
+void setVSync(BOOL sync);
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
@@ -19,6 +23,8 @@ void OpenGLContext::initialize()
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     glfwWindowHint(GLFW_SAMPLES, m_pSetting->m_graphicsSetting.antialasing); // 4x MSAA
+
+    setVSync(m_pSetting->vsync);
 
     window = glfwCreateWindow(m_pSetting->resolution.width,
                               m_pSetting->resolution.height,
@@ -150,5 +156,21 @@ void mouse_callback(GLFWwindow * window, double x_pos, double y_pos)
 
         prevPosX = x_pos;
         prevPosY = y_pos;
+    }
+}
+
+// Set the vsync setting
+void setVSync(BOOL sync)
+{
+    typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+    PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+
+    const char *extensions = (char*)glGetString(GL_EXTENSIONS);
+
+    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+    if (wglSwapIntervalEXT != NULL)
+    {
+        wglSwapIntervalEXT(sync);
     }
 }

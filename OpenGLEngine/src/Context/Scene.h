@@ -69,13 +69,13 @@ public:
         float fov      = 45.0f);
 
     void addOrthographicCamera(
-        const glm::vec3& pos,
-        const glm::vec3& center,
-        const glm::vec3& up,
-        const float      speed,
-        const Rectangle  viewport,
-        const float      nearClip = 0.1f,
-        const float      farClip  = 100.0f);
+        const glm::vec3&   pos,
+        const glm::vec3&   center,
+        const glm::vec3&   up,
+        const float        speed,
+        const BxsRectangle viewport,
+        const float        nearClip = 0.1f,
+        const float        farClip  = 100.0f);
 
     void addTexture(
         const std::string& textureFile,

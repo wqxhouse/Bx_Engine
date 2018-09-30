@@ -40,9 +40,9 @@ namespace Math
         const float farClip);        ///< Far clip
 
     Mat4 orthographicProjectionMatrix(
-        const Rectangle& viewport,   ///< Viewport for the orthographic camera
-        const float      nearClip,   ///< Near clip
-        const float      farClip);    ///< Far clip
+        const BxsRectangle& viewport,   ///< Viewport for the orthographic camera
+        const float         nearClip,   ///< Near clip
+        const float         farClip);    ///< Far clip
 
 	Quaternion operator*(const float& f, const Quaternion& q);
 

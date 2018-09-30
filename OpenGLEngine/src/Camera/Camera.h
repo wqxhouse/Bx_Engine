@@ -79,17 +79,17 @@ class OrthographicCamera : public Camera
 {
 public:
     OrthographicCamera(
-        const glm::vec3& pos,
-        const glm::vec3& center,
-        const glm::vec3& up,
-        const float      speed,
-        const Rectangle& viewport,
-        const float      nearClip = 0.1f,
-        const float      farClip  = 100.0f);
+        const glm::vec3&    pos,
+        const glm::vec3&    center,
+        const glm::vec3&    up,
+        const float         speed,
+        const BxsRectangle& viewport,
+        const float         nearClip = 0.1f,
+        const float         farClip  = 100.0f);
     ~OrthographicCamera();
 
     void update(float deltaTime);
 
 private:
-    Rectangle m_viewport;
+    BxsRectangle m_viewport;
 };

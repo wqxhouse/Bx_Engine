@@ -33,10 +33,10 @@ BOOL ShadowMap::initialize()
         {
             m_pLightCamera = new OrthographicCamera(
                 glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
-                0.0f, Rectangle(-halfWidth  + offset,
-                                 halfWidth  + offset,
-                                -halfHeight + offset,
-                                 halfHeight + offset), 0.1f, 10000.0f);
+                0.0f, BxsRectangle(-halfWidth  + offset,
+                                    halfWidth  + offset,
+                                   -halfHeight + offset,
+                                    halfHeight + offset), 0.1f, 10000.0f);
             break;
         }
         case LightType::POINT_LIGHT:

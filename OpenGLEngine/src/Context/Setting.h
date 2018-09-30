@@ -19,7 +19,7 @@ struct GraphicsSetting
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
     Antialasing antialasing         = Antialasing::AA_HIGH;
 
-    BOOL shadowCasting              = TRUE;
+    BOOL shadowCasting;
     Resolution shadowResolution     = { 128, 128 };
 
     inline void EnableSSAO()
@@ -46,6 +46,8 @@ struct Setting
 	float fov = 45.0f;
 
 	PolyMode polyMode = PolyMode::POLYMODE_FILL;
+
+    BOOL vsync = TRUE;
 
 	GraphicsSetting m_graphicsSetting;
 };

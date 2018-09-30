@@ -794,13 +794,13 @@ void Scene::addProspectiveCamera(
 }
 
 void Scene::addOrthographicCamera(
-    const glm::vec3& pos,
-    const glm::vec3& center,
-    const glm::vec3& up,
-    const float      speed,
-    const Rectangle  viewport,
-    const float      nearClip,
-    const float      farClip) 
+    const glm::vec3&    pos,
+    const glm::vec3&    center,
+    const glm::vec3&    up,
+    const float         speed,
+    const BxsRectangle  viewport,
+    const float         nearClip,
+    const float         farClip) 
 {
     m_pCameraList.push_back(
         new OrthographicCamera(pos, center, up, speed, viewport, nearClip, farClip));

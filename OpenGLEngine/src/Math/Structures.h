@@ -2,9 +2,9 @@
 
 #include "Vector4.h"
 
-struct Rectangle
+struct BxsRectangle
 {
-    Rectangle(const float left,
+    BxsRectangle(const float left,
               const float right,
               const float bottom,
               const float top)
