@@ -168,8 +168,6 @@ void setVSync(BOOL sync)
     typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
     PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 
-    const char *extensions = (char*)glGetString(GL_EXTENSIONS);
-
     wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 
     if (wglSwapIntervalEXT != NULL)
