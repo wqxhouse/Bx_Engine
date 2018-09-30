@@ -36,4 +36,7 @@ private:
             UINT reserve                   : 30;
         }bits;
     };
+
+private:
+    char* m_computeShaderFile;
 };

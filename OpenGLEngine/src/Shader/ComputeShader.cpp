@@ -1,5 +1,6 @@
 #include "ComputeShader.h"
 
+<<<<<<< HEAD
 #define DEFAULT_GROUP_SIZE_X 16
 #define DEFAULT_GROUP_SIZE_Y 16
 #define DEFAULT_GROUP_SIZE_Z 1
