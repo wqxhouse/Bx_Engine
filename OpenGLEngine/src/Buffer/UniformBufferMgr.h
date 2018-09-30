@@ -39,6 +39,11 @@ public:
         const GLsizei dataSize,
         const GLvoid* data);
 
+    inline void* GetUniformBufferData(const UINT uniformBufferBindIndex)
+    {
+        return m_pUniformBindBlockList[uniformBufferBindIndex]->GetUniformBufferData();
+    }
+
 private:
     UINT m_maxUboCount;
     std::vector<UniformBuffer*> m_pUniformBindBlockList;

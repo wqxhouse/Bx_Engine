@@ -82,7 +82,7 @@ void UniformBufferMgr::bindUniformBuffer(
 
         // TODO: No need to bind buffer base every time
         UniformBuffer* pUniformBuffer = m_pUniformBindBlockList[uniformBufferBindIndex];
-        glBindBufferBase(GL_UNIFORM_BUFFER, uniformBufferBindIndex, pUniformBuffer->getUniformbufferHandle());
+        glBindBufferBase(GL_UNIFORM_BUFFER, uniformBufferBindIndex, pUniformBuffer->GetUniformbufferHandle());
     }
     else
     {

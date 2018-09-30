@@ -38,7 +38,8 @@ public:
         const UniformBlockMemberData*  uniformBlockMembers,
         const GLenum                   usage);
 
-    inline GLuint getUniformbufferHandle() const { return m_uniformBufferHandle; }
+    inline GLuint   GetUniformbufferHandle() const { return m_uniformBufferHandle; }
+    inline GLubyte* GetUniformBufferData()   const { return m_uniformDataBuffer;   }
 
 private:
     GLuint        m_uniformBufferIndex;
