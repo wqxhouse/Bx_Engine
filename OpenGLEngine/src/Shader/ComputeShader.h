@@ -15,13 +15,15 @@ public:
     void setTotalThreadSize(const UINT x, const UINT y, const UINT z);
     void setThreadGroupSize(const UINT x, const UINT y, const UINT z);
 
+    void calGroupNum();
+
     inline void setShader(char* const computeShaderFile) { m_computeShaderFile = computeShaderFile; }
     inline void enableCSVariableGroupSize()              { useComputeVariableGroupSize = TRUE;      }
     inline void disableCSVariableGroupSize()             { useComputeVariableGroupSize = FALSE;     }
 
-private:
-    void calGroupNum();
+    inline UINT* getGroupNum() { return m_groupNum;}
 
+private:
     char* m_computeShaderFile;
 
     UINT m_totalInvocationSize[3]; // Total thread numbers
@@ -30,9 +32,9 @@ private:
 
     BOOL useComputeVariableGroupSize;
 
-    union
+    union ThreadGroupChangeFlags
     {
-        UINT threadGroupChangeFlags;
+        UINT value;
 
         struct
         {
@@ -40,5 +42,5 @@ private:
             BOOL groupSizeChange           : 1;
             UINT reserve                   : 30;
         }bits;
-    };
+    }threadGroupChangeFlags;
 };

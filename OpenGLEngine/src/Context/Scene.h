@@ -97,24 +97,26 @@ public:
     void enableSceneLocalMaterial();
     void disableSceneLocalMaterial();
 
-    inline Setting* GetSetting()                     const { return m_pSetting;                           }
+    inline Setting* GetSetting()                     const { return m_pSetting;                             }
                                                                                                          
-    inline size_t GetModelSize()                     const { return m_pSceneModelList.size();             }
-    inline Model* GetModelPtr(const UINT index)      const { return m_pSceneModelList[index];             }
+    inline size_t GetModelSize()                     const { return m_pSceneModelList.size();               }
+    inline Model* GetModelPtr(const UINT index)      const { return m_pSceneModelList[index];               }
 
-    inline Camera* GetActivateCamera()               const { return m_pActiveCamera;                      }
+    inline Camera* GetActivateCamera()               const { return m_pActiveCamera;                        }
 
-    inline UniformBufferMgr* GetUniformBufferMgr()         { return &m_uniformBufferMgr;                  }
-    inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;         }
-    inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex;      }
+    inline UniformBufferMgr* GetUniformBufferMgr()         { return &m_uniformBufferMgr;                    }
+    inline GLuint GetMaterialUniformBufferIndex()    const { return m_materialUniformBufferIndex;           }
+    inline GLuint GetPBRMaterialUniformBufferIndex() const { return m_pbrMaterialUniformBufferIndex;        }
 
-    inline GBuffer*   GetGBuffer()                   const { return m_pGBuffer;                           }
+    inline GBuffer* GetGBuffer()                     const { return m_pGBuffer;                             }
 
-    inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;                  }
+    inline CookTorranceMaterial GetGlobalMaterial()  const { return m_globalPbrMaterial;                    }
                                                                                                           
-    inline SSAO* GetSSAO()                           const { return m_pSsao;                              }
+    inline SSAO* GetSSAO()                           const { return m_pSsao;                                }
                                                                                                           
-    inline Math::Vector4 GetBackGroundColor()        const { return m_backgroundColor;                    }
+    inline Math::Vector4 GetBackGroundColor()        const { return m_backgroundColor;                      }
+
+    inline Math::Mat4 GetProjectionMatrix()          const { return m_pActiveCamera->GetProjectionMatrix(); }
 
     void setSceneShader(
         char* const vertexShaderFile,

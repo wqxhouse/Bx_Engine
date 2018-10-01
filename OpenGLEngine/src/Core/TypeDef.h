@@ -129,3 +129,9 @@ enum ModelFormat
     OBJ,
     FBX
 };
+
+struct Resolution
+{
+    UINT width;
+    UINT height;
+};

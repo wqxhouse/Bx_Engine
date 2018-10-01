@@ -2,12 +2,6 @@
 
 #include "../Core/TypeDef.h"
 
-struct Resolution
-{
-    UINT width;
-    UINT height;
-};
-
 struct AmbientOcclutionSetting
 {
     AmbientOcclusion ambientOcclusion;

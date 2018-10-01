@@ -5,12 +5,13 @@
 #define DEFAULT_GROUP_SIZE_Z 1
 
 ComputeShader::ComputeShader()
-    : threadGroupChangeFlags(0),
-      useComputeVariableGroupSize(TRUE)
+    :useComputeVariableGroupSize(TRUE)
 {
     m_groupSize[0] = DEFAULT_GROUP_SIZE_X;
     m_groupSize[1] = DEFAULT_GROUP_SIZE_Y;
     m_groupSize[2] = DEFAULT_GROUP_SIZE_Z;
+
+    threadGroupChangeFlags.value = 0;
 }
 
 ComputeShader::~ComputeShader()
@@ -35,7 +36,7 @@ BOOL ComputeShader::compileShaderProgram()
 
 void ComputeShader::compute()
 {
-    useProgram();
+    calGroupNum();
 
     if (useComputeVariableGroupSize == FALSE)
     {
@@ -48,8 +49,6 @@ void ComputeShader::compute()
     }
 
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-    FinishProgram();
 }
 
 void ComputeShader::setTotalThreadSize(
@@ -60,6 +59,8 @@ void ComputeShader::setTotalThreadSize(
     m_totalInvocationSize[0] = x;
     m_totalInvocationSize[1] = y;
     m_totalInvocationSize[2] = z;
+
+    threadGroupChangeFlags.bits.totalInvocationSizeChange = TRUE;
 }
 
 void ComputeShader::setThreadGroupSize(
@@ -70,16 +71,19 @@ void ComputeShader::setThreadGroupSize(
     m_groupSize[0] = x;
     m_groupSize[1] = y;
     m_groupSize[2] = z;
+
+    threadGroupChangeFlags.bits.groupSizeChange = TRUE;
 }
 
 void ComputeShader::calGroupNum()
 {
-    if (threadGroupChangeFlags != 0)
+    if (threadGroupChangeFlags.value != 0)
     {
-        m_groupNum[0] = m_totalInvocationSize[0] / m_groupSize[0];
-        m_groupNum[1] = m_totalInvocationSize[1] / m_groupSize[1];
-        m_groupNum[2] = m_totalInvocationSize[2] / m_groupSize[2];
-
-        threadGroupChangeFlags = 0;
+        for (int i = 0; i < 3; ++i)
+        {
+            m_groupNum[i] =
+                static_cast<int>(std::ceil(static_cast<float>(m_totalInvocationSize[i]) / static_cast<float>(m_groupSize[i])));
+        }
+        threadGroupChangeFlags.value = 0;
     }
 }

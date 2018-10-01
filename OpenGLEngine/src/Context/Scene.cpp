@@ -155,7 +155,7 @@ BOOL Scene::initialize()
     }
 
     // Forward+
-    m_pForwardPlusRenderer = new ForwardPlusRender();
+    m_pForwardPlusRenderer = new ForwardPlusRender(this);
     m_pForwardPlusRenderer->initialize();
 
     return status;
