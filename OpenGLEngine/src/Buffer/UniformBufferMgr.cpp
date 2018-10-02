@@ -87,7 +87,7 @@ void UniformBufferMgr::bindUniformBuffer(
     else
     {
         printf("Can't find the uniform buffer in the shader program.\n");
-        //assert(FALSE);
+        assert(FALSE);
     }
 }
 

@@ -99,18 +99,18 @@ void ForwardPlusRender::draw()
 
     m_gridFrustumComputeShader.FinishProgram();
 
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_frustumVerticesSsbo);
-    Vector4* gpuFrustumsPtr =
-        static_cast<Vector4*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
+    //glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_frustumVerticesSsbo);
+    //Vector4* gpuFrustumsPtr =
+    //    static_cast<Vector4*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
 
-    /*for (int i = 0; i < 4; ++i)
-    {
-        gpuFrustumsPtr[i] = m_tests[i];
-    }
-    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ///*for (int i = 0; i < 4; ++i)
+    //{
+    //    gpuFrustumsPtr[i] = m_tests[i];
+    //}
+    //glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-    Vector4* gpuFrustumsPtr2 =
-        static_cast<Vector4*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT));*/
+    //Vector4* gpuFrustumsPtr2 =
+    //    static_cast<Vector4*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT));*/
 
-    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    //glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }

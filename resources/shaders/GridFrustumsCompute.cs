@@ -71,15 +71,15 @@ Plane computeFrustum(vec3 p0, vec3 p1, vec3 p2)
 
 void main()
 {    
-    uint threadId = gl_GlobalInvocationID.y + gl_GlobalInvocationID.x * m_tileResolution.width;
+    uint threadId = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * m_tileResolution.width;
     
     if (threadId < frustumSize)
     {
         vec4 screenSpaceFrustumFarPlane[4];
         
         screenSpaceFrustumFarPlane[0] = vec4(gl_GlobalInvocationID.xy * groupSize, -1.0f, 1.0f);
-        screenSpaceFrustumFarPlane[1] = vec4((gl_GlobalInvocationID.x + 1) * groupSize, gl_GlobalInvocationID.y, -1.0f, 1.0f);
-        screenSpaceFrustumFarPlane[2] = vec4(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y * groupSize, -1.0f, 1.0f);
+        screenSpaceFrustumFarPlane[1] = vec4((gl_GlobalInvocationID.x + 1) * groupSize, gl_GlobalInvocationID.y * groupSize, -1.0f, 1.0f);
+        screenSpaceFrustumFarPlane[2] = vec4(gl_GlobalInvocationID.x * groupSize, gl_GlobalInvocationID.y * groupSize, -1.0f, 1.0f);
         screenSpaceFrustumFarPlane[3] = vec4((gl_GlobalInvocationID.xy + ivec2(1)) * groupSize, -1.0f, 1.0f);
         
         vec3 viewSpaceFrustumFarPlane[4];
@@ -95,11 +95,5 @@ void main()
             frustum[threadId].m_plane[i] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[i], viewSpaceFrustumFarPlane[i + 1]);
         }
         frustum[threadId].m_plane[3] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[3], viewSpaceFrustumFarPlane[0]);
-        
-        for (int i = 0; i < 4; ++i)
-        {
-            frustum[threadId].m_plane[i].N = screenSpaceFrustumFarPlane[i].xyz;
-            frustum[threadId].m_plane[i].d = screenSpaceFrustumFarPlane[i].w;
-        }
     }
 }
