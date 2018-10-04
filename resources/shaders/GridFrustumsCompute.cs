@@ -40,6 +40,8 @@ layout(std140, binding = 0) buffer Frustums
     Frustum frustum[];
 };
 
+
+
 vec3 screenToView(vec4 screenPos)
 {
     // Screen space to clip space
@@ -60,10 +62,10 @@ Plane computeFrustum(vec3 p0, vec3 p1, vec3 p2)
 {
     Plane plane;
 
-    vec3 v1 = (p1 - p0);
-    vec3 v2 = (p2 - p0);
+    vec3 v1 = normalize(p1 - p0);
+    vec3 v2 = normalize(p2 - p0);
     
-    plane.N = cross(v1, v2);
+    plane.N = normalize(cross(v1, v2));
     plane.d = dot(plane.N, p0);
     
     return plane;
@@ -79,9 +81,9 @@ void main()
         
         screenSpaceFrustumFarPlane[0] = vec4(gl_GlobalInvocationID.xy * groupSize, -1.0f, 1.0f);
         screenSpaceFrustumFarPlane[1] = vec4((gl_GlobalInvocationID.x + 1) * groupSize, gl_GlobalInvocationID.y * groupSize, -1.0f, 1.0f);
-        screenSpaceFrustumFarPlane[2] = vec4(gl_GlobalInvocationID.x * groupSize, gl_GlobalInvocationID.y * groupSize, -1.0f, 1.0f);
-        screenSpaceFrustumFarPlane[3] = vec4((gl_GlobalInvocationID.xy + ivec2(1)) * groupSize, -1.0f, 1.0f);
-        
+        screenSpaceFrustumFarPlane[2] = vec4((gl_GlobalInvocationID.xy + ivec2(1)) * groupSize, -1.0f, 1.0f);
+        screenSpaceFrustumFarPlane[3] = vec4(gl_GlobalInvocationID.x * groupSize, (gl_GlobalInvocationID.y + 1) * groupSize, -1.0f, 1.0f);
+
         vec3 viewSpaceFrustumFarPlane[4];
         for (int i = 0; i < 4; ++i)
         {
@@ -95,5 +97,11 @@ void main()
             frustum[threadId].m_plane[i] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[i], viewSpaceFrustumFarPlane[i + 1]);
         }
         frustum[threadId].m_plane[3] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[3], viewSpaceFrustumFarPlane[0]);
+        
+        for (int i = 0; i < 4; ++i)
+        {
+            // frustum[threadId].m_plane[i].N = viewSpaceFrustumFarPlane[i].xyz;
+            // frustum[threadId].m_plane[i].d = viewSpaceFrustumFarPlane[i].w;
+        }
     }
 }
