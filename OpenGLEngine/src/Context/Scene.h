@@ -117,6 +117,8 @@ public:
     inline Math::Vector4 GetBackGroundColor()        const { return m_backgroundColor;                      }
 
     inline Math::Mat4 GetProjectionMatrix()          const { return m_pActiveCamera->GetProjectionMatrix(); }
+    
+    inline LightMgr* GetLightMgr()                   const { return m_pLightMgr;                            }
 
     void setSceneShader(
         char* const vertexShaderFile,
