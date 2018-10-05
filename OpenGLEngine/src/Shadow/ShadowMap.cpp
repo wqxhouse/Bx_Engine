@@ -6,7 +6,8 @@ ShadowMap::ShadowMap(
     Scene*     pScene,  ///< Pointer to the scene
     Light*     pLight)  ///< The light be casted shadow
     : m_pScene(pScene),
-      m_pLight(pLight)
+      m_pLight(pLight),
+      m_pLightCamera(NULL)
 {
     Setting* pSetting = pScene->GetSetting();
 

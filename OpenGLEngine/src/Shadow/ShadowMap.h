@@ -27,14 +27,23 @@ public:
 
     inline glm::mat4 GetLightTransVP()
     {
-        return ToGLMMat4(m_pLightCamera->GetProjectionMatrix()) *
-               ToGLMMat4(m_pLightCamera->GetViewMatrix());
+        glm::mat4 result;
+
+        if (m_pLightCamera != NULL)
+        {
+            result = ToGLMMat4(m_pLightCamera->GetProjectionMatrix()) *
+                     ToGLMMat4(m_pLightCamera->GetViewMatrix());
+        }
+
+        return result;
     }
 
     inline GLuint GetShadowResolutionUniformBufferIndex() const
     {
         return m_shadowResolutionUniformBufferIndex;
     }
+
+    inline Camera* GetLightCamera() const { return m_pLightCamera; }
 
 private:
     void initializeLightCamera();

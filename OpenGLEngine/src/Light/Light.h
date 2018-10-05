@@ -40,7 +40,8 @@ public:
 
     inline void UpdateLightTrans()
     {        
-        if (m_pShadowMap != NULL)
+        if (m_pShadowMap                   != NULL &&
+            m_pShadowMap->GetLightCamera() != NULL)
         {
             m_lightTransVP = m_pShadowMap->GetLightTransVP();
         }
