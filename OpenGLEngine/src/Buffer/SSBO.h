@@ -2,16 +2,29 @@
 
 #include "../Core/OpenGLPCH.h"
 
-class SSBO
+class Ssbo
 {
 public:
-    SSBO(const UINT  size,
-         const void* data,
-         const UINT  bindingPoint);
+    Ssbo();
 
-    ~SSBO();
+    ~Ssbo();
 
-    BOOL create();
+    void createStaticSsbo(
+        const UINT   size,
+        const void*  data,
+        const GLenum bufFlags,
+        const UINT   bindingPoint);
+
+    void createDynamicSsbo(
+        const UINT   size,
+        const void*  data,
+        const GLenum bufUsage,
+        const UINT   bindingPoint);
+
+    void* getData();
+    void* setData(
+        const UINT  size,
+        const void* data);
 
 private:
     GLuint m_ssboHandle;

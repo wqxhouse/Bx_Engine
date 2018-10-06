@@ -210,6 +210,12 @@
     <ClInclude Include="src\Shader\ComputeShader.h">
       <Filter>src\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\Ssbo.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\SsboMgr.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
@@ -352,6 +358,12 @@
     </ClCompile>
     <ClCompile Include="src\Shader\ComputeShader.cpp">
       <Filter>src\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\Ssbo.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\SsboMgr.cpp">
+      <Filter>src\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

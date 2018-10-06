@@ -95,14 +95,11 @@ BOOL ForwardPlusRender::initGridFrustums()
     m_gridFrustumComputeShader.calGroupNum();
 
     // Generate frustum SSBO
-    glGenBuffers(1, &m_frustumVerticesSsbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_frustumVerticesSsbo);
-    glBufferData(GL_SHADER_STORAGE_BUFFER,
-        m_frustums.size() * sizeof(SimpleFrustum),
-        static_cast<void*>(m_frustums.data()),
-        GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_frustumVerticesSsbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    m_pScene->GetSsboMgr()->addStaticSsbo(
+        m_frustums.size() * sizeof(SimpleFrustum),   // Size of SSBO
+        NULL,                                        // SSBO data
+        GL_MAP_READ_BIT,                             // Buffer flags
+        0);                                          // Binding point
 
     return result;
 }
@@ -151,8 +148,7 @@ BOOL ForwardPlusRender::initTileLightList()
     BOOL result = TRUE;
 
     m_tiledLightList.m_pLightListData = m_pScene->GetLightMgr()->GetLightData();
-
-
+    
     return result;
 }
 

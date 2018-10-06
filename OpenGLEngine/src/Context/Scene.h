@@ -3,6 +3,7 @@
 #include "../Model/Model.h"
 #include "../Light/LightMgr.h"
 #include "../Buffer/UniformBufferMgr.h"
+#include "../Buffer/SsboMgr.h"
 #include "../Shadow/ShadowMap.h"
 #include "../Buffer/GBuffer.h"
 #include "../Shadow/SSAO.h"
@@ -120,6 +121,8 @@ public:
     
     inline LightMgr* GetLightMgr()                   const { return m_pLightMgr;                            }
 
+    inline SsboMgr* GetSsboMgr()                           { return &m_ssboMgr;                             }
+
     void setSceneShader(
         char* const vertexShaderFile,
         char* const fragmentShaderFile);
@@ -176,6 +179,9 @@ private:
     GLuint m_pointLightUniformBufferIndex;
     GLuint m_materialUniformBufferIndex;
     GLuint m_pbrMaterialUniformBufferIndex;
+
+    // SSBO manager
+    SsboMgr            m_ssboMgr;
 
     // Shadow map test
     void shadowPass();
