@@ -26,6 +26,8 @@ public:
         const UINT  size,
         const void* data);
 
+    inline GLuint GetSsboHandle() const { return m_ssboHandle; }
+
 private:
     GLuint m_ssboHandle;
     UINT   m_bindingPoint;

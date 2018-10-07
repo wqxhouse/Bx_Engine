@@ -1,0 +1,12 @@
+// Frustum header file
+
+struct Plane
+{
+    vec3  N;
+    float d;
+};
+
+struct Frustum
+{
+    Plane m_plane[4];
+};

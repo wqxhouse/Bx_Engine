@@ -1,12 +1,16 @@
+/*
+    GridFrustumsCompute.cs
+*/
+
 #version 440 core
 
 #extension GL_ARB_compute_variable_group_size : require
 #extension GL_ARB_compute_variable_group_size : enable
 
 #include <Utilities.hglsl>
+#include <Frustum.hglsl>
 
 layout (local_size_variable) in;
-// layout(local_size_x = 4) in;
 
 uniform int frustumSize;
 
@@ -24,23 +28,10 @@ uniform forwardPlusResolutionUniformBlock
     Resolution m_forwardPlusResolution;
 };
 
-struct Plane
-{
-    vec3 N;
-    float d;
-};
-
-struct Frustum
-{
-    Plane m_plane[4];
-};
-
-layout(std140, binding = 0) buffer Frustums
+layout(std430, binding = 0) buffer Frustums
 {
     Frustum frustum[];
 };
-
-
 
 vec3 screenToView(vec4 screenPos)
 {
@@ -99,3 +90,5 @@ void main()
         frustum[threadId].m_plane[3] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[3], viewSpaceFrustumFarPlane[0]);
     }
 }
+
+// GridFrustumsCompute.cs

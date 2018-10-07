@@ -16,6 +16,8 @@ public:
     void update();
     void draw();
 
+    inline void UpdateLightListBit() { m_renderFlags.bits.lightListUpdate = 1; }
+
 private:
     BOOL initGridFrustums();
     void calGridFrustums();
@@ -25,15 +27,17 @@ private:
 
     Scene* m_pScene;
 
-    // Grid Frustum
+    /// Grid Frustum
     ComputeShader  m_gridFrustumComputeShader;
     GraphicsShader m_renderShader;
 
-    GLuint m_frustumVerticesSsbo;
+    UINT m_gridFrustumBindingPoint;
 
     Resolution m_resolution;
     UINT       m_frustumNum[2];
     UINT       m_frustumSize[2];
+
+    UINT globalSizeUboIndex;
 
     struct SimpleFrustum
     {
@@ -42,7 +46,8 @@ private:
 
     std::vector<SimpleFrustum> m_frustums;
 
-    // Light culling
+    /// Light culling
+    ComputeShader m_lightCullingComputeShader;
 
     // Light grid structure design: http://www.cse.chalmers.se/~uffe/tiled_shading_preprint.pdf
     struct TiledLightList
@@ -54,11 +59,12 @@ private:
         };
 
         void* m_pLightListData;
-        std::vector<UINT> m_lightIndexList;
+
+        std::vector<UINT>      m_lightIndexList;
         std::vector<LightTile> m_lightGrid;
 
-        GLuint m_lightIndexListSSBO;
-        GLuint m_lightGridSSBO;
+        UINT m_lightIndexListBindingPoint;
+        UINT m_lightGridBindingPoint;
 
     } m_tiledLightList;
 
@@ -69,7 +75,8 @@ private:
         struct
         {
             UINT skipCalGridFrustums   : 1;
-            UINT reserve               : 31;
+            UINT lightListUpdate       : 1;
+            UINT reserve               : 30;
         } bits;
     } m_renderFlags;
 };
