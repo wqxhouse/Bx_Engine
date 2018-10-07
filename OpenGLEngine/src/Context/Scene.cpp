@@ -289,6 +289,8 @@ void Scene::update(float deltaTime)
     }
 
     m_renderText = std::to_string(deltaTime);
+
+    m_pForwardPlusRenderer->update();
 }
 
 void Scene::preDraw()

@@ -24,6 +24,10 @@ ForwardPlusRender::ForwardPlusRender(
 
     m_frustums.resize(m_frustumNum[0] * m_frustumNum[1]);
 
+    m_gridFrustumBindingPoint                     = 0;
+    m_tiledLightList.m_lightGridBindingPoint      = 1;
+    m_tiledLightList.m_lightIndexListBindingPoint = 2;
+
     m_renderFlags.value = 0;
 }
 
@@ -44,37 +48,33 @@ BOOL ForwardPlusRender::initialize()
 
     assert(result == TRUE);
 
-    if (result == TRUE)
-    {
-        result = initTileLightList();
-    }
-
-    assert(result == TRUE);
-
     return result;
 }
 
 void ForwardPlusRender::update()
 {
+    BOOL result = initTileLightList();
 
+    assert(result == TRUE);
 }
 
 void ForwardPlusRender::draw()
 {
     calGridFrustums();
 
-
+    lightCulling();
 
     // Sample of mapping SSBO
-    //glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_frustumVerticesSsbo);
-    //Vector4* gpuFrustumsPtr = static_cast<Vector4*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
+    SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, pSsboMgr->GetSsbo(2)->GetSsboHandle());
+    UINT* pData = static_cast<UINT*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
 
-    ///*for (int i = 0; i < 4; ++i)
-    //{
-    //    gpuFrustumsPtr[i] = m_tests[i];
-    //}
+    /*for (int i = 0; i < 4; ++i)
+    {
+        gpuFrustumsPtr[i] = m_tests[i];
+    }*/
 
-    //glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
 
 BOOL ForwardPlusRender::initGridFrustums()
@@ -99,7 +99,7 @@ BOOL ForwardPlusRender::initGridFrustums()
         m_frustums.size() * sizeof(SimpleFrustum),   // Size of SSBO
         NULL,                                        // SSBO data
         GL_MAP_READ_BIT,                             // Buffer flags
-        0);                                          // Binding point
+        m_gridFrustumBindingPoint);                  // Binding point
 
     return result;
 }
@@ -122,7 +122,7 @@ void ForwardPlusRender::calGridFrustums()
 
         UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
 
-        UINT globalSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumNum), (&(m_frustumNum[0])));
+        globalSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumNum), (&(m_frustumNum[0])));
         pUboMgr->bindUniformBuffer(globalSizeUboIndex, gridFrustumProgram, "globalSizeUniformBlock");
 
         UINT resolutionUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_resolution), &m_resolution);
@@ -147,11 +147,51 @@ BOOL ForwardPlusRender::initTileLightList()
 {
     BOOL result = TRUE;
 
-    m_tiledLightList.m_pLightListData = m_pScene->GetLightMgr()->GetLightData();
-    
+    if (1 == m_renderFlags.bits.lightListUpdate)
+    {
+        SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
+
+        m_tiledLightList.m_pLightListData = m_pScene->GetLightMgr()->GetLightData();
+
+        UINT frunstumTotalNum = m_frustumNum[0] * m_frustumNum[1];
+
+        pSsboMgr->addDynamicSsbo(
+            frunstumTotalNum,
+            NULL,
+            GL_DYNAMIC_DRAW,
+            m_tiledLightList.m_lightGridBindingPoint);
+
+        pSsboMgr->addDynamicSsbo(
+            frunstumTotalNum * m_pScene->GetLightMgr()->GetLightCount(),
+            NULL,
+            GL_DYNAMIC_DRAW,
+            m_tiledLightList.m_lightIndexListBindingPoint);
+
+        m_lightCullingComputeShader.setShader("LightCulling.cs");
+        result = m_lightCullingComputeShader.compileShaderProgram();
+
+        assert(result == TRUE);
+
+        m_lightCullingComputeShader.setTotalThreadSize(
+            m_frustumNum[0], // Number of frustum tiles on X
+            m_frustumNum[1], // Number of frustum tiles on Y
+            1);              // Keep Z to 1
+
+        m_renderFlags.bits.lightListUpdate = 0;
+    }
+
     return result;
 }
 
 void ForwardPlusRender::lightCulling()
 {
+    GLuint lightCullingProgram = m_lightCullingComputeShader.useProgram();
+
+    UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
+
+    pUboMgr->bindUniformBuffer(globalSizeUboIndex, lightCullingProgram, "globalSizeUniformBlock");
+
+    m_lightCullingComputeShader.compute();
+
+    m_lightCullingComputeShader.FinishProgram();
 }

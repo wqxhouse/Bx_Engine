@@ -38,6 +38,8 @@ public:
         const Math::Vector3& color)
     {
         m_pLightMgr->addDirectionalLight(direction, color);
+
+        m_pForwardPlusRenderer->UpdateLightListBit();
     }
 
     inline void AddPointLight(
@@ -46,6 +48,8 @@ public:
         const float          radius)
     {
         m_pLightMgr->addPointLight(pos, color, radius);
+
+        m_pForwardPlusRenderer->UpdateLightListBit();
     }
 
     inline void AddSpotLight(
@@ -57,6 +61,8 @@ public:
         const float          outerAngle)
     {
         m_pLightMgr->addSpotLight(pos, dir, color, distance, innerAngle, outerAngle);
+
+        m_pForwardPlusRenderer->UpdateLightListBit();
     }
 
     void addProspectiveCamera(

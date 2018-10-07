@@ -1,3 +1,7 @@
+/*
+    GridFrustumsCompute.cs
+*/
+
 #version 440 core
 
 #extension GL_ARB_compute_variable_group_size : require
@@ -26,7 +30,7 @@ uniform forwardPlusResolutionUniformBlock
 
 struct Plane
 {
-    vec3 N;
+    vec3  N;
     float d;
 };
 
@@ -35,12 +39,10 @@ struct Frustum
     Plane m_plane[4];
 };
 
-layout(std140, binding = 0) buffer Frustums
+layout(std430, binding = 0) buffer Frustums
 {
     Frustum frustum[];
 };
-
-
 
 vec3 screenToView(vec4 screenPos)
 {
@@ -99,3 +101,5 @@ void main()
         frustum[threadId].m_plane[3] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[3], viewSpaceFrustumFarPlane[0]);
     }
 }
+
+// GridFrustumsCompute.cs
