@@ -2,7 +2,7 @@
     GridFrustumsCompute.cs
 */
 
-#version 440 core
+#version 460 core
 
 #extension GL_ARB_compute_variable_group_size : require
 #extension GL_ARB_compute_variable_group_size : enable
@@ -30,7 +30,7 @@ uniform forwardPlusResolutionUniformBlock
 
 layout(std430, binding = 0) buffer Frustums
 {
-    Frustum frustum[];
+    Frustum m_frustum[];
 };
 
 vec3 screenToView(vec4 screenPos)
@@ -85,9 +85,9 @@ void main()
         
         for (int i = 0; i < 3; ++i)
         {
-            frustum[threadId].m_plane[i] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[i], viewSpaceFrustumFarPlane[i + 1]);
+            m_frustum[threadId].m_plane[i] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[i], viewSpaceFrustumFarPlane[i + 1]);
         }
-        frustum[threadId].m_plane[3] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[3], viewSpaceFrustumFarPlane[0]);
+        m_frustum[threadId].m_plane[3] = computeFrustum(eyePos, viewSpaceFrustumFarPlane[3], viewSpaceFrustumFarPlane[0]);
     }
 }
 

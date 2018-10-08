@@ -23,6 +23,7 @@ private:
     void calGridFrustums();
 
     BOOL initTileLightList();
+    void updateLightData();
     void lightCulling();
 
     Scene* m_pScene;
@@ -55,10 +56,11 @@ private:
         struct LightTile
         {
             UINT offset = 0;
-            UINT lightNum = 0;
+            UINT size   = 0;
         };
 
         void* m_pLightListData;
+        UINT  m_lightNum;
 
         std::vector<UINT>      m_lightIndexList;
         std::vector<LightTile> m_lightGrid;
@@ -66,6 +68,7 @@ private:
         UINT m_lightIndexListBindingPoint;
         UINT m_lightGridBindingPoint;
 
+        GLuint m_lightGridCounterHandle; // Automic counter for light grid
     } m_tiledLightList;
 
     union RenderFlags

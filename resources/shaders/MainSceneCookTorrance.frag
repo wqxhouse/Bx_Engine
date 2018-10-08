@@ -159,12 +159,12 @@ void main()
                 vec3  lightDir      = normalize(m_light[i].data[1].xyz);
                 float innerCosTheta = m_light[i].data[0].w;
                 float outerCosTheta = m_light[i].data[1].w;
-                
+
                 vec3  dirVector = posWorld - m_light[i].data[0].xyz;                
                 dir             = normalize(dirVector);
-                
+
                 float cosTheta = dot(lightDir, dir);
-                
+
                 // Pixel is outside the range of spot light, discard
                 if      (cosTheta < outerCosTheta) { continue; }
                 // Pixel is between the inner and outer theta range, add attenuation effect
@@ -180,7 +180,7 @@ void main()
 
                 // Pixel is outside the range of spot light, discard
                 // if (dis2 > range2) { continue; }
-                
+
                 break;
             }
             default:

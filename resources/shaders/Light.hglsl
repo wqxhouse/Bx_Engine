@@ -4,6 +4,10 @@
 #define MAX_LIGHT_NUM 64
 #endif
 
+#ifndef MAX_LIGHT_NUM_TILE
+#define MAX_LIGHT_NUM_TILE 1024 // Maximum 1024 lights per tile
+#endif
+
 struct LightBase
 {
     vec2  padding1;

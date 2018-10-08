@@ -295,9 +295,6 @@ void Scene::update(float deltaTime)
 
 void Scene::preDraw()
 {
-    // Compute shader
-    m_pForwardPlusRenderer->draw();
-
     glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -333,6 +330,9 @@ void Scene::preDraw()
 
 void Scene::draw()
 {
+    // Compute shader
+    m_pForwardPlusRenderer->draw();
+
     if (m_skyboxImages.size() == CUBE_MAP_FACE_NUM)
     {
         m_pSkybox->draw();

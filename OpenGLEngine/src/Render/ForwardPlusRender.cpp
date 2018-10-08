@@ -48,14 +48,20 @@ BOOL ForwardPlusRender::initialize()
 
     assert(result == TRUE);
 
+    result = initTileLightList();
+
+    assert(result == TRUE);
+
+    LightMgr* pLightMgr = m_pScene->GetLightMgr();
+    pLightMgr->bindLightUbo(
+        m_pScene->GetUniformBufferMgr(), m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");
+
     return result;
 }
 
 void ForwardPlusRender::update()
 {
-    BOOL result = initTileLightList();
-
-    assert(result == TRUE);
+    updateLightData();
 }
 
 void ForwardPlusRender::draw()
@@ -65,16 +71,16 @@ void ForwardPlusRender::draw()
     lightCulling();
 
     // Sample of mapping SSBO
-    SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, pSsboMgr->GetSsbo(2)->GetSsboHandle());
+    /*SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, pSsboMgr->GetSsbo(1)->GetSsboHandle());
     UINT* pData = static_cast<UINT*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
 
-    /*for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         gpuFrustumsPtr[i] = m_tests[i];
-    }*/
+    }
 
-    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);*/
 }
 
 BOOL ForwardPlusRender::initGridFrustums()
@@ -147,30 +153,51 @@ BOOL ForwardPlusRender::initTileLightList()
 {
     BOOL result = TRUE;
 
+    m_lightCullingComputeShader.setShader("LightCulling.cs");
+    result = m_lightCullingComputeShader.compileShaderProgram();
+
+    assert(result == TRUE);
+
+    // Initialize light index list counter
+    UINT initCounterValue = 0;
+    glGenBuffers(1, &m_tiledLightList.m_lightGridCounterHandle);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, m_tiledLightList.m_lightGridCounterHandle);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(UINT), &initCounterValue, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, m_tiledLightList.m_lightGridCounterHandle);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+    GLuint lightCullingProgram = m_lightCullingComputeShader.useProgram();
+
+    GLuint frustumSizeLocation = glGetUniformLocation(lightCullingProgram, "frustumSize");
+    glUniform1ui(frustumSizeLocation, m_frustumNum[0] * m_frustumNum[1]);
+
+    Shader::FinishProgram();
+
+    return result;
+}
+
+void ForwardPlusRender::updateLightData()
+{
     if (1 == m_renderFlags.bits.lightListUpdate)
     {
         SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
 
         m_tiledLightList.m_pLightListData = m_pScene->GetLightMgr()->GetLightData();
+        m_tiledLightList.m_lightNum = m_pScene->GetLightMgr()->GetLightCount();
 
         UINT frunstumTotalNum = m_frustumNum[0] * m_frustumNum[1];
 
         pSsboMgr->addDynamicSsbo(
-            frunstumTotalNum,
+            frunstumTotalNum * sizeof(TiledLightList::LightTile),
             NULL,
             GL_DYNAMIC_DRAW,
             m_tiledLightList.m_lightGridBindingPoint);
 
         pSsboMgr->addDynamicSsbo(
-            frunstumTotalNum * m_pScene->GetLightMgr()->GetLightCount(),
+            frunstumTotalNum * m_tiledLightList.m_lightNum * sizeof(UINT),
             NULL,
             GL_DYNAMIC_DRAW,
             m_tiledLightList.m_lightIndexListBindingPoint);
-
-        m_lightCullingComputeShader.setShader("LightCulling.cs");
-        result = m_lightCullingComputeShader.compileShaderProgram();
-
-        assert(result == TRUE);
 
         m_lightCullingComputeShader.setTotalThreadSize(
             m_frustumNum[0], // Number of frustum tiles on X
@@ -178,20 +205,43 @@ BOOL ForwardPlusRender::initTileLightList()
             1);              // Keep Z to 1
 
         m_renderFlags.bits.lightListUpdate = 0;
-    }
 
-    return result;
+        // Updating light data
+        GLint lightNumLocation = glGetUniformLocation(m_lightCullingComputeShader.useProgram(), "lightNum");
+        if (lightNumLocation >= 0)
+        {
+            glUniform1ui(lightNumLocation, m_pScene->GetLightMgr()->GetLightCount());
+        }
+        else
+        {
+            printf("Can't find light number uniform. \n");
+        }
+
+        m_pScene->GetLightMgr()->updateLightUbo(
+            m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");
+    }
 }
 
 void ForwardPlusRender::lightCulling()
 {
     GLuint lightCullingProgram = m_lightCullingComputeShader.useProgram();
 
+    GLuint viewMatLocation = glGetUniformLocation(m_lightCullingComputeShader.GetShaderProgram(), "viewMat");
+    glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(ToGLMMat4(m_pScene->GetActivateCamera()->GetViewMatrix())));
+
     UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
 
     pUboMgr->bindUniformBuffer(globalSizeUboIndex, lightCullingProgram, "globalSizeUniformBlock");
 
+    // Generate light index list and light grid
     m_lightCullingComputeShader.compute();
 
+    // Finish light culling
     m_lightCullingComputeShader.FinishProgram();
+
+    // Reset atomic buffer counter
+    UINT initCounterValue = 0;
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, m_tiledLightList.m_lightGridCounterHandle);
+    glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(UINT), &initCounterValue);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
 }
