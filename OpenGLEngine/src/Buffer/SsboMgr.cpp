@@ -14,44 +14,56 @@ SsboMgr::~SsboMgr()
     }
 }
 
-void SsboMgr::addStaticSsbo(
+GLuint SsboMgr::addStaticSsbo(
     const UINT   size,
     const void*  data,
     const GLenum bufFlags,
     const UINT   bindingPoint)
 {
+    GLuint ssboHandle = INVALID_HANDLE;
+
     if (m_pSsboList[bindingPoint] == NULL)
     {
          Ssbo* pNewSsbo = new Ssbo();
          pNewSsbo->createStaticSsbo(size, data, bufFlags, bindingPoint);
 
          m_pSsboList[bindingPoint] = pNewSsbo;
+
+         ssboHandle = pNewSsbo->GetSsboHandle();
     }
     else
     {
         printf("Binding point %u has already be binded.\n", bindingPoint);
         assert(FALSE);
     }
+
+    return ssboHandle;
 }
 
-void SsboMgr::addDynamicSsbo(
+GLuint SsboMgr::addDynamicSsbo(
     const UINT   size,
     const void*  data,
     const GLenum bufUsage,
     const UINT   bindingPoint)
 {
+    GLuint ssboHandle = INVALID_HANDLE;
+
     if (m_pSsboList[bindingPoint] == NULL)
     {
         Ssbo* pNewSsbo = new Ssbo();
         pNewSsbo->createDynamicSsbo(size, data, bufUsage, bindingPoint);
 
         m_pSsboList[bindingPoint] = pNewSsbo;
+
+        ssboHandle = pNewSsbo->GetSsboHandle();
     }
     else
     {
         printf("Binding point %u has already be binded.\n", bindingPoint);
         assert(FALSE);
     }
+
+    return ssboHandle;
 }
 
 void SsboMgr::updateBindingPoint(

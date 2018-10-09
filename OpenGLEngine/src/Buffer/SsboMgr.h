@@ -11,13 +11,13 @@ public:
 
     ~SsboMgr();
 
-    void addStaticSsbo(
+    GLuint addStaticSsbo(
         const UINT   size,
         const void*  data,
         const GLenum bufFlags,
         const UINT   bindingPoint);
 
-    void addDynamicSsbo(
+    GLuint addDynamicSsbo(
         const UINT   size,
         const void*  data,
         const GLenum bufUsage,

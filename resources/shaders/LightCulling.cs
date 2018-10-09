@@ -36,6 +36,10 @@ layout(binding = 0, offset = 0) uniform atomic_uint lightIndexListCounter;
 // SSBO
 layout(std430, binding = 0) buffer Frustums
 {
+    float   zNear;
+    float   zFar;
+    vec2    padding;
+
     Frustum m_frustum[];
 };
 
@@ -71,6 +75,13 @@ bool pointLightInsideFrustum(
 {
     bool result = true;
 
+    // The point light is outside of the view near/far clip space
+    if ((center.z + radius < zNear) ||
+        (center.z - radius > zFar))
+    {
+        result = false;
+    }
+    
     for (uint i = 0; ((i < 4) && (result == true)); ++i)
     {
         if (sphereOutsidePlane(threadFrustum.m_plane[i], center, radius) == true)

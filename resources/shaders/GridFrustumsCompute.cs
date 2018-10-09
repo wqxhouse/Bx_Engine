@@ -30,6 +30,10 @@ uniform forwardPlusResolutionUniformBlock
 
 layout(std430, binding = 0) buffer Frustums
 {
+    float   zNear;
+    float   zFar;
+    vec2    padding;
+
     Frustum m_frustum[];
 };
 
