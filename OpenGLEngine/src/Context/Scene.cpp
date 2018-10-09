@@ -8,6 +8,7 @@ Scene::Scene(Setting* pSetting)
       m_backgroundColor(0.0f, 0.0f, 0.6f, 1.0f),
       m_pLightMgr(NULL),
       m_activeCameraIndex(0),
+      m_pActiveCamera(NULL),
       m_uniformBufferMgr(128),
       m_pGBuffer(NULL),
       useGlobalMaterial(FALSE),

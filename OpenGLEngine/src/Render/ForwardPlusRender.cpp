@@ -22,7 +22,7 @@ ForwardPlusRender::ForwardPlusRender(
     m_frustumNum[1] =
         static_cast<UINT>(std::ceil(static_cast<float>(m_resolution.height) / static_cast<float>(m_frustumSize[1])));
 
-    m_frustums.resize(m_frustumNum[0] * m_frustumNum[1]);
+    m_frustums.resize(m_frustumNum[0] * m_frustumNum[1] + 1);
 
     m_gridFrustumBindingPoint                     = 0;
     m_tiledLightList.m_lightGridBindingPoint      = 1;
@@ -97,23 +97,33 @@ BOOL ForwardPlusRender::initGridFrustums()
         m_frustumNum[1], // Number of frustum tiles on Y
         1);              // Keep Z to 1
 
-    m_gridFrustumComputeShader.setThreadGroupSize(m_frustumSize[0], m_frustumSize[1], 1);
-    m_gridFrustumComputeShader.calGroupNum();
-
-    // Generate frustum SSBO
-    m_pScene->GetSsboMgr()->addStaticSsbo(
-        m_frustums.size() * sizeof(SimpleFrustum),   // Size of SSBO
-        NULL,                                        // SSBO data
-        GL_MAP_READ_BIT,                             // Buffer flags
-        m_gridFrustumBindingPoint);                  // Binding point
-
     return result;
 }
 
 void ForwardPlusRender::calGridFrustums()
 {
-    if (m_renderFlags.bits.skipCalGridFrustums == 0)
+    if (m_renderFlags.bits.skipCalGridFrustums == FALSE)
     {
+        // Generate frustum SSBO
+        if (m_renderFlags.bits.skipgenerateFrustumSsbo == FALSE)
+        {
+            Camera* pCam = m_pScene->GetActivateCamera();
+
+            m_frustums[0].planes[0].N = Math::Vector3(pCam->GetNearClip(), pCam->GetFarClip(), 0.0f);
+            m_frustums[0].planes[0].d = 0.0f;
+
+            m_gridFrustumSsboHandle = m_pScene->GetSsboMgr()->addStaticSsbo(
+                m_frustums.size() * sizeof(SimpleFrustum) + sizeof(Math::Vector4), // Size of SSBO
+                m_frustums.data(),                                                 // SSBO data
+                GL_MAP_READ_BIT,                                                   // Buffer flags
+                m_gridFrustumBindingPoint);                                        // Binding point
+
+            m_frustums.clear();
+        }
+
+        m_gridFrustumComputeShader.setThreadGroupSize(m_frustumSize[0], m_frustumSize[1], 1);
+        m_gridFrustumComputeShader.calGroupNum();
+
         GLuint gridFrustumProgram = m_gridFrustumComputeShader.useProgram();
 
         // Set UBOs
@@ -145,7 +155,7 @@ void ForwardPlusRender::calGridFrustums()
 
         Shader::FinishProgram();
 
-        m_renderFlags.bits.skipCalGridFrustums = 1;
+        m_renderFlags.bits.skipCalGridFrustums = TRUE;
     }
 }
 

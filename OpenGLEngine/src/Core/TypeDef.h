@@ -13,6 +13,8 @@
 #define TRUE_F  (1.0F)
 #define FALSE_F (0.0F)
 
+#define INVALID_HANDLE 0xFFFFFFFF
+
 enum PolyMode
 {
     POLYMODE_POINT     = 0x00000000,

@@ -32,6 +32,7 @@ private:
     ComputeShader  m_gridFrustumComputeShader;
     GraphicsShader m_renderShader;
 
+    GLuint m_gridFrustumSsboHandle;
     UINT m_gridFrustumBindingPoint;
 
     Resolution m_resolution;
@@ -77,9 +78,10 @@ private:
 
         struct
         {
-            UINT skipCalGridFrustums   : 1;
-            UINT lightListUpdate       : 1;
-            UINT reserve               : 30;
+            BOOL skipCalGridFrustums     : 1;
+            BOOL skipgenerateFrustumSsbo : 1;
+            BOOL lightListUpdate         : 1;
+            UINT reserve                 : 29;
         } bits;
     } m_renderFlags;
 };

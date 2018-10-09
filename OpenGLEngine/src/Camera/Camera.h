@@ -28,9 +28,11 @@ public:
 
     inline CameraType GetCameraType() const { return m_cameraType; }
 
-    inline Trans      GetTrans()            const { return m_trans; }
+    inline Trans      GetTrans()            const { return m_trans;              }
     inline Math::Mat4 GetViewMatrix()             { return m_trans.GetViewMat(); }
-    inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
+    inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix;   }
+    inline float      GetNearClip()         const { return m_nearClip;           }
+    inline float      GetFarClip()          const { return m_farClip;            }
 
     void setCamTrans(
         const glm::vec3& pos,
