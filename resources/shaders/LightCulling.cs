@@ -76,8 +76,8 @@ bool pointLightInsideFrustum(
     bool result = true;
 
     // The point light is outside of the view near/far clip space
-    if ((center.z - radius < zNear) ||
-        (center.z + radius > zFar))
+    if ((center.z + radius < zNear) ||
+        (center.z - radius > zFar))
     {
         result = false;
     }
