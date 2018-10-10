@@ -14,6 +14,7 @@
 #define FALSE_F (0.0F)
 
 #define INVALID_HANDLE 0xFFFFFFFF
+#define INVALID_INDEX  0xFFFFFFFF
 
 enum PolyMode
 {

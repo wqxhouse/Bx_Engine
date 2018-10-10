@@ -42,16 +42,27 @@ BOOL ShadowMgr::initialize()
     return status;
 }
 
-void ShadowMgr::createShadowMap(
+UINT ShadowMgr::createShadowMap(
     Light* pLight)
 {
+    UINT shadowIndex = INVALID_INDEX;
+
     ShadowMap* pShadowMap = new ShadowMap(m_pScene, pLight);
-    m_pShadowMapList.push_back(pShadowMap);
 
-    pLight->AttachShadowMap(pShadowMap);
-    pShadowMap->initialize();
+    assert(pShadowMap != NULL);
 
-    pLight->UpdateLightTrans();
+    if (pShadowMap != NULL)
+    {
+        shadowIndex = m_pShadowMapList.size();
+        m_pShadowMapList.push_back(pShadowMap);
+
+        pLight->AttachShadowMap(pShadowMap);
+        pShadowMap->initialize();
+
+        pLight->UpdateLightTrans();
+    }
+
+    return shadowIndex;
 }
 
 void ShadowMgr::updateShadowMap(

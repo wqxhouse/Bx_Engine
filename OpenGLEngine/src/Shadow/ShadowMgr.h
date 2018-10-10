@@ -13,7 +13,9 @@ public:
     ~ShadowMgr();
 
     BOOL initialize();
-    void createShadowMap(Light* pLight);
+
+    UINT createShadowMap(Light* pLight);
+
     void updateShadowMap(const UINT i, Light* pLight);
     void castShadow(const UINT i);
 

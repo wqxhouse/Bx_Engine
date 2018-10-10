@@ -3,6 +3,8 @@
 #include "../Shader/GraphicsShader.h"
 #include "../Shader/ComputeShader.h"
 #include "../Math/Vector4.h"
+#include "../Buffer/Framebuffer.h"
+#include "../Shadow/ShadowMap.h"
 
 class Scene;
 
@@ -21,6 +23,8 @@ public:
 private:
     BOOL initGridFrustums();
     void calGridFrustums();
+
+    void renderViewDepthBuffer();
 
     BOOL initTileLightList();
     void updateLightData();
@@ -47,6 +51,10 @@ private:
     };
 
     std::vector<SimpleFrustum> m_frustums;
+
+    // Main camera depth buffer
+    Framebuffer m_camDepthBuffer;
+    ShadowMap*  m_pShadowMap;
 
     /// Light culling
     ComputeShader m_lightCullingComputeShader;
@@ -79,7 +87,8 @@ private:
         struct
         {
             BOOL skipCalGridFrustums     : 1;
-            BOOL skipgenerateFrustumSsbo : 1;
+            BOOL skipGenerateFrustumSsbo : 1;
+            BOOL skipShadowMapGenerating : 1;
             BOOL lightListUpdate         : 1;
             UINT reserve                 : 29;
         } bits;

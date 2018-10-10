@@ -10,7 +10,8 @@ using Math::Mat4;
 
 ForwardPlusRender::ForwardPlusRender(
     Scene* pScene)
-    : m_pScene(pScene)
+    : m_pScene(pScene),
+      m_pShadowMap(NULL)
 {
     m_resolution = m_pScene->GetSetting()->resolution;
 
@@ -33,6 +34,7 @@ ForwardPlusRender::ForwardPlusRender(
 
 ForwardPlusRender::~ForwardPlusRender()
 {
+    SafeDelete(m_pShadowMap);
 }
 
 BOOL ForwardPlusRender::initialize()
@@ -56,6 +58,19 @@ BOOL ForwardPlusRender::initialize()
     pLightMgr->bindLightUbo(
         m_pScene->GetUniformBufferMgr(), m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");
 
+    Setting* pSetting = m_pScene->GetSetting();
+    m_camDepthBuffer.createFramebufferTexture2D(GL_TEXTURE0,
+                                                GL_DEPTH_ATTACHMENT,
+                                                GL_COLOR_ATTACHMENT0,
+                                                pSetting->resolution.width,
+                                                pSetting->resolution.height,
+                                                1,
+                                                GL_DEPTH_COMPONENT,
+                                                GL_DEPTH_COMPONENT32F,
+                                                GL_FLOAT,
+                                                GL_CLAMP_TO_BORDER,
+                                                FALSE);
+
     return result;
 }
 
@@ -67,6 +82,8 @@ void ForwardPlusRender::update()
 void ForwardPlusRender::draw()
 {
     calGridFrustums();
+
+    renderViewDepthBuffer();
 
     lightCulling();
 
@@ -105,7 +122,7 @@ void ForwardPlusRender::calGridFrustums()
     if (m_renderFlags.bits.skipCalGridFrustums == FALSE)
     {
         // Generate frustum SSBO
-        if (m_renderFlags.bits.skipgenerateFrustumSsbo == FALSE)
+        if (m_renderFlags.bits.skipGenerateFrustumSsbo == FALSE)
         {
             Camera* pCam = m_pScene->GetActivateCamera();
 
@@ -119,6 +136,8 @@ void ForwardPlusRender::calGridFrustums()
                 m_gridFrustumBindingPoint);                                        // Binding point
 
             m_frustums.clear();
+
+            m_renderFlags.bits.skipGenerateFrustumSsbo = TRUE;
         }
 
         m_gridFrustumComputeShader.setThreadGroupSize(m_frustumSize[0], m_frustumSize[1], 1);
@@ -188,7 +207,7 @@ BOOL ForwardPlusRender::initTileLightList()
 
 void ForwardPlusRender::updateLightData()
 {
-    if (1 == m_renderFlags.bits.lightListUpdate)
+    if (TRUE == m_renderFlags.bits.lightListUpdate)
     {
         SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
 
@@ -230,6 +249,36 @@ void ForwardPlusRender::updateLightData()
         m_pScene->GetLightMgr()->updateLightUbo(
             m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");
     }
+
+    if (FALSE == m_renderFlags.bits.skipShadowMapGenerating)
+    {
+        if (m_pShadowMap != NULL)
+        {
+            SafeDelete(m_pShadowMap);
+        }
+
+        if (m_pShadowMap == NULL)
+        {
+            m_pShadowMap = new ShadowMap(m_pScene, m_pScene->GetActivateCamera(), m_pScene->GetSetting()->resolution);
+            m_pShadowMap->initialize();
+        }
+
+        m_renderFlags.bits.skipShadowMapGenerating = TRUE;
+    }
+}
+
+void ForwardPlusRender::renderViewDepthBuffer()
+{
+    assert(m_pShadowMap != NULL);
+
+    m_camDepthBuffer.setRenderTargets();
+
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+
+    m_pShadowMap->drawShadowMap(m_pScene);
+
+    m_camDepthBuffer.finishDrawFramebuffer();
 }
 
 void ForwardPlusRender::lightCulling()

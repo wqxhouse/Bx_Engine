@@ -18,6 +18,21 @@ ShadowMap::ShadowMap(
     // m_shadowMapSamples = pSetting->m_graphicsSetting.antialasing;
 }
 
+ShadowMap::ShadowMap(
+    Scene*     pScene,
+    Camera*    pCam,
+    Resolution shadowResolution)
+    : m_pScene(pScene),
+      m_pLight(NULL),
+      m_pLightCamera(pCam)
+{
+    m_shadowResolution = shadowResolution;
+    m_shadowMapSamples = 1;
+
+    // TODO: Multi-sampled shadow map
+    // m_shadowMapSamples = pSetting->m_graphicsSetting.antialasing;
+}
+
 ShadowMap::~ShadowMap()
 { }
 
@@ -28,16 +43,18 @@ BOOL ShadowMap::initialize()
 
     float offset = 0.0f;
 
-    switch (m_pLight->GetLightType())
+    if (m_pLight != NULL)
     {
+        switch (m_pLight->GetLightType())
+        {
         case LightType::DIRECTIONAL_LIGHT:
         {
             m_pLightCamera = new OrthographicCamera(
                 glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0),
-                0.0f, BxsRectangle(-halfWidth  + offset,
-                                    halfWidth  + offset,
-                                   -halfHeight + offset,
-                                    halfHeight + offset), 0.1f, 10000.0f);
+                0.0f, BxsRectangle(-halfWidth + offset,
+                    halfWidth + offset,
+                    -halfHeight + offset,
+                    halfHeight + offset), 0.1f, 10000.0f);
             break;
         }
         case LightType::POINT_LIGHT:
@@ -74,6 +91,7 @@ BOOL ShadowMap::initialize()
             printf("Unknown light type!\n");
             assert(false);
             break;
+        }
     }
 
     m_shadowMapShader.setShaderFiles("ShadowMap.vert", "ShadowMap.frag");
@@ -187,8 +205,10 @@ void ShadowMap::drawShadowMap(Scene* pScene)
 
 void ShadowMap::initializeLightCamera()
 {
-    switch (m_pLight->GetLightType())
+    if (m_pLight != NULL)
     {
+        switch (m_pLight->GetLightType())
+        {
         case LightType::DIRECTIONAL_LIGHT:
         {
             update(m_pLight);
@@ -209,5 +229,6 @@ void ShadowMap::initializeLightCamera()
             printf("Unsupport light type.\n");
             assert(FALSE);
             break;
+        }
     }
 }

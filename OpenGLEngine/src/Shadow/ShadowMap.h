@@ -12,8 +12,14 @@ class ShadowMap
 {
 public:
     ShadowMap(
+        Scene* pScene,
+        Light* pLight); ///< The light be casted shadow
+
+    ShadowMap(
         Scene*     pScene,
-        Light*     pLight); ///< The light be casted shadow
+        Camera*    pCam,
+        Resolution shadowResolution); ///< Directly set the camera to cast shadow
+
     ~ShadowMap();
 
     BOOL initialize();

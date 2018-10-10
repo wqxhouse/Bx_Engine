@@ -85,6 +85,8 @@ Scene::~Scene()
     {
         SafeDelete(pSprite);
     }
+
+    SafeDelete(m_pForwardPlusRenderer);
 }
 
 BOOL Scene::initialize()
@@ -325,15 +327,15 @@ void Scene::preDraw()
     {
         m_pLightProbe->draw();
     }
-
     glViewport(0, 0, m_pSetting->resolution.width, m_pSetting->resolution.height);
+
+    // Compute shader
+    m_pForwardPlusRenderer->draw();
+
 }
 
 void Scene::draw()
 {
-    // Compute shader
-    m_pForwardPlusRenderer->draw();
-
     if (m_skyboxImages.size() == CUBE_MAP_FACE_NUM)
     {
         m_pSkybox->draw();
