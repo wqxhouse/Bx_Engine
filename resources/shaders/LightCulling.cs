@@ -14,12 +14,20 @@
 
 layout (local_size_variable) in;
 
+// Scene Depth Texture
+uniform sampler2D depthTexture;
+
 // Uniform blocks/variables
 uniform uint frustumSize;
 
 layout (std140) uniform globalSizeUniformBlock
 {
     Resolution m_tileResolution;
+};
+
+layout (std140) uniform tileSizeUniformBlock
+{
+    Resolution m_tileSize; // 16 * 16 by default
 };
 
 uniform uint lightNum;
@@ -146,6 +154,21 @@ void main()
 
     if (threadId < frustumSize)
     {
+        // Calculate near/far plane for the frustum
+        float minDepth = 0xFFFFFFFF;
+        float maxDepth = 0;
+        
+        for (uint i = 0; i < m_tileSize.width; ++i)
+        {
+            for (int j = 0; j < m_tileSize.height; ++j)
+            {
+                ivec2 texCoord = gl_FragCoord.xy;
+            }
+        }
+        
+        barrier();
+        
+        // Light culling
         uint tileLightSize = 0;
         uint localLightIndexList[MAX_LIGHT_NUM_TILE];
 

@@ -36,7 +36,8 @@ struct AABB
 
 struct Frustum
 {
-    Plane farPlane;
-    Plane nearPlane;
     Plane sidePlanes[4];
+
+    Plane nearPlane;
+    Plane farPlane;
 };

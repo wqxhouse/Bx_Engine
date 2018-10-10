@@ -9,4 +9,7 @@ struct Plane
 struct Frustum
 {
     Plane m_plane[4];
+
+    Plane nearPlane;
+    Plane farPlane;
 };

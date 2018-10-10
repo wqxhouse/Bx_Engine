@@ -44,13 +44,9 @@ private:
     UINT       m_frustumSize[2];
 
     UINT globalSizeUboIndex;
+    UINT tileSizeUboIndex;
 
-    struct SimpleFrustum
-    {
-        Plane planes[4];
-    };
-
-    std::vector<SimpleFrustum> m_frustums;
+    std::vector<Frustum> m_frustums;
 
     // Main camera depth buffer
     Framebuffer m_camDepthBuffer;

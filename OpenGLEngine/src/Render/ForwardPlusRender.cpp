@@ -126,14 +126,14 @@ void ForwardPlusRender::calGridFrustums()
         {
             Camera* pCam = m_pScene->GetActivateCamera();
 
-            m_frustums[0].planes[0].N = Math::Vector3(pCam->GetNearClip(), pCam->GetFarClip(), 0.0f);
-            m_frustums[0].planes[0].d = 0.0f;
+            m_frustums[0].sidePlanes[0].N = Math::Vector3(pCam->GetNearClip(), pCam->GetFarClip(), 0.0f);
+            m_frustums[0].sidePlanes[0].d = 0.0f;
 
             m_gridFrustumSsboHandle = m_pScene->GetSsboMgr()->addStaticSsbo(
-                m_frustums.size() * sizeof(SimpleFrustum) + sizeof(Math::Vector4), // Size of SSBO
-                m_frustums.data(),                                                 // SSBO data
-                GL_MAP_READ_BIT,                                                   // Buffer flags
-                m_gridFrustumBindingPoint);                                        // Binding point
+                m_frustums.size() * sizeof(Frustum) + sizeof(Math::Vector4), // Size of SSBO
+                m_frustums.data(),                                           // SSBO data
+                GL_MAP_READ_BIT,                                             // Buffer flags
+                m_gridFrustumBindingPoint);                                  // Binding point
 
             m_frustums.clear();
 
@@ -199,6 +199,10 @@ BOOL ForwardPlusRender::initTileLightList()
 
     GLuint frustumSizeLocation = glGetUniformLocation(lightCullingProgram, "frustumSize");
     glUniform1ui(frustumSizeLocation, m_frustumNum[0] * m_frustumNum[1]);
+
+    UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
+    tileSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumSize), (&(m_frustumSize[0])));
+    pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "tileSizeUniformBlock");
 
     Shader::FinishProgram();
 
@@ -291,6 +295,9 @@ void ForwardPlusRender::lightCulling()
     UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
 
     pUboMgr->bindUniformBuffer(globalSizeUboIndex, lightCullingProgram, "globalSizeUniformBlock");
+    pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "tileSizeUniformBlock");
+
+    m_camDepthBuffer.getTexturePtr(0)->bindTexture(GL_TEXTURE0, lightCullingProgram, "depthTexture");
 
     // Generate light index list and light grid
     m_lightCullingComputeShader.compute();
