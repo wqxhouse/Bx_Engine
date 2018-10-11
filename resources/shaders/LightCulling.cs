@@ -20,12 +20,17 @@ uniform sampler2D depthTexture;
 // Uniform blocks/variables
 uniform uint frustumSize;
 
-layout (std140) uniform globalSizeUniformBlock
+layout (std140) uniform RenderingResolutionBlock
+{
+    Resolution m_renderingResolution;
+};
+
+layout (std140) uniform GlobalSizeUniformBlock
 {
     Resolution m_tileResolution;
 };
 
-layout (std140) uniform tileSizeUniformBlock
+layout (std140) uniform TileSizeUniformBlock
 {
     Resolution m_tileSize; // 16 * 16 by default
 };
@@ -47,6 +52,7 @@ layout(std430, binding = 0) buffer Frustums
     float   zNear;
     float   zFar;
     vec2    padding;
+    Plane   padding2[5];
 
     Frustum m_frustum[];
 };
@@ -157,15 +163,31 @@ void main()
         // Calculate near/far plane for the frustum
         float minDepth = 0xFFFFFFFF;
         float maxDepth = 0;
-        
+
+        ivec2 iTexCoordBase = ivec2(gl_GlobalInvocationID.x * m_tileSize.width,
+                                    gl_GlobalInvocationID.y * m_tileSize.height);
+
         for (uint i = 0; i < m_tileSize.width; ++i)
         {
             for (int j = 0; j < m_tileSize.height; ++j)
             {
-                ivec2 texCoord = gl_FragCoord.xy;
+                ivec2 iTexCoord = iTexCoordBase + ivec2(float(i), float(j));
+                vec2  texCoord  = vec2(float(iTexCoord.x) / float(m_renderingResolution.width),
+                                       float(iTexCoord.y) / float(m_renderingResolution.height));
+
+                float depth = texture(depthTexture, texCoord).r;
+                
+                minDepth = min(minDepth, depth);
+                maxDepth = max(maxDepth, depth);
             }
         }
-        
+
+        m_frustum[threadId].nearPlane.N = vec3(0.0f, 0.0f, -1.0f);
+        m_frustum[threadId].nearPlane.d = minDepth;
+
+        m_frustum[threadId].farPlane.N  = vec3(0.0f, 0.0f, 1.0f);
+        m_frustum[threadId].farPlane.d  = maxDepth;
+
         barrier();
         
         // Light culling

@@ -130,11 +130,12 @@ void ForwardPlusRender::calGridFrustums()
             m_frustums[0].sidePlanes[0].d = 0.0f;
 
             m_gridFrustumSsboHandle = m_pScene->GetSsboMgr()->addStaticSsbo(
-                m_frustums.size() * sizeof(Frustum) + sizeof(Math::Vector4), // Size of SSBO
-                m_frustums.data(),                                           // SSBO data
-                GL_MAP_READ_BIT,                                             // Buffer flags
-                m_gridFrustumBindingPoint);                                  // Binding point
+                m_frustums.size() * sizeof(Frustum),                   // Size of SSBO
+                m_frustums.data(),                                     // SSBO data
+                GL_MAP_READ_BIT,                                       // Buffer flags
+                m_gridFrustumBindingPoint);                            // Binding point
 
+            // Clear the CPU memory usage
             m_frustums.clear();
 
             m_renderFlags.bits.skipGenerateFrustumSsbo = TRUE;
@@ -158,10 +159,10 @@ void ForwardPlusRender::calGridFrustums()
         UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
 
         globalSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumNum), (&(m_frustumNum[0])));
-        pUboMgr->bindUniformBuffer(globalSizeUboIndex, gridFrustumProgram, "globalSizeUniformBlock");
+        pUboMgr->bindUniformBuffer(globalSizeUboIndex, gridFrustumProgram, "GlobalSizeUniformBlock");
 
         UINT resolutionUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_resolution), &m_resolution);
-        pUboMgr->bindUniformBuffer(resolutionUboIndex, gridFrustumProgram, "forwardPlusResolutionUniformBlock");
+        pUboMgr->bindUniformBuffer(resolutionUboIndex, gridFrustumProgram, "ForwardPlusResolutionUniformBlock");
 
         // Calculate the frustums
         GLuint invProjMatLocation = glGetUniformLocation(gridFrustumProgram, "projMatInv");
@@ -202,7 +203,7 @@ BOOL ForwardPlusRender::initTileLightList()
 
     UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
     tileSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumSize), (&(m_frustumSize[0])));
-    pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "tileSizeUniformBlock");
+    pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "TileSizeUniformBlock");
 
     Shader::FinishProgram();
 
@@ -294,10 +295,13 @@ void ForwardPlusRender::lightCulling()
 
     UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
 
-    pUboMgr->bindUniformBuffer(globalSizeUboIndex, lightCullingProgram, "globalSizeUniformBlock");
-    pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "tileSizeUniformBlock");
+    pUboMgr->bindUniformBuffer(globalSizeUboIndex, lightCullingProgram, "GlobalSizeUniformBlock");
+    pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "TileSizeUniformBlock");
+    pUboMgr->bindUniformBuffer(
+        m_pScene->m_resolutionUniformBufferIndex, lightCullingProgram, "RenderingResolutionBlock");
 
-    m_camDepthBuffer.getTexturePtr(0)->bindTexture(GL_TEXTURE0, lightCullingProgram, "depthTexture");
+    m_camDepthBuffer.getTexturePtr(GL_TEXTURE0)
+        ->bindTexture(GL_TEXTURE0, lightCullingProgram, "depthTexture");
 
     // Generate light index list and light grid
     m_lightCullingComputeShader.compute();

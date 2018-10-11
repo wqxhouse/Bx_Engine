@@ -228,4 +228,5 @@ private:
 
 // Friend functions
     friend void LightProbe::draw();
+    friend void ForwardPlusRender::lightCulling();
 };

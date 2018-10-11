@@ -89,4 +89,7 @@ private:
             UINT reserve                 : 29;
         } bits;
     } m_renderFlags;
+
+// Friend functions
+    friend class Scene;
 };

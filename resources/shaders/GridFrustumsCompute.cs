@@ -18,22 +18,25 @@ uniform int groupSize;
 
 uniform mat4 projMatInv;
 
-uniform globalSizeUniformBlock
+uniform GlobalSizeUniformBlock
 {
     Resolution m_tileResolution;
 };
 
-uniform forwardPlusResolutionUniformBlock
+uniform ForwardPlusResolutionUniformBlock
 {
     Resolution m_forwardPlusResolution;
 };
 
 layout(std430, binding = 0) buffer Frustums
 {
+// Frustum 0, only for holding zNear/zFar
     float   zNear;
     float   zFar;
     vec2    padding;
+    Plane   paddingPlanes[5];
 
+// Actual screen frustums start from frustum[0]
     Frustum m_frustum[];
 };
 
