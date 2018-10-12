@@ -126,14 +126,14 @@ void ForwardPlusRender::calGridFrustums()
         {
             Camera* pCam = m_pScene->GetActivateCamera();
 
-            m_frustums[0].sidePlanes[0].N = Math::Vector3(pCam->GetNearClip(), pCam->GetFarClip(), 0.0f);
+            m_frustums[0].sidePlanes[0].N = Math::Vector3(-pCam->GetNearClip(), -pCam->GetFarClip(), 0.0f);
             m_frustums[0].sidePlanes[0].d = 0.0f;
 
             m_gridFrustumSsboHandle = m_pScene->GetSsboMgr()->addStaticSsbo(
-                m_frustums.size() * sizeof(Frustum),                   // Size of SSBO
-                m_frustums.data(),                                     // SSBO data
-                GL_MAP_READ_BIT,                                       // Buffer flags
-                m_gridFrustumBindingPoint);                            // Binding point
+                m_frustums.size() * sizeof(Frustum),    // Size of SSBO
+                m_frustums.data(),                      // SSBO data
+                GL_MAP_READ_BIT,                        // Buffer flags
+                m_gridFrustumBindingPoint);             // Binding point
 
             // Clear the CPU memory usage
             m_frustums.clear();
@@ -161,7 +161,7 @@ void ForwardPlusRender::calGridFrustums()
         globalSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumNum), (&(m_frustumNum[0])));
         pUboMgr->bindUniformBuffer(globalSizeUboIndex, gridFrustumProgram, "GlobalSizeUniformBlock");
 
-        UINT resolutionUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_resolution), &m_resolution);
+        resolutionUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_resolution), &m_resolution);
         pUboMgr->bindUniformBuffer(resolutionUboIndex, gridFrustumProgram, "ForwardPlusResolutionUniformBlock");
 
         // Calculate the frustums
@@ -290,15 +290,21 @@ void ForwardPlusRender::lightCulling()
 {
     GLuint lightCullingProgram = m_lightCullingComputeShader.useProgram();
 
-    GLuint viewMatLocation = glGetUniformLocation(m_lightCullingComputeShader.GetShaderProgram(), "viewMat");
-    glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(ToGLMMat4(m_pScene->GetActivateCamera()->GetViewMatrix())));
+    GLuint viewMatLocation = glGetUniformLocation(lightCullingProgram, "viewMat");
+    glUniformMatrix4fv(
+        viewMatLocation, 1, GL_FALSE, glm::value_ptr(ToGLMMat4(m_pScene->GetActivateCamera()->GetViewMatrix())));
+
+    GLuint invProjMatLocation = glGetUniformLocation(lightCullingProgram, "projMatInv");
+    Math::Mat4 projMatrix = m_pScene->GetProjectionMatrix();
+    glm::mat4 invProjMatrix = glm::inverse(ToGLMMat4(projMatrix));
+    glUniformMatrix4fv(invProjMatLocation, 1, GL_FALSE, glm::value_ptr(invProjMatrix));
 
     UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
-
     pUboMgr->bindUniformBuffer(globalSizeUboIndex, lightCullingProgram, "GlobalSizeUniformBlock");
     pUboMgr->bindUniformBuffer(tileSizeUboIndex, lightCullingProgram, "TileSizeUniformBlock");
     pUboMgr->bindUniformBuffer(
         m_pScene->m_resolutionUniformBufferIndex, lightCullingProgram, "RenderingResolutionBlock");
+    pUboMgr->bindUniformBuffer(resolutionUboIndex, lightCullingProgram, "ForwardPlusResolutionUniformBlock");
 
     m_camDepthBuffer.getTexturePtr(GL_TEXTURE0)
         ->bindTexture(GL_TEXTURE0, lightCullingProgram, "depthTexture");

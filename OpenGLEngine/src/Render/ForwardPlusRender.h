@@ -45,6 +45,7 @@ private:
 
     UINT globalSizeUboIndex;
     UINT tileSizeUboIndex;
+    UINT resolutionUboIndex;
 
     std::vector<Frustum> m_frustums;
 

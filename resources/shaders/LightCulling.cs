@@ -35,6 +35,11 @@ layout (std140) uniform TileSizeUniformBlock
     Resolution m_tileSize; // 16 * 16 by default
 };
 
+uniform ForwardPlusResolutionUniformBlock
+{
+    Resolution m_forwardPlusResolution;
+};
+
 uniform uint lightNum;
 layout (std140) uniform lightArrayUniformBlock
 {
@@ -42,6 +47,7 @@ layout (std140) uniform lightArrayUniformBlock
 };
 
 uniform mat4 viewMat;
+uniform mat4 projMatInv;
 
 // Atomic counters
 layout(binding = 0, offset = 0) uniform atomic_uint lightIndexListCounter;
@@ -49,18 +55,12 @@ layout(binding = 0, offset = 0) uniform atomic_uint lightIndexListCounter;
 // SSBO
 layout(std430, binding = 0) buffer Frustums
 {
-    float   zNear;
-    float   zFar;
+    float   zNearVS;
+    float   zFarVS;
     vec2    padding;
     Plane   padding2[5];
 
     Frustum m_frustum[];
-};
-
-struct LightTile
-{
-    uint offset;
-    uint size;
 };
 
 layout(std430, binding = 1) buffer LightGridBuffer
@@ -72,6 +72,22 @@ layout(std430, binding = 2) buffer LightIndexListBuffer
 {
     uint lightIndexList[];
 };
+
+vec3 screenToView(vec4 screenPos)
+{
+    // Screen space to clip space
+    vec4 clipPos =
+        vec4(screenPos.x / m_forwardPlusResolution.width, screenPos.y / m_forwardPlusResolution.height, screenPos.z, 1.0f);
+    
+    clipPos.x = -2.0f * clipPos.x + 1.0f;
+    clipPos.y =  2.0f * clipPos.y - 1.0f;
+    
+    // Clip space to view space
+    vec4 viewPos = projMatInv * clipPos;
+    viewPos.xyz /= viewPos.w;
+    
+    return viewPos.xyz;
+}
 
 bool sphereOutsidePlane(
     Plane p, // The plane
@@ -90,8 +106,8 @@ bool pointLightInsideFrustum(
     bool result = true;
 
     // The point light is outside of the view near/far clip space
-    if ((center.z + radius < zNear) ||
-        (center.z - radius > zFar))
+    if ((center.z - radius > zNearVS/*threadFrustum.nearPlane.d*/) ||
+        (center.z + radius < zFarVS/*threadFrustum.farPlane.d*/))
     {
         result = false;
     }
@@ -161,8 +177,8 @@ void main()
     if (threadId < frustumSize)
     {
         // Calculate near/far plane for the frustum
-        float minDepth = 0xFFFFFFFF;
-        float maxDepth = 0;
+        float minDepth = -zFarVS;
+        float maxDepth = -zNearVS;
 
         ivec2 iTexCoordBase = ivec2(gl_GlobalInvocationID.x * m_tileSize.width,
                                     gl_GlobalInvocationID.y * m_tileSize.height);
@@ -175,18 +191,19 @@ void main()
                 vec2  texCoord  = vec2(float(iTexCoord.x) / float(m_renderingResolution.width),
                                        float(iTexCoord.y) / float(m_renderingResolution.height));
 
-                float depth = texture(depthTexture, texCoord).r;
-                
+                float depthScreen = texture(depthTexture, texCoord).r;
+                float depth       = -screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
+
                 minDepth = min(minDepth, depth);
                 maxDepth = max(maxDepth, depth);
             }
         }
 
         m_frustum[threadId].nearPlane.N = vec3(0.0f, 0.0f, -1.0f);
-        m_frustum[threadId].nearPlane.d = minDepth;
+        m_frustum[threadId].nearPlane.d = -minDepth;
 
         m_frustum[threadId].farPlane.N  = vec3(0.0f, 0.0f, 1.0f);
-        m_frustum[threadId].farPlane.d  = maxDepth;
+        m_frustum[threadId].farPlane.d  = -maxDepth;
 
         barrier();
         
@@ -205,6 +222,8 @@ void main()
             }
         }
 
+        barrier();
+        
         lightGrid[threadId].offset = atomicCounterAdd(lightIndexListCounter, tileLightSize);
         lightGrid[threadId].size   = tileLightSize;
 

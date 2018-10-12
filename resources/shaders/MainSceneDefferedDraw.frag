@@ -47,7 +47,7 @@ uniform mat4 viewMat;
 
 // Test
 uniform int useSsao;
-uniform int lightNum;
+uniform uint lightNum;
 
 out vec4 outColor;
 
@@ -155,7 +155,7 @@ void main()
     float attenuation = 1.0f; // Attenuations for radiance
 	
 	// Loop all lights
-	for (int i = 0; i < lightNum; ++i)
+	for (uint i = 0; i < lightNum; ++i)
 	{
 		// Shadow casting
 		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
