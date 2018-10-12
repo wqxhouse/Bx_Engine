@@ -7,6 +7,10 @@
 #include <Material.hglsl>
 #include <Utilities.hglsl>
 #include <BRDF.hglsl>
+#include <Frustum.hglsl>
+
+#define RENDER_METHOD_FORWARD      0u
+#define RENDER_METHOD_FORWARD_PLUS 1u
 
 in vec4 posWorldVec4;
 in vec3 normalWorld;
@@ -32,6 +36,11 @@ uniform samplerCube lightProbeCubemap;
     Resolution m_shadowMapResolution;
 };*/
 
+layout (std140) uniform RenderingResolutionBlock
+{
+    Resolution m_resolution;
+};
+
 layout (std140) uniform lightArrayUniformBlock
 {
     Light m_light[MAX_LIGHT_NUM];
@@ -44,9 +53,31 @@ layout (std140) uniform material
 
 uniform vec3 eyePos;
 
-uniform int lightNum;
+uniform uint lightNum;
 
 out vec4 outColor;
+
+// Forward+
+uniform uint useForwardPlus;
+layout(std140) uniform TileSizeUniformBlock
+{
+    Resolution m_tileSize; // 16 * 16 by default
+};
+
+layout(std140) uniform GlobalSizeUniformBlock
+{
+    Resolution m_tileResolution;
+};
+
+layout(std430, binding = 1) buffer LightGridBuffer
+{
+    LightTile m_lightGrid[];
+};
+
+layout(std430, binding = 2) buffer LightIndexListBuffer
+{
+    uint m_lightIndexList[];
+};
 
 float castingShadow(vec4 posLightProj, float i)
 {
@@ -120,30 +151,58 @@ void main()
     
     float attenuation = 1.0f;
 
-	for (int i = 0; i < lightNum; ++i)
+    uint validLightNum = lightNum;
+    /// Forward+ branch
+    uvec2 tileIndexD2 = uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
+                              uint(gl_FragCoord.y) / m_tileSize.height);
+    
+    uint tileIndex = tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
+    LightTile lightGrid = m_lightGrid[tileIndex];
+
+    if (useForwardPlus == RENDER_METHOD_FORWARD_PLUS)
+    {
+        validLightNum = lightGrid.size;
+    }
+    /// Forward+ branch End
+
+	for (uint i = 0; i < validLightNum; ++i)
 	{
-        vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+        Light light;
+        
+        /// Forward+ branch
+        if (useForwardPlus == RENDER_METHOD_FORWARD_PLUS)
+        {
+            uint index      = lightGrid.offset + i;
+            uint lightIndex = m_lightIndexList[index];
+            light = m_light[lightIndex];
+        }
+        else if(useForwardPlus == RENDER_METHOD_FORWARD) // Normal Forward rendering
+        {
+            light = m_light[i];
+        }
+        
+        vec4  posLightProj      = light.lightBase.lightTransVP * posWorldVec4;
         float shadowAttenuation = castingShadow(posLightProj, float(i));
 
-        vec3 lightColor = m_light[i].lightBase.color;
+        vec3 lightColor = light.lightBase.color;
 
 		vec3 dir;
-        switch(m_light[i].lightBase.type)
+        switch(light.lightBase.type)
         {
             case 0: // Directional Light
             {
                 // Transform light direction vector to view space
-                dir = normalize(m_light[i].data[0].xyz);
+                dir = normalize(light.data[0].xyz);
                 shadowAttenuation = 1.0f;                
                 break;
             }
             case 1: // Point Light
             {
-                float radius  = m_light[i].data[0].w;
+                float radius  = light.data[0].w;
                 float radius2 = radius * radius;
 
                 // Transform light position vector to view space
-                vec3  dirVector = posWorld - m_light[i].data[0].xyz;
+                vec3  dirVector = posWorld - light.data[0].xyz;
                 float dis2      = dot(dirVector, dirVector);
                 shadowAttenuation = 1.0f;
 
@@ -156,11 +215,11 @@ void main()
             }
             case 2: // Spot Light
             {
-                vec3  lightDir      = normalize(m_light[i].data[1].xyz);
-                float innerCosTheta = m_light[i].data[0].w;
-                float outerCosTheta = m_light[i].data[1].w;
+                vec3  lightDir      = normalize(light.data[1].xyz);
+                float innerCosTheta = light.data[0].w;
+                float outerCosTheta = light.data[1].w;
 
-                vec3  dirVector = posWorld - m_light[i].data[0].xyz;                
+                vec3  dirVector = posWorld - light.data[0].xyz;                
                 dir             = normalize(dirVector);
 
                 float cosTheta = dot(lightDir, dir);
@@ -175,7 +234,7 @@ void main()
                 // float cosTheta2 = cosTheta * cosTheta;
                 // dis2           *= cosTheta2;
                 // 
-                // float range  = m_light[i].lightBase.padding1.y;
+                // float range  = light.lightBase.padding1.y;
                 // float range2 = range * range;
 
                 // Pixel is outside the range of spot light, discard
@@ -210,5 +269,9 @@ void main()
     // Gamma correction
     radiance = gammaCorrection(radiance);
     outColor = vec4(radiance, 1.0f);
+    
+    //if (validLightNum == 1) { outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); }
+    //else if ( validLightNum == 2) { outColor = vec4(0.0f, 1.0f, 0.0f, 1.0f); }
+    //else { outColor = vec4(0.0f, 0.0f, 1.0f, 1.0f); }
 }
 // End MainSceneCookTorrance.frag

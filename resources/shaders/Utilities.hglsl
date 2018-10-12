@@ -2,8 +2,8 @@
 
 struct Resolution
 {
-    int width;
-    int height;
+    uint width;
+    uint height;
 };
 
 vec3 gammaCorrection(const vec3 color)

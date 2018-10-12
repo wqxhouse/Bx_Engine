@@ -107,7 +107,8 @@ void LightProbe::draw()
             GL_TEXTURE0, GL_COLOR_ATTACHMENT0, m_pCubemap, lightProbeFaces[i], GL_COLOR_ATTACHMENT0);
 
         // Render the light probe
-        if (m_pScene->GetSetting()->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
+        if (m_pScene->GetSetting()->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING ||
+            m_pScene->GetSetting()->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_PLUS_RENDERING)
         {
             m_probeFbo.setRenderTargets();
 

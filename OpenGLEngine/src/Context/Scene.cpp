@@ -208,11 +208,11 @@ void Scene::update(float deltaTime)
     m_pActiveCamera = m_pCameraList[m_activeCameraIndex];
     m_pActiveCamera->update(deltaTime);
     
-    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_B])
     {
         m_pSetting->m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
     }
-    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_M])
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
     {
         m_pSetting->m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
         if (m_pGBuffer == NULL)
@@ -224,6 +224,10 @@ void Scene::update(float deltaTime)
                 assert(FALSE);
             }
         }
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_M])
+    {
+        m_pSetting->m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
@@ -315,6 +319,9 @@ void Scene::preDraw()
     }
     /// End updating UBO data
 
+    // Invoking frustum grid calculation and light culling
+    m_pForwardPlusRenderer->draw();
+
     /// Casting shadow
     if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
     {
@@ -328,10 +335,6 @@ void Scene::preDraw()
         m_pLightProbe->draw();
     }
     glViewport(0, 0, m_pSetting->resolution.width, m_pSetting->resolution.height);
-
-    // Compute shader
-    m_pForwardPlusRenderer->draw();
-
 }
 
 void Scene::draw()
@@ -341,7 +344,8 @@ void Scene::draw()
         m_pSkybox->draw();
     }
 
-    if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING)
+    if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING ||
+        m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_PLUS_RENDERING)
     {
         /*if (m_pSsao == NULL)
         {
@@ -402,6 +406,8 @@ void Scene::drawScene()
     printf("%f %f %f\n", camPos.8x, camPos.y, camPos.z);
 #endif
 
+    assert(m_pSetting->m_graphicsSetting.renderingMethod != DEFERRED_RENDERING);
+
     GLuint sceneShaderProgram;
     GLuint materialIndex;
 
@@ -438,6 +444,32 @@ void Scene::drawScene()
             pModel->updateMaterial(&m_uniformBufferMgr, materialIndex);
         }
 
+        GLint renderMethodHandle = glGetUniformLocation(sceneShaderProgram, "useForwardPlus");
+
+        assert(renderMethodHandle >= 0);
+
+        switch(m_pSetting->m_graphicsSetting.renderingMethod)
+        {
+            case FORWARD_RENDERING:
+            {
+                glUniform1ui(renderMethodHandle, 0);
+                break;
+            }
+            case FORWARD_PLUS_RENDERING:
+            {
+                glUniform1ui(renderMethodHandle, 1);
+                m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->tileSizeUboIndex, sceneShaderProgram, "TileSizeUniformBlock");
+                m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->globalSizeUboIndex, sceneShaderProgram, "GlobalSizeUniformBlock");
+                break;
+            }
+            default:
+                printf("Unsupport render method!\n");
+                assert(FALSE);
+                break;
+        }
+        
         glm::mat4 transMatrix[4] =
         {
             pModel->GetTrans()->GetTransMatrix(),
@@ -453,23 +485,8 @@ void Scene::drawScene()
         GLint eyeHandle = glGetUniformLocation(sceneShaderProgram, "eyePos");
         glUniform3fv(eyeHandle, 1, glm::value_ptr(m_pActiveCamera->GetTrans().GetPos()));
 
-
         m_pLightMgr->GetShadowMgr()->
                 readShadowMap(GL_TEXTURE4, sceneShaderProgram, "shadowMapSampler", 4);
-        //ShadowMap* pShadowMap = GetShadowMap();
-
-        //glm::mat4 lightTransWVP = pShadowMap->GetLightTransVP() *
-        //                          pModel->m_pTrans->GetTransMatrix();
-
-        //GLint lightTransHandle = glGetUniformLocation(sceneShaderProgram, "lightTransWVP");
-        //glUniformMatrix4fv(lightTransHandle, 1, GL_FALSE, glm::value_ptr(lightTransWVP));
-
-        //if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
-        //{
-        //    // pShadowMap->readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
-        //    m_pLightMgr->GetShadowMgr()->
-        //        readShadowMap(GL_TEXTURE1, sceneShaderProgram, "shadowMapSampler", 1);
-        //}
 
         if (m_pLightProbe != NULL)
         {
@@ -479,7 +496,7 @@ void Scene::drawScene()
         GLint lightNumLocation = glGetUniformLocation(sceneShaderProgram, "lightNum");
         if (lightNumLocation >= 0)
         {
-            glUniform1i(lightNumLocation, m_pLightMgr->GetLightCount());
+            glUniform1ui(lightNumLocation, m_pLightMgr->GetLightCount());
         }
         else
         {
@@ -557,7 +574,7 @@ void Scene::deferredDrawScene()
         GLint lightNumLocation = glGetUniformLocation(gShaderProgram, "lightNum");
         if (lightNumLocation >= 0)
         {
-            glUniform1i(lightNumLocation, m_pLightMgr->GetLightCount());
+            glUniform1ui(lightNumLocation, m_pLightMgr->GetLightCount());
         }
         else
         {
@@ -670,6 +687,11 @@ BOOL Scene::initializePBRendering()
         m_transUniformbufferIndex,
         m_pbrShader.GetShaderProgram(),
         "transUniformBlock");
+
+    m_uniformBufferMgr.bindUniformBuffer(
+        m_resolutionUniformBufferIndex,
+        m_pbrShader.GetShaderProgram(),
+        "RenderingResolutionBlock");
 
     m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,

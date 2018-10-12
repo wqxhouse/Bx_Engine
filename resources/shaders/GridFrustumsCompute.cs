@@ -31,8 +31,8 @@ uniform ForwardPlusResolutionUniformBlock
 layout(std430, binding = 0) buffer Frustums
 {
 // Frustum 0, only for holding zNear/zFar
-    float   zNear;
-    float   zFar;
+    float   zNearVS;
+    float   zFarVS;
     vec2    padding;
     Plane   paddingPlanes[5];
 
