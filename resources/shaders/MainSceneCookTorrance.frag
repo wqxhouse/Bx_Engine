@@ -269,9 +269,5 @@ void main()
     // Gamma correction
     radiance = gammaCorrection(radiance);
     outColor = vec4(radiance, 1.0f);
-    
-    //if (validLightNum == 1) { outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); }
-    //else if ( validLightNum == 2) { outColor = vec4(0.0f, 1.0f, 0.0f, 1.0f); }
-    //else { outColor = vec4(0.0f, 0.0f, 1.0f, 1.0f); }
 }
 // End MainSceneCookTorrance.frag
