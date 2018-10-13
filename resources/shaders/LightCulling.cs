@@ -81,6 +81,7 @@ vec3 screenToView(vec4 screenPos)
 
     clipPos.x = -2.0f * clipPos.x + 1.0f;
     clipPos.y =  2.0f * clipPos.y - 1.0f;
+    clipPos.z =  2.0f * clipPos.z - 1.0f;
 
     // Clip space to view space
     vec4 viewPos = projMatInv * clipPos;
@@ -106,12 +107,12 @@ bool pointLightInsideFrustum(
     bool result = true;
 
     // The point light is outside of the view near/far clip space
-    if ((center.z - radius > zNearVS/*threadFrustum.nearPlane.d*/) ||
-        (center.z + radius < zFarVS/*threadFrustum.farPlane.d*/))
+    if ((center.z - radius > /*zNearVS*/threadFrustum.nearPlane.d) ||
+        (center.z + radius < /*zFarVS*/threadFrustum.farPlane.d))
     {
         result = false;
     }
-    
+
     for (uint i = 0; ((i < 4) && (result == true)); ++i)
     {
         if (sphereOutsidePlane(threadFrustum.m_plane[i], center, radius) == true)
@@ -177,8 +178,8 @@ void main()
     if (threadId < frustumSize)
     {
         // Calculate near/far plane for the frustum
-        float minDepth = -zFarVS;
-        float maxDepth = -zNearVS;
+        float minDepth = zFarVS;
+        float maxDepth = zNearVS;
 
         ivec2 iTexCoordBase = ivec2(gl_GlobalInvocationID.x * m_tileSize.width,
                                     gl_GlobalInvocationID.y * m_tileSize.height);
@@ -188,22 +189,22 @@ void main()
             for (int j = 0; j < m_tileSize.height; ++j)
             {
                 ivec2 iTexCoord = iTexCoordBase + ivec2(float(i), float(j));
-                vec2  texCoord  = vec2(float(iTexCoord.x) / float(m_renderingResolution.width),
+                vec2  texCoord  = vec2(float(m_renderingResolution.width - iTexCoord.x) / float(m_renderingResolution.width),
                                        float(iTexCoord.y) / float(m_renderingResolution.height));
 
                 float depthScreen = texture(depthTexture, texCoord).r;
-                float depth       = -screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
+                float depth       = screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
 
-                minDepth = min(minDepth, depth);
-                maxDepth = max(maxDepth, depth);
+                minDepth = max(minDepth, depth);
+                maxDepth = min(maxDepth, depth);
             }
         }
 
         m_frustum[threadId].nearPlane.N = vec3(0.0f, 0.0f, -1.0f);
-        m_frustum[threadId].nearPlane.d = -minDepth;
+        m_frustum[threadId].nearPlane.d = minDepth;
 
         m_frustum[threadId].farPlane.N  = vec3(0.0f, 0.0f, 1.0f);
-        m_frustum[threadId].farPlane.d  = -maxDepth;
+        m_frustum[threadId].farPlane.d  = maxDepth;
 
         barrier();
         

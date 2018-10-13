@@ -45,10 +45,11 @@ vec3 screenToView(vec4 screenPos)
     // Screen space to clip space
     vec4 clipPos =
         vec4(screenPos.x / m_forwardPlusResolution.width, screenPos.y / m_forwardPlusResolution.height, screenPos.z, 1.0f);
-    
+
     clipPos.x = -2.0f * clipPos.x + 1.0f;
     clipPos.y =  2.0f * clipPos.y - 1.0f;
-    
+    clipPos.z =  2.0f * clipPos.z - 1.0f;
+
     // Clip space to view space
     vec4 viewPos = projMatInv * clipPos;
     viewPos.xyz /= viewPos.w;

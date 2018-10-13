@@ -193,7 +193,7 @@ void main()
             {
                 // Transform light direction vector to view space
                 dir = normalize(light.data[0].xyz);
-                shadowAttenuation = 1.0f;                
+                shadowAttenuation = 1.0f;
                 break;
             }
             case 1: // Point Light
@@ -259,7 +259,7 @@ void main()
     // Light Probe
     // 0 - 1 roughtness; 0 - 7 mipmap
     vec3 environmentLight = texture(lightProbeCubemap, reflection, m_cookTorranceMaterial.roughness * 7.0f).xyz;
-        
+
     // Fetch environmentLight
     vec3 environmentLightRadiance = calCookTorranceRadiance(view, normal, -reflection, environmentLight);
     //radiance += environmentLightRadiance;
@@ -269,9 +269,5 @@ void main()
     // Gamma correction
     radiance = gammaCorrection(radiance);
     outColor = vec4(radiance, 1.0f);
-    
-    //if (validLightNum == 1) { outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); }
-    //else if ( validLightNum == 2) { outColor = vec4(0.0f, 1.0f, 0.0f, 1.0f); }
-    //else { outColor = vec4(0.0f, 0.0f, 1.0f, 1.0f); }
 }
 // End MainSceneCookTorrance.frag
