@@ -43,7 +43,7 @@ layout (std140) uniform RenderingResolutionBlock
 
 layout (std140) uniform lightArrayUniformBlock
 {
-    Light m_light[MAX_LIGHT_NUM];
+    Light m_light[MAX_LIGHT_UBO_NUM];
 };
 
 layout (std140) uniform material

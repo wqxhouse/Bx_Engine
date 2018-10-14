@@ -2,7 +2,7 @@
 
 #include "ShadowMap.h"
 
-#define MAX_SHADOW_NUM MAX_LIGHT_NUM
+#define MAX_SHADOW_NUM MAX_LIGHT_UBO_NUM
 
 class Scene;
 

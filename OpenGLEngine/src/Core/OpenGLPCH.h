@@ -47,7 +47,7 @@ inline void SafeRelease(void* ptr, AllocateMode allocateMode)
 		switch (allocateMode)
 		{
 		case MALLOC:
-			free(ptr);
+    			free(ptr);
 			break;
 		case NEW:
 			delete ptr;

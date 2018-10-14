@@ -43,7 +43,7 @@ uniform ForwardPlusResolutionUniformBlock
 uniform uint lightNum;
 layout (std140) uniform lightArrayUniformBlock
 {
-    Light m_light[MAX_LIGHT_NUM];
+    Light m_light[MAX_LIGHT_UBO_NUM];
 };
 
 uniform mat4 viewMat;
