@@ -297,7 +297,10 @@ void Scene::update(float deltaTime)
 
     m_renderText = std::to_string(deltaTime);
 
-    m_pForwardPlusRenderer->update();
+    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING)
+    {
+        m_pForwardPlusRenderer->update();
+    }
 }
 
 void Scene::preDraw()
@@ -319,8 +322,11 @@ void Scene::preDraw()
     }
     /// End updating UBO data
 
-    // Invoking frustum grid calculation and light culling
-    m_pForwardPlusRenderer->draw();
+    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING)
+    {
+        // Invoking frustum grid calculation and light culling
+        m_pForwardPlusRenderer->draw();
+    }
 
     /// Casting shadow
     if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)

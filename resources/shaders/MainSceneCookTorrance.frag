@@ -196,6 +196,8 @@ void main()
             {
                 // Transform light direction vector to view space
                 dir = normalize(light.data[0].xyz);
+
+                // TODO: Enable shadow for directional lights
                 shadowAttenuation = 1.0f;
                 break;
             }
@@ -207,6 +209,8 @@ void main()
                 // Transform light position vector to view space
                 vec3  dirVector = posWorld - light.data[0].xyz;
                 float dis2      = dot(dirVector, dirVector);
+
+                // TODO: Enable shadow for directional lights
                 shadowAttenuation = 1.0f;
 
                 // Pixel is outside the range of point light, discard

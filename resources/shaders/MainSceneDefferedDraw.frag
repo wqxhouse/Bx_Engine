@@ -170,6 +170,10 @@ void main()
             {
                 // Transform light direction vector to view space
                 dir = normalize(viewMat * vec4(m_light[i].data[0].xyz, 0.0f)).xyz;
+                
+                // TODO: Enable shadow for directional lights
+                shadowAttenuation = 1.0f;
+                
                 break;
             }
             case 1: // Point Light
@@ -188,6 +192,10 @@ void main()
                 if (dis2 > radius2) { continue; }
 
                 dir = normalize(dirVector);
+                
+                // TODO: Enable shadow for directional lights
+                shadowAttenuation = 1.0f;
+                
                 break;
             }
             case 2: // Spot Light
