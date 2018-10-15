@@ -16,6 +16,11 @@ layout (std140) uniform gMaterialPBR
 	CookTorranceMaterial m_pbrMaterial;
 };
 
+uniform sampler2D diffuseMap;
+uniform sampler2D specMap;
+uniform sampler2D normalMap;
+uniform sampler2D lightMap;
+
 uniform int materialType;
 
 uniform vec3 cameraPos;
@@ -66,7 +71,7 @@ void main()
             break;
         case COOKTORRANCE_MATERIAL:
         {
-            albedoTexture           = vec4(m_pbrMaterial.albedo, 1.0f);
+            albedoTexture           = vec4(texture(diffuseMap, fragTexCoord).xyz, 1.0f);//vec4(m_pbrMaterial.albedo, 1.0f);
             specularTexture         = vec4(m_pbrMaterial.roughness, m_pbrMaterial.metallic, m_pbrMaterial.fresnel, -1.0f);
 
             // Store the world space reflection vector for sampling light probe

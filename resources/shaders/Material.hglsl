@@ -13,8 +13,10 @@ struct PhongMaterial
 
 struct CookTorranceMaterial
 {
-    vec3  albedo; float albedoPadding;
+    vec3  albedo; uint useDiffuseMap;
+
     float roughness;
     float metallic;
     float fresnel;
+    uint useSpecularMap;
 };

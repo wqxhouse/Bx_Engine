@@ -129,13 +129,16 @@ vec3 calCookTorranceRadiance(
     const vec3  lightColor)
 {
     vec3 L = -lightDir;
-    
+
     float NoL = clamp(dot(normal, L), 0.0f, 1.0f);
-    
-    vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, m_cookTorranceMaterial, 1.0f);
-    
+
+    CookTorranceMaterial cookTorranceMaterial = m_cookTorranceMaterial;
+    cookTorranceMaterial.albedo = texture(diffuseMap, fragTexCoord).xyz;
+
+    vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, cookTorranceMaterial, 1.0f);
+
     vec3 radiance = brdf * lightColor * NoL;
-    
+
     return radiance;
 }
 
@@ -148,7 +151,7 @@ void main()
     vec3 normal     = normalize(normalWorld);
 
     vec3 reflection = normalize(2 * dot(normalWorld, view) * normalWorld - view);
-    
+
     float attenuation = 1.0f;
 
     uint validLightNum = lightNum;
@@ -156,14 +159,16 @@ void main()
     ///
     //  We flip the x here for transforming LH coordinate system back to RH system.
     ///
-    uvec2 tileIndexD2 = uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
-                              uint(gl_FragCoord.y) / m_tileSize.height);
-
-    uint tileIndex = tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
-    LightTile lightGrid = m_lightGrid[tileIndex];
+    LightTile lightGrid;
 
     if (useForwardPlus == RENDER_METHOD_FORWARD_PLUS)
     {
+        uvec2 tileIndexD2 = uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
+                                  uint(gl_FragCoord.y) / m_tileSize.height);
+
+        uint tileIndex = tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
+
+        lightGrid     = m_lightGrid[tileIndex];
         validLightNum = lightGrid.size;
     }
     /// Forward+ branch End

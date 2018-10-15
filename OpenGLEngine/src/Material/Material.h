@@ -99,14 +99,14 @@ public:
     {
         struct
         {
-            Math::Vector3 albedo; float albedoPadding;
+            Math::Vector3 albedo; UINT useDiffuseMap;
         };
         Math::Vector4 albedoVector4;
     };
     float roughness;
     float metallic;
     float fresnel;
-    float padding; // Vector4
+    float useSpecularMap; // Vector4
 };
 
 union MaterialMap

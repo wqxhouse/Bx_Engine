@@ -1,0 +1,355 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 21.09.2018 22:35:28
+
+newmtl _sponzaleaf
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_diff.tga
+	map_d D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_mask.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_ddn.tga
+
+newmtl _sponzaMaterial__57
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_plant.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_plant.tga
+	map_d D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_plant_mask.tga
+
+newmtl _sponzaMaterial__298
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background_ddn.tga
+
+newmtl _sponzabricks
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_diff.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_ddn.tga
+
+newmtl _sponzaarch
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_arch_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_arch_diff.tga
+
+newmtl _sponzaceiling
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_ceiling_a_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_ceiling_a_diff.tga
+
+newmtl _sponzacolumn_a
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_diff.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_ddn.tga
+
+newmtl _sponzafloor
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_floor_a_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_floor_a_diff.tga
+
+newmtl _sponzacolumn_c
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_diff.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_ddn.tga
+
+newmtl _sponzadetails
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_details_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_details_diff.tga
+
+newmtl _sponzacolumn_b
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_diff.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_ddn.tga
+
+newmtl _sponzaMaterial__47
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+
+newmtl _sponzaflagpole
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_flagpole_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_flagpole_diff.tga
+
+newmtl _sponzafabric_e
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_green_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_green_diff.tga
+
+newmtl _sponzafabric_d
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_blue_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_blue_diff.tga
+
+newmtl _sponzafabric_a
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_diff.tga
+
+newmtl _sponzafabric_g
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_blue_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_blue_diff.tga
+
+newmtl _sponzafabric_c
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_diff.tga
+
+newmtl _sponzafabric_f
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_green_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_green_diff.tga
+
+newmtl _sponzachain
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture.tga
+	map_d D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture_mask.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture_ddn.tga
+
+newmtl _sponzavase_hanging
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_hanging.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_hanging.tga
+
+newmtl _sponzavase
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_dif.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_dif.tga
+
+newmtl _sponzaMaterial__25
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion.tga
+	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion_ddn.tga
+	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion_ddn.tga
+
+newmtl _sponzaroof
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_roof_diff.tga
+	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_roof_diff.tga

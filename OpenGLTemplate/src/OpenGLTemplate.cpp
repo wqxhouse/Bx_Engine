@@ -1,5 +1,7 @@
 #include "OpenGLTemplate.h"
 
+#include <random>
+
 using Math::Vector3;
 
 OpenGLTemplate::OpenGLTemplate(
@@ -25,6 +27,9 @@ void OpenGLTemplate::run()
 
 void OpenGLTemplate::createDefaultScene()
 {
+    std::default_random_engine generator;
+    std::uniform_real_distribution<float> distribution(0.0, 1.0);
+
     m_context.initialize();
 
     Scene* pScene = m_context.GetScene();
@@ -46,11 +51,25 @@ void OpenGLTemplate::createDefaultScene()
         Vector3(-2.0f, 3.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 5.0f,
         Math::Radians(60.0f), Math::Radians(90.0f));*/
 
-    pScene->AddPointLight(Vector3(0.0f, -0.5f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), 1.0f);
+    // pScene->AddPointLight(Vector3(0.0f, -0.5f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), 1.0f);
 
-    /*pScene->AddPointLight(Vector3(   0.0f, 0.0f, 0.0f), Vector3(0.5f, 0.0f, 0.0f), 50.0f);
+    /*pScene->AddPointLight(Vector3(   0.0f, 0.0f, 0.0f), Vector3(0.5f, 0.5f, 0.5f), 50.0f);
     pScene->AddPointLight(Vector3( 100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 50.0f);
     pScene->AddPointLight(Vector3(-100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 50.0f);*/
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+        {
+            rand();
+            pScene->AddPointLight(Vector3(-100.0f + i * 20.0f, 0.0f, -100.0f + j * 20.0f),
+                                  // Vector3(0.5f, 0.5f, 0.5f),
+                                  Vector3(distribution(generator),
+                                          distribution(generator),
+                                          distribution(generator)),
+                                  50.0f);
+        }
+    }
 
     /*pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.0f, 0.0f));
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f,  1.0f), Vector3(0.0f, 0.5f, 0.0f));
@@ -104,8 +123,8 @@ void OpenGLTemplate::createDefaultScene()
         new Trans(glm::vec3( 3.0f, 0.0f,  0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
         new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
-    pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
-        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    /*pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
+        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3( 0.0f, 0.0f,  3.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -122,8 +141,8 @@ void OpenGLTemplate::createDefaultScene()
     pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3(-3.0f, 0.0f, -3.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
     
-    /*pScene->addModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+    pScene->addModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     /*pScene->addModel(
         "../resources/models/cornellbox/CornellBox-Sphere.obj",

@@ -69,9 +69,9 @@ float castingShadow()
 }
 
 void main()
-{    
+{
     float shadowAttenuation = castingShadow();
-    
+
     posWorldTexture    = posWorld;
     normalWorldTexture = normalWorld;
     texCoordTexture    = vec3(fragTexCoord, shadowAttenuation);

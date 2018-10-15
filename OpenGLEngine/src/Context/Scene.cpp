@@ -9,7 +9,7 @@ Scene::Scene(Setting* pSetting)
       m_pLightMgr(NULL),
       m_activeCameraIndex(0),
       m_pActiveCamera(NULL),
-      m_uniformBufferMgr(128),
+      m_uniformBufferMgr(1024),
       m_pGBuffer(NULL),
       useGlobalMaterial(FALSE),
       m_pSsao(NULL),
@@ -266,7 +266,7 @@ void Scene::update(float deltaTime)
             m_globalPbrMaterial.roughness = 0.01f;
         }
     }
-    
+
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_J])
     {
         m_globalPbrMaterial.metallic += 0.01f;
@@ -400,7 +400,7 @@ void Scene::postDraw()
 
     // TODO: Post processing
 
-    //debugDraw();
+    debugDraw();
 }
 
 void Scene::drawScene()

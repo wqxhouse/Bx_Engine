@@ -16,9 +16,9 @@ vec3 calCookTorranceDiffuse(
     const vec3 albedo)
 {
     vec3 diffuseComponent;
-    
+
     diffuseComponent = albedo * InvPI;
-    
+
     return diffuseComponent;
 }
 

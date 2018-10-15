@@ -259,7 +259,7 @@ void main()
 			float matellic  = specular.y;
 			float fresnel   = specular.z;
 
-			CookTorranceMaterial material = { albedo.xyz, 1.0f, roughness, matellic, fresnel };
+			CookTorranceMaterial material = { albedo.xyz, 1, roughness, matellic, fresnel, 1 };
 
 			vec3 directLightRadiance = calCookTorranceRadiance(view, normal, dir, lightColor, material);
 
@@ -276,7 +276,7 @@ void main()
                 vec3 environmentLightRadiance =
                     calCookTorranceRadiance(view, normal, -reflectionView, environmentLight, material);
 
-                radiance += environmentLightRadiance;
+                // radiance += environmentLightRadiance;
             }
 		}
 	}
