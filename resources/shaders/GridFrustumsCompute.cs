@@ -46,7 +46,25 @@ vec3 screenToView(vec4 screenPos)
     vec4 clipPos =
         vec4(screenPos.x / m_forwardPlusResolution.width, screenPos.y / m_forwardPlusResolution.height, screenPos.z, 1.0f);
 
-    clipPos.x = -2.0f * clipPos.x + 1.0f;
+    /// Screen-space to Clip-space transformation
+    // For OpenGL Screen space origin is bottom-left, range is [0,0] to [viewportWidth, viewportHeight].
+    // If using right-hand coordinate system, it's the same as screen space, only thing need to do is normalize.
+    // However, for left-hand coordinate system, we also need to flip the X. Because it's start from bottom right,
+    // so the range is [1, -1] to [-1, 1]
+    // /\ y   Screen-space                                     Clip-space(Left-Hand) /\ y
+    // |____________________(ViewportWidth, ViewportHeight)       (1, 1)_____________| (-1, 1)
+    // |                   |                                           |             |
+    // |                   |        =============================>     |             |
+    // |                   |                  Transform                |             |
+    // |                   |                                           |             |
+    // |___________________|__\                                   / ___|_____________|(-1, -1)
+    // (0, 0)                 /x                                x \ (1, -1)
+    //
+    // Note: The final value stored in the frustum is under LH system, need to flip x to get the real frustum in
+    // screen space. E.g. index = (resolution.width - x) / resolution.width
+    ///
+
+    clipPos.x = -2.0f * clipPos.x + 1.0f; // Flip the x for left-hand coordinate system
     clipPos.y =  2.0f * clipPos.y - 1.0f;
     clipPos.z =  2.0f * clipPos.z - 1.0f;
 

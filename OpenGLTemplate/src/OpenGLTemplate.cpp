@@ -46,11 +46,11 @@ void OpenGLTemplate::createDefaultScene()
         Vector3(-2.0f, 3.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 5.0f,
         Math::Radians(60.0f), Math::Radians(90.0f));*/
 
-    // pScene->AddPointLight(Vector3(0.0f, 5.0f, 0.0f), Vector3(0.5f, 0.5f, 0.5f), 10.0f);
+    pScene->AddPointLight(Vector3(0.0f, -0.5f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), 1.0f);
 
-    pScene->AddPointLight(Vector3( 0.0f, -0.5f,  2.0f), Vector3(0.5f, 0.0f, 0.0f), 1.0f);
-    pScene->AddPointLight(Vector3(-1.0f, -0.5f, -2.0f), Vector3(0.0f, 0.5f, 0.0f), 1.0f);
-    pScene->AddPointLight(Vector3( 1.0f, -0.5f, -2.0f), Vector3(0.0f, 0.0f, 0.5f), 1.0f);/**/
+    /*pScene->AddPointLight(Vector3(   0.0f, 0.0f, 0.0f), Vector3(0.5f, 0.0f, 0.0f), 50.0f);
+    pScene->AddPointLight(Vector3( 100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 50.0f);
+    pScene->AddPointLight(Vector3(-100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 50.0f);*/
 
     /*pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.0f, 0.0f));
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f,  1.0f), Vector3(0.0f, 0.5f, 0.0f));
@@ -94,9 +94,9 @@ void OpenGLTemplate::createDefaultScene()
 
     //Load model and texture(Hardcode here)
     /*pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-    new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-    pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-    new Trans(glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+    new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+    /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+    new Trans(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
     
     //Model* pModel = pScene->GetModelPtr(0);
 

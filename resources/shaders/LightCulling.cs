@@ -76,8 +76,10 @@ layout(std430, binding = 2) buffer LightIndexListBuffer
 vec3 screenToView(vec4 screenPos)
 {
     // Screen space to clip space
-    vec4 clipPos =
-        vec4(screenPos.x / m_forwardPlusResolution.width, screenPos.y / m_forwardPlusResolution.height, screenPos.z, 1.0f);
+    vec4 clipPos = vec4(screenPos.x / m_forwardPlusResolution.width,
+                        screenPos.y / m_forwardPlusResolution.height,
+                        screenPos.z,
+                        1.0f);
 
     clipPos.x = -2.0f * clipPos.x + 1.0f;
     clipPos.y =  2.0f * clipPos.y - 1.0f;
@@ -107,8 +109,8 @@ bool pointLightInsideFrustum(
     bool result = true;
 
     // The point light is outside of the view near/far clip space
-    if ((center.z - radius > /*zNearVS*/threadFrustum.nearPlane.d) ||
-        (center.z + radius < /*zFarVS*/threadFrustum.farPlane.d))
+    if ((center.z - radius > threadFrustum.nearPlane.d) ||
+        (center.z + radius < threadFrustum.farPlane.d))
     {
         result = false;
     }
@@ -184,6 +186,7 @@ void main()
         ivec2 iTexCoordBase = ivec2(gl_GlobalInvocationID.x * m_tileSize.width,
                                     gl_GlobalInvocationID.y * m_tileSize.height);
 
+        // TODO: Do depth max/min clip in parallel
         for (uint i = 0; i < m_tileSize.width; ++i)
         {
             for (int j = 0; j < m_tileSize.height; ++j)

@@ -153,9 +153,12 @@ void main()
 
     uint validLightNum = lightNum;
     /// Forward+ branch
+    ///
+    //  We flip the x here for transforming LH coordinate system back to RH system.
+    ///
     uvec2 tileIndexD2 = uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
                               uint(gl_FragCoord.y) / m_tileSize.height);
-    
+
     uint tileIndex = tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
     LightTile lightGrid = m_lightGrid[tileIndex];
 
