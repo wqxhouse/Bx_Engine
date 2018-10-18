@@ -114,6 +114,11 @@ BOOL ForwardPlusRender::initGridFrustums()
         m_frustumNum[1], // Number of frustum tiles on Y
         1);              // Keep Z to 1
 
+    UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
+
+    resolutionUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_resolution), &m_resolution);
+    globalSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumNum), (&(m_frustumNum[0])));
+
     return result;
 }
 
@@ -157,11 +162,7 @@ void ForwardPlusRender::calGridFrustums()
         glUniform1i(groupWidthLocation, m_frustumSize[0]);
 
         UniformBufferMgr* pUboMgr = m_pScene->GetUniformBufferMgr();
-
-        globalSizeUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_frustumNum), (&(m_frustumNum[0])));
         pUboMgr->bindUniformBuffer(globalSizeUboIndex, gridFrustumProgram, "GlobalSizeUniformBlock");
-
-        resolutionUboIndex = pUboMgr->createUniformBuffer(GL_STATIC_DRAW, sizeof(m_resolution), &m_resolution);
         pUboMgr->bindUniformBuffer(resolutionUboIndex, gridFrustumProgram, "ForwardPlusResolutionUniformBlock");
 
         // Calculate the frustums
@@ -239,17 +240,6 @@ void ForwardPlusRender::updateLightData()
             1);              // Keep Z to 1
 
         m_renderFlags.bits.lightListUpdate = 0;
-
-        // Updating light data
-        GLint lightNumLocation = glGetUniformLocation(m_lightCullingComputeShader.useProgram(), "lightNum");
-        if (lightNumLocation >= 0)
-        {
-            glUniform1ui(lightNumLocation, m_pScene->GetLightMgr()->GetLightCount());
-        }
-        else
-        {
-            printf("Can't find light number uniform. \n");
-        }
 
         m_pScene->GetLightMgr()->updateLightUbo(
             m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");

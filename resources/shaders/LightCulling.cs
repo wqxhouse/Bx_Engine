@@ -40,12 +40,6 @@ uniform ForwardPlusResolutionUniformBlock
     Resolution m_forwardPlusResolution;
 };
 
-uniform uint lightNum;
-layout (std140) uniform lightArrayUniformBlock
-{
-    Light m_light[MAX_LIGHT_UBO_NUM];
-};
-
 uniform mat4 viewMat;
 uniform mat4 projMatInv;
 
@@ -142,7 +136,7 @@ bool lightVisibility(uint frustumIndex, uint lightIndex)
     bool lightVisible = true;
 
     Frustum frustum = m_frustum[frustumIndex];
-    Light   light   = m_light[lightIndex];
+    Light   light   = m_lightUniformBuffer.m_light[lightIndex];
 
     switch(light.lightBase.type)
     {
@@ -215,7 +209,7 @@ void main()
         uint tileLightSize = 0;
         uint localLightIndexList[MAX_LIGHT_NUM_TILE];
 
-        for (uint i = 0; i < lightNum; ++i)
+        for (uint i = 0; i < m_lightUniformBuffer.lightNum; ++i)
         {
             bool isLightVisible = lightVisibility(threadId, i);
 

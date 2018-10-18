@@ -20,6 +20,8 @@ BOOL LightMgr::initialize()
 {
     BOOL status = TRUE;
 
+    m_lightList.resize(1);
+
     createLightUbo(m_pScene->GetUniformBufferMgr());
 
     status = m_shadowMgr.initialize();
@@ -61,11 +63,17 @@ void LightMgr::updateLightUbo(
 
     if (m_lightFlags.bitField.isRecreateLightUbo == TRUE)
     {
+        UINT* pData = reinterpret_cast<UINT*>(m_lightList.data());
+        *pData = GetLightCount();
+
         createLightUbo(pUboMgr);
         bindLightUbo(pUboMgr, shaderProgram, uniformBufferBlockName);
     }
     else if (m_lightFlags.bitField.isUpdateLightUbo == TRUE)
     {
+        UINT* pData = reinterpret_cast<UINT*>(m_lightList.data());
+        *pData = GetLightCount();
+
         pUboMgr->updateUniformBufferData(
             m_lightUboHandle, GetLightDataSize(), GetLightData());
     }
@@ -94,7 +102,7 @@ void LightMgr::translateLight(
     const UINT           index,
     const Math::Vector3& transVector)
 {
-    Light* pLight = reinterpret_cast<Light*>(&(m_lightList[index]));
+    Light* pLight = GetLight(index);
 
     assert(pLight != NULL);
 
@@ -111,7 +119,7 @@ void LightMgr::rotateLight(
     const Math::Vector3& axis,
     const float          angle)
 {
-    Light* pLight = reinterpret_cast<Light*>(&(m_lightList[index]));
+    Light* pLight = GetLight(index);
 
     assert(pLight != NULL);
 

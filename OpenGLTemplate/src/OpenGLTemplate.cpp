@@ -57,17 +57,16 @@ void OpenGLTemplate::createDefaultScene()
     pScene->AddPointLight(Vector3( 100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 50.0f);
     pScene->AddPointLight(Vector3(-100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 50.0f);*/
 
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 15; ++i)
     {
-        for (int j = 0; j < 5; ++j)
+        for (int j = 0; j < 15; ++j)
         {
-            rand();
             pScene->AddPointLight(Vector3(-100.0f + i * 20.0f, 0.0f, -100.0f + j * 20.0f),
                                   // Vector3(0.5f, 0.5f, 0.5f),
                                   Vector3(distribution(generator),
                                           distribution(generator),
                                           distribution(generator)),
-                                  50.0f);
+                                          50.0f);
         }
     }
 

@@ -29,11 +29,6 @@ layout (location = 8) uniform sampler2DArray shadowMapSampler;
     Resolution m_shadowMapResolution;
 };*/
 
-layout (std140) uniform lightArrayUniformBlock
-{
-    Light m_light[MAX_LIGHT_UBO_NUM];
-};
-
 layout (std140) uniform RenderingResolutionBlock
 {
     Resolution resolution;
@@ -47,7 +42,6 @@ uniform mat4 viewMat;
 
 // Test
 uniform int useSsao;
-uniform uint lightNum;
 
 out vec4 outColor;
 
@@ -155,21 +149,23 @@ void main()
     float attenuation = 1.0f; // Attenuations for radiance
 	
 	// Loop all lights
-	for (uint i = 0; i < lightNum; ++i)
+	for (uint i = 0; i < m_lightUniformBuffer.lightNum; ++i)
 	{
+        Light light = m_lightUniformBuffer.m_light[i];
+
 		// Shadow casting
-		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+		vec4  posLightProj      = light.lightBase.lightTransVP * posWorldVec4;
 		float shadowAttenuation = castingShadow(posLightProj, float(i));
 		
-		vec3 lightColor = m_light[i].lightBase.color;
+		vec3 lightColor = light.lightBase.color;
 
         vec3 dir;
-        switch(m_light[i].lightBase.type)
+        switch(light.lightBase.type)
         {
             case 0: // Directional Light
             {
                 // Transform light direction vector to view space
-                dir = normalize(viewMat * vec4(m_light[i].data[0].xyz, 0.0f)).xyz;
+                dir = normalize(viewMat * vec4(light.data[0].xyz, 0.0f)).xyz;
                 
                 // TODO: Enable shadow for directional lights
                 shadowAttenuation = 1.0f;
@@ -178,11 +174,11 @@ void main()
             }
             case 1: // Point Light
             {
-                float radius  = m_light[i].data[0].w;
+                float radius  = light.data[0].w;
                 float radius2 = radius * radius;
 
                 // Transform light position vector to view space
-                vec4 lightViewPosVec4 = viewMat * vec4(m_light[i].data[0].xyz, 1.0f);
+                vec4 lightViewPosVec4 = viewMat * vec4(light.data[0].xyz, 1.0f);
                 vec3 lightViewPos     = lightViewPosVec4.xyz / lightViewPosVec4.w;
 
                 vec3  dirVector = posView - lightViewPos;
@@ -200,12 +196,12 @@ void main()
             }
             case 2: // Spot Light
             {
-                vec3  lightDir      = normalize(viewMat * vec4(m_light[i].data[1].xyz, 0.0f)).xyz;
-                float innerCosTheta = m_light[i].data[0].w;
-                float outerCosTheta = m_light[i].data[1].w;
+                vec3  lightDir      = normalize(viewMat * vec4(light.data[1].xyz, 0.0f)).xyz;
+                float innerCosTheta = light.data[0].w;
+                float outerCosTheta = light.data[1].w;
                 
                 // Transform light position vector to view space
-                vec4 lightViewPosVec4 = viewMat * vec4(m_light[i].data[0].xyz, 1.0f);
+                vec4 lightViewPosVec4 = viewMat * vec4(light.data[0].xyz, 1.0f);
                 vec3 lightViewPos     = lightViewPosVec4.xyz / lightViewPosVec4.w;
                 
                 vec3 dirVector = posView - lightViewPos;

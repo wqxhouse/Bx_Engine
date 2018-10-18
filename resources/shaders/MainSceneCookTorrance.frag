@@ -41,19 +41,12 @@ layout (std140) uniform RenderingResolutionBlock
     Resolution m_resolution;
 };
 
-layout (std140) uniform lightArrayUniformBlock
-{
-    Light m_light[MAX_LIGHT_UBO_NUM];
-};
-
 layout (std140) uniform material
 {
 	PhongMaterial m_phongMaterial;
 };
 
 uniform vec3 eyePos;
-
-uniform uint lightNum;
 
 out vec4 outColor;
 
@@ -133,7 +126,7 @@ vec3 calCookTorranceRadiance(
     float NoL = clamp(dot(normal, L), 0.0f, 1.0f);
 
     CookTorranceMaterial cookTorranceMaterial = m_cookTorranceMaterial;
-    cookTorranceMaterial.albedo = texture(diffuseMap, fragTexCoord).xyz;
+    // cookTorranceMaterial.albedo = texture(diffuseMap, fragTexCoord).xyz;
 
     vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, cookTorranceMaterial, 1.0f);
 
@@ -154,7 +147,7 @@ void main()
 
     float attenuation = 1.0f;
 
-    uint validLightNum = lightNum;
+    uint validLightNum = m_lightUniformBuffer.lightNum;
     /// Forward+ branch
     ///
     //  We flip the x here for transforming LH coordinate system back to RH system.
@@ -182,11 +175,11 @@ void main()
         {
             uint index      = lightGrid.offset + i;
             uint lightIndex = m_lightIndexList[index];
-            light = m_light[lightIndex];
+            light = m_lightUniformBuffer.m_light[lightIndex];
         }
         else if(useForwardPlus == RENDER_METHOD_FORWARD) // Normal Forward rendering
         {
-            light = m_light[i];
+            light = m_lightUniformBuffer.m_light[i];
         }
         
         vec4  posLightProj      = light.lightBase.lightTransVP * posWorldVec4;

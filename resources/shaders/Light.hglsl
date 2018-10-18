@@ -59,7 +59,15 @@ struct SpotLight
     float outerRadius;
 };
 
-layout(std430, binding = 0) buffer LightBuffer
+/*layout(std430, binding = 0) buffer LightBuffer
 {
     Light m_light[MAX_LIGHT_NUM];
-} m_lightBuffer;
+} m_lightBuffer;*/
+
+layout (std140) uniform lightArrayUniformBlock
+{
+    uint lightNum;
+    vec4 lightArrayPadding[7];
+
+    Light m_light[MAX_LIGHT_UBO_NUM];
+} m_lightUniformBuffer;

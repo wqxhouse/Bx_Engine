@@ -55,15 +55,15 @@ public:
 
     inline GLuint GetLightDataHandle() const { return m_lightUboHandle; }
 
-    inline UINT GetLightCount() const { return m_lightList.size(); }
+    inline UINT GetLightCount() const { return m_lightList.size() - 1; }
 
-    inline UINT GetLightDataSize() const { return GetLightCount() * sizeof(LightData); }
+    inline UINT GetLightDataSize() const { return m_lightList.size() * sizeof(LightData); }
 
     inline Light* GetLight(const UINT index)
     {
         assert(index < m_lightList.size());
 
-        return reinterpret_cast<Light*>(&(m_lightList[index]));
+        return reinterpret_cast<Light*>(&(m_lightList[index + 1]));
     }
 
     inline void* GetLightData() const

@@ -459,6 +459,13 @@ void Scene::drawScene()
             case FORWARD_RENDERING:
             {
                 glUniform1ui(renderMethodHandle, 0);
+
+                // TODO: Remove this UBOs from forward rendering
+                m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->tileSizeUboIndex, sceneShaderProgram, "TileSizeUniformBlock");
+                m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->globalSizeUboIndex, sceneShaderProgram, "GlobalSizeUniformBlock");
+
                 break;
             }
             case FORWARD_PLUS_RENDERING:
@@ -497,16 +504,6 @@ void Scene::drawScene()
         if (m_pLightProbe != NULL)
         {
             m_pLightProbe->readLightProbe(sceneShaderProgram, "lightProbeCubemap", GL_TEXTURE5);
-        }
-
-        GLint lightNumLocation = glGetUniformLocation(sceneShaderProgram, "lightNum");
-        if (lightNumLocation >= 0)
-        {
-            glUniform1ui(lightNumLocation, m_pLightMgr->GetLightCount());
-        }
-        else
-        {
-            printf("Can't find light number uniform. \n");
         }
 
         pModel->draw(sceneShaderProgram);
@@ -556,37 +553,6 @@ void Scene::deferredDrawScene()
         // Casting shadow map
         m_pLightMgr->GetShadowMgr()->
                 readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
-
-        //ShadowMap* pShadowMap = GetShadowMap();
-
-        //GLint lightTransLocation = glGetUniformLocation(gShaderProgram, "lightTransVP");
-
-        //if (lightTransLocation >= 0)
-        //{
-        //    glm::mat4 lightTransVP = pShadowMap->GetLightTransVP();
-        //    glUniformMatrix4fv(lightTransLocation, 1, GL_FALSE, glm::value_ptr(lightTransVP));
-
-        //    //pShadowMap->readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
-        //    m_pLightMgr->GetShadowMgr()->
-        //        readShadowMap(GL_TEXTURE8, gShaderProgram, "shadowMapSampler", 8);
-        //}
-        //else
-        //{
-        //    printf("Can't find shadow vp matrix.\n");
-        //    assert(false);
-        //}
-
-        // Light Number
-        GLint lightNumLocation = glGetUniformLocation(gShaderProgram, "lightNum");
-        if (lightNumLocation >= 0)
-        {
-            glUniform1ui(lightNumLocation, m_pLightMgr->GetLightCount());
-        }
-        else
-        {
-            printf("Can't find light number uniform. \n");
-            assert(false);
-        }
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

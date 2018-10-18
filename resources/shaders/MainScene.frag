@@ -25,19 +25,12 @@ uniform shadowMapResolutionUniformBlock
     Resolution m_shadowMapResolution;
 };
 
-layout (std140) uniform lightArrayUniformBlock
-{
-    Light m_light[MAX_LIGHT_UBO_NUM];
-};
-
 layout (std140) uniform material
 {
 	PhongMaterial m_phongMaterial;
 };
 
 uniform vec3 eyePos;
-
-uniform int lightNum;
 
 out vec4 outColor;
 
@@ -83,11 +76,11 @@ void main()
 {
 	vec3 posWorld   = posWorldVec4.xyz / posWorldVec4.w;
 
-	for (int i = 0; i < lightNum; ++i)
+	for (int i = 0; i < m_lightUniformBuffer.lightNum; ++i)
 	{
 		DirectionalLight m_directionalLight;
-		m_directionalLight.lightBase = m_light[i].lightBase;
-		m_directionalLight.dir = m_light[i].data[0].xyz;
+		m_directionalLight.lightBase = m_lightUniformBuffer.m_light[i].lightBase;
+		m_directionalLight.dir = m_lightUniformBuffer.m_light[i].data[0].xyz;
 		
 		vec3 view       = normalize(eyePos - posWorld);
 		vec3 dir        = m_directionalLight.dir;
@@ -100,7 +93,7 @@ void main()
 		
 		float specularCoefficient = pow(VoR, m_phongMaterial.ks.w);
 		
-		vec4  posLightProj      = m_light[i].lightBase.lightTransVP * posWorldVec4;
+		vec4  posLightProj      = m_lightUniformBuffer.m_light[i].lightBase.lightTransVP * posWorldVec4;
 		float shadowAttenuation = castingShadow(posLightProj, float(i));
 		float shadowSpecularAttenuation = ((shadowAttenuation < 0.9999999f) ? 0.0f : 1.0f);
 
