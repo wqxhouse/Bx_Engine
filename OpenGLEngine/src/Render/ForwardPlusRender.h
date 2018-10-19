@@ -87,7 +87,7 @@ private:
             BOOL skipGenerateFrustumSsbo : 1;
             BOOL skipShadowMapGenerating : 1;
             BOOL lightListUpdate         : 1;
-            UINT reserve                 : 29;
+            UINT reserve                 : 28;
         } bits;
     } m_renderFlags;
 

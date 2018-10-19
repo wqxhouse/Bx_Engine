@@ -304,10 +304,30 @@ void ForwardPlusRender::lightCulling()
     // Finish light culling
     m_lightCullingComputeShader.FinishProgram();
 
+    SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
+
+    /*UINT* pCounter= (UINT*)(pSsboMgr->GetSsbo(3)->getData());
+
+    struct LightData
+    {
+        Math::Vector4 lightBaseData[2];
+        Math::Mat4    m_lightTransVP;
+        Math::Vector4 lightData[2];
+    };
+
+    struct LightGrid
+    {
+        UINT offset;
+        UINT size;
+    };
+
+    LightGrid* pLightGrid = (LightGrid*)(pSsboMgr->GetSsbo(1)->getData());*/
+
     // Reset atomic buffer counter
     UINT initCounterValue = 0;
     /*glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, m_tiledLightList.m_lightGridCounterHandle);
     glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(UINT), &initCounterValue);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);*/
-    m_pScene->GetSsboMgr()->GetSsbo(3)->setData(sizeof(UINT), &initCounterValue);
+    pSsboMgr->GetSsbo(3)->setData(sizeof(UINT), &initCounterValue);
+
 }
