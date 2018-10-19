@@ -2,17 +2,20 @@
     LightCulling.cs
 */
 
-#version 460 core
+#version 450 core
 
-#extension GL_ARB_compute_variable_group_size : require
-#extension GL_ARB_compute_variable_group_size : enable
+// #extension GL_ARB_compute_variable_group_size : require
+// #extension GL_ARB_compute_variable_group_size : enable
 
 #include <Utilities.hglsl>
 #include <Light.hglsl>
 
 #include <Frustum.hglsl>
+
 #line 14
-layout (local_size_variable) in;
+
+// layout (local_size_variable) in;
+layout (local_size_x = 16, local_size_y = 16) in;
 
 // Scene Depth Texture
 uniform sampler2D depthTexture;
@@ -85,6 +88,11 @@ layout(std430, binding = 2) buffer LightIndexListBuffer
 // Test
 uniform uint enableAdvancedCulling;
 
+layout(std430, binding = 4) buffer LightIndexCounter
+{
+    uint m_counter;
+};
+
 vec3 screenToView(vec4 screenPos)
 {
     // Screen space to clip space
@@ -149,7 +157,7 @@ bool pointLightInsideFrustum(
         ((centerDepth + radius < threadFrustum.nearPlane.d) ||
          (centerDepth - radius > threadFrustum.farPlane.d)))
     {
-        result = false;
+        // result = false;
     }
 
     for (uint i = 0; ((i < 4) && (result == true)); ++i)
@@ -279,6 +287,9 @@ void main()
         }
 
         barrier();
+        
+        lightGrid[threadId].offset = atomicAdd(m_counter, tileLightSize); //atomicCounterAdd(lightIndexListCounter, tileLightSize);
+        lightGrid[threadId].size   = tileLightSize;
 
         if (localThreadIndex == 0)
         {

@@ -69,7 +69,7 @@ Texture2D::Texture2D(
                               reinterpret_cast<int*>(&m_textureDataType),
                               STBI_rgb_alpha);
 
-    assert(m_textureData != NULL);
+    //assert(m_textureData != NULL);
 
     if (m_textureData != NULL)
     {
