@@ -61,12 +61,12 @@ void OpenGLTemplate::createDefaultScene()
     {
         for (int j = 0; j < 15; ++j)
         {
-            pScene->AddPointLight(Vector3(-100.0f + i * 20.0f, 0.0f, -100.0f + j * 20.0f),
+            pScene->AddPointLight(Vector3(-100.0f + i * 10.0f, -30.0f, -100.0f + j * 10.0f),
                                   // Vector3(0.5f, 0.5f, 0.5f),
                                   Vector3(distribution(generator),
                                           distribution(generator),
                                           distribution(generator)),
-                                          50.0f);
+                                          5.0f);
         }
     }
 
@@ -150,15 +150,15 @@ void OpenGLTemplate::createDefaultScene()
 
     //pScene->GetModelPtr(0)->m_pTrans->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
 
-    /*pScene->addModel(
+    pScene->addModel(
         "../resources/models/buddha/buddha.obj",
         "../resources/models/buddha/buddha.mtl",
-        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+        new Trans(glm::vec3(10.0f, -30.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
-    /*pScene->addModel(
+    pScene->addModel(
         "../resources/models/dragon/dragon.obj",
         "../resources/models/dragon/dragon.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+        new Trans(glm::vec3(0.0f, -30.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     //Create texture and set sampler
     pScene->addTexture("../resources/textures/teaport/wall.jpg",

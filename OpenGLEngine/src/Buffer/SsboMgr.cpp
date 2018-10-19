@@ -73,10 +73,10 @@ void SsboMgr::updateBindingPoint(
     const UINT   bindingPoint)
 {
     SafeDelete(m_pSsboList[bindingPoint]);
-     Ssbo* pNewSsbo = new Ssbo();
-     pNewSsbo->createDynamicSsbo(size, data, usage, bindingPoint);
+    Ssbo* pNewSsbo = new Ssbo();
+    pNewSsbo->createDynamicSsbo(size, data, usage, bindingPoint);
 
-     m_pSsboList[bindingPoint] = pNewSsbo;
+    m_pSsboList[bindingPoint] = pNewSsbo;
 }
 
 void* SsboMgr::GetSsboData(const UINT bindingPoint)

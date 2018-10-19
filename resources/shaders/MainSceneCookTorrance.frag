@@ -126,7 +126,7 @@ vec3 calCookTorranceRadiance(
     float NoL = clamp(dot(normal, L), 0.0f, 1.0f);
 
     CookTorranceMaterial cookTorranceMaterial = m_cookTorranceMaterial;
-    // cookTorranceMaterial.albedo = texture(diffuseMap, fragTexCoord).xyz;
+    cookTorranceMaterial.albedo = texture(diffuseMap, fragTexCoord).xyz;
 
     vec3 brdf = calCookTorranceBRDF(view, normal, L, NoL, cookTorranceMaterial, 1.0f);
 
@@ -147,7 +147,7 @@ void main()
 
     float attenuation = 1.0f;
 
-    uint validLightNum = m_lightUniformBuffer.lightNum;
+    uint validLightNum = m_lightBuffer.lightNum;
     /// Forward+ branch
     ///
     //  We flip the x here for transforming LH coordinate system back to RH system.
@@ -175,11 +175,11 @@ void main()
         {
             uint index      = lightGrid.offset + i;
             uint lightIndex = m_lightIndexList[index];
-            light = m_lightUniformBuffer.m_light[lightIndex];
+            light = m_lightBuffer.m_light[lightIndex];
         }
         else if(useForwardPlus == RENDER_METHOD_FORWARD) // Normal Forward rendering
         {
-            light = m_lightUniformBuffer.m_light[i];
+            light = m_lightBuffer.m_light[i];
         }
         
         vec4  posLightProj      = light.lightBase.lightTransVP * posWorldVec4;

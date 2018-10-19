@@ -309,9 +309,11 @@ void Scene::preDraw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /// Updating UBO data
-    m_pLightMgr->updateLightUbo(m_sceneShader.GetShaderProgram(), "lightArrayUniformBlock");
+    /*m_pLightMgr->updateLightUbo(m_sceneShader.GetShaderProgram(), "lightArrayUniformBlock");
     m_pLightMgr->updateLightUbo(m_pbrShader.GetShaderProgram(), "lightArrayUniformBlock");
-    m_pLightMgr->updateLightUbo(m_deferredRenderingShader.GetShaderProgram(), "lightArrayUniformBlock");
+    m_pLightMgr->updateLightUbo(m_deferredRenderingShader.GetShaderProgram(), "lightArrayUniformBlock");*/
+
+    m_pLightMgr->updateLightSsbo();
 
     if (useGlobalMaterial == TRUE)
     {
@@ -618,10 +620,10 @@ BOOL Scene::initializePhongRendering()
         m_sceneShader.GetShaderProgram(),
         "transUniformBlock");
 
-    m_pLightMgr->bindLightUbo(
+    /*m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,
         m_sceneShader.GetShaderProgram(),
-        "lightArrayUniformBlock");
+        "lightArrayUniformBlock");*/
 
     // Material ubo
     m_materialUniformBufferIndex =
@@ -665,10 +667,10 @@ BOOL Scene::initializePBRendering()
         m_pbrShader.GetShaderProgram(),
         "RenderingResolutionBlock");
 
-    m_pLightMgr->bindLightUbo(
+    /*m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,
         m_pbrShader.GetShaderProgram(),
-        "lightArrayUniformBlock");
+        "lightArrayUniformBlock");*/
 
     m_pbrMaterialUniformBufferIndex =
         m_uniformBufferMgr.createUniformBuffer(
@@ -748,10 +750,10 @@ BOOL Scene::initializeDeferredRendering()
     /// UBOs initialization
 
     // Bind Light Ubo
-    m_pLightMgr->bindLightUbo(
+    /*m_pLightMgr->bindLightUbo(
         &m_uniformBufferMgr,
         m_deferredRenderingShader.GetShaderProgram(),
-        "lightArrayUniformBlock");
+        "lightArrayUniformBlock");*/
 
     // Resolution ubo
     m_uniformBufferMgr.bindUniformBuffer(

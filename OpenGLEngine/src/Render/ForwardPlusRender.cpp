@@ -55,8 +55,8 @@ BOOL ForwardPlusRender::initialize()
     assert(result == TRUE);
 
     LightMgr* pLightMgr = m_pScene->GetLightMgr();
-    pLightMgr->bindLightUbo(
-        m_pScene->GetUniformBufferMgr(), m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");
+    /*pLightMgr->bindLightUbo(
+        m_pScene->GetUniformBufferMgr(), m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");*/
 
     Setting* pSetting = m_pScene->GetSetting();
     m_camDepthBuffer.createFramebufferTexture2D(GL_TEXTURE0,
@@ -241,8 +241,8 @@ void ForwardPlusRender::updateLightData()
 
         m_renderFlags.bits.lightListUpdate = 0;
 
-        m_pScene->GetLightMgr()->updateLightUbo(
-            m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");
+        /*m_pScene->GetLightMgr()->updateLightUbo(
+            m_lightCullingComputeShader.GetShaderProgram(), "lightArrayUniformBlock");*/
     }
 
     if (FALSE == m_renderFlags.bits.skipShadowMapGenerating)

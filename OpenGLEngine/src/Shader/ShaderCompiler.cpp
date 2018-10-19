@@ -18,8 +18,8 @@ ShaderCompiler::ShaderCompiler(const char * shaderPath)
 }
 
 void ShaderCompiler::combileShaderPathAndFile(
-    const char*     path,
-    const char*     file, 
+    const     char* path,
+    const     char* file, 
     OUT const char* filePath)
 {
     //memset((char*)filePath, 0, strlen(filePath));
@@ -92,7 +92,7 @@ void ShaderCompiler::preprocessingShaderFile(
     const char* line,
     UINT        sourceSize,
     UINT*       writtenSize,
-    OUT char*   shaderSource)
+    OUT   char* shaderSource)
 {
     char includeFile[256];
 
@@ -145,9 +145,9 @@ void ShaderCompiler::preprocessingShaderFile(
 }
 
 void ShaderCompiler::parseShaderFile(
-    const char*  file,
-    UINT         sourceSize,
-    OUT char*    shaderSource)
+    const char* file,
+    UINT        sourceSize,
+    OUT char*   shaderSource)
 {
     const char* filePath = (const char*)malloc(256 * sizeof(char));
     combileShaderPathAndFile(shaderPath, file, filePath);
@@ -178,7 +178,7 @@ void ShaderCompiler::parseShaderFile(
     const char*  path,
     const char*  file,
     UINT         sourceSize,
-    OUT char *   shaderSource)
+    OUT   char*  shaderSource)
 {
     SafeRelease((char*)shaderPath, MALLOC);
     shaderPath = (char*)malloc(512 * sizeof(char));
@@ -220,14 +220,14 @@ BOOL ShaderCompiler::compileShader(
 }
 
 BOOL ShaderCompiler::compileShader(
-    const char*  const vertexShaderFile,
-    const char*  const fragmentShaderFile,
-    const char*  const geometryShaderFile,
-    const char*  const tcsShaderFile,
-    const char*  const tesShaderFile,
-    OUT GLuint*        shaderProgram,
-    const UINT         vertexShaderSourceSize,
-    const UINT         fragShaderSourceSize)
+    const char* const vertexShaderFile,
+    const char* const fragmentShaderFile,
+    const char* const geometryShaderFile,
+    const char* const tcsShaderFile,
+    const char* const tesShaderFile,
+    OUT GLuint*       shaderProgram,
+    const UINT        vertexShaderSourceSize,
+    const UINT        fragShaderSourceSize)
 {
     BOOL result = TRUE;
 
@@ -248,7 +248,7 @@ BOOL ShaderCompiler::compileShader(
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (success)
     {
-        printf("\nVertex shader is successly compiled.\n");
+        printf("\nVertex shader is successfully compiled.\n");
     }
     else
     {
@@ -270,7 +270,7 @@ BOOL ShaderCompiler::compileShader(
     glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
     if (success)
     {
-        printf("\nFragment shader is successly compiled.\n");
+        printf("\nFragment shader is successfully compiled.\n");
     }
     else
     {
@@ -297,7 +297,7 @@ BOOL ShaderCompiler::compileShader(
 
         if (success)
         {
-            printf("\nGeometry shader is successly compiled.\n");
+            printf("\nGeometry shader is successfully compiled.\n");
         }
         else
         {
@@ -320,7 +320,7 @@ BOOL ShaderCompiler::compileShader(
 
     if (success)
     {
-        printf("\nShader program is successly linked.\n");
+        printf("\nShader program is successfully linked.\n");
     }
     else
     {
@@ -369,7 +369,7 @@ BOOL ShaderCompiler::compileComputeShader(
     glGetShaderiv(computeShader, GL_COMPILE_STATUS, &success);
     if (success)
     {
-        printf("\nCompute shader is successly compiled.\n");
+        printf("\nCompute shader is successfully compiled.\n");
     }
     else
     {
@@ -389,7 +389,7 @@ BOOL ShaderCompiler::compileComputeShader(
 
     if (success)
     {
-        printf("\nShader program is successly linked.\n");
+        printf("\nShader program is successfully linked.\n");
     }
     else
     {

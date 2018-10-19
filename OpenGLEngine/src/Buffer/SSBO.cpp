@@ -15,6 +15,8 @@ void Ssbo::createStaticSsbo(
     const GLenum bufFlags,
     const UINT   bindingPoint)
 {
+    m_bindingPoint = bindingPoint;
+
     glGenBuffers(1, &m_ssboHandle);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssboHandle);
     glBufferStorage(GL_SHADER_STORAGE_BUFFER, size, data, bufFlags);
@@ -59,7 +61,7 @@ void* Ssbo::setData(
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssboHandle);
 
-    pData = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+    pData = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
 
     pData = memcpy(pData, data, size);
 

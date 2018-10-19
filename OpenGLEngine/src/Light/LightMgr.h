@@ -6,6 +6,7 @@
 #include "../Shadow/ShadowMgr.h"
 
 #define MAX_LIGHT_UBO_NUM 256
+#define MAX_LIGHT_NUM     1024
 
 class LightMgr
 {
@@ -19,6 +20,8 @@ public:
     void updateLightUbo(
         const GLuint      shaderProgram,
         const GLchar*     uniformBufferBlockName);
+
+    void updateLightSsbo();
 
     void updateLightShadow();
 
@@ -75,6 +78,7 @@ public:
 
 private:
     void createLightUbo(UniformBufferMgr* m_pUboMgr);
+    void createLightSsbo();
 
     struct LightData
     {
@@ -98,7 +102,8 @@ private:
         {
             UINT isRecreateLightUbo : 1;
             UINT isUpdateLightUbo   : 1;
-            UINT reserve            : 30;
+            UINT isUpdateLightSsbo  : 1;
+            UINT reserve            : 29;
         } bitField;
     }m_lightFlags;
 };

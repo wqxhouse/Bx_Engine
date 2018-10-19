@@ -24,6 +24,8 @@ BOOL LightMgr::initialize()
 
     createLightUbo(m_pScene->GetUniformBufferMgr());
 
+    createLightSsbo();
+
     status = m_shadowMgr.initialize();
 
     return status;
@@ -82,6 +84,32 @@ void LightMgr::updateLightUbo(
     m_lightFlags.flags = 0;
 }
 
+void LightMgr::createLightSsbo()
+{
+    SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
+
+    if (pSsboMgr != NULL)
+    {
+        pSsboMgr->addStaticSsbo(MAX_LIGHT_UBO_NUM * sizeof(LightData),
+                                GetLightData(),
+                                GL_MAP_WRITE_BIT,
+                                LIGHT_BUFFER_SSBO_BINDING_POINT);
+    }
+}
+
+void LightMgr::updateLightSsbo()
+{
+    SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
+
+    if (pSsboMgr != NULL)
+    {
+        UINT* pData = reinterpret_cast<UINT*>(m_lightList.data());
+        *pData = GetLightCount();
+
+        pSsboMgr->SetSsboData(3, GetLightDataSize(), GetLightData());
+    }
+}
+
 void LightMgr::updateLightShadow()
 {
     for (size_t i = 0; i < m_lightList.size(); ++i)
@@ -110,7 +138,14 @@ void LightMgr::translateLight(
     {
         pLight->translate(transVector);
 
-        m_lightFlags.bitField.isUpdateLightUbo = TRUE;
+        if (GetLightCount() <= MAX_LIGHT_UBO_NUM)
+        {
+            m_lightFlags.bitField.isUpdateLightUbo = TRUE;
+        }
+        else
+        {
+            m_lightFlags.bitField.isUpdateLightSsbo = TRUE;
+        }
     }
 }
 
@@ -127,7 +162,14 @@ void LightMgr::rotateLight(
     {
         pLight->rotate(axis, angle);
 
-        m_lightFlags.bitField.isUpdateLightUbo = TRUE;
+        if (GetLightCount() <= MAX_LIGHT_UBO_NUM)
+        {
+            m_lightFlags.bitField.isUpdateLightUbo = TRUE;
+        }
+        else
+        {
+            m_lightFlags.bitField.isUpdateLightSsbo = TRUE;
+        }
     }
 }
 

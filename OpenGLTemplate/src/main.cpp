@@ -10,7 +10,7 @@ int main()
 {
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    //setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    //setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
 
     OpenGLTemplate m_oglTemplate(&setting);
     m_oglTemplate.run();

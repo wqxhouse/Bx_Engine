@@ -149,9 +149,9 @@ void main()
     float attenuation = 1.0f; // Attenuations for radiance
 	
 	// Loop all lights
-	for (uint i = 0; i < m_lightUniformBuffer.lightNum; ++i)
+	for (uint i = 0; i < m_lightBuffer.lightNum; ++i)
 	{
-        Light light = m_lightUniformBuffer.m_light[i];
+        Light light = m_lightBuffer.m_light[i];
 
 		// Shadow casting
 		vec4  posLightProj      = light.lightBase.lightTransVP * posWorldVec4;

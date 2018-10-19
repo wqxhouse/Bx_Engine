@@ -136,7 +136,7 @@ bool lightVisibility(uint frustumIndex, uint lightIndex)
     bool lightVisible = true;
 
     Frustum frustum = m_frustum[frustumIndex];
-    Light   light   = m_lightUniformBuffer.m_light[lightIndex];
+    Light   light   = m_lightBuffer.m_light[lightIndex];
 
     switch(light.lightBase.type)
     {
@@ -209,7 +209,7 @@ void main()
         uint tileLightSize = 0;
         uint localLightIndexList[MAX_LIGHT_NUM_TILE];
 
-        for (uint i = 0; i < m_lightUniformBuffer.lightNum; ++i)
+        for (uint i = 0; i < m_lightBuffer.lightNum; ++i)
         {
             bool isLightVisible = lightVisibility(threadId, i);
 
