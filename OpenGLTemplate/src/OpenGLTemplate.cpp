@@ -68,7 +68,7 @@ void OpenGLTemplate::createDefaultScene()
                                   Vector3(distribution(generator),
                                           distribution(generator),
                                           distribution(generator)),
-                                          5.0f);
+                                          10.0f);
         }
     }*/
     for (int i = 0; i < 2040; ++i)
@@ -109,7 +109,11 @@ void OpenGLTemplate::createDefaultScene()
 
     //pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
+<<<<<<< HEAD
     pScene->addProspectiveCamera(glm::vec3(-80.0f, 0.0f, 0.0f), glm::vec3(0, 0, 0),
+=======
+    pScene->addProspectiveCamera(glm::vec3(-50.0f, 3.0f, 0.0f), glm::vec3(0, 0, 0),
+>>>>>>> Forward+: Fixed issues and made demo for forward+
         glm::vec3(0, 1, 0), 10.0f, invAspectRadio, 0.1f, 1000.0f, 70.0f);
 
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
@@ -161,7 +165,7 @@ void OpenGLTemplate::createDefaultScene()
     pScene->addModel(
         "../resources/models/dragon/dragon.obj",
         "../resources/models/dragon/dragon.mtl",
-        new Trans(glm::vec3(0.0f, -30.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        new Trans(glm::vec3(0.0f, -30.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     /*pScene->addModel(
         "../resources/models/cornellbox/CornellBox-Sphere.obj",

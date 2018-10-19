@@ -107,9 +107,9 @@ void LightMgr::updateLightSsbo()
         UINT* pData = reinterpret_cast<UINT*>(m_lightList.data());
         *pData = GetLightCount();
 
-        pSsboMgr->SetSsboData(3, GetLightDataSize(), GetLightData());
-
         m_lightFlags.bitField.isUpdateLightSsbo = FALSE;
+
+        pSsboMgr->SetSsboData(LIGHT_BUFFER_SSBO_BINDING_POINT, GetLightDataSize(), GetLightData());
     }
 }
 

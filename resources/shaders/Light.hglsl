@@ -59,7 +59,7 @@ struct SpotLight
     float outerRadius;
 };
 
-layout(std430, binding = 3) buffer LightBuffer
+layout(std430, binding = 4) buffer LightBuffer
 {
     uint lightNum;
     vec4 lightArrayPadding[7];
