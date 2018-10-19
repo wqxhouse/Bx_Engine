@@ -156,10 +156,10 @@ void main()
 
     if (useForwardPlus == RENDER_METHOD_FORWARD_PLUS)
     {
-        uvec2 tileIndexD2 = uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
-                                  uint(gl_FragCoord.y) / m_tileSize.height);
+        uvec2 tileIndexD2 = uvec2(0, 0);//uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
+                                        //      uint(gl_FragCoord.y) / m_tileSize.height);
 
-        uint tileIndex = tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
+        uint tileIndex = 0;//tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
 
         lightGrid     = m_lightGrid[tileIndex];
         validLightNum = lightGrid.size;

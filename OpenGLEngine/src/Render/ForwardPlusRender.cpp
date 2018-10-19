@@ -160,6 +160,7 @@ void ForwardPlusRender::calGridFrustums()
         glm::mat4 invProjMatrix = glm::inverse(ToGLMMat4(projMatrix));
         glUniformMatrix4fv(invProjMatLocation, 1, GL_FALSE, glm::value_ptr(invProjMatrix));
 
+        m_gridFrustumComputeShader.disableCSVariableGroupSize();
         m_gridFrustumComputeShader.compute();
 
         Shader::FinishProgram();
@@ -179,11 +180,17 @@ BOOL ForwardPlusRender::initTileLightList()
 
     // Initialize light index list counter
     UINT initCounterValue = 0;
-    glGenBuffers(1, &m_tiledLightList.m_lightGridCounterHandle);
+    /*glGenBuffers(1, &m_tiledLightList.m_lightGridCounterHandle);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, m_tiledLightList.m_lightGridCounterHandle);
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(UINT), &initCounterValue, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, m_tiledLightList.m_lightGridCounterHandle);
-    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);*/
+
+    m_tiledLightList.m_lightGridCounterHandle = m_pScene->GetSsboMgr()->
+                                                    addStaticSsbo(sizeof(UINT),
+                                                                  &initCounterValue,
+                                                                  GL_MAP_WRITE_BIT,
+                                                                  3);
 
     GLuint lightCullingProgram = m_lightCullingComputeShader.useProgram();
 
@@ -289,6 +296,8 @@ void ForwardPlusRender::lightCulling()
     m_camDepthBuffer.getTexturePtr(GL_TEXTURE0)
         ->bindTexture(GL_TEXTURE0, lightCullingProgram, "depthTexture");
 
+    m_lightCullingComputeShader.disableCSVariableGroupSize();
+
     // Generate light index list and light grid
     m_lightCullingComputeShader.compute();
 
@@ -297,7 +306,8 @@ void ForwardPlusRender::lightCulling()
 
     // Reset atomic buffer counter
     UINT initCounterValue = 0;
-    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, m_tiledLightList.m_lightGridCounterHandle);
+    /*glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, m_tiledLightList.m_lightGridCounterHandle);
     glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(UINT), &initCounterValue);
-    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);*/
+    m_pScene->GetSsboMgr()->GetSsbo(3)->setData(sizeof(UINT), &initCounterValue);
 }

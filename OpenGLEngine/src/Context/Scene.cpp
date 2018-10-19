@@ -416,7 +416,7 @@ void Scene::postDraw()
 {
     // TODO: Post processing
 
-    debugDraw();
+    // debugDraw();
 }
 
 void Scene::drawScene()
@@ -480,8 +480,8 @@ void Scene::drawScene()
             case FORWARD_PLUS_RENDERING:
             {
                 glUniform1ui(renderMethodHandle, 1);
-                m_uniformBufferMgr.bindUniformBuffer(
-                    m_pForwardPlusRenderer->tileSizeUboIndex, sceneShaderProgram, "TileSizeUniformBlock");
+                /*m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->tileSizeUboIndex, sceneShaderProgram, "TileSizeUniformBlock");*/
                 m_uniformBufferMgr.bindUniformBuffer(
                     m_pForwardPlusRenderer->globalSizeUboIndex, sceneShaderProgram, "GlobalSizeUniformBlock");
                 break;

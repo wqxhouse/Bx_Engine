@@ -2,15 +2,16 @@
     GridFrustumsCompute.cs
 */
 
-#version 460 core
+#version 450 core
 
-#extension GL_ARB_compute_variable_group_size : require
-#extension GL_ARB_compute_variable_group_size : enable
+// #extension GL_ARB_compute_variable_group_size : require
+// #extension GL_ARB_compute_variable_group_size : enable
 
 #include <Utilities.hglsl>
 #include <Frustum.hglsl>
 
-layout (local_size_variable) in;
+// layout (local_size_variable) in;
+layout (local_size_x = 16, local_size_y = 16) in;
 
 uniform int frustumSize;
 
