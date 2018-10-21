@@ -6,6 +6,10 @@
 #include <Light.hglsl>
 #include <Utilities.hglsl>
 #include <BRDF.hglsl>
+#include <Frustum.hglsl>
+
+#define RENDER_METHOD_DEFERRED       0u
+#define RENDER_METHOD_DEFERRED_TILED 1u
 
 layout(location = 0) uniform sampler2D posTex;
 layout(location = 1) uniform sampler2D normalTex;
@@ -31,7 +35,7 @@ layout (location = 8) uniform sampler2DArray shadowMapSampler;
 
 layout (std140) uniform RenderingResolutionBlock
 {
-    Resolution resolution;
+    Resolution m_resolution;
 };
 
 uniform vec3 eyePos;
@@ -40,8 +44,30 @@ uniform mat4 viewMat;
 
 // uniform mat4 lightTransVP;
 
-// Test
+// SSAO
 uniform int useSsao;
+
+// Tiled rendering
+uniform uint useForwardPlus;
+layout(std140) uniform TileSizeUniformBlock
+{
+    Resolution m_tileSize; // 16 * 16 by default
+};
+
+layout(std140) uniform GlobalSizeUniformBlock
+{
+    Resolution m_tileResolution;
+};
+
+layout(std430, binding = 1) buffer LightGridBuffer
+{
+    LightTile m_lightGrid[];
+};
+
+layout(std430, binding = 2) buffer LightIndexListBuffer
+{
+    uint m_lightIndexList[];
+};
 
 out vec4 outColor;
 
@@ -112,8 +138,8 @@ vec2 calgBufferTexCoord()
     vec2 result;
 
     result = gl_FragCoord.xy;
-    result.x /= float(resolution.width);
-    result.y /= float(resolution.height);
+    result.x /= float(m_resolution.width);
+    result.y /= float(m_resolution.height);
 
     return result;
 }
@@ -138,7 +164,7 @@ void main()
 
     vec4  gSpecular = texture(specularTex, gBufferTexCoord);
     vec3  specular  = gSpecular.xyz;
-    float ns  = gSpecular.w;
+    float ns        = gSpecular.w;
 
     // Transform eye position to view space
     vec4 eyePosVec4 = viewMat * vec4(eyePos, 1.0f);
@@ -148,10 +174,41 @@ void main()
     vec3 radiance; // Final radiance for every pixel from hemisphere
     float attenuation = 1.0f; // Attenuations for radiance
 	
+    uint validLightNum = m_lightBuffer.lightNum;
+    /// Tiled branch
+    ///
+    //  We flip the x here for transforming LH coordinate system back to RH system.
+    ///
+    LightTile lightGrid;
+    if (useForwardPlus == RENDER_METHOD_DEFERRED_TILED)
+    {
+        uvec2 tileIndexD2 = uvec2((m_resolution.width - uint(gl_FragCoord.x)) / m_tileSize.width,
+                                  uint(gl_FragCoord.y) / m_tileSize.height);
+
+        uint tileIndex = tileIndexD2.x + tileIndexD2.y * m_tileResolution.width;
+
+        lightGrid     = m_lightGrid[tileIndex];
+        validLightNum = lightGrid.size;
+    }
+    /// End Tiled branch
+
 	// Loop all lights
-	for (uint i = 0; i < m_lightBuffer.lightNum; ++i)
+	for (uint i = 0; i < validLightNum; ++i)
 	{
-        Light light = m_lightBuffer.m_light[i];
+        Light light;
+
+        /// Tiled branch
+        if (useForwardPlus == RENDER_METHOD_DEFERRED_TILED)
+        {
+            uint index      = lightGrid.offset + i;
+            uint lightIndex = m_lightIndexList[index];
+            light           = m_lightBuffer.m_light[lightIndex];
+        }
+        /// End tiled
+        else if (useForwardPlus == RENDER_METHOD_DEFERRED)
+        {
+            light = m_lightBuffer.m_light[i];
+        }
 
 		// Shadow casting
 		vec4  posLightProj      = light.lightBase.lightTransVP * posWorldVec4;

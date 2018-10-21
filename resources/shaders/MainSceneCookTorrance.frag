@@ -175,7 +175,7 @@ void main()
         {
             uint index      = lightGrid.offset + i;
             uint lightIndex = m_lightIndexList[index];
-            light = m_lightBuffer.m_light[lightIndex];
+            light           = m_lightBuffer.m_light[lightIndex];
         }
         else if(useForwardPlus == RENDER_METHOD_FORWARD) // Normal Forward rendering
         {

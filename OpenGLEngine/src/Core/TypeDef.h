@@ -30,9 +30,17 @@ enum PolyMode
 
 enum RenderingMethod
 {
+    // Normal rendering
     FORWARD_RENDERING,
     DEFERRED_RENDERING,
+
+    // Tile based rendering
     FORWARD_PLUS_RENDERING,
+    DEFERRED_TILED_RENDERING,
+
+    // TODO: Clustered rendering
+    FORWARD_CLUSTERED_RENDERING,
+    DEFERRED_CLUSTERED_RENDERING
 };
 
 enum Antialasing

@@ -208,11 +208,11 @@ void Scene::update(float deltaTime)
     m_pActiveCamera = m_pCameraList[m_activeCameraIndex];
     m_pActiveCamera->update(deltaTime);
     
-    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_B])
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_T])
     {
         m_pSetting->m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
     }
-    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_N])
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_Y])
     {
         m_pSetting->m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
         if (m_pGBuffer == NULL)
@@ -225,9 +225,13 @@ void Scene::update(float deltaTime)
             }
         }
     }
-    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_M])
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_U])
     {
         m_pSetting->m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_I])
+    {
+        m_pSetting->m_graphicsSetting.renderingMethod = DEFERRED_TILED_RENDERING;
     }
 
     if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_R])
@@ -297,7 +301,8 @@ void Scene::update(float deltaTime)
 
     m_renderText = std::to_string(deltaTime);
 
-    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING)
+    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING ||
+        m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_TILED_RENDERING)
     {
         m_pForwardPlusRenderer->update();
     }
@@ -344,7 +349,8 @@ void Scene::preDraw()
     }
     /// End updating UBO data
 
-    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING)
+    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING ||
+        m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_TILED_RENDERING)
     {
         // Invoking frustum grid calculation and light culling
         m_pForwardPlusRenderer->draw();
@@ -373,8 +379,8 @@ void Scene::draw()
         m_pSkybox->draw();
     }
 
-    if (m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_RENDERING ||
-        m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::FORWARD_PLUS_RENDERING)
+    if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_RENDERING ||
+        m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING)
     {
         /*if (m_pSsao == NULL)
         {
@@ -410,7 +416,7 @@ void Scene::postDraw()
 {
     // TODO: Post processing
 
-    //debugDraw();
+    debugDraw();
 }
 
 void Scene::drawScene()
@@ -517,17 +523,21 @@ void Scene::drawScene()
 
 void Scene::deferredDrawScene()
 {
-    assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING);
+    assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING       ||
+           m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_TILED_RENDERING);
 
     GLuint gShaderProgram = m_deferredRenderingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
 
     Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
 
-    GLint eyeLocation = glGetUniformLocation(gShaderProgram, "eyePos");
-    GLint viewMatLocation = glGetUniformLocation(gShaderProgram, "viewMat");
+    GLint eyeLocation        = glGetUniformLocation(gShaderProgram, "eyePos");
+    GLint viewMatLocation    = glGetUniformLocation(gShaderProgram, "viewMat");
+    GLint renderMethodHandle = glGetUniformLocation(gShaderProgram, "useForwardPlus");
 
-    if (eyeLocation >= 0 && viewMatLocation >= 0)
+    if (eyeLocation        >= 0 &&
+        viewMatLocation    >= 0 &&
+        renderMethodHandle >= 0)
     {
         glUniform3fv(eyeLocation, 1, glm::value_ptr(activeCamPtr->GetTrans().GetPos()));
         glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(ToGLMMat4(activeCamPtr->GetViewMatrix())));
@@ -551,6 +561,28 @@ void Scene::deferredDrawScene()
 
             glActiveTexture(GL_TEXTURE7);
             glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+        switch (m_pSetting->m_graphicsSetting.renderingMethod)
+        {
+            case DEFERRED_RENDERING:
+            {
+                glUniform1ui(renderMethodHandle, 0);
+                break;
+            }
+            case DEFERRED_TILED_RENDERING:
+            {
+                glUniform1ui(renderMethodHandle, 1);
+                m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->tileSizeUboIndex, gShaderProgram, "TileSizeUniformBlock");
+                m_uniformBufferMgr.bindUniformBuffer(
+                    m_pForwardPlusRenderer->globalSizeUboIndex, gShaderProgram, "GlobalSizeUniformBlock");
+                break;
+            }
+            default:
+                printf("Unsupport render method!\n");
+                assert(FALSE);
+                break;
         }
 
         // Casting shadow map
@@ -690,8 +722,7 @@ void Scene::initializeDebug()
 
 void Scene::debugDraw()
 {
-    if (enableDebugDraw == TRUE &&
-        m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING)
+    if (enableDebugDraw == TRUE)
     {
         m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
 
@@ -706,15 +737,19 @@ void Scene::debugDraw()
 
         m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
 
-        if (m_pDebugSpriteList.size() == 0)
+        if (m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_RENDERING ||
+            m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_TILED_RENDERING)
         {
-            initializeDebug();
-        }
+            if (m_pDebugSpriteList.size() == 0)
+            {
+                initializeDebug();
+            }
 
-        for(int i = 0; i < 5; ++i)
-        {
-            m_pDebugSpriteList[i]->BindTexture(static_cast<Texture2D*>(m_pGBuffer->GetGBufferTexture(i)));
-            m_pDebugSpriteList[i]->draw();
+            for (int i = 0; i < 5; ++i)
+            {
+                m_pDebugSpriteList[i]->BindTexture(static_cast<Texture2D*>(m_pGBuffer->GetGBufferTexture(i)));
+                m_pDebugSpriteList[i]->draw();
+            }
         }
     }
 }
