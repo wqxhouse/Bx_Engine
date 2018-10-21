@@ -9,7 +9,7 @@
 #endif
 
 #ifndef MAX_LIGHT_NUM_TILE
-#define MAX_LIGHT_NUM_TILE 1024 // Maximum 1024 lights per tile
+#define MAX_LIGHT_NUM_TILE MAX_LIGHT_NUM // Maximum 2048 lights per tile
 #endif
 
 struct LightBase

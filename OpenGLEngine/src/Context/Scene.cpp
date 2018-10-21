@@ -9,7 +9,7 @@ Scene::Scene(Setting* pSetting)
       m_pLightMgr(NULL),
       m_activeCameraIndex(0),
       m_pActiveCamera(NULL),
-      m_uniformBufferMgr(1024),
+      m_uniformBufferMgr(),
       m_pGBuffer(NULL),
       useGlobalMaterial(FALSE),
       m_pSsao(NULL),
@@ -147,8 +147,8 @@ BOOL Scene::initialize()
     }
 
     // Light Probe
-    m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
-    m_pLightProbe->initialize();
+    //m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
+    //m_pLightProbe->initialize();
 
     // Text rendering
     m_text.initialize();
@@ -301,6 +301,26 @@ void Scene::update(float deltaTime)
     {
         m_pForwardPlusRenderer->update();
     }
+
+    // Demo
+    for (UINT i = 1; i < m_pLightMgr->GetLightCount(); ++i)
+    {
+        Light* pLight = m_pLightMgr->GetLight(i);
+
+        if (pLight->GetLightType() == POINT_LIGHT)
+        {
+            PointLight* pPointLight = static_cast<PointLight*>(pLight);
+
+            if (pPointLight->GetPos().y <= 100)
+            {
+                m_pLightMgr->translateLight(i, Math::Vector3(0.0f, 2.0f, 0.0f));
+            }
+            else
+            {
+                m_pLightMgr->translateLight(i, Math::Vector3(0.0f, -150.0f, 0.0f));
+            }
+        }
+    }
 }
 
 void Scene::preDraw()
@@ -337,8 +357,9 @@ void Scene::preDraw()
     }
 
     /// Casting light radiance on light probes
-    if (enableRealtimeLightProbe     == TRUE ||
-        m_pLightProbe->IsFirstDraw() == TRUE)
+    if ((m_pLightProbe != NULL)                 &&
+        ((enableRealtimeLightProbe     == TRUE) ||
+         (m_pLightProbe->IsFirstDraw() == TRUE)))
     {
         m_pLightProbe->draw();
     }
@@ -387,33 +408,13 @@ void Scene::draw()
 
 void Scene::postDraw()
 {
-    m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
-
-    glm::vec3 camPos = m_pActiveCamera->GetTrans().GetPos();
-    m_renderText += "CAMERA POSITION: (";
-    m_renderText += std::to_string(camPos.x);
-    m_renderText += ", ";
-    m_renderText += std::to_string(camPos.y);
-    m_renderText += ", ";
-    m_renderText += std::to_string(camPos.z);
-    m_renderText += ")\n";
-
-    m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
-
     // TODO: Post processing
 
-    debugDraw();
+    //debugDraw();
 }
 
 void Scene::drawScene()
 {
-    //Camera* activeCamPtr = m_pCameraList[m_activeCameraIndex];
-
-#if 0
-    Vector3 camPos = activeCamPtr->GetTrans().GetPos();
-    printf("%f %f %f\n", camPos.8x, camPos.y, camPos.z);
-#endif
-
     assert(m_pSetting->m_graphicsSetting.renderingMethod != DEFERRED_RENDERING);
 
     GLuint sceneShaderProgram;
@@ -584,18 +585,6 @@ void Scene::shadowPass()
 
     m_pLightMgr->updateLightShadow();
     m_pLightMgr->castShadow();
-
-    /*glCullFace(GL_FRONT);
-    if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
-    {
-        glDepthFunc(GL_NEVER);
-    }
-    pShadowMap->drawShadowMap(this);
-    glCullFace(GL_BACK);
-    if (m_pSetting->m_graphicsSetting.shadowCasting == FALSE)
-    {
-        glDepthFunc(GL_LEQUAL);
-    }*/
 }
 
 BOOL Scene::initializePhongRendering()
@@ -704,6 +693,19 @@ void Scene::debugDraw()
     if (enableDebugDraw == TRUE &&
         m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING)
     {
+        m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
+
+        glm::vec3 camPos = m_pActiveCamera->GetTrans().GetPos();
+        m_renderText += "CAMERA POSITION: (";
+        m_renderText += std::to_string(camPos.x);
+        m_renderText += ", ";
+        m_renderText += std::to_string(camPos.y);
+        m_renderText += ", ";
+        m_renderText += std::to_string(camPos.z);
+        m_renderText += ")\n";
+
+        m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
+
         if (m_pDebugSpriteList.size() == 0)
         {
             initializeDebug();

@@ -22,7 +22,7 @@ public:
         const UINT   bindingPoint);
 
     void* getData();
-    void* setData(
+    void  setData(
         const UINT  size,
         const void* data);
 

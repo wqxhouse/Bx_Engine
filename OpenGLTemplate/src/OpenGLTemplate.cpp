@@ -57,12 +57,11 @@ void OpenGLTemplate::createDefaultScene()
     pScene->AddPointLight(Vector3( 100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 50.0f);
     pScene->AddPointLight(Vector3(-100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 50.0f);*/
 
-    for (int i = 0; i < 15; ++i)
+    for (int i = 0; i < 63; ++i)
     {
-        for (int j = 0; j < 15; ++j)
+        for (int j = 0; j < 32; ++j)
         {
-            pScene->AddPointLight(Vector3(-100.0f + i * 10.0f, -30.0f, -100.0f + j * 10.0f),
-                                  // Vector3(0.5f, 0.5f, 0.5f),
+            pScene->AddPointLight(Vector3(-100.0f + i * 2.0f, -30.0f, -100.0f + j * 5.0f),
                                   Vector3(distribution(generator),
                                           distribution(generator),
                                           distribution(generator)),
@@ -99,7 +98,7 @@ void OpenGLTemplate::createDefaultScene()
 
     //pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
-    pScene->addProspectiveCamera(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0, 0, 0),
+    pScene->addProspectiveCamera(glm::vec3(-50.0f, 3.0f, 0.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 10.0f, invAspectRadio, 0.1f, 1000.0f, 70.0f);
 
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),
@@ -143,13 +142,6 @@ void OpenGLTemplate::createDefaultScene()
     pScene->addModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
         new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
 
-    /*pScene->addModel(
-        "../resources/models/cornellbox/CornellBox-Sphere.obj",
-        "../resources/models/cornellbox/CornellBox-Sphere.mtl",
-        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
-
-    //pScene->GetModelPtr(0)->m_pTrans->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
-
     pScene->addModel(
         "../resources/models/buddha/buddha.obj",
         "../resources/models/buddha/buddha.mtl",
@@ -159,6 +151,13 @@ void OpenGLTemplate::createDefaultScene()
         "../resources/models/dragon/dragon.obj",
         "../resources/models/dragon/dragon.mtl",
         new Trans(glm::vec3(0.0f, -30.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+    /*pScene->addModel(
+        "../resources/models/cornellbox/CornellBox-Sphere.obj",
+        "../resources/models/cornellbox/CornellBox-Sphere.mtl",
+        new Trans(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
+
+    //pScene->GetModelPtr(0)->m_pTrans->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
 
     //Create texture and set sampler
     pScene->addTexture("../resources/textures/teaport/wall.jpg",

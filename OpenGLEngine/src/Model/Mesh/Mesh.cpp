@@ -129,6 +129,9 @@ void Mesh::initialize()
     // Unbind VAO
     glBindVertexArray(0);
 
+    /*m_vertexBuffer.clear();
+    m_indexBuffer.clear();*/
+
     /*glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
     GLint bufSize;
 

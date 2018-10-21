@@ -30,7 +30,7 @@ public:
         const UINT   bindingPoint);
 
     void* GetSsboData(const UINT bindingPoint);
-    void* SetSsboData(
+    void  SetSsboData(
         const UINT  bindingPoint,
         const UINT  size,
         const void* data);

@@ -31,6 +31,8 @@ void Ssbo::createDynamicSsbo(
     const GLenum bufUsage,
     const UINT   bindingPoint)
 {
+    m_bindingPoint = bindingPoint;
+
     glGenBuffers(1, &m_ssboHandle);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssboHandle);
     glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, bufUsage);
@@ -42,18 +44,18 @@ void Ssbo::createDynamicSsbo(
 void* Ssbo::getData()
 {
     void* pData = NULL;
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssboHandle);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssboHandle); CHECK_GL_ERROR
     
-    pData = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+    pData = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY); CHECK_GL_ERROR
 
-    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER); CHECK_GL_ERROR
 
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); CHECK_GL_ERROR
 
     return pData;
 }
 
-void* Ssbo::setData(
+void Ssbo::setData(
     const UINT  size,
     const void* data)
 {
@@ -63,11 +65,9 @@ void* Ssbo::setData(
 
     pData = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
 
-    pData = memcpy(pData, data, size);
+    memcpy(pData, data, size);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
-    return pData;
 }

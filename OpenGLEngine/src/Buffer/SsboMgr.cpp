@@ -81,11 +81,19 @@ void SsboMgr::updateBindingPoint(
 
 void* SsboMgr::GetSsboData(const UINT bindingPoint)
 {
+    void* pData = NULL;
+
     Ssbo* pSsbo = m_pSsboList[bindingPoint];
-    return pSsbo->getData();
+
+    if (pSsbo != NULL)
+    {
+        pData = pSsbo->getData();
+    }
+
+    return pData;
 }
 
-void* SsboMgr::SetSsboData(
+void SsboMgr::SetSsboData(
     const UINT  bindingPoint,
     const UINT  size,
     const void* data)

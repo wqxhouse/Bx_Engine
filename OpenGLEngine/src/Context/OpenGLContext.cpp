@@ -104,7 +104,7 @@ void OpenGLContext::run()
         m_pScene->update(deltaTime);
         
         //Start Rendering
-        m_pScene->preDraw(); 
+        m_pScene->preDraw();
         m_pScene->draw(); 
         m_pScene->postDraw(); 
 

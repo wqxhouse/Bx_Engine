@@ -90,7 +90,7 @@ void LightMgr::createLightSsbo()
 
     if (pSsboMgr != NULL)
     {
-        pSsboMgr->addStaticSsbo(MAX_LIGHT_UBO_NUM * sizeof(LightData),
+        pSsboMgr->addStaticSsbo(MAX_LIGHT_NUM * sizeof(LightData),
                                 GetLightData(),
                                 GL_MAP_WRITE_BIT,
                                 LIGHT_BUFFER_SSBO_BINDING_POINT);
@@ -101,12 +101,15 @@ void LightMgr::updateLightSsbo()
 {
     SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
 
-    if (pSsboMgr != NULL)
+    if ((pSsboMgr != NULL) &&
+        (m_lightFlags.bitField.isUpdateLightSsbo == TRUE))
     {
         UINT* pData = reinterpret_cast<UINT*>(m_lightList.data());
         *pData = GetLightCount();
 
         pSsboMgr->SetSsboData(3, GetLightDataSize(), GetLightData());
+
+        m_lightFlags.bitField.isUpdateLightSsbo = FALSE;
     }
 }
 
@@ -138,11 +141,11 @@ void LightMgr::translateLight(
     {
         pLight->translate(transVector);
 
-        if (GetLightCount() <= MAX_LIGHT_UBO_NUM)
+        //if (GetLightCount() <= MAX_LIGHT_UBO_NUM)
         {
-            m_lightFlags.bitField.isUpdateLightUbo = TRUE;
+            //m_lightFlags.bitField.isUpdateLightUbo = TRUE;
         }
-        else
+        //else
         {
             m_lightFlags.bitField.isUpdateLightSsbo = TRUE;
         }
@@ -162,11 +165,11 @@ void LightMgr::rotateLight(
     {
         pLight->rotate(axis, angle);
 
-        if (GetLightCount() <= MAX_LIGHT_UBO_NUM)
+        //if (GetLightCount() <= MAX_LIGHT_UBO_NUM)
         {
-            m_lightFlags.bitField.isUpdateLightUbo = TRUE;
+            //m_lightFlags.bitField.isUpdateLightUbo = TRUE;
         }
-        else
+        //else
         {
             m_lightFlags.bitField.isUpdateLightSsbo = TRUE;
         }
@@ -204,6 +207,7 @@ void LightMgr::addPointLight(
     m_lightList.push_back(lightData);
 
     m_lightFlags.bitField.isRecreateLightUbo = TRUE;
+    m_lightFlags.bitField.isUpdateLightSsbo = TRUE;
 }
 
 void LightMgr::addSpotLight(
@@ -224,4 +228,5 @@ void LightMgr::addSpotLight(
     m_lightList.push_back(lightData);
 
     m_lightFlags.bitField.isRecreateLightUbo = TRUE;
+    m_lightFlags.bitField.isUpdateLightSsbo = TRUE;
 }
