@@ -523,8 +523,8 @@ void Scene::drawScene()
 
 void Scene::deferredDrawScene()
 {
-    assert(m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_RENDERING       ||
-           m_pSetting->m_graphicsSetting.renderingMethod == RenderingMethod::DEFERRED_TILED_RENDERING);
+    assert(m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_RENDERING       ||
+           m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_TILED_RENDERING);
 
     GLuint gShaderProgram = m_deferredRenderingShader.useProgram();
     m_pGBuffer->readGBuffer(gShaderProgram);
@@ -715,7 +715,7 @@ void Scene::initializeDebug()
     for(int i = 0; i < 5; ++i)
     {        
         m_pDebugSpriteList.push_back(
-            new Sprite(this, Math::Vector3(50.0f, 600.0f - i * 100.0f, 0.0f), { 100.0f, 100.0f }));
+            new Sprite(this, Math::Vector3(50.0f, 500.0f - i * 100.0f, 0.0f), { 100.0f, 100.0f }));
         m_pDebugSpriteList[i]->initialize();
     }
 }
@@ -725,6 +725,26 @@ void Scene::debugDraw()
     if (enableDebugDraw == TRUE)
     {
         m_renderText = "SECONDS PER FRAME: " + m_renderText + "MS\n";
+
+        switch (m_pSetting->m_graphicsSetting.renderingMethod)
+        {
+            case FORWARD_RENDERING:
+                m_renderText += "FORWARD_RENDERING\n";
+                break;
+            case DEFERRED_RENDERING:
+                m_renderText += "DEFERRED_RENDERING\n";
+                break;
+            case FORWARD_PLUS_RENDERING:
+                m_renderText += "FORWARD_PLUS_RENDERING\n";
+                break;
+            case DEFERRED_TILED_RENDERING:
+                m_renderText += "DEFERRED_TILED_RENDERING\n";
+                break;
+            default:
+                printf("Unsupport render method!\n");
+                assert(FALSE);
+                break;
+        }
 
         glm::vec3 camPos = m_pActiveCamera->GetTrans().GetPos();
         m_renderText += "CAMERA POSITION: (";
