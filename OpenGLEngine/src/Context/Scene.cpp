@@ -147,8 +147,8 @@ BOOL Scene::initialize()
     }
 
     // Light Probe
-    //m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
-    //m_pLightProbe->initialize();
+    m_pLightProbe = new LightProbe(this, Math::Vector3(3.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
+    m_pLightProbe->initialize();
 
     // Text rendering
     m_text.initialize();
@@ -634,7 +634,7 @@ BOOL Scene::initializePhongRendering()
 
     /// UBOs initialization
     m_transUniformbufferIndex =
-        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Math::Mat4) * 4, nullptr);
+        m_uniformBufferMgr.createUniformBuffer(GL_DYNAMIC_DRAW, sizeof(Math::Mat4) * 4, NULL);
 
     m_uniformBufferMgr.bindUniformBuffer(
         m_transUniformbufferIndex,
