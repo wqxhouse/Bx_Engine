@@ -53,9 +53,9 @@ void OpenGLTemplate::createDefaultScene()
 
     // pScene->AddPointLight(Vector3(0.0f, -0.5f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), 1.0f);
 
-    /*pScene->AddPointLight(Vector3(   0.0f, 0.0f, 0.0f), Vector3(0.5f, 0.5f, 0.5f), 50.0f);
-    pScene->AddPointLight(Vector3( 100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 50.0f);
-    pScene->AddPointLight(Vector3(-100.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 50.0f);*/
+    /*pScene->AddPointLight(Vector3( 0.0f, 0.0f, 0.0f), Vector3(0.5f, 0.0f, 0.0f), 2.0f);
+    pScene->AddPointLight(Vector3( 1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 2.0f);
+    pScene->AddPointLight(Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 2.0f);*/
 
     for (int i = 0; i < 63; ++i)
     {
@@ -98,7 +98,7 @@ void OpenGLTemplate::createDefaultScene()
 
     //pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.5f, 0.5f));
 
-    pScene->addProspectiveCamera(glm::vec3(-50.0f, 3.0f, 0.0f), glm::vec3(0, 0, 0),
+    pScene->addProspectiveCamera(glm::vec3(-5.0f, 3.0f, 0.0f), glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0), 10.0f, invAspectRadio, 0.1f, 1000.0f, 70.0f);
 
     /*pScene->addProspectiveCamera(glm::vec3(0.0f, 5.0f, 0.1f), glm::vec3(0, 4, 0),

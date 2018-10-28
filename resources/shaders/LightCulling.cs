@@ -46,6 +46,12 @@ uniform mat4 projMatInv;
 // Atomic counters
 layout(binding = 0, offset = 0) uniform atomic_uint lightIndexListCounter;
 
+// Group shared variables
+shared uint localLightIndexList[MAX_LIGHT_NUM_TILE];
+shared uint tileLightSize;
+shared uint uMinDepth;
+shared uint uMaxDepth;
+
 // SSBO
 layout(std430, binding = 0) buffer Frustums
 {
@@ -102,9 +108,11 @@ bool pointLightInsideFrustum(
 {
     bool result = true;
 
+    float centerDepth = -center.z;
+    
     // The point light is outside of the view near/far clip space
-    if ((center.z - radius > threadFrustum.nearPlane.d) ||
-        (center.z + radius < threadFrustum.farPlane.d))
+    if ((centerDepth + radius < threadFrustum.nearPlane.d) ||
+        (centerDepth - radius > threadFrustum.farPlane.d))
     {
         result = false;
     }
@@ -169,67 +177,71 @@ bool lightVisibility(uint frustumIndex, uint lightIndex)
 
 void main()
 {
-    uint threadId = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * m_tileResolution.width;
+    uint frustumIndex     = gl_WorkGroupID.x + gl_WorkGroupID.y * m_tileResolution.width;
+    uint localThreadIndex = gl_LocalInvocationID.x + gl_LocalInvocationID.y * m_tileSize.width;
 
-    if (threadId < frustumSize)
+    if (frustumIndex < frustumSize)
     {
-        // Calculate near/far plane for the frustum
-        float minDepth = zFarVS;
-        float maxDepth = zNearVS;
-
-        ivec2 iTexCoordBase = ivec2(gl_GlobalInvocationID.x * m_tileSize.width,
-                                    gl_GlobalInvocationID.y * m_tileSize.height);
-
-        // TODO: Do depth max/min clip in parallel
-        for (uint i = 0; i < m_tileSize.width; ++i)
+        /// Calculate near/far (max/min) plane for the frustum
+        // Initialization
+        if (localThreadIndex == 0)
         {
-            for (int j = 0; j < m_tileSize.height; ++j)
-            {
-                ivec2 iTexCoord = iTexCoordBase + ivec2(float(i), float(j));
-                vec2  texCoord  = vec2(float(m_renderingResolution.width - iTexCoord.x) / float(m_renderingResolution.width),
-                                       float(iTexCoord.y) / float(m_renderingResolution.height));
-
-                float depthScreen = texture(depthTexture, texCoord).r;
-                float depth       = screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
-
-                minDepth = max(minDepth, depth);
-                maxDepth = min(maxDepth, depth);
-            }
+            tileLightSize = 0;
+            uMinDepth     = 0xFFFFFFFF;
+            uMaxDepth     = 0;
         }
 
-        m_frustum[threadId].nearPlane.N = vec3(0.0f, 0.0f, -1.0f);
-        m_frustum[threadId].nearPlane.d = minDepth;
+        barrier();
 
-        m_frustum[threadId].farPlane.N  = vec3(0.0f, 0.0f, 1.0f);
-        m_frustum[threadId].farPlane.d  = maxDepth;
+        // Calculate the max/min for near/far plane
+        ivec2 iTexCoord = ivec2(gl_GlobalInvocationID.xy);
+        vec2  texCoord  = vec2(float(m_renderingResolution.width - iTexCoord.x) / float(m_renderingResolution.width),
+                               float(iTexCoord.y) / float(m_renderingResolution.height));
+
+        float depthScreen   = texture(depthTexture, texCoord).r;
+        float depth         = screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
+        uint  uDepth        = floatBitsToUint(-depth);
+
+        atomicMin(uMinDepth, uDepth);
+        atomicMax(uMaxDepth, uDepth);
+        // End max/min calculation
 
         barrier();
-        
-        // Light culling
-        uint tileLightSize = 0;
-        uint localLightIndexList[MAX_LIGHT_NUM_TILE];
 
-        for (uint i = 0; i < m_lightBuffer.lightNum; ++i)
+        m_frustum[frustumIndex].nearPlane.N = vec3(0.0f, 0.0f, -1.0f);
+        m_frustum[frustumIndex].nearPlane.d = uintBitsToFloat(uMinDepth);
+
+        m_frustum[frustumIndex].farPlane.N  = vec3(0.0f, 0.0f, 1.0f);
+        m_frustum[frustumIndex].farPlane.d  = uintBitsToFloat(uMaxDepth);
+        /// End far/near plane calculation
+
+        // Light culling
+        uint tileBlockSize    = m_tileSize.width * m_tileSize.height;
+
+        for (uint i = localThreadIndex; i < m_lightBuffer.lightNum; i+= tileBlockSize)
         {
-            bool isLightVisible = lightVisibility(threadId, i);
+            bool isLightVisible = lightVisibility(frustumIndex, i);
 
             if (isLightVisible == true)
             {
-                localLightIndexList[tileLightSize] = i;
-                tileLightSize++;
+                uint tileLightIndex                 = atomicAdd(tileLightSize, 1);
+                localLightIndexList[tileLightIndex] = i;
             }
         }
 
         barrier();
-        
-        lightGrid[threadId].offset = atomicCounterAdd(lightIndexListCounter, tileLightSize);
-        lightGrid[threadId].size   = tileLightSize;
 
-        // Copy the local light index list to global list
-        for (uint i = 0; i < tileLightSize; ++i)
+        if (localThreadIndex == 0)
         {
-            uint globalLightIndexListIndex            = lightGrid[threadId].offset + i;
-            lightIndexList[globalLightIndexListIndex] = localLightIndexList[i];
+            lightGrid[frustumIndex].offset = atomicCounterAdd(lightIndexListCounter, tileLightSize);
+            lightGrid[frustumIndex].size   = tileLightSize;
+
+            // Copy the local light index list to global list
+            for (uint i = 0; i < tileLightSize; ++i)
+            {
+                uint globalLightIndexListIndex            = lightGrid[frustumIndex].offset + i;
+                lightIndexList[globalLightIndexListIndex] = localLightIndexList[i];
+            }
         }
     }
 }

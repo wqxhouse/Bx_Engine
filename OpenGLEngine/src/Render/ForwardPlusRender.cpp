@@ -86,18 +86,6 @@ void ForwardPlusRender::draw()
     renderViewDepthBuffer();
 
     lightCulling();
-
-    // Sample of mapping SSBO
-    /*SsboMgr* pSsboMgr = m_pScene->GetSsboMgr();
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, pSsboMgr->GetSsbo(1)->GetSsboHandle());
-    UINT* pData = static_cast<UINT*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
-
-    for (int i = 0; i < 4; ++i)
-    {
-        gpuFrustumsPtr[i] = m_tests[i];
-    }
-
-    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);*/
 }
 
 BOOL ForwardPlusRender::initGridFrustums()
@@ -235,9 +223,11 @@ void ForwardPlusRender::updateLightData()
             m_tiledLightList.m_lightIndexListBindingPoint);
 
         m_lightCullingComputeShader.setTotalThreadSize(
-            m_frustumNum[0], // Number of frustum tiles on X
-            m_frustumNum[1], // Number of frustum tiles on Y
-            1);              // Keep Z to 1
+            // m_frustumNum[0],
+            // m_frustumNum[1],
+            m_resolution.width,  // Number of pixels on X
+            m_resolution.height, // Number of pixels tiles on Y
+            1);                  // Keep Z to 1
 
         m_renderFlags.bits.lightListUpdate = 0;
 
@@ -254,7 +244,9 @@ void ForwardPlusRender::updateLightData()
 
         if (m_pShadowMap == NULL)
         {
-            m_pShadowMap = new ShadowMap(m_pScene, m_pScene->GetActivateCamera(), m_pScene->GetSetting()->resolution);
+            m_pShadowMap =
+                new ShadowMap(m_pScene, m_pScene->GetActivateCamera(), m_pScene->GetSetting()->resolution);
+
             m_pShadowMap->initialize();
         }
 
