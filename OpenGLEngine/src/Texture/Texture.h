@@ -36,7 +36,6 @@ protected:
     GLuint m_textureHandle;
 
     UINT  m_textureDataType;
-
     UINT  m_textureWidth;
     UINT  m_textureHeight;
 

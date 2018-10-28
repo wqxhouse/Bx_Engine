@@ -21,13 +21,9 @@ uniform transUniformBlock
     Trans m_trans;
 };
 
-// uniform mat4 lightTransWVP;
-
 out vec4 posWorldVec4;
 out vec3 normalWorld;
 out vec2 fragTexCoord;
-
-// out vec4 posLightProj;
 
 out vec3 lightProbeSampler;
 
@@ -37,9 +33,7 @@ void main()
 	normalWorld  = (m_trans.world * vec4(normal, 0.0f)).xyz;
 	fragTexCoord = texCoord;
 
-	// posLightProj = lightTransWVP * vec4(position, 1.0f);
-
-    lightProbeSampler = position;//vec3(position.x, position.y, position.z);
+    lightProbeSampler = position;
 
     gl_Position  = m_trans.wvp * vec4(position, 1.0f);
 }

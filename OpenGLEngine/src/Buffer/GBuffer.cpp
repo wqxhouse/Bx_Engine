@@ -119,17 +119,6 @@ BOOL GBuffer::initialize()
                                               GL_CLAMP_TO_BORDER,
                                               FALSE);
 
-    /*m_gFramebuffer.createFramebufferTexture2D(GL_TEXTURE7,
-                                              GL_COLOR_ATTACHMENT7,
-                                              m_width,
-                                              m_height,
-                                              1,
-                                              GL_RED_INTEGER,
-                                              GL_R32I,
-                                              GL_UNSIGNED_INT,
-                                              GL_CLAMP_TO_BORDER,
-                                              FALSE);*/
-
     m_gShader.setShaderFiles("GBuffer.vert", "GBuffer.frag");
     result = m_gShader.compileShaderProgram();
 
