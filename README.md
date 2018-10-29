@@ -1,2 +1,2 @@
-# OpenGL_Framework
-This is a graphics framework based on OpenGL.
+# BXS_Engine
+OpenGL engine
