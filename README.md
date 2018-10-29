@@ -1,2 +1,2 @@
-# BXS_Engine
+# Bx_Engine
 OpenGL engine
