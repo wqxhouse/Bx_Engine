@@ -246,6 +246,36 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\include\" /Y/D/E</Command>
     <ClCompile Include="src\Texture\Texture3D.cpp" />
     <ClCompile Include="src\Texture\Cubemap.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\BRDF.hglsl" />
+    <None Include="..\resources\shaders\CookTorranceDefferedDraw.frag" />
+    <None Include="..\resources\shaders\Frustum.hglsl" />
+    <None Include="..\resources\shaders\GBuffer.frag" />
+    <None Include="..\resources\shaders\GBuffer.vert" />
+    <None Include="..\resources\shaders\GBufferPBR.frag" />
+    <None Include="..\resources\shaders\GridFrustumsCompute.cs" />
+    <None Include="..\resources\shaders\Light.hglsl" />
+    <None Include="..\resources\shaders\LightCulling.cs" />
+    <None Include="..\resources\shaders\MainScene.frag" />
+    <None Include="..\resources\shaders\MainScene.vert" />
+    <None Include="..\resources\shaders\MainSceneCookTorrance.frag" />
+    <None Include="..\resources\shaders\MainSceneDefferedDraw.frag" />
+    <None Include="..\resources\shaders\MainSceneDefferedDraw.vert" />
+    <None Include="..\resources\shaders\Material.hglsl" />
+    <None Include="..\resources\shaders\ShadowMap.frag" />
+    <None Include="..\resources\shaders\ShadowMap.vert" />
+    <None Include="..\resources\shaders\Skybox.frag" />
+    <None Include="..\resources\shaders\Skybox.vert" />
+    <None Include="..\resources\shaders\Sprite.frag" />
+    <None Include="..\resources\shaders\Sprite.vert" />
+    <None Include="..\resources\shaders\SSAO.frag" />
+    <None Include="..\resources\shaders\SSAO.vert" />
+    <None Include="..\resources\shaders\Text.frag" />
+    <None Include="..\resources\shaders\Text.vert" />
+    <None Include="..\resources\shaders\TextureBlur.frag" />
+    <None Include="..\resources\shaders\TextureBlur.vert" />
+    <None Include="..\resources\shaders\Utilities.hglsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

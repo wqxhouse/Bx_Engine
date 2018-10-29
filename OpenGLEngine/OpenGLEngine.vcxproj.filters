@@ -55,6 +55,9 @@
     <Filter Include="src\Render">
       <UniqueIdentifier>{89a61e0b-fc3a-4529-9942-c9968ded9295}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{366cbb1e-bda5-4c82-9dde-38ed1bb71c69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector3.h">
@@ -365,5 +368,91 @@
     <ClCompile Include="src\Buffer\SsboMgr.cpp">
       <Filter>src\Buffer</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\GridFrustumsCompute.cs">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Light.hglsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\LightCulling.cs">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\MainScene.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\MainScene.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\MainSceneCookTorrance.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\MainSceneDefferedDraw.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\MainSceneDefferedDraw.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Material.hglsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\ShadowMap.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\ShadowMap.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Skybox.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Skybox.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Sprite.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Sprite.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\SSAO.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\SSAO.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Text.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Text.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\TextureBlur.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\TextureBlur.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Utilities.hglsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\BRDF.hglsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\CookTorranceDefferedDraw.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\Frustum.hglsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\GBuffer.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\GBuffer.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resources\shaders\GBufferPBR.frag">
+      <Filter>shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
