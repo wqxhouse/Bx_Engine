@@ -11,7 +11,7 @@
 #include <Light.hglsl>
 
 #include <Frustum.hglsl>
-
+#line 14
 layout (local_size_variable) in;
 
 // Scene Depth Texture
@@ -51,6 +51,15 @@ shared uint localLightIndexList[MAX_LIGHT_NUM_TILE];
 shared uint tileLightSize;
 shared uint uMinDepth;
 shared uint uMaxDepth;
+
+// Shader global variables
+float minDepth;
+float maxDepth;
+float tileDepthDis;
+uint  tileIndex;
+
+// 2.5D culling
+shared uint tileDepthMask;
 
 // SSBO
 layout(std430, binding = 0) buffer Frustums
@@ -109,7 +118,29 @@ bool pointLightInsideFrustum(
     bool result = true;
 
     float centerDepth = -center.z;
-    
+
+    /// 2.5D culling
+    float minLightDepth     = centerDepth - radius;
+    float maxLightDepth     = centerDepth + radius;
+    uint minLightDepthIndex = min(31, max(0, uint(floor((minLightDepth - minDepth) / tileDepthDis))));
+    uint maxLightDepthIndex = min(31, max(0, uint(floor((maxLightDepth - minDepth) / tileDepthDis))));
+
+    // Set the bits in light mask from minLightDepthIndex to maxLightDepthIndex to 1
+    // E.g. min = 2, max = 5;
+    // So the minMask is 1 << 2 = 100, maxMask is 1 << 5 = 100000;
+    // 100000 - 1 = 11111, 100 - 1 = 11;
+    // 11111 ^ 11 = 11100;
+    // 100000 | 11100 = 111100
+    uint lightMask = ((1 << maxLightDepthIndex) |
+                      (((1 << maxLightDepthIndex) - 1) ^
+                       ((1 << minLightDepthIndex) - 1)));
+
+    if ((lightMask & tileDepthMask) == 0)
+    {
+        result = false;
+    }
+    /// End 2.5D culling
+
     // The point light is outside of the view near/far clip space
     if ((centerDepth + radius < threadFrustum.nearPlane.d) ||
         (centerDepth - radius > threadFrustum.farPlane.d))
@@ -160,7 +191,7 @@ bool lightVisibility(uint frustumIndex, uint lightIndex)
             lightVisible = pointLightInsideFrustum(frustum, pointLightCenterVS, light.data[0].w);
             break;
         }
-        case 2: // Spot Light
+        case 2: // TODO: Spot Light
         {
             vec4 spotLightCenterVSHomogeneous = viewMat * vec4(light.data[0].xyz, 1.0f);
             vec3 spotLightCenterVS = spotLightCenterVSHomogeneous.xyz / spotLightCenterVSHomogeneous.w;
@@ -189,6 +220,7 @@ void main()
             tileLightSize = 0;
             uMinDepth     = 0xFFFFFFFF;
             uMaxDepth     = 0;
+            tileDepthMask = 0;
         }
 
         barrier();
@@ -198,25 +230,38 @@ void main()
         vec2  texCoord  = vec2(float(m_renderingResolution.width - iTexCoord.x) / float(m_renderingResolution.width),
                                float(iTexCoord.y) / float(m_renderingResolution.height));
 
-        float depthScreen   = texture(depthTexture, texCoord).r;
-        float depth         = screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
-        uint  uDepth        = floatBitsToUint(-depth);
+        float depthScreen   =  texture(depthTexture, texCoord).r;
+        float depth         = -screenToView(vec4(0.0f, 0.0f, depthScreen, 1.0f)).z;
+        uint  uDepth        =  floatBitsToUint(depth);
 
+        // TODO: Use Parallel Reduction here, avoid atomic overhead
         atomicMin(uMinDepth, uDepth);
         atomicMax(uMaxDepth, uDepth);
         // End max/min calculation
 
         barrier();
 
+        minDepth = uintBitsToFloat(uMinDepth);
+        maxDepth = uintBitsToFloat(uMaxDepth);
+
+        /// 2.5D culling tile depth mask construction
+        tileDepthDis = ((maxDepth - minDepth) * 0.03125f);
+        tileIndex    = min(31, max(0, uint(floor((depth - minDepth) / tileDepthDis))));
+
+        atomicOr(tileDepthMask, (1 << tileIndex));
+        /// End 2.5D culling tile depth mask construction
+
         m_frustum[frustumIndex].nearPlane.N = vec3(0.0f, 0.0f, -1.0f);
-        m_frustum[frustumIndex].nearPlane.d = uintBitsToFloat(uMinDepth);
+        m_frustum[frustumIndex].nearPlane.d = minDepth;
 
         m_frustum[frustumIndex].farPlane.N  = vec3(0.0f, 0.0f, 1.0f);
-        m_frustum[frustumIndex].farPlane.d  = uintBitsToFloat(uMaxDepth);
+        m_frustum[frustumIndex].farPlane.d  = maxDepth;
         /// End far/near plane calculation
 
+        barrier();
+
         // Light culling
-        uint tileBlockSize    = m_tileSize.width * m_tileSize.height;
+        uint tileBlockSize = m_tileSize.width * m_tileSize.height;
 
         for (uint i = localThreadIndex; i < m_lightBuffer.lightNum; i+= tileBlockSize)
         {

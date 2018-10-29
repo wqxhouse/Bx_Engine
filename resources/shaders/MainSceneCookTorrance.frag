@@ -258,7 +258,6 @@ void main()
         // lightRadiance *= shadowAttenuation;
 
         radiance += ((shadowAttenuation < 0.9999999f) ? vec3(0.0f) : lightRadiance * attenuation);
-        // radiance += lightRadiance;
     }
 
     // Light Probe
@@ -269,15 +268,8 @@ void main()
     vec3 environmentLightRadiance = calCookTorranceRadiance(view, normal, -reflection, environmentLight);
     //radiance += environmentLightRadiance;
 
-    //radiance *= texture(diffuseMap, fragTexCoord).xyz;
-
     // Gamma correction
     radiance = gammaCorrection(radiance);
     outColor = vec4(radiance, 1.0f);
-
-    /*if (validLightNum == 1) outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    else if (validLightNum == 2) outColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    else if (validLightNum == 3) outColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
-    else if (validLightNum == 4) outColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);*/
 }
 // End MainSceneCookTorrance.frag

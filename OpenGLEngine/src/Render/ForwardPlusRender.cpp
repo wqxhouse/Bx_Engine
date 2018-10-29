@@ -223,8 +223,6 @@ void ForwardPlusRender::updateLightData()
             m_tiledLightList.m_lightIndexListBindingPoint);
 
         m_lightCullingComputeShader.setTotalThreadSize(
-            // m_frustumNum[0],
-            // m_frustumNum[1],
             m_resolution.width,  // Number of pixels on X
             m_resolution.height, // Number of pixels tiles on Y
             1);                  // Keep Z to 1

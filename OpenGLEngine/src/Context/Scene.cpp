@@ -308,7 +308,7 @@ void Scene::update(float deltaTime)
     }
 
     // Demo
-    for (UINT i = 1; i < m_pLightMgr->GetLightCount(); ++i)
+    /*for (UINT i = 1; i < m_pLightMgr->GetLightCount(); ++i)
     {
         Light* pLight = m_pLightMgr->GetLight(i);
 
@@ -325,7 +325,7 @@ void Scene::update(float deltaTime)
                 m_pLightMgr->translateLight(i, Math::Vector3(0.0f, -150.0f, 0.0f));
             }
         }
-    }
+    }*/
 }
 
 void Scene::preDraw()
@@ -422,29 +422,6 @@ void Scene::postDraw()
 void Scene::drawScene()
 {
     assert(m_pSetting->m_graphicsSetting.renderingMethod != DEFERRED_RENDERING);
-
-    /*auto test  = glm::uintBitsToFloat(0u);
-    auto test2 = glm::uintBitsToFloat(0xFFFFFFFF);
-
-    struct NearFarPlanes
-    {
-        float near;
-        float far;
-    };
-
-    Frustum* pData = (Frustum*)(m_ssboMgr.GetSsboData(0));
-    std::vector<NearFarPlanes> nearFarPlanes;
-    for (UINT i = 0; i < 3600; ++i)
-    {
-        nearFarPlanes.push_back({ pData[i].nearPlane.d, pData[i].farPlane.d });
-    }
-    struct LightTile
-    {
-        UINT offset = 0;
-        UINT size = 0;
-    };
-    LightTile* pTileData = (LightTile*)(m_ssboMgr.GetSsboData(1));
-    UINT* pLightIndex    = (UINT*)(m_ssboMgr.GetSsboData(2));*/
 
     GLuint sceneShaderProgram;
     GLuint materialIndex;
