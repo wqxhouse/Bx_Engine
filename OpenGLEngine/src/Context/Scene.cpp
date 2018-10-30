@@ -426,21 +426,6 @@ void Scene::draw()
 
 void Scene::postDraw()
 {
-    float fps = 1.0f / stof(m_renderText);
-    m_renderText = "SECONDS PER FRAME: " + m_renderText + "S\n";
-    // m_renderText += "FPS: " + std::to_string(fps) + "\n";
-
-    glm::vec3 camPos = m_pActiveCamera->GetTrans().GetPos();
-    m_renderText += "CAMERA POSITION: (";
-    m_renderText += std::to_string(camPos.x);
-    m_renderText += ", ";
-    m_renderText += std::to_string(camPos.y);
-    m_renderText += ", ";
-    m_renderText += std::to_string(camPos.z);
-    m_renderText += ")\n";
-
-    m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
-
     // TODO: Post processing
 
     debugDraw();
@@ -801,7 +786,7 @@ void Scene::debugDraw()
         m_renderText += std::to_string(camPos.z);
         m_renderText += ")\n";
 
-        m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
+        // m_text.RenderText(this, m_renderText, Math::Vector2(50.0f, 700.0f));
 
         if (m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_RENDERING ||
             m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_TILED_RENDERING)

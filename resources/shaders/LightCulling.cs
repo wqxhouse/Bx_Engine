@@ -11,7 +11,6 @@
 #include <Light.hglsl>
 
 #include <Frustum.hglsl>
-
 #line 14
 
 // layout (local_size_variable) in;
@@ -164,7 +163,7 @@ bool pointLightInsideFrustum(
     {
         if (sphereOutsidePlane(threadFrustum.m_plane[i], center, radius) == true)
         {
-            result = false;
+            // result = false;
         }
     }
 
@@ -287,13 +286,10 @@ void main()
         }
 
         barrier();
-        
-        lightGrid[threadId].offset = atomicAdd(m_counter, tileLightSize); //atomicCounterAdd(lightIndexListCounter, tileLightSize);
-        lightGrid[threadId].size   = tileLightSize;
 
         if (localThreadIndex == 0)
         {
-            lightGrid[frustumIndex].offset = atomicCounterAdd(lightIndexListCounter, tileLightSize);
+            lightGrid[frustumIndex].offset = atomicAdd(m_counter, tileLightSize); //atomicCounterAdd(lightIndexListCounter, tileLightSize);
             lightGrid[frustumIndex].size   = tileLightSize;
 
             // Copy the local light index list to global list
