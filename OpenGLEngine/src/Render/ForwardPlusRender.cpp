@@ -289,6 +289,10 @@ void ForwardPlusRender::lightCulling()
     m_camDepthBuffer.getTexturePtr(GL_TEXTURE0)
         ->bindTexture(GL_TEXTURE0, lightCullingProgram, "depthTexture");
 
+    // Test
+    auto location = glGetUniformLocation(lightCullingProgram, "enableAdvancedCulling");
+    glUniform1ui(location, enableLightCulling);
+
     // Generate light index list and light grid
     m_lightCullingComputeShader.compute();
 

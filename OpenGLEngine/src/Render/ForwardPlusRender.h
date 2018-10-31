@@ -20,6 +20,8 @@ public:
 
     inline void UpdateLightListBit() { m_renderFlags.bits.lightListUpdate = 1; }
 
+    BOOL enableLightCulling = FALSE;
+
 private:
     BOOL initGridFrustums();
     void calGridFrustums();
@@ -37,7 +39,7 @@ private:
     GraphicsShader m_renderShader;
 
     GLuint m_gridFrustumSsboHandle;
-    UINT m_gridFrustumBindingPoint;
+    UINT   m_gridFrustumBindingPoint;
 
     Resolution m_resolution;
     UINT       m_frustumNum[2];

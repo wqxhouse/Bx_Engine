@@ -82,6 +82,9 @@ layout(std430, binding = 2) buffer LightIndexListBuffer
     uint lightIndexList[];
 };
 
+// Test
+uniform uint enableAdvancedCulling;
+
 vec3 screenToView(vec4 screenPos)
 {
     // Screen space to clip space
@@ -135,15 +138,16 @@ bool pointLightInsideFrustum(
                       (((1 << maxLightDepthIndex) - 1) ^
                        ((1 << minLightDepthIndex) - 1)));
 
-    if ((lightMask & tileDepthMask) == 0)
+    if ((enableAdvancedCulling == 1) && ((lightMask & tileDepthMask) == 0))
     {
         result = false;
     }
     /// End 2.5D culling
 
     // The point light is outside of the view near/far clip space
-    if ((centerDepth + radius < threadFrustum.nearPlane.d) ||
-        (centerDepth - radius > threadFrustum.farPlane.d))
+    if ((result == true) &&
+        ((centerDepth + radius < threadFrustum.nearPlane.d) ||
+         (centerDepth - radius > threadFrustum.farPlane.d)))
     {
         result = false;
     }

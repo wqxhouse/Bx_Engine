@@ -307,8 +307,17 @@ void Scene::update(float deltaTime)
         m_pForwardPlusRenderer->update();
     }
 
+    if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_O])
+    {
+        m_pForwardPlusRenderer->enableLightCulling = FALSE;
+    }
+    else if (1 == callbackInfo.keyboardCallBack[GLFW_KEY_P])
+    {
+        m_pForwardPlusRenderer->enableLightCulling = TRUE;
+    }
+
     // Demo
-    /*for (UINT i = 1; i < m_pLightMgr->GetLightCount(); ++i)
+    for (UINT i = 1; i < m_pLightMgr->GetLightCount(); ++i)
     {
         Light* pLight = m_pLightMgr->GetLight(i);
 
@@ -318,14 +327,14 @@ void Scene::update(float deltaTime)
 
             if (pPointLight->GetPos().y <= 100)
             {
-                m_pLightMgr->translateLight(i, Math::Vector3(0.0f, 2.0f, 0.0f));
+                m_pLightMgr->translateLight(i, Math::Vector3(0.0f, 0.5f, 0.0f));
             }
             else
             {
                 m_pLightMgr->translateLight(i, Math::Vector3(0.0f, -150.0f, 0.0f));
             }
         }
-    }*/
+    }
 }
 
 void Scene::preDraw()
@@ -422,6 +431,26 @@ void Scene::postDraw()
 void Scene::drawScene()
 {
     assert(m_pSetting->m_graphicsSetting.renderingMethod != DEFERRED_RENDERING);
+
+    /*struct NearFarPlanes
+    {
+        float near;
+        float far;
+    };
+
+    Frustum* pData = (Frustum*)(m_ssboMgr.GetSsboData(0));
+    std::vector<NearFarPlanes> nearFarPlanes;
+    for (UINT i = 0; i < 3600; ++i)
+    {
+        nearFarPlanes.push_back({ pData[i].nearPlane.d, pData[i].farPlane.d });
+    }
+    struct LightTile
+    {
+        UINT offset = 0;
+        UINT size = 0;
+    };
+    LightTile* pTileData = (LightTile*)(m_ssboMgr.GetSsboData(1));
+    UINT* pLightIndex    = (UINT*)(m_ssboMgr.GetSsboData(2));*/
 
     GLuint sceneShaderProgram;
     GLuint materialIndex;

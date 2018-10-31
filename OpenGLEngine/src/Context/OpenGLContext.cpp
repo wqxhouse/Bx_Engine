@@ -32,7 +32,7 @@ void OpenGLContext::initialize()
 
     window = glfwCreateWindow(m_pSetting->resolution.width,
                               m_pSetting->resolution.height,
-                              "BXS OpenGL Engine",
+                              "BxEngine",
                               pMonitor,
                               NULL);    
 
