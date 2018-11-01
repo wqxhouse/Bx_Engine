@@ -19,16 +19,28 @@ public:
 private:
     BOOL initWindow();
     BOOL initVulkan();
+
     BOOL createInstance();
+    BOOL initDebug();
 
     // Window pointer and settings
-    Setting*    m_pSetting;
-    GLFWwindow* m_pWindow;
+    Setting*          m_pSetting;
+    GLFWwindow*       m_pWindow;
+    const std::string m_windowName;
+    const std::string m_engineName;
 
     // Timer
-    float prevTime  = 0.0f;
-    float deltaTime = 0.0f;
+    float m_prevTime;
+    float m_deltaTime;
 
-    // Vulkan library members
-    VkInstance m_vkInstance;
+    // Core vulkan components
+    VDeleter<VkInstance> m_vkInstance;
+
+#if _DEBUG
+    VDeleter<VkDebugUtilsMessengerEXT> m_vkDebugMsg;
+#endif
+
+    // Extension
+    UINT         m_extCount;
+    const char** m_extensions;
 };
