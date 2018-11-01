@@ -18,6 +18,16 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Context\VulkanContext.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Context\Setting.h" />
+    <ClInclude Include="src\Context\VulkanContext.h" />
+    <ClInclude Include="src\Core\TypeDef.h" />
+    <ClInclude Include="src\Core\VDeleter.h" />
+    <ClInclude Include="src\Core\VulkanPCH.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0}</ProjectGuid>
@@ -86,6 +96,18 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>if not exist $(SolutionDir)lib\Vulkan\$(Configuration) mkdir $(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)
+if exist $(SolutionDir)lib\Vulkan\include\ RD /S/Q $(SolutionDir)lib\Vulkan\include\
+
+mkdir $(SolutionDir)lib\Vulkan\include\
+
+xcopy "$(ProjectDir)\src\*.h" "$(SolutionDir)lib\Vulkan\include\" /Y/D/E
+
+copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
+xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)\" /Y
+xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)\" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,17 +145,19 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(SolutionDir)lib\Vulkan\$(Configuration) mkdir $(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)
+if exist $(SolutionDir)lib\Vulkan\include\ RD /S/Q $(SolutionDir)lib\Vulkan\include\
+
+mkdir $(SolutionDir)lib\Vulkan\include\
+
+xcopy "$(ProjectDir)\src\*.h" "$(SolutionDir)lib\Vulkan\include\" /Y/D/E
+
+copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)\$(ProjectName).lib"
+xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)\" /Y
+xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\Vulkan\$(Platform)\$(Configuration)\" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Context\VulkanContext.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Context\Setting.h" />
-    <ClInclude Include="Context\VulkanContext.h" />
-    <ClInclude Include="Core\TypeDef.h" />
-    <ClInclude Include="Core\VDeleter.h" />
-    <ClInclude Include="Core\VulkanPCH.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
