@@ -4,7 +4,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
 VulkanContext::VulkanContext(
-    Setting * pSetting)
+    Setting* pSetting)
+    : m_pSetting(pSetting)
 {
 }
 
@@ -26,7 +27,7 @@ void VulkanContext::initialize()
 
 void VulkanContext::run()
 {
-    while (glfwWindowShouldClose(m_pWindow) != FALSE)
+    while (glfwWindowShouldClose(m_pWindow) == FALSE)
     {
         glfwSwapBuffers(m_pWindow);
         glfwPollEvents();
