@@ -1,5 +1,7 @@
 #pragma once
 
+#if BX_OPENGL
+
 #include "Context/OpenGLContext.h"
 
 class OpenGLTemplate
@@ -17,3 +19,5 @@ public:
     Setting*      m_pSetting;
     OpenGLContext m_context;
 };
+
+#endif
