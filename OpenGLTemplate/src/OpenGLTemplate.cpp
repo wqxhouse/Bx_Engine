@@ -129,12 +129,12 @@ void OpenGLTemplate::createDefaultScene()
     
     //Model* pModel = pScene->GetModelPtr(0);
 
-    pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+    /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3( 3.0f, 0.0f,  0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
         new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
     pScene->addModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
-        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        new Trans(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
 
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
         new Trans(glm::vec3( 0.0f, 0.0f,  3.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
