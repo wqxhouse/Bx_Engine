@@ -190,7 +190,7 @@ BOOL ForwardPlusRender::initTileLightList()
                                                     addStaticSsbo(sizeof(UINT),
                                                                   &initCounterValue,
                                                                   GL_MAP_WRITE_BIT,
-                                                                  4);
+                                                                  3);
 
     GLuint lightCullingProgram = m_lightCullingComputeShader.useProgram();
 
@@ -333,5 +333,5 @@ void ForwardPlusRender::lightCulling()
     glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(UINT), &initCounterValue);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);*/
 
-    pSsboMgr->GetSsbo(4)->setData(sizeof(UINT), &initCounterValue);
+    pSsboMgr->GetSsbo(3)->setData(sizeof(UINT), &initCounterValue);
 }

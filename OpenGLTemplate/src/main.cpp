@@ -14,7 +14,7 @@ int main()
 {
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
+    // setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
 
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);

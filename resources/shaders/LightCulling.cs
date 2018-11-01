@@ -87,7 +87,7 @@ layout(std430, binding = 2) buffer LightIndexListBuffer
 // Test
 uniform uint enableAdvancedCulling;
 
-layout(std430, binding = 4) buffer LightIndexCounter
+layout(std430, binding = 3) buffer LightIndexCounter
 {
     uint m_counter;
 };
