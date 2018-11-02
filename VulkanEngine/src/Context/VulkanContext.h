@@ -29,5 +29,20 @@ private:
     float deltaTime = 0.0f;
 
     // Vulkan library members
+    const std::vector<const char* const> m_validationLayers =
+    {
+        "VK_LAYER_LUNARG_standard_validation"
+    };
+
+#if _DEBUG
+    const bool m_enableValidationLayer = TRUE;
+
+    bool checkValidationLayerSupport();
+
+#elif
+    const bool enableValidationLayer = FALSE;
+#endif
+
     VkInstance m_vkInstance;
+
 };

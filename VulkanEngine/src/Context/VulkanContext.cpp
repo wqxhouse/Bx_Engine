@@ -86,8 +86,54 @@ BOOL VulkanContext::createInstance()
 {
     BOOL status = BX_SUCCESS;
 
+    // Checking validation layer support
+    if ((m_enableValidationLayer       == TRUE) &&
+        (checkValidationLayerSupport() == FALSE))
+    {
+        status = FALSE;
+    }
+
+    if (status == TRUE)
+    {
+        // TODO: Creating instance
+    }
+
     return status;
 }
+
+#if _DEBUG
+bool VulkanContext::checkValidationLayerSupport()
+{
+    BOOL result = TRUE;
+
+    UINT layerCount = 0;
+    vkEnumerateInstanceLayerProperties(&layerCount, NULL);
+
+    std::vector<VkLayerProperties> layerProperties(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, layerProperties.data());
+
+    for(const char* layerName : m_validationLayers)
+    {
+        if (result == TRUE)
+        {
+            for(const VkLayerProperties& prop : layerProperties)
+            {
+                if(strcmp(prop.layerName, layerName) != 0)
+                {
+                    result = FALSE;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return result;
+}
+#endif
 
 void key_callback(
     GLFWwindow* window,
