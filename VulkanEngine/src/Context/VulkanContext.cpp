@@ -86,6 +86,18 @@ BOOL VulkanContext::createInstance()
 {
     BOOL status = BX_SUCCESS;
 
+    // Checking validation layer support
+    if ((VulkanUtility::IsValidationLayerEnabled()    == TRUE) &&
+        (VulkanUtility::CheckValidationLayerSupport() == FALSE))
+    {
+        status = FALSE;
+    }
+
+    if (status == TRUE)
+    {
+        // TODO: Creating instance
+    }
+
     return status;
 }
 

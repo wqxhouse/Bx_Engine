@@ -10,11 +10,11 @@
 #define TRUE    1
 #define FALSE   0
 
-#define BX_SUCCESS 1
-#define BX_FAIL    0
-
 #define TRUE_F  (1.0F)
 #define FALSE_F (0.0F)
+
+#define BX_SUCCESS 1
+#define BX_FAIL    0
 
 #define INVALID_HANDLE 0xFFFFFFFF
 #define INVALID_INDEX  0xFFFFFFFF
