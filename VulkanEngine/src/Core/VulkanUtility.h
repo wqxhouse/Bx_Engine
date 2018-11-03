@@ -7,9 +7,18 @@ class VulkanUtility
 {
 public:
     static BOOL CheckValidationLayerSupport();
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+	VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,
+	VkDebugUtilsMessageTypeFlagsEXT				type,
+	const VkDebugUtilsMessengerCallbackDataEXT* pData,
+	void*										pUserData);
+
     static inline BOOL IsValidationLayerEnabled() { return m_enableValidationLayer; }
 
 private:
+	std::vector<const char*> getRequiredExts();
+
     const static std::vector<const char*> m_validationLayers;
 
 #if _DEBUG

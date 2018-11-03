@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -36,13 +36,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context\VulkanContext.cpp" />
+    <ClCompile Include="src\Core\Utility.cpp" />
+    <ClCompile Include="src\Core\VulkanUtility.cpp" />
+    <ClCompile Include="src\Math\Math.cpp" />
+    <ClCompile Include="src\Math\Transform\Trans.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Context\Setting.h" />
     <ClInclude Include="src\Context\VulkanContext.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
+    <ClInclude Include="src\Core\Utility.h" />
     <ClInclude Include="src\Core\VDeleter.h" />
     <ClInclude Include="src\Core\VulkanPCH.h" />
+    <ClInclude Include="src\Core\VulkanUtility.h" />
+    <ClInclude Include="src\Math\Math.h" />
+    <ClInclude Include="src\Math\Matrix2x2.h" />
+    <ClInclude Include="src\Math\Matrix3x3.h" />
+    <ClInclude Include="src\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Math\Quaternion.h" />
+    <ClInclude Include="src\Math\Structures.h" />
+    <ClInclude Include="src\Math\Transform\Trans.h" />
+    <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Math\Vector3.h" />
+    <ClInclude Include="src\Math\Vector4.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

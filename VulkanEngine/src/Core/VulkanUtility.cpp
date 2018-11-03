@@ -36,3 +36,28 @@ BOOL VulkanUtility::CheckValidationLayerSupport()
 
     return result;
 }
+
+VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(
+	VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,
+	VkDebugUtilsMessageTypeFlagsEXT				type,
+	const VkDebugUtilsMessengerCallbackDataEXT* pData,
+	void*										pUserData)
+{
+	std::cerr << "BxEngine validation layer: " << pData->pMessage << std::endl;
+
+	return VK_FALSE;
+}
+
+std::vector<const char*> VulkanUtility::getRequiredExts()
+{
+	UINT glfwExtCounts = 0;
+	const char** glfwExtNames;
+
+	glfwExtNames = glfwGetRequiredInstanceExtensions(&glfwExtCounts);
+
+	std::vector<const char*> exts(glfwExtNames, glfwExtNames + glfwExtCounts);
+
+	exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+	return exts;
+}
