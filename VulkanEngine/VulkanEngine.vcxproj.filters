@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{ed35fda0-9fba-4a8e-abcf-4640ed84cd2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Context">
+      <UniqueIdentifier>{9724bb31-a5f8-4dc2-a1b5-a8c098a592b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core">
+      <UniqueIdentifier>{e5e89a69-1758-453a-af4d-6ae97122a684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Math">
+      <UniqueIdentifier>{a69c588b-6697-44fa-b53c-a8b677c242c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Math\Trans">
+      <UniqueIdentifier>{97575a32-4225-472b-b2df-59104013ec84}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Context\VulkanContext.cpp">
+      <Filter>src\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Math.cpp">
+      <Filter>src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Utility.cpp">
+      <Filter>src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\VulkanUtility.cpp">
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Transform\Trans.cpp">
+      <Filter>src\Math\Trans</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Context\VulkanContext.h">
+      <Filter>src\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Context\Setting.h">
+      <Filter>src\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\VDeleter.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\VulkanPCH.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\TypeDef.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Math.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix2x2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix3x3.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix4x4.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Quaternion.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Structures.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Utility.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector3.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector4.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\VulkanUtility.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Transform\Trans.h">
+      <Filter>src\Math\Trans</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

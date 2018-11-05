@@ -71,6 +71,141 @@ std::vector<const char*> VulkanUtility::GetRequiredExts()
     return exts;
 }
 
+UINT VulkanUtility::GetHwDeviceScore(
+    const VkPhysicalDevice& hwGpuDevice)
+{
+    UINT score = 0;
+
+    VkPhysicalDeviceProperties deviceProps;
+    VkPhysicalDeviceFeatures   deviceFeatures;
+    vkGetPhysicalDeviceProperties(hwGpuDevice, &deviceProps);
+    vkGetPhysicalDeviceFeatures(hwGpuDevice, &deviceFeatures);
+
+    // Heriustic calculate the device score
+    if (deviceProps.deviceType ==
+        VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+    {
+        score += 1024;
+    }
+    else if (deviceProps.deviceType ==
+        VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+    {
+        score += 64;
+    }
+    else
+    {
+        // Not GPU device
+        score = 0;
+    }
+
+    if (score > 0)
+    {
+        score += deviceProps.limits.maxImageDimension2D;
+
+        if (deviceFeatures.geometryShader == TRUE)
+        {
+            score += 128;
+        }
+
+        if (deviceFeatures.tessellationShader == TRUE)
+        {
+            score += 128;
+        }
+
+#if _DEBUG
+        std::cout << "API version: " << deviceProps.apiVersion << std::endl;
+        std::cout << "GPU ID: " << deviceProps.deviceID << std::endl;
+        std::cout << "GPU Name: " << deviceProps.deviceName << std::endl;
+        std::cout << "Device Type: " << deviceProps.deviceType << std::endl;
+        std::cout << "Driver version: " << deviceProps.driverVersion << std::endl;
+        std::cout << "Buffer image granularity(size)" <<
+            deviceProps.limits.bufferImageGranularity << std::endl;
+        std::cout << "Queue priorities: " <<
+            deviceProps.limits.discreteQueuePriorities << std::endl;
+        std::cout << "Framebuffer Color Sample Counts: " <<
+            deviceProps.limits.framebufferColorSampleCounts << std::endl;
+        std::cout << "Framebuffer Depth Sample Counts: " <<
+            deviceProps.limits.framebufferDepthSampleCounts << std::endl;
+        std::cout << "Framebuffer No Attachments SampleCounts: " <<
+            deviceProps.limits.framebufferNoAttachmentsSampleCounts << std::endl;
+        std::cout << "Framebuffer Stencil Sample Counts: " <<
+            deviceProps.limits.framebufferStencilSampleCounts << std::endl;
+        std::cout << "Line Width Granularity: " <<
+            deviceProps.limits.lineWidthGranularity << std::endl;
+        std::cout << "Line Width Range: " <<
+            deviceProps.limits.lineWidthRange[0] << "--" << deviceProps.limits.lineWidthRange[1] << std::endl;
+        std::cout << "Max Bound Descriptor Sets: " <<
+            deviceProps.limits.maxBoundDescriptorSets << std::endl;
+        std::cout << "Max Clip Distance: " <<
+            deviceProps.limits.maxClipDistances << std::endl;
+        std::cout << "Max Color Attachments" <<
+            deviceProps.limits.maxColorAttachments << std::endl;
+        std::cout << "Max Combined Clip And Cull Distance: " <<
+            deviceProps.limits.maxCombinedClipAndCullDistances << std::endl;
+
+        std::cout << "Max Cull Distance: " <<
+            deviceProps.limits.maxCullDistances << std::endl;
+        std::cout << "Max Descriptor Set" <<
+            deviceProps.limits.maxDescriptorSetInputAttachments << std::endl;
+        std::cout << "Max Descriptor Set Sampled Images: " <<
+            deviceProps.limits.maxDescriptorSetSampledImages << std::endl;
+        std::cout << "Residency aligned mip size: " <<
+            deviceProps.sparseProperties.residencyAlignedMipSize << std::endl;
+
+        // Compute properties
+        std::cout << "Max Compute Shared Memory: " <<
+            deviceProps.limits.maxComputeSharedMemorySize << std::endl;
+        std::cout << "Max Compute Work Group: (" <<
+            deviceProps.limits.maxComputeWorkGroupCount[0] << ", " <<
+            deviceProps.limits.maxComputeWorkGroupCount[1] << ", " <<
+            deviceProps.limits.maxComputeWorkGroupCount[2] << ") " << std::endl;
+        std::cout << "Max Compute Work Group Invocations:" <<
+            deviceProps.limits.maxComputeWorkGroupInvocations << std::endl;
+        std::cout << "Max Compute Work Group Size: (" <<
+            deviceProps.limits.maxComputeWorkGroupSize[0] << ", " <<
+            deviceProps.limits.maxComputeWorkGroupSize[1] << ", " <<
+            deviceProps.limits.maxComputeWorkGroupSize[2] << ") " << std::endl;
+#endif
+    }
+
+    return score;
+}
+
+QueueFamilyIndices VulkanUtility::GetQueueFamilies(
+    const VkPhysicalDevice & hwGpuDevice)
+{
+    QueueFamilyIndices queueFamilyIndices;
+
+    UINT queueFamilyNum = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(hwGpuDevice, &queueFamilyNum, NULL);
+
+    if (queueFamilyNum > 0)
+    {
+        std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyNum);
+        vkGetPhysicalDeviceQueueFamilyProperties(hwGpuDevice, &queueFamilyNum, queueFamilyProperties.data());
+
+        UINT index = 0;
+        for (const VkQueueFamilyProperties& prop : queueFamilyProperties)
+        {
+            if (prop.queueCount > 0)
+            {
+                if ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
+                {
+                    queueFamilyIndices.graphicsFamilyIndex = index;
+                }
+                else if ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
+                {
+                    queueFamilyIndices.computeFamilyIndex = index;
+                }
+            }
+
+            index++;
+        }
+    }
+
+    return queueFamilyIndices;
+}
+
 #if _DEBUG
 
 VkResult VulkanUtility::CreateDebugUtilsMessenger(

@@ -119,8 +119,32 @@ BOOL VulkanContext::initVulkan()
     if (status == BX_SUCCESS)
     {
         status = initDebug();
+        if (status == BX_FAIL)
+        {
+            printf("Failed to initialize Validation layers!\n");
+            assert(BX_FAIL);
+        }
     }
 #endif
+    if (status == BX_SUCCESS)
+    {
+        status = initHwDevice();
+        if (status == BX_FAIL)
+        {
+            printf("Failed to get hardware devices!\n");
+            assert(BX_FAIL);
+        }
+    }
+
+    if (status == BX_SUCCESS)
+    {
+        status = initDevice();
+        if (status == BX_FAIL)
+        {
+            printf("Failed to initialize Vulkan Device!\n");
+            assert(BX_FAIL);
+        }
+    }
 
     return status;
 }
@@ -170,6 +194,59 @@ BOOL VulkanContext::createInstance()
     }
 
     return status;
+}
+
+BOOL VulkanContext::initHwDevice()
+{
+    BOOL result = BX_SUCCESS;
+
+    UINT gpuNum = 0;
+    VkResult vkResult = vkEnumeratePhysicalDevices(m_vkInstance, &gpuNum, NULL);
+
+    std::vector<VkPhysicalDevice> hwDevices(gpuNum);
+    if (gpuNum > 0)
+    {
+        vkResult = vkEnumeratePhysicalDevices(m_vkInstance, &gpuNum, hwDevices.data());
+
+        result = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+    }
+    else
+    {
+        result = BX_FAIL;
+    }
+
+    if (result == BX_SUCCESS)
+    {
+        for (const VkPhysicalDevice& hwDevice : hwDevices)
+        {
+            UINT score = VulkanUtility::GetHwDeviceScore(hwDevice);
+
+            if (score > 0)
+            {
+                m_avaliableHwGpuDevices.insert(std::pair<UINT, VkPhysicalDevice>(score, hwDevice));
+            }
+        }
+
+        // Pick up the GPU with top score
+        // TODO: Heriustic choose GPUs
+        // TODO: Parallel using avaliable GPUs
+        m_vkActiveHwGpuDeviceList.push_back(m_avaliableHwGpuDevices.begin()->second);
+
+        m_hwQueueIndices = VulkanUtility::GetQueueFamilies(m_vkActiveHwGpuDeviceList[0]);
+
+        if (m_hwQueueIndices.isValid() == FALSE)
+        {
+            result = BX_FAIL;
+        }
+    }
+
+    return result;
+}
+
+BOOL VulkanContext::initDevice()
+{
+    BOOL result = BX_SUCCESS;
+    return result;
 }
 
 #if _DEBUG

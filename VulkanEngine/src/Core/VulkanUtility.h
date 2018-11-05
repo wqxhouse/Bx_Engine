@@ -3,6 +3,18 @@
 #include "VulkanPCH.h"
 #include "Utility.h"
 
+struct QueueFamilyIndices
+{
+    INT graphicsFamilyIndex = -1;
+    INT computeFamilyIndex  = -1;
+
+    inline BOOL isValid() const
+    {
+        return ((graphicsFamilyIndex >= 0) &&
+                (computeFamilyIndex  >= 0));
+    }
+};
+
 class VulkanUtility
 {
 public:
@@ -11,6 +23,12 @@ public:
         const char* const** pLayerNames);
 
     static std::vector<const char*> GetRequiredExts();
+
+    static UINT GetHwDeviceScore(
+        const VkPhysicalDevice& hwGpuDevice);
+
+    static QueueFamilyIndices GetQueueFamilies(
+        const VkPhysicalDevice& hwGpuDevice);
 
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

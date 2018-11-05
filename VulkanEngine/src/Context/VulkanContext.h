@@ -4,6 +4,8 @@
 #include "../Core/VulkanUtility.h"
 #include "Setting.h"
 
+#include <map>
+
 class VulkanContext
 {
 public:
@@ -21,8 +23,15 @@ private:
     BOOL initVulkan();
 
     BOOL createInstance();
-    BOOL initDebug();
+    BOOL initHwDevice();
+    BOOL initDevice();
 
+    // Core vulkan components
+    VDeleter<VkInstance>          m_vkInstance;
+    std::vector<VkPhysicalDevice> m_vkActiveHwGpuDeviceList;
+    VDeleter<VkDevice>            m_vkDevice;
+
+    /// Context attributes
     // Window pointer and settings
     Setting*          m_pSetting;
     GLFWwindow*       m_pWindow;
@@ -33,10 +42,13 @@ private:
     float m_prevTime;
     float m_deltaTime;
 
-    // Core vulkan components
-    VDeleter<VkInstance> m_vkInstance;
+    // Hardware properties
+    // Avaliable hardware devices are listed with descending order
+    std::multimap<UINT, VkPhysicalDevice, std::greater<UINT>> m_avaliableHwGpuDevices;
+    QueueFamilyIndices                                        m_hwQueueIndices;
 
 #if _DEBUG
+    BOOL initDebug();
     VDeleter<VkDebugUtilsMessengerEXT> m_vkDebugMsg;
 #endif
 
