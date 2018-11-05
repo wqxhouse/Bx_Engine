@@ -17,8 +17,9 @@ VulkanContext::VulkanContext(
       m_computeQueuePriority(1.0f)
 {
     // Set resource release callback functions
-    m_vkInstance = { vkDestroyInstance };
-    m_vkDevice   = { vkDestroyDevice   };
+    m_vkInstance = { vkDestroyInstance                 };
+    m_vkSurface  = { m_vkInstance, vkDestroySurfaceKHR };
+    m_vkDevice   = { vkDestroyDevice                   };
 
 #if _DEBUG
     m_vkDebugMsg = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -129,6 +130,17 @@ BOOL VulkanContext::initVulkan()
         }
     }
 #endif
+
+    if (status == BX_SUCCESS)
+    {
+        status = createSurface();
+        if (status == BX_FAIL)
+        {
+            printf("Failed to create window surface!\n");
+            assert(BX_FAIL);
+        }
+    }
+
     if (status == BX_SUCCESS)
     {
         status = initHwDevice();
@@ -195,6 +207,16 @@ BOOL VulkanContext::createInstance()
         VkResult result = vkCreateInstance(&instanceInfo, NULL, m_vkInstance.replace());
         status = ((result == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
     }
+
+    return status;
+}
+
+BOOL VulkanContext::createSurface()
+{
+    BOOL status = BX_SUCCESS;
+
+    VkResult vkResult = glfwCreateWindowSurface(m_vkInstance, m_pWindow, NULL, m_vkSurface.replace());
+    status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
     return status;
 }

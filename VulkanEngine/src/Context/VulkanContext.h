@@ -23,13 +23,9 @@ private:
     BOOL initVulkan();
 
     BOOL createInstance();
+    BOOL createSurface();
     BOOL initHwDevice();
     BOOL initDevice();
-
-    // Core vulkan components
-    VDeleter<VkInstance>          m_vkInstance;
-    std::vector<VkPhysicalDevice> m_vkActiveHwGpuDeviceList;
-    VDeleter<VkDevice>            m_vkDevice;
 
     /// Context attributes
     // Window pointer and settings
@@ -37,6 +33,12 @@ private:
     GLFWwindow*       m_pWindow;
     const std::string m_windowName;
     const std::string m_engineName;
+
+    // Core vulkan components
+    VDeleter<VkInstance>          m_vkInstance;
+    VDeleter<VkSurfaceKHR>        m_vkSurface;
+    std::vector<VkPhysicalDevice> m_vkActiveHwGpuDeviceList;
+    VDeleter<VkDevice>            m_vkDevice;
 
     // Timer
     float m_prevTime;
