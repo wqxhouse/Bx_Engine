@@ -12,10 +12,13 @@ VulkanContext::VulkanContext(
       m_prevTime(0.0f),
       m_deltaTime(0.0f),
       m_extCount(0),
-      m_extensions(NULL)
+      m_extensions(NULL),
+      m_graphicsQueuePriority(1.0f),
+      m_computeQueuePriority(1.0f)
 {
     // Set resource release callback functions
     m_vkInstance = { vkDestroyInstance };
+    m_vkDevice   = { vkDestroyDevice   };
 
 #if _DEBUG
     m_vkDebugMsg = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -157,7 +160,7 @@ BOOL VulkanContext::createInstance()
     const char* const* ppEnabledLayerNames = NULL;
 
     // Checking validation layer support
-    if ((VulkanUtility::IsValidationLayerEnabled()                                            == TRUE) &&
+    if ((m_enableValidationLayer                                                              == TRUE) &&
         (VulkanUtility::CheckValidationLayerSupport(&enabledLayerCount, &ppEnabledLayerNames) == FALSE))
     {
         status = FALSE;
@@ -246,6 +249,44 @@ BOOL VulkanContext::initHwDevice()
 BOOL VulkanContext::initDevice()
 {
     BOOL result = BX_SUCCESS;
+
+    VkDeviceQueueCreateInfo queueCreateInfo[2] = { {}, {} };
+    // Graphics queues
+    queueCreateInfo[0].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo[0].queueFamilyIndex = m_hwQueueIndices.graphicsFamilyIndex;
+    queueCreateInfo[0].queueCount       = 1;
+    queueCreateInfo[0].pQueuePriorities = &m_graphicsQueuePriority;
+    // Compute queues
+    queueCreateInfo[1].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo[1].queueFamilyIndex = m_hwQueueIndices.computeFamilyIndex;
+    queueCreateInfo[1].queueCount       = 1;
+    queueCreateInfo[1].pQueuePriorities = &m_computeQueuePriority;
+
+    VkPhysicalDeviceFeatures hwDeviceFeatures = {};
+
+    VkDeviceCreateInfo deviceCreateInfo    = {};
+    deviceCreateInfo.sType                 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo.pQueueCreateInfos     = queueCreateInfo;
+    deviceCreateInfo.queueCreateInfoCount  = 2;
+    deviceCreateInfo.enabledExtensionCount = 0;
+    deviceCreateInfo.pEnabledFeatures      = &hwDeviceFeatures;
+
+    if (m_enableValidationLayer == TRUE)
+    {
+        deviceCreateInfo.enabledLayerCount   = static_cast<UINT>(VulkanUtility::m_validationLayers.size());
+        deviceCreateInfo.ppEnabledLayerNames = VulkanUtility::m_validationLayers.data();
+    }
+    else
+    {
+        deviceCreateInfo.enabledLayerCount = 0;
+    }
+
+    VkResult vkResult = vkCreateDevice(m_vkActiveHwGpuDeviceList[0], &deviceCreateInfo, NULL, m_vkDevice.replace());
+    result            = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+    vkGetDeviceQueue(m_vkDevice, m_hwQueueIndices.graphicsFamilyIndex, 0, &m_graphicsQueue);
+    vkGetDeviceQueue(m_vkDevice, m_hwQueueIndices.computeFamilyIndex,  0, &m_computeQueue);
+
     return result;
 }
 
