@@ -12,9 +12,7 @@ VulkanContext::VulkanContext(
       m_prevTime(0.0f),
       m_deltaTime(0.0f),
       m_extCount(0),
-      m_extensions(NULL),
-      m_graphicsQueuePriority(1.0f),
-      m_computeQueuePriority(1.0f)
+      m_extensions(NULL)
 {
     // Set resource release callback functions
     m_vkInstance = { vkDestroyInstance                 };
@@ -257,9 +255,10 @@ BOOL VulkanContext::initHwDevice()
         // TODO: Parallel using avaliable GPUs
         m_vkActiveHwGpuDeviceList.push_back(m_avaliableHwGpuDevices.begin()->second);
 
-        m_hwQueueIndices = VulkanUtility::GetQueueFamilies(m_vkActiveHwGpuDeviceList[0]);
+        QueueFamilyIndices queueIndices =
+            m_queueMgr.retriveHwQueueIndices(m_vkActiveHwGpuDeviceList[0], m_vkSurface);
 
-        if (m_hwQueueIndices.isValid() == FALSE)
+        if (m_queueMgr.IsQueueIndicesCompleted() == FALSE)
         {
             result = BX_FAIL;
         }
@@ -272,23 +271,26 @@ BOOL VulkanContext::initDevice()
 {
     BOOL result = BX_SUCCESS;
 
-    VkDeviceQueueCreateInfo queueCreateInfo[2] = { {}, {} };
-    // Graphics queues
-    queueCreateInfo[0].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo[0].queueFamilyIndex = m_hwQueueIndices.graphicsFamilyIndex;
-    queueCreateInfo[0].queueCount       = 1;
-    queueCreateInfo[0].pQueuePriorities = &m_graphicsQueuePriority;
-    // Compute queues
-    queueCreateInfo[1].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo[1].queueFamilyIndex = m_hwQueueIndices.computeFamilyIndex;
-    queueCreateInfo[1].queueCount       = 1;
-    queueCreateInfo[1].pQueuePriorities = &m_computeQueuePriority;
+    QueueFamilyIndices queueFamilyIndices = m_queueMgr.GetHwQueueIndices();
+    UINT queueFamilyIndicesNum            = queueFamilyIndices.GetIndexNum();
+
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfo(queueFamilyIndicesNum);
+
+    for (UINT i = 0; i < queueFamilyIndicesNum; ++i)
+    {
+        queueCreateInfo[i].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo[i].queueFamilyIndex = queueFamilyIndices.GetQueueFamilyIndex(i);
+        queueCreateInfo[i].queueCount       = 1;
+
+        float priority = m_queueMgr.GetQueue(i).priority;
+        queueCreateInfo[i].pQueuePriorities = &priority;
+    }
 
     VkPhysicalDeviceFeatures hwDeviceFeatures = {};
 
     VkDeviceCreateInfo deviceCreateInfo    = {};
     deviceCreateInfo.sType                 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    deviceCreateInfo.pQueueCreateInfos     = queueCreateInfo;
+    deviceCreateInfo.pQueueCreateInfos     = queueCreateInfo.data();
     deviceCreateInfo.queueCreateInfoCount  = 2;
     deviceCreateInfo.enabledExtensionCount = 0;
     deviceCreateInfo.pEnabledFeatures      = &hwDeviceFeatures;
@@ -306,8 +308,7 @@ BOOL VulkanContext::initDevice()
     VkResult vkResult = vkCreateDevice(m_vkActiveHwGpuDeviceList[0], &deviceCreateInfo, NULL, m_vkDevice.replace());
     result            = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
-    vkGetDeviceQueue(m_vkDevice, m_hwQueueIndices.graphicsFamilyIndex, 0, &m_graphicsQueue);
-    vkGetDeviceQueue(m_vkDevice, m_hwQueueIndices.computeFamilyIndex,  0, &m_computeQueue);
+    m_queueMgr.retriveQueueHandle(m_vkDevice);
 
     return result;
 }

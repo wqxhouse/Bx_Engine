@@ -171,41 +171,6 @@ UINT VulkanUtility::GetHwDeviceScore(
     return score;
 }
 
-QueueFamilyIndices VulkanUtility::GetQueueFamilies(
-    const VkPhysicalDevice & hwGpuDevice)
-{
-    QueueFamilyIndices queueFamilyIndices;
-
-    UINT queueFamilyNum = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(hwGpuDevice, &queueFamilyNum, NULL);
-
-    if (queueFamilyNum > 0)
-    {
-        std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyNum);
-        vkGetPhysicalDeviceQueueFamilyProperties(hwGpuDevice, &queueFamilyNum, queueFamilyProperties.data());
-
-        UINT index = 0;
-        for (const VkQueueFamilyProperties& prop : queueFamilyProperties)
-        {
-            if (prop.queueCount > 0)
-            {
-                if ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
-                {
-                    queueFamilyIndices.graphicsFamilyIndex = index;
-                }
-                else if ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
-                {
-                    queueFamilyIndices.computeFamilyIndex = index;
-                }
-            }
-
-            index++;
-        }
-    }
-
-    return queueFamilyIndices;
-}
-
 #if _DEBUG
 
 VkResult VulkanUtility::CreateDebugUtilsMessenger(

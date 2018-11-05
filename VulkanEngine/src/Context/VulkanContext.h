@@ -2,6 +2,7 @@
 
 #include "../Core/VulkanPCH.h"
 #include "../Core/VulkanUtility.h"
+#include "QueueMgr.h"
 #include "Setting.h"
 
 #include <map>
@@ -47,13 +48,9 @@ private:
     // Hardware properties
     // Avaliable hardware devices are listed with descending order
     std::multimap<UINT, VkPhysicalDevice, std::greater<UINT>> m_avaliableHwGpuDevices;
-    QueueFamilyIndices                                        m_hwQueueIndices;
 
     // Queue
-    VkQueue m_graphicsQueue;
-    float   m_graphicsQueuePriority;
-    VkQueue m_computeQueue;
-    float   m_computeQueuePriority;
+    QueueMgr m_queueMgr;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;
