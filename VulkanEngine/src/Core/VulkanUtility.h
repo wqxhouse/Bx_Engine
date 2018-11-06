@@ -15,6 +15,9 @@ public:
     static UINT GetHwDeviceScore(
         const VkPhysicalDevice& hwGpuDevice);
 
+	static BOOL CheckDeviceExtSupport(
+		const VkPhysicalDevice& device);
+
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,
@@ -35,4 +38,5 @@ public:
 #endif
 
     const static std::vector<const char*> m_validationLayers;
+	const static std::vector<const char*> m_deviceExts;
 };

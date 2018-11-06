@@ -5,6 +5,11 @@ const std::vector<const char*> VulkanUtility::m_validationLayers =
     "VK_LAYER_LUNARG_standard_validation"
 };
 
+const std::vector<const char*> VulkanUtility::m_deviceExts =
+{
+	"VK_KHR_SWAPCHAIN_EXTENSION_NAME"
+};
+
 BOOL VulkanUtility::CheckValidationLayerSupport(
     UINT*               layerCount,
     const char* const** pLayerNames)
@@ -118,7 +123,7 @@ UINT VulkanUtility::GetHwDeviceScore(
         std::cout << "GPU Name: " << deviceProps.deviceName << std::endl;
         std::cout << "Device Type: " << deviceProps.deviceType << std::endl;
         std::cout << "Driver version: " << deviceProps.driverVersion << std::endl;
-        std::cout << "Buffer image granularity(size)" <<
+        std::cout << "Buffer image granularity(size): " <<
             deviceProps.limits.bufferImageGranularity << std::endl;
         std::cout << "Queue priorities: " <<
             deviceProps.limits.discreteQueuePriorities << std::endl;
@@ -133,7 +138,7 @@ UINT VulkanUtility::GetHwDeviceScore(
         std::cout << "Line Width Granularity: " <<
             deviceProps.limits.lineWidthGranularity << std::endl;
         std::cout << "Line Width Range: " <<
-            deviceProps.limits.lineWidthRange[0] << "--" << deviceProps.limits.lineWidthRange[1] << std::endl;
+            deviceProps.limits.lineWidthRange[0] << " -- " << deviceProps.limits.lineWidthRange[1] << std::endl;
         std::cout << "Max Bound Descriptor Sets: " <<
             deviceProps.limits.maxBoundDescriptorSets << std::endl;
         std::cout << "Max Clip Distance: " <<
@@ -216,6 +221,39 @@ VkResult VulkanUtility::DestroyDebugUtilsMessenger(
     }
 
     return result;
+}
+
+BOOL VulkanUtility::CheckDeviceExtSupport(
+	const VkPhysicalDevice& device)
+{
+	BOOL result = TRUE;
+
+	UINT extPropsNum = 0;
+	vkEnumerateDeviceExtensionProperties(device, NULL, &extPropsNum, NULL);
+
+	std::vector<VkExtensionProperties> extProps(extPropsNum);
+	vkEnumerateDeviceExtensionProperties(device, NULL, &extPropsNum, extProps.data());
+
+	for (const char* const& deviceExtName : m_deviceExts)
+	{
+		BOOL isSupport = FALSE;
+		for (const VkExtensionProperties& prop : extProps)
+		{
+			if (strcmp(prop.extensionName, deviceExtName) == 0)
+			{
+				isSupport = TRUE;
+				break;
+			}
+		}
+
+		if (isSupport == FALSE)
+		{
+			result = FALSE;
+			break;
+		}
+	}
+
+	return result;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(
