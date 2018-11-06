@@ -486,7 +486,6 @@ BOOL VulkanContext::createSwapchain()
             }
         }
     }
-
     return status;
 }
 
