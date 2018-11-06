@@ -27,6 +27,7 @@ private:
     BOOL createSurface();
     BOOL initHwDevice();
     BOOL initDevice();
+    BOOL createSwapchain();
 
     /// Context attributes
     // Window pointer and settings
@@ -48,6 +49,11 @@ private:
     // Hardware properties
     // Avaliable hardware devices are listed with descending order
     std::multimap<UINT, VkPhysicalDevice, std::greater<UINT>> m_avaliableHwGpuDevices;
+
+    // Swapchain
+    VDeleter<VkSwapchainKHR> m_swapchain;
+    std::vector<VkImage>	 m_swapchainImages;
+    SwapChainHwProperties    m_swapchainHwProperties;
 
     // Queue
     QueueMgr m_queueMgr;
