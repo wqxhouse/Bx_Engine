@@ -272,7 +272,7 @@ SwapChainHwProperties VulkanUtility::QuerySwapchainHwProperties(
 
 BOOL VulkanUtility::ValidateHwDevice(
     const VkPhysicalDevice&         hwGpuDevice,
-    const VkSurfaceKHR&             surface,
+    const SwapChainHwProperties&    swapChainHwProperties,
     const QueueFamilyIndices&       queueIndices,
     const std::vector<const char*>& deviceExts)
 {
@@ -281,7 +281,6 @@ BOOL VulkanUtility::ValidateHwDevice(
     BOOL isQueueComplete    = queueIndices.IsCompleted();
     BOOL isDeviceExtSupport = CheckDeviceExtSupport(hwGpuDevice, deviceExts);
 
-    SwapChainHwProperties swapChainHwProperties = QuerySwapchainHwProperties(hwGpuDevice, surface);
     BOOL isSwapchainSupport = ((swapChainHwProperties.m_surfaceFormats.empty() == FALSE) &&
                                (swapChainHwProperties.m_presentModes.empty()   == FALSE));
 
@@ -290,6 +289,122 @@ BOOL VulkanUtility::ValidateHwDevice(
               (isSwapchainSupport == TRUE));
 
     return result;
+}
+
+VkExtent2D VulkanUtility::GetSwapchainExtent(
+    const VkSurfaceCapabilitiesKHR& surfaceCapabilities,
+    const UINT&                     windowWidth,
+    const UINT&                     windowHeight)
+{
+    VkExtent2D swapchainExtent;
+
+    swapchainExtent.width = std::max(surfaceCapabilities.minImageExtent.width,
+                            std::min(surfaceCapabilities.maxImageExtent.width, windowWidth));
+
+    swapchainExtent.height = std::max(surfaceCapabilities.minImageExtent.height,
+                             std::min(surfaceCapabilities.maxImageExtent.height, windowHeight));
+
+    return swapchainExtent;
+}
+
+VkSurfaceFormatKHR VulkanUtility::GetSwapchainSurfaceFormat(
+	const std::vector<VkSurfaceFormatKHR>& surfaceFormats,
+	const BOOL							   linearFormat)
+{
+	VkSurfaceFormatKHR swapchainSurfaceFormat = {};
+
+	VkFormat targetFormat = ((linearFormat == TRUE) ? VK_FORMAT_B8G8R8A8_UNORM : VK_FORMAT_B8G8R8A8_SNORM);
+
+	if ((surfaceFormats.size()	  == 1) &&
+		(surfaceFormats[0].format == VK_FORMAT_UNDEFINED))
+	{
+		swapchainSurfaceFormat.format	  = targetFormat;
+		swapchainSurfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+	}
+	else
+	{
+		for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats)
+		{
+			if ((surfaceFormat.format     == targetFormat) &&
+				(surfaceFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR))
+			{
+				swapchainSurfaceFormat = surfaceFormat;
+				break;
+			}
+		}
+	}
+
+	return swapchainSurfaceFormat;
+}
+
+VkPresentModeKHR VulkanUtility::GetSwapchainPresentMode(
+	const std::vector<VkPresentModeKHR>& presentModes,
+	BX_SWAPCHAIN_SURFACE_BUFFER		     swapchainSurfaceBuffer,
+	BOOL								 vSync)
+{
+	VkPresentModeKHR swapchainPresentMode;
+
+	switch (swapchainSurfaceBuffer)
+	{
+	case BX_SWAPCHAIN_SURFACE_BUFFER_SINGLE:
+	{
+		if (vSync == FALSE)
+		{
+			swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+		}
+		break;
+	}
+	case BX_SWAPCHAIN_SURFACE_BUFFER_DOUBLE:
+	{
+		if (vSync == TRUE)
+		{
+			swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+		}
+		else
+		{
+			swapchainPresentMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+		}
+		break;
+	}
+	case BX_SWAPCHAIN_SURFACE_BUFFER_TRIPLE:
+	{
+		swapchainPresentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+		break;
+	}
+	default:
+		printf("Not support present mode, use default FIFO mode!\n");
+		swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+		break;
+	}
+
+	BOOL presentModeExist = FALSE;
+	for (const VkPresentModeKHR& presentMode : presentModes)
+	{
+		if (presentMode == swapchainPresentMode)
+		{
+			presentModeExist = TRUE;
+			break;
+		}
+	}
+
+	// The present mode is not supported, use the default FIFO mode
+	if (presentModeExist == FALSE)
+	{
+		swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+	}
+
+	return swapchainPresentMode;
+}
+
+UINT VulkanUtility::GetSwapchainImageCount(
+    const VkSurfaceCapabilitiesKHR& surfaceCapabilities)
+{
+    UINT imageCount = surfaceCapabilities.minImageCount + 1;
+
+    imageCount = ((surfaceCapabilities.maxImageCount > 0) ?
+        std::min(surfaceCapabilities.maxImageCount, imageCount) : imageCount);
+
+    return imageCount;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(

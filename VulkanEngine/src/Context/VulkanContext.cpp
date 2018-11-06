@@ -1,5 +1,7 @@
 #include "VulkanContext.h"
 
+#include <set>
+
 const std::vector<const char*> VulkanContext::m_validationLayers =
 {
     "VK_LAYER_LUNARG_standard_validation"
@@ -30,6 +32,7 @@ VulkanContext::VulkanContext(
     m_vkInstance = { vkDestroyInstance                 };
     m_vkSurface  = { m_vkInstance, vkDestroySurfaceKHR };
     m_vkDevice   = { vkDestroyDevice                   };
+    m_swapchain  = { m_vkDevice, vkDestroySwapchainKHR };
 
 #if _DEBUG
     m_vkDebugMsg = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -171,6 +174,16 @@ BOOL VulkanContext::initVulkan()
         }
     }
 
+    if (status == BX_SUCCESS)
+    {
+        status = createSwapchain();
+        if (status == BX_FAIL)
+        {
+            printf("Failed to created swapchain!\n");
+            assert(BX_FAIL);
+        }
+    }
+
     return status;
 }
 
@@ -179,7 +192,7 @@ BOOL VulkanContext::createInstance()
     BOOL status = BX_SUCCESS;
 
     // Checking validation layer support
-    if ((m_enableValidationLayer                                                              == TRUE) &&
+    if ((m_enableValidationLayer                                        == TRUE) &&
         (VulkanUtility::CheckValidationLayerSupport(m_validationLayers) == FALSE))
     {
         status = FALSE;
@@ -213,6 +226,8 @@ BOOL VulkanContext::createInstance()
 
         VkResult result = vkCreateInstance(&instanceInfo, NULL, m_vkInstance.replace());
         status = ((result == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+        assert(status == BX_SUCCESS);
     }
 
     return status;
@@ -224,6 +239,8 @@ BOOL VulkanContext::createSurface()
 
     VkResult vkResult = glfwCreateWindowSurface(m_vkInstance, m_pWindow, NULL, m_vkSurface.replace());
     status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+    assert(status == BX_SUCCESS);
 
     return status;
 }
@@ -241,9 +258,12 @@ BOOL VulkanContext::initHwDevice()
         vkResult = vkEnumeratePhysicalDevices(m_vkInstance, &gpuNum, hwDevices.data());
 
         result = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+        assert(result == BX_SUCCESS);
     }
     else
     {
+        assert(BX_FAIL);
         result = BX_FAIL;
     }
 
@@ -264,11 +284,15 @@ BOOL VulkanContext::initHwDevice()
         // TODO: Parallel using avaliable GPUs
         m_vkActiveHwGpuDeviceList.push_back(m_avaliableHwGpuDevices.begin()->second);
 
+        // Validate chosen device
         QueueFamilyIndices queueIndices =
             m_queueMgr.retriveHwQueueIndices(m_vkActiveHwGpuDeviceList[0], m_vkSurface);
 
+        m_swapchainHwProperties =
+            VulkanUtility::QuerySwapchainHwProperties(m_vkActiveHwGpuDeviceList[0], m_vkSurface);
+
         if (VulkanUtility::ValidateHwDevice(m_vkActiveHwGpuDeviceList[0],
-                                            m_vkSurface,
+                                            m_swapchainHwProperties,
                                             queueIndices,
                                             m_deviceExts) == TRUE)
         {
@@ -277,6 +301,7 @@ BOOL VulkanContext::initHwDevice()
         }
         else
         {
+            assert(BX_FAIL);
             result = BX_FAIL;
         }
     }
@@ -291,24 +316,36 @@ BOOL VulkanContext::initDevice()
     QueueFamilyIndices queueFamilyIndices = m_queueMgr.GetHwQueueIndices();
     UINT queueFamilyIndicesNum            = queueFamilyIndices.GetIndexNum();
 
-    std::vector<VkDeviceQueueCreateInfo> queueCreateInfo(queueFamilyIndicesNum);
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfoList;
+
+	std::set<UINT> queueIndicesSet;
 
     for (UINT i = 0; i < queueFamilyIndicesNum; ++i)
     {
-        queueCreateInfo[i].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo[i].queueFamilyIndex = queueFamilyIndices.GetQueueFamilyIndex(i);
-        queueCreateInfo[i].queueCount       = 1;
+		UINT index = queueFamilyIndices.GetQueueFamilyIndex(i);
+		if ((index != -1) &&
+			(queueIndicesSet.find(index) == queueIndicesSet.end()))
+		{
+			VkDeviceQueueCreateInfo queueCreateInfo = {};
+			queueCreateInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex		= index;
+			queueCreateInfo.queueCount				= 1;
 
-        float priority = m_queueMgr.GetQueue(i).priority;
-        queueCreateInfo[i].pQueuePriorities = &priority;
+			float priority = m_queueMgr.GetQueue(i).priority;
+			queueCreateInfo.pQueuePriorities = &priority;
+
+			queueCreateInfoList.push_back(queueCreateInfo);
+
+			queueIndicesSet.insert(index);
+		}
     }
 
     VkPhysicalDeviceFeatures hwDeviceFeatures = {};
 
     VkDeviceCreateInfo deviceCreateInfo    = {};
     deviceCreateInfo.sType                 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    deviceCreateInfo.pQueueCreateInfos     = queueCreateInfo.data();
-    deviceCreateInfo.queueCreateInfoCount  = 2;
+    deviceCreateInfo.pQueueCreateInfos     = queueCreateInfoList.data();
+    deviceCreateInfo.queueCreateInfoCount  = static_cast<UINT>(queueCreateInfoList.size());
     deviceCreateInfo.pEnabledFeatures      = &hwDeviceFeatures;
 
     if (m_enableValidationLayer == TRUE)
@@ -338,6 +375,119 @@ BOOL VulkanContext::initDevice()
     m_queueMgr.retriveQueueHandle(m_vkDevice);
 
     return result;
+}
+
+BOOL VulkanContext::createSwapchain()
+{
+    BOOL status = BX_SUCCESS;
+
+	VkSurfaceFormatKHR swapchainSurfaceFormat = VulkanUtility::GetSwapchainSurfaceFormat(m_swapchainHwProperties.m_surfaceFormats, TRUE);
+	UINT			   swapchainMinImageCount = VulkanUtility::GetSwapchainImageCount(m_swapchainHwProperties.m_surfaceCapabilities);
+	
+	VkExtent2D		   swapchainExtent		  = VulkanUtility::GetSwapchainExtent(m_swapchainHwProperties.m_surfaceCapabilities,
+																				  m_pSetting->resolution.width,
+																				  m_pSetting->resolution.height);
+
+	VkPresentModeKHR   swapchainPresentMode	  = VulkanUtility::GetSwapchainPresentMode(m_swapchainHwProperties.m_presentModes,
+																					   BX_SWAPCHAIN_SURFACE_BUFFER_TRIPLE,
+																					   TRUE);
+	QueueFamilyIndices queueIndices			  = m_queueMgr.GetHwQueueIndices();
+
+    VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+    swapchainCreateInfo.sType                    = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    swapchainCreateInfo.oldSwapchain             = VK_NULL_HANDLE; // No previous swapchain
+    swapchainCreateInfo.surface                  = m_vkSurface;
+	swapchainCreateInfo.presentMode				 = swapchainPresentMode;
+    swapchainCreateInfo.imageUsage               = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    swapchainCreateInfo.imageArrayLayers         = 1; // TODO: Stereoscopic 3D app needs to modify this property
+	swapchainCreateInfo.imageFormat				 = swapchainSurfaceFormat.format;
+	swapchainCreateInfo.imageColorSpace			 = swapchainSurfaceFormat.colorSpace;
+	swapchainCreateInfo.minImageCount            = swapchainMinImageCount;
+    swapchainCreateInfo.imageExtent              = swapchainExtent;
+	swapchainCreateInfo.preTransform			 = m_swapchainHwProperties.m_surfaceCapabilities.currentTransform;
+	swapchainCreateInfo.clipped					 = VK_TRUE;
+	swapchainCreateInfo.compositeAlpha			 = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+
+	UINT swapchainQueueIndices[2] = 
+	{
+		static_cast<UINT>(queueIndices.presentSurfaceFamilyIndex),
+		static_cast<UINT>(queueIndices.graphicsFamilyIndex)
+	};
+
+	if (queueIndices.graphicsFamilyIndex == queueIndices.presentSurfaceFamilyIndex)
+	{
+		swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	}
+	else
+	{
+		swapchainCreateInfo.imageArrayLayers	  = VK_SHARING_MODE_CONCURRENT;
+		swapchainCreateInfo.queueFamilyIndexCount = 2;
+		swapchainCreateInfo.pQueueFamilyIndices   = &(swapchainQueueIndices[0]);
+	}
+
+    VkResult vkResult = vkCreateSwapchainKHR(m_vkDevice, &swapchainCreateInfo, NULL, m_swapchain.replace());
+    status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+    // Retrive the swapchain images
+    UINT swapchainImageNum = 0;
+	if (status == BX_SUCCESS)
+	{
+		VkResult vkResult = vkGetSwapchainImagesKHR(m_vkDevice, m_swapchain, &swapchainImageNum, NULL);
+
+        if ((vkResult == VK_SUCCESS) &&
+            (swapchainImageNum > 0))
+        {
+            m_swapchainImages.resize(swapchainImageNum);
+            vkResult = vkGetSwapchainImagesKHR(m_vkDevice, m_swapchain, &swapchainImageNum, m_swapchainImages.data());
+
+            status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+        }
+        else
+        {
+            assert(BX_FAIL);
+            status = BX_FAIL;
+        }
+	}
+	else
+	{
+        assert(BX_FAIL);
+		status = BX_FAIL;
+	}
+
+    // Create Image views for the swapchain images
+    if (status == BX_SUCCESS)
+    {
+        m_swapchainImagesView.resize(swapchainImageNum, { m_vkDevice, vkDestroyImageView });
+
+        for (UINT i = 0; i < swapchainImageNum; ++i)
+        {
+            VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
+            swapchainImageViewCreateInfo.sType                 = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            swapchainImageViewCreateInfo.viewType              = VK_IMAGE_VIEW_TYPE_2D;
+            swapchainImageViewCreateInfo.image                 = m_swapchainImages[i];
+            swapchainImageViewCreateInfo.format                = swapchainSurfaceFormat.format;
+            swapchainImageViewCreateInfo.components.r          = VK_COMPONENT_SWIZZLE_R;
+            swapchainImageViewCreateInfo.components.g          = VK_COMPONENT_SWIZZLE_G;
+            swapchainImageViewCreateInfo.components.b          = VK_COMPONENT_SWIZZLE_B;
+            swapchainImageViewCreateInfo.components.a          = VK_COMPONENT_SWIZZLE_A;
+
+            swapchainImageViewCreateInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+            swapchainImageViewCreateInfo.subresourceRange.baseMipLevel   = 0;
+            swapchainImageViewCreateInfo.subresourceRange.levelCount     = 1;
+            swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+            swapchainImageViewCreateInfo.subresourceRange.layerCount     = 1;
+
+            VkResult vkResult = vkCreateImageView(m_vkDevice, &swapchainImageViewCreateInfo, NULL, m_swapchainImagesView[i].replace());
+            if (vkResult != VK_SUCCESS)
+            {
+                assert(BX_FAIL);
+                status = BX_FAIL;
+                break;
+            }
+        }
+    }
+
+    return status;
 }
 
 #if _DEBUG

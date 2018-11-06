@@ -8,6 +8,7 @@
 #include <chrono>
 #include <math.h>
 #include <memory>
+#include <algorithm>
 
 //GLFW
 #ifdef _WIN32

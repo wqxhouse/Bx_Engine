@@ -33,9 +33,26 @@ public:
 
     static BOOL ValidateHwDevice(
         const VkPhysicalDevice&         hwGpuDevice,
-        const VkSurfaceKHR&             surface,
+        const SwapChainHwProperties&    swapChainHwProperties,
         const QueueFamilyIndices&       queueIndices,
         const std::vector<const char*>& deviceExts);
+
+    static VkExtent2D GetSwapchainExtent(
+        const VkSurfaceCapabilitiesKHR& surfaceCapabilities,
+        const UINT&                     windowWidth,
+        const UINT&                     windowHeight);
+
+	static VkSurfaceFormatKHR GetSwapchainSurfaceFormat(
+		const std::vector<VkSurfaceFormatKHR>& surfaceFormats,
+		const BOOL							   linearFormat);
+
+	static VkPresentModeKHR GetSwapchainPresentMode(
+		const std::vector<VkPresentModeKHR>& presentModes,
+		BX_SWAPCHAIN_SURFACE_BUFFER		     swapchainSurfaceBuffer,
+		BOOL								 vSync);
+
+    static UINT GetSwapchainImageCount(
+        const VkSurfaceCapabilitiesKHR& surfaceCapabilities);
 
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

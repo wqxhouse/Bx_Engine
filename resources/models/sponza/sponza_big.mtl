@@ -12,11 +12,11 @@ newmtl _sponzaleaf
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_diff.tga
-	map_d D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_mask.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_thorn_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_thorn_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_thorn_diff.tga
+	map_d ..\resources\models\sponza\textures\sponza_thorn_mask.tga
+	map_bump ..\resources\models\sponza\textures\sponza_thorn_ddn.tga
+	bump ..\resources\models\sponza\textures\sponza_thorn_ddn.tga
 
 newmtl _sponzaMaterial__57
 	Ns 10.0000
@@ -29,9 +29,9 @@ newmtl _sponzaMaterial__57
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_plant.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_plant.tga
-	map_d D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_plant_mask.tga
+	map_Ka ..\resources\models\sponza\textures\vase_plant.tga
+	map_Kd ..\resources\models\sponza\textures\vase_plant.tga
+	map_d ..\resources\models\sponza\textures\vase_plant_mask.tga
 
 newmtl _sponzaMaterial__298
 	Ns 10.0000
@@ -44,10 +44,10 @@ newmtl _sponzaMaterial__298
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\background_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\background.tga
+	map_Kd ..\resources\models\sponza\textures\background.tga
+	map_bump ..\resources\models\sponza\textures\background_ddn.tga
+	bump ..\resources\models\sponza\textures\background_ddn.tga
 
 newmtl _sponzabricks
 	Ns 10.0000
@@ -60,10 +60,10 @@ newmtl _sponzabricks
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_diff.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\spnza_bricks_a_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\spnza_bricks_a_diff.tga
+	map_Kd ..\resources\models\sponza\textures\spnza_bricks_a_diff.tga
+	map_bump ..\resources\models\sponza\textures\spnza_bricks_a_ddn.tga
+	bump ..\resources\models\sponza\textures\spnza_bricks_a_ddn.tga
 
 newmtl _sponzaarch
 	Ns 10.0000
@@ -76,8 +76,8 @@ newmtl _sponzaarch
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_arch_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_arch_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_arch_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_arch_diff.tga
 
 newmtl _sponzaceiling
 	Ns 10.0000
@@ -90,8 +90,8 @@ newmtl _sponzaceiling
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_ceiling_a_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_ceiling_a_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_ceiling_a_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_ceiling_a_diff.tga
 
 newmtl _sponzacolumn_a
 	Ns 10.0000
@@ -104,10 +104,10 @@ newmtl _sponzacolumn_a
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_diff.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_a_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_column_a_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_column_a_diff.tga
+	map_bump ..\resources\models\sponza\textures\sponza_column_a_ddn.tga
+	bump ..\resources\models\sponza\textures\sponza_column_a_ddn.tga
 
 newmtl _sponzafloor
 	Ns 10.0000
@@ -120,8 +120,8 @@ newmtl _sponzafloor
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_floor_a_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_floor_a_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_floor_a_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_floor_a_diff.tga
 
 newmtl _sponzacolumn_c
 	Ns 10.0000
@@ -134,10 +134,10 @@ newmtl _sponzacolumn_c
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_diff.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_c_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_column_c_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_column_c_diff.tga
+	map_bump ..\resources\models\sponza\textures\sponza_column_c_ddn.tga
+	bump ..\resources\models\sponza\textures\sponza_column_c_ddn.tga
 
 newmtl _sponzadetails
 	Ns 10.0000
@@ -150,8 +150,8 @@ newmtl _sponzadetails
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_details_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_details_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_details_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_details_diff.tga
 
 newmtl _sponzacolumn_b
 	Ns 10.0000
@@ -164,10 +164,10 @@ newmtl _sponzacolumn_b
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_diff.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_column_b_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_column_b_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_column_b_diff.tga
+	map_bump ..\resources\models\sponza\textures\sponza_column_b_ddn.tga
+	bump ..\resources\models\sponza\textures\sponza_column_b_ddn.tga
 
 newmtl _sponzaMaterial__47
 	Ns 10.0000
@@ -192,8 +192,8 @@ newmtl _sponzaflagpole
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_flagpole_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_flagpole_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_flagpole_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_flagpole_diff.tga
 
 newmtl _sponzafabric_e
 	Ns 10.0000
@@ -206,8 +206,8 @@ newmtl _sponzafabric_e
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_green_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_green_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_fabric_green_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_fabric_green_diff.tga
 
 newmtl _sponzafabric_d
 	Ns 10.0000
@@ -220,8 +220,8 @@ newmtl _sponzafabric_d
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_blue_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_blue_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_fabric_blue_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_fabric_blue_diff.tga
 
 newmtl _sponzafabric_a
 	Ns 10.0000
@@ -234,8 +234,8 @@ newmtl _sponzafabric_a
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_fabric_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_fabric_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_fabric_diff.tga
 
 newmtl _sponzafabric_g
 	Ns 10.0000
@@ -248,8 +248,8 @@ newmtl _sponzafabric_g
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_blue_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_blue_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_curtain_blue_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_curtain_blue_diff.tga
 
 newmtl _sponzafabric_c
 	Ns 10.0000
@@ -262,8 +262,8 @@ newmtl _sponzafabric_c
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_curtain_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_curtain_diff.tga
 
 newmtl _sponzafabric_f
 	Ns 10.0000
@@ -276,8 +276,8 @@ newmtl _sponzafabric_f
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_green_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_curtain_green_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_curtain_green_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_curtain_green_diff.tga
 
 newmtl _sponzachain
 	Ns 10.0000
@@ -290,11 +290,11 @@ newmtl _sponzachain
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture.tga
-	map_d D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture_mask.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\chain_texture_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\chain_texture.tga
+	map_Kd ..\resources\models\sponza\textures\chain_texture.tga
+	map_d ..\resources\models\sponza\textures\chain_texture_mask.tga
+	map_bump ..\resources\models\sponza\textures\chain_texture_ddn.tga
+	bump ..\resources\models\sponza\textures\chain_texture_ddn.tga
 
 newmtl _sponzavase_hanging
 	Ns 10.0000
@@ -307,8 +307,8 @@ newmtl _sponzavase_hanging
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_hanging.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_hanging.tga
+	map_Ka ..\resources\models\sponza\textures\vase_hanging.tga
+	map_Kd ..\resources\models\sponza\textures\vase_hanging.tga
 
 newmtl _sponzavase
 	Ns 10.0000
@@ -321,8 +321,8 @@ newmtl _sponzavase
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_dif.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\vase_dif.tga
+	map_Ka ..\resources\models\sponza\textures\vase_dif.tga
+	map_Kd ..\resources\models\sponza\textures\vase_dif.tga
 
 newmtl _sponzaMaterial__25
 	Ns 10.0000
@@ -335,10 +335,10 @@ newmtl _sponzaMaterial__25
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion.tga
-	map_bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion_ddn.tga
-	bump D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\lion_ddn.tga
+	map_Ka ..\resources\models\sponza\textures\lion.tga
+	map_Kd ..\resources\models\sponza\textures\lion.tga
+	map_bump ..\resources\models\sponza\textures\lion_ddn.tga
+	bump ..\resources\models\sponza\textures\lion_ddn.tga
 
 newmtl _sponzaroof
 	Ns 10.0000
@@ -351,5 +351,5 @@ newmtl _sponzaroof
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_roof_diff.tga
-	map_Kd D:\study\graphics\Projects\OpenGL_Framework\resources\models\sponza\textures\sponza_roof_diff.tga
+	map_Ka ..\resources\models\sponza\textures\sponza_roof_diff.tga
+	map_Kd ..\resources\models\sponza\textures\sponza_roof_diff.tga
