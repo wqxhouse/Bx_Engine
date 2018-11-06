@@ -2,7 +2,7 @@
 
 #include "../Core/VulkanPCH.h"
 #include "../Core/VulkanUtility.h"
-#include "QueueMgr.h"
+#include "BxQueue.h"
 #include "Setting.h"
 
 #include <map>
@@ -62,6 +62,11 @@ private:
 #endif
 
     // Extension
-    UINT         m_extCount;
-    const char** m_extensions;
+    UINT         m_instanceExtCount;
+    const char** m_instanceExtensions;
+
+    BOOL         m_deviceExtSupport;
+
+    const static std::vector<const char*> m_validationLayers;
+    const static std::vector<const char*> m_deviceExts;
 };

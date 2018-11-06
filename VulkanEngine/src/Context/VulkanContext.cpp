@@ -1,5 +1,16 @@
 #include "VulkanContext.h"
 
+const std::vector<const char*> VulkanContext::m_validationLayers =
+{
+    "VK_LAYER_LUNARG_standard_validation"
+};
+
+const std::vector<const char*> VulkanContext::m_deviceExts =
+{
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
@@ -11,8 +22,9 @@ VulkanContext::VulkanContext(
       m_engineName("BxEngine"),
       m_prevTime(0.0f),
       m_deltaTime(0.0f),
-      m_extCount(0),
-      m_extensions(NULL)
+      m_instanceExtCount(0),
+      m_instanceExtensions(NULL),
+      m_deviceExtSupport(FALSE)
 {
     // Set resource release callback functions
     m_vkInstance = { vkDestroyInstance                 };
@@ -166,12 +178,9 @@ BOOL VulkanContext::createInstance()
 {
     BOOL status = BX_SUCCESS;
 
-    UINT enabledLayerCount                 = 0;
-    const char* const* ppEnabledLayerNames = NULL;
-
     // Checking validation layer support
     if ((m_enableValidationLayer                                                              == TRUE) &&
-        (VulkanUtility::CheckValidationLayerSupport(&enabledLayerCount, &ppEnabledLayerNames) == FALSE))
+        (VulkanUtility::CheckValidationLayerSupport(m_validationLayers) == FALSE))
     {
         status = FALSE;
     }
@@ -180,10 +189,10 @@ BOOL VulkanContext::createInstance()
     {
 #if _DEBUG
         std::vector<const char*> extensions = VulkanUtility::GetRequiredExts();
-        m_extCount   = static_cast<UINT>(extensions.size());
-        m_extensions = extensions.data();
+        m_instanceExtCount   = static_cast<UINT>(extensions.size());
+        m_instanceExtensions = extensions.data();
 #else
-        m_extensions = glfwGetRequiredInstanceExtensions(&m_extCount);
+        m_instanceExtensions = glfwGetRequiredInstanceExtensions(&m_instanceExtCount);
 #endif
 
         VkApplicationInfo appInfo = {};
@@ -197,10 +206,10 @@ BOOL VulkanContext::createInstance()
         VkInstanceCreateInfo instanceInfo    = {};
         instanceInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instanceInfo.pApplicationInfo        = &appInfo;
-        instanceInfo.enabledExtensionCount   = m_extCount;
-        instanceInfo.ppEnabledExtensionNames = m_extensions;
-        instanceInfo.enabledLayerCount       = enabledLayerCount;
-        instanceInfo.ppEnabledLayerNames     = ppEnabledLayerNames;
+        instanceInfo.enabledExtensionCount   = m_instanceExtCount;
+        instanceInfo.ppEnabledExtensionNames = m_instanceExtensions;
+        instanceInfo.enabledLayerCount       = static_cast<UINT>(m_validationLayers.size());
+        instanceInfo.ppEnabledLayerNames     = m_validationLayers.data();
 
         VkResult result = vkCreateInstance(&instanceInfo, NULL, m_vkInstance.replace());
         status = ((result == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
@@ -258,7 +267,15 @@ BOOL VulkanContext::initHwDevice()
         QueueFamilyIndices queueIndices =
             m_queueMgr.retriveHwQueueIndices(m_vkActiveHwGpuDeviceList[0], m_vkSurface);
 
-        if (m_queueMgr.IsQueueIndicesCompleted() == FALSE)
+        if (VulkanUtility::ValidateHwDevice(m_vkActiveHwGpuDeviceList[0],
+                                            m_vkSurface,
+                                            queueIndices,
+                                            m_deviceExts) == TRUE)
+        {
+            m_deviceExtSupport = TRUE;
+            result             = BX_SUCCESS;
+        }
+        else
         {
             result = BX_FAIL;
         }
@@ -292,17 +309,27 @@ BOOL VulkanContext::initDevice()
     deviceCreateInfo.sType                 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo.pQueueCreateInfos     = queueCreateInfo.data();
     deviceCreateInfo.queueCreateInfoCount  = 2;
-    deviceCreateInfo.enabledExtensionCount = 0;
     deviceCreateInfo.pEnabledFeatures      = &hwDeviceFeatures;
 
     if (m_enableValidationLayer == TRUE)
     {
-        deviceCreateInfo.enabledLayerCount   = static_cast<UINT>(VulkanUtility::m_validationLayers.size());
-        deviceCreateInfo.ppEnabledLayerNames = VulkanUtility::m_validationLayers.data();
+        deviceCreateInfo.enabledLayerCount   = static_cast<UINT>(m_validationLayers.size());
+        deviceCreateInfo.ppEnabledLayerNames = m_validationLayers.data();
     }
     else
     {
         deviceCreateInfo.enabledLayerCount = 0;
+    }
+
+    if (m_deviceExtSupport == TRUE)
+    {
+        deviceCreateInfo.enabledExtensionCount   = static_cast<UINT>(m_deviceExts.size());
+        deviceCreateInfo.ppEnabledExtensionNames = m_deviceExts.data();
+    }
+    else
+    {
+        deviceCreateInfo.enabledExtensionCount   = 0;
+        deviceCreateInfo.ppEnabledExtensionNames = NULL;
     }
 
     VkResult vkResult = vkCreateDevice(m_vkActiveHwGpuDeviceList[0], &deviceCreateInfo, NULL, m_vkDevice.replace());

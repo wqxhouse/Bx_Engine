@@ -35,7 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Context\QueueMgr.cpp" />
+    <ClCompile Include="src\Context\BxQueue.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
@@ -43,7 +43,7 @@
     <ClCompile Include="src\Math\Transform\Trans.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Context\QueueMgr.h" />
+    <ClInclude Include="src\Context\BxQueue.h" />
     <ClInclude Include="src\Context\Setting.h" />
     <ClInclude Include="src\Context\VulkanContext.h" />
     <ClInclude Include="src\Core\TypeDef.h" />

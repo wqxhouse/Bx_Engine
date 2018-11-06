@@ -1,4 +1,4 @@
-#include "QueueMgr.h"
+#include "BxQueue.h"
 
 QueueMgr::QueueMgr()
 {

@@ -1,18 +1,7 @@
 #include "VulkanUtility.h"
 
-const std::vector<const char*> VulkanUtility::m_validationLayers =
-{
-    "VK_LAYER_LUNARG_standard_validation"
-};
-
-const std::vector<const char*> VulkanUtility::m_deviceExts =
-{
-	"VK_KHR_SWAPCHAIN_EXTENSION_NAME"
-};
-
 BOOL VulkanUtility::CheckValidationLayerSupport(
-    UINT*               layerCount,
-    const char* const** pLayerNames)
+    const std::vector<const char*>& validationLayers)
 {
     BOOL result = TRUE;
 
@@ -26,7 +15,7 @@ BOOL VulkanUtility::CheckValidationLayerSupport(
         std::vector<VkLayerProperties> layerProperties(totalLayoutCount);
         vkEnumerateInstanceLayerProperties(&totalLayoutCount, layerProperties.data());
 
-        for (const char* layerName : m_validationLayers)
+        for (const char* layerName : validationLayers)
         {
             BOOL validLayer = FALSE;
 
@@ -44,17 +33,6 @@ BOOL VulkanUtility::CheckValidationLayerSupport(
                 result = FALSE;
                 break;
             }
-        }
-
-        if (result == TRUE)
-        {
-            *pLayerNames = m_validationLayers.data();
-            *layerCount  = static_cast<UINT>(m_validationLayers.size());
-        }
-        else
-        {
-            *pLayerNames = NULL;
-            *layerCount  = 0;
         }
     }
 #endif
@@ -224,17 +202,18 @@ VkResult VulkanUtility::DestroyDebugUtilsMessenger(
 }
 
 BOOL VulkanUtility::CheckDeviceExtSupport(
-	const VkPhysicalDevice& device)
+	const VkPhysicalDevice&         hwGpuDevice,
+    const std::vector<const char*>& deviceExts)
 {
 	BOOL result = TRUE;
 
 	UINT extPropsNum = 0;
-	vkEnumerateDeviceExtensionProperties(device, NULL, &extPropsNum, NULL);
+	vkEnumerateDeviceExtensionProperties(hwGpuDevice, NULL, &extPropsNum, NULL);
 
 	std::vector<VkExtensionProperties> extProps(extPropsNum);
-	vkEnumerateDeviceExtensionProperties(device, NULL, &extPropsNum, extProps.data());
+	vkEnumerateDeviceExtensionProperties(hwGpuDevice, NULL, &extPropsNum, extProps.data());
 
-	for (const char* const& deviceExtName : m_deviceExts)
+	for (const char* const& deviceExtName : deviceExts)
 	{
 		BOOL isSupport = FALSE;
 		for (const VkExtensionProperties& prop : extProps)
@@ -254,6 +233,63 @@ BOOL VulkanUtility::CheckDeviceExtSupport(
 	}
 
 	return result;
+}
+
+SwapChainHwProperties VulkanUtility::QuerySwapchainHwProperties(
+    const VkPhysicalDevice& hwGpuDevice,
+    const VkSurfaceKHR&     surface)
+{
+    SwapChainHwProperties swapChainProperty;
+
+    // Query surface capabilities
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+        hwGpuDevice, surface, &(swapChainProperty.m_surfaceCapabilities));
+
+    // Query surface formats
+    UINT formatNum = 0;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(hwGpuDevice, surface, &formatNum, NULL);
+
+    if (formatNum > 0)
+    {
+        swapChainProperty.m_surfaceFormats.resize(static_cast<size_t>(formatNum));
+        vkGetPhysicalDeviceSurfaceFormatsKHR(
+            hwGpuDevice, surface, &formatNum, swapChainProperty.m_surfaceFormats.data());
+    }
+
+    // Query surface present modes
+    UINT presentModeNum = 0;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(hwGpuDevice, surface, &presentModeNum, NULL);
+
+    if (presentModeNum > 0)
+    {
+        swapChainProperty.m_presentModes.resize(presentModeNum);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(
+            hwGpuDevice, surface, &presentModeNum, swapChainProperty.m_presentModes.data());
+    }
+
+    return swapChainProperty;
+}
+
+BOOL VulkanUtility::ValidateHwDevice(
+    const VkPhysicalDevice&         hwGpuDevice,
+    const VkSurfaceKHR&             surface,
+    const QueueFamilyIndices&       queueIndices,
+    const std::vector<const char*>& deviceExts)
+{
+    BOOL result = TRUE;
+    
+    BOOL isQueueComplete    = queueIndices.IsCompleted();
+    BOOL isDeviceExtSupport = CheckDeviceExtSupport(hwGpuDevice, deviceExts);
+
+    SwapChainHwProperties swapChainHwProperties = QuerySwapchainHwProperties(hwGpuDevice, surface);
+    BOOL isSwapchainSupport = ((swapChainHwProperties.m_surfaceFormats.empty() == FALSE) &&
+                               (swapChainHwProperties.m_presentModes.empty()   == FALSE));
+
+    result = ((isQueueComplete    == TRUE) &&
+              (isDeviceExtSupport == TRUE) &&
+              (isSwapchainSupport == TRUE));
+
+    return result;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(

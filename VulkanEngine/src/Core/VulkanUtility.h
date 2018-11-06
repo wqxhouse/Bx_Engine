@@ -3,20 +3,39 @@
 #include "VulkanPCH.h"
 #include "Utility.h"
 
+#include "../Context/BxQueue.h"
+
+struct SwapChainHwProperties
+{
+    VkSurfaceCapabilitiesKHR        m_surfaceCapabilities;
+    std::vector<VkSurfaceFormatKHR> m_surfaceFormats;
+    std::vector<VkPresentModeKHR>   m_presentModes;
+};
+
 class VulkanUtility
 {
 public:
     static BOOL CheckValidationLayerSupport(
-        UINT*               layerCount,
-        const char* const** pLayerNames);
+        const std::vector<const char*>& validationLayers);
 
     static std::vector<const char*> GetRequiredExts();
 
     static UINT GetHwDeviceScore(
         const VkPhysicalDevice& hwGpuDevice);
 
-	static BOOL CheckDeviceExtSupport(
-		const VkPhysicalDevice& device);
+    static SwapChainHwProperties QuerySwapchainHwProperties(
+        const VkPhysicalDevice& hwGpuDevice,
+        const VkSurfaceKHR&     surface);
+
+    static BOOL CheckDeviceExtSupport(
+        const VkPhysicalDevice&         hwGpuDevice,
+        const std::vector<const char*>& deviceExts);
+
+    static BOOL ValidateHwDevice(
+        const VkPhysicalDevice&         hwGpuDevice,
+        const VkSurfaceKHR&             surface,
+        const QueueFamilyIndices&       queueIndices,
+        const std::vector<const char*>& deviceExts);
 
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -36,7 +55,4 @@ public:
         VkDebugUtilsMessengerEXT                    messenger,
         const VkAllocationCallbacks*                pAllocator);
 #endif
-
-    const static std::vector<const char*> m_validationLayers;
-	const static std::vector<const char*> m_deviceExts;
 };

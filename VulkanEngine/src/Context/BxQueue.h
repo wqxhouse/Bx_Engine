@@ -11,8 +11,8 @@ struct QueueFamilyIndices
     inline BOOL IsCompleted() const
     {
         return ((graphicsFamilyIndex >= 0) &&
-            (computeFamilyIndex >= 0) &&
-            (presentSurfaceFamilyIndex >= 0));
+                (computeFamilyIndex >= 0) &&
+                (presentSurfaceFamilyIndex >= 0));
     }
 
     inline UINT GetIndexNum() const

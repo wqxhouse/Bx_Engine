@@ -33,7 +33,7 @@
     <ClCompile Include="src\Math\Transform\Trans.cpp">
       <Filter>src\Math\Trans</Filter>
     </ClCompile>
-    <ClCompile Include="src\Context\QueueMgr.cpp">
+    <ClCompile Include="src\Context\BxQueue.cpp">
       <Filter>src\Context</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,7 +89,7 @@
     <ClInclude Include="src\Math\Transform\Trans.h">
       <Filter>src\Math\Trans</Filter>
     </ClInclude>
-    <ClInclude Include="src\Context\QueueMgr.h">
+    <ClInclude Include="src\Context\BxQueue.h">
       <Filter>src\Context</Filter>
     </ClInclude>
   </ItemGroup>
