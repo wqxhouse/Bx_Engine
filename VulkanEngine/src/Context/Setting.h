@@ -11,7 +11,8 @@ struct AmbientOcclutionSetting
 struct GraphicsSetting
 {
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
-    Antialasing antialasing         = Antialasing::AA_HIGH;
+    Antialasing     antialasing     = Antialasing::AA_HIGH;
+    BOOL            blend           = FALSE;
 
     BOOL shadowCasting;
     Resolution shadowResolution     = { 128, 128 };

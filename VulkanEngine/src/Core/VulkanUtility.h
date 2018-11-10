@@ -58,6 +58,64 @@ public:
         const std::string& fileName,
         const BOOL         isBinary);
 
+    static inline VkPolygonMode GetVkPolygonMode(
+        const PolyMode polyMode)
+    {
+        VkPolygonMode vkPolyMode = VK_POLYGON_MODE_BEGIN_RANGE;
+
+        switch (polyMode)
+        {
+            case POLYMODE_POINT:
+                vkPolyMode = VK_POLYGON_MODE_POINT;
+                break;
+            case POLYMODE_WIREFRAME:
+                vkPolyMode = VK_POLYGON_MODE_LINE;
+                break;
+            case POLYMODE_FILL:
+                vkPolyMode = VK_POLYGON_MODE_FILL;
+                break;
+            default:
+                break;
+        }
+
+        return vkPolyMode;
+    }
+
+    static inline VkSampleCountFlagBits GetSampleCount(
+        const UINT sampleCount)
+    {
+        VkSampleCountFlagBits sampleCountFlagBit = VK_SAMPLE_COUNT_1_BIT;
+
+        switch (sampleCount)
+        {
+            case 1:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_1_BIT;
+                break;
+            case 2:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_2_BIT;
+                break;
+            case 4:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_4_BIT;
+                break;
+            case 8:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_8_BIT;
+                break;
+            case 16:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_16_BIT;
+                break;
+            case 32:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_32_BIT;
+                break;
+            case 64:
+                sampleCountFlagBit = VK_SAMPLE_COUNT_64_BIT;
+                break;
+            default:
+                break;
+        }
+
+        return sampleCountFlagBit;
+    }
+
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,

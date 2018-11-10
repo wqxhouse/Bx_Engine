@@ -29,10 +29,12 @@ VulkanContext::VulkanContext(
       m_deviceExtSupport(FALSE)
 {
     // Set resource release callback functions
-    m_vkInstance = { vkDestroyInstance                 };
-    m_vkSurface  = { m_vkInstance, vkDestroySurfaceKHR };
-    m_vkDevice   = { vkDestroyDevice                   };
-    m_swapchain  = { m_vkDevice, vkDestroySwapchainKHR };
+    m_vkInstance             = { vkDestroyInstance                 };
+    m_vkSurface              = { m_vkInstance, vkDestroySurfaceKHR };
+    m_vkDevice               = { vkDestroyDevice                   };
+    m_swapchain              = { m_vkDevice, vkDestroySwapchainKHR };
+    m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline     };
+    m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
 
 #if _DEBUG
     m_vkDebugMsg = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -318,26 +320,26 @@ BOOL VulkanContext::initDevice()
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfoList;
 
-	std::set<UINT> queueIndicesSet;
+    std::set<UINT> queueIndicesSet;
 
     for (UINT i = 0; i < queueFamilyIndicesNum; ++i)
     {
-		UINT index = queueFamilyIndices.GetQueueFamilyIndex(i);
-		if ((index != -1) &&
-			(queueIndicesSet.find(index) == queueIndicesSet.end()))
-		{
-			VkDeviceQueueCreateInfo queueCreateInfo = {};
-			queueCreateInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueCreateInfo.queueFamilyIndex		= index;
-			queueCreateInfo.queueCount				= 1;
+        UINT index = queueFamilyIndices.GetQueueFamilyIndex(i);
+        if ((index != -1) &&
+            (queueIndicesSet.find(index) == queueIndicesSet.end()))
+        {
+            VkDeviceQueueCreateInfo queueCreateInfo = {};
+            queueCreateInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex		= index;
+            queueCreateInfo.queueCount				= 1;
 
-			float priority = m_queueMgr.GetQueue(i).priority;
-			queueCreateInfo.pQueuePriorities = &priority;
+            float priority = m_queueMgr.GetQueue(i).priority;
+            queueCreateInfo.pQueuePriorities = &priority;
 
-			queueCreateInfoList.push_back(queueCreateInfo);
+            queueCreateInfoList.push_back(queueCreateInfo);
 
-			queueIndicesSet.insert(index);
-		}
+            queueIndicesSet.insert(index);
+        }
     }
 
     VkPhysicalDeviceFeatures hwDeviceFeatures = {};
@@ -389,58 +391,58 @@ BOOL VulkanContext::createSwapchain()
 {
     BOOL status = BX_SUCCESS;
 
-	VkSurfaceFormatKHR swapchainSurfaceFormat = VulkanUtility::GetSwapchainSurfaceFormat(m_swapchainHwProperties.m_surfaceFormats, TRUE);
-	UINT			   swapchainMinImageCount = VulkanUtility::GetSwapchainImageCount(m_swapchainHwProperties.m_surfaceCapabilities);
-	
-	VkExtent2D		   swapchainExtent		  = VulkanUtility::GetSwapchainExtent(m_swapchainHwProperties.m_surfaceCapabilities,
-																				  m_pSetting->resolution.width,
-																				  m_pSetting->resolution.height);
+    VkSurfaceFormatKHR swapchainSurfaceFormat = VulkanUtility::GetSwapchainSurfaceFormat(m_swapchainHwProperties.m_surfaceFormats, TRUE);
+    UINT			   swapchainMinImageCount = VulkanUtility::GetSwapchainImageCount(m_swapchainHwProperties.m_surfaceCapabilities);
 
-	VkPresentModeKHR   swapchainPresentMode	  = VulkanUtility::GetSwapchainPresentMode(m_swapchainHwProperties.m_presentModes,
-																					   BX_SWAPCHAIN_SURFACE_BUFFER_TRIPLE,
-																					   TRUE);
-	QueueFamilyIndices queueIndices			  = m_queueMgr.GetHwQueueIndices();
+    VkPresentModeKHR   swapchainPresentMode	  = VulkanUtility::GetSwapchainPresentMode(m_swapchainHwProperties.m_presentModes,
+                                                                                       BX_SWAPCHAIN_SURFACE_BUFFER_TRIPLE,
+                                                                                       TRUE);
+
+    m_swapchainExtent		                  = VulkanUtility::GetSwapchainExtent(m_swapchainHwProperties.m_surfaceCapabilities,
+                                                                                  m_pSetting->resolution.width,
+                                                                                  m_pSetting->resolution.height);
+    QueueFamilyIndices queueIndices = m_queueMgr.GetHwQueueIndices();
 
     VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
     swapchainCreateInfo.sType                    = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     swapchainCreateInfo.oldSwapchain             = VK_NULL_HANDLE; // No previous swapchain
     swapchainCreateInfo.surface                  = m_vkSurface;
-	swapchainCreateInfo.presentMode				 = swapchainPresentMode;
+    swapchainCreateInfo.presentMode				 = swapchainPresentMode;
     swapchainCreateInfo.imageUsage               = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     swapchainCreateInfo.imageArrayLayers         = 1; // TODO: Stereoscopic 3D app needs to modify this property
-	swapchainCreateInfo.imageFormat				 = swapchainSurfaceFormat.format;
-	swapchainCreateInfo.imageColorSpace			 = swapchainSurfaceFormat.colorSpace;
-	swapchainCreateInfo.minImageCount            = swapchainMinImageCount;
-    swapchainCreateInfo.imageExtent              = swapchainExtent;
-	swapchainCreateInfo.preTransform			 = m_swapchainHwProperties.m_surfaceCapabilities.currentTransform;
-	swapchainCreateInfo.clipped					 = VK_TRUE;
-	swapchainCreateInfo.compositeAlpha			 = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    swapchainCreateInfo.imageFormat				 = swapchainSurfaceFormat.format;
+    swapchainCreateInfo.imageColorSpace			 = swapchainSurfaceFormat.colorSpace;
+    swapchainCreateInfo.minImageCount            = swapchainMinImageCount;
+    swapchainCreateInfo.imageExtent              = m_swapchainExtent;
+    swapchainCreateInfo.preTransform			 = m_swapchainHwProperties.m_surfaceCapabilities.currentTransform;
+    swapchainCreateInfo.clipped					 = VK_TRUE;
+    swapchainCreateInfo.compositeAlpha			 = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
-	UINT swapchainQueueIndices[2] = 
-	{
-		static_cast<UINT>(queueIndices.presentSurfaceFamilyIndex),
-		static_cast<UINT>(queueIndices.graphicsFamilyIndex)
-	};
+    UINT swapchainQueueIndices[2] =
+    {
+        static_cast<UINT>(queueIndices.presentSurfaceFamilyIndex),
+        static_cast<UINT>(queueIndices.graphicsFamilyIndex)
+    };
 
-	if (queueIndices.graphicsFamilyIndex == queueIndices.presentSurfaceFamilyIndex)
-	{
-		swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	}
-	else
-	{
-		swapchainCreateInfo.imageArrayLayers	  = VK_SHARING_MODE_CONCURRENT;
-		swapchainCreateInfo.queueFamilyIndexCount = 2;
-		swapchainCreateInfo.pQueueFamilyIndices   = &(swapchainQueueIndices[0]);
-	}
+    if (queueIndices.graphicsFamilyIndex == queueIndices.presentSurfaceFamilyIndex)
+    {
+        swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    }
+    else
+    {
+        swapchainCreateInfo.imageArrayLayers	  = VK_SHARING_MODE_CONCURRENT;
+        swapchainCreateInfo.queueFamilyIndexCount = 2;
+        swapchainCreateInfo.pQueueFamilyIndices   = &(swapchainQueueIndices[0]);
+    }
 
     VkResult vkResult = vkCreateSwapchainKHR(m_vkDevice, &swapchainCreateInfo, NULL, m_swapchain.replace());
     status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
     // Retrive the swapchain images
     UINT swapchainImageNum = 0;
-	if (status == BX_SUCCESS)
-	{
-		VkResult vkResult = vkGetSwapchainImagesKHR(m_vkDevice, m_swapchain, &swapchainImageNum, NULL);
+    if (status == BX_SUCCESS)
+    {
+        VkResult vkResult = vkGetSwapchainImagesKHR(m_vkDevice, m_swapchain, &swapchainImageNum, NULL);
 
         if ((vkResult == VK_SUCCESS) &&
             (swapchainImageNum > 0))
@@ -455,12 +457,12 @@ BOOL VulkanContext::createSwapchain()
             assert(BX_FAIL);
             status = BX_FAIL;
         }
-	}
-	else
-	{
+    }
+    else
+    {
         assert(BX_FAIL);
-		status = BX_FAIL;
-	}
+        status = BX_FAIL;
+    }
 
     // Create Image views for the swapchain images
     if (status == BX_SUCCESS)
@@ -494,6 +496,108 @@ BOOL VulkanContext::createSwapchain()
             }
         }
     }
+
+    return status;
+}
+
+BOOL VulkanContext::createGraphicsPipeline()
+{
+    BOOL status = BX_SUCCESS;
+
+    /// Setup Fixed pipeline stages
+    // VS input
+    VkPipelineVertexInputStateCreateInfo vsInputCreateInfo = {};
+    vsInputCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    // TODO
+    vsInputCreateInfo.vertexAttributeDescriptionCount      = 0;
+    vsInputCreateInfo.pVertexAttributeDescriptions	       = NULL;
+    vsInputCreateInfo.vertexBindingDescriptionCount	       = 0;
+    vsInputCreateInfo.pVertexBindingDescriptions	       = NULL;
+
+    // Input assembly state
+    VkPipelineInputAssemblyStateCreateInfo inputAsmCreateInfo = {};
+    inputAsmCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAsmCreateInfo.topology                               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    inputAsmCreateInfo.primitiveRestartEnable                 = VK_FALSE;
+
+    // Rasterizer
+    VkPipelineRasterizationStateCreateInfo rasterizerCreateInfo = {};
+    rasterizerCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizerCreateInfo.depthClampEnable                       = VK_FALSE;
+    rasterizerCreateInfo.rasterizerDiscardEnable                = VK_FALSE;
+    rasterizerCreateInfo.polygonMode                            = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
+    rasterizerCreateInfo.lineWidth                              = 1.0f;
+    rasterizerCreateInfo.cullMode                               = VK_CULL_MODE_BACK_BIT;
+    rasterizerCreateInfo.depthBiasEnable                        = VK_FALSE;
+
+    // Multisampling
+    VkPipelineMultisampleStateCreateInfo multiSamplingCreateInfo = {};
+    multiSamplingCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multiSamplingCreateInfo.rasterizationSamples                 = VulkanUtility::GetSampleCount(m_pSetting->m_graphicsSetting.antialasing);
+    multiSamplingCreateInfo.sampleShadingEnable                  = VK_FALSE;
+
+    // Depth/Stencil
+    VkPipelineColorBlendAttachmentState blendAttachmentState = {};
+    blendAttachmentState.colorWriteMask                      = VK_COLOR_COMPONENT_R_BIT |
+                                                               VK_COLOR_COMPONENT_G_BIT |
+                                                               VK_COLOR_COMPONENT_B_BIT |
+                                                               VK_COLOR_COMPONENT_A_BIT;
+    if (m_pSetting->m_graphicsSetting.blend == TRUE)
+    {
+        blendAttachmentState.blendEnable         = VK_TRUE;
+        blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
+        blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
+        blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    }
+    else
+    {
+        blendAttachmentState.blendEnable = VK_FALSE;
+    }
+
+    VkPipelineColorBlendStateCreateInfo blendState = {};
+    blendState.sType                               = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    blendState.attachmentCount                     = 1;
+    blendState.pAttachments                        = &blendAttachmentState;
+    blendState.logicOpEnable                       = VK_FALSE; // Enable will disable the states in pAttachments
+
+    // Viewport and scissor
+    VkViewport viewport = {};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = m_swapchainExtent.width;
+    viewport.height = m_swapchainExtent.height;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+
+    VkRect2D scissor = {};
+    scissor.extent = m_swapchainExtent;
+    scissor.offset = { 0, 0 };
+
+    VkPipelineViewportStateCreateInfo viewportCreateInfo = {};
+    viewportCreateInfo.sType                             = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportCreateInfo.viewportCount                     = 1;
+    viewportCreateInfo.pViewports                        = &viewport;
+    viewportCreateInfo.scissorCount                      = 1;
+    viewportCreateInfo.pScissors                         = &scissor;
+
+    // Pipeline Layout
+    VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
+    pipelineLayoutCreateInfo.sType                      = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+
+    VkResult vkResult = vkCreatePipelineLayout(
+        m_vkDevice, &pipelineLayoutCreateInfo, NULL, m_graphicsPipelineLayout.replace());
+
+    status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+    assert(status == BX_SUCCESS);
+
+    /// End fixed pipeline stages setup
+
+    /// Setup programmable pipeline stages
+
+    /// End programmable pipeline stages setup
 
     return status;
 }

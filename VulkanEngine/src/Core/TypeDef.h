@@ -69,9 +69,9 @@ enum RenderingMethod
 
 enum Antialasing
 {
-    AA_NONE = 0x00000000,
-    AA_LOW = 0x00000002,
-    AA_HIGH = 0x00000004,
+    AA_NONE  = 0x00000000,
+    AA_LOW   = 0x00000002,
+    AA_HIGH  = 0x00000004,
     AA_EXTRA = 0x00000008,
 };
 

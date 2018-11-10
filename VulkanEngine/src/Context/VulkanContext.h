@@ -29,6 +29,7 @@ private:
     BOOL initHwDevice();
     BOOL initDevice();
     BOOL createSwapchain();
+	BOOL createGraphicsPipeline();
 
     /// Context attributes
     // Window pointer and settings
@@ -56,12 +57,17 @@ private:
     SwapChainHwProperties              m_swapchainHwProperties;
     std::vector<VkImage>	           m_swapchainImages;
     std::vector<VDeleter<VkImageView>> m_swapchainImagesView;
+    VkExtent2D                         m_swapchainExtent;
 
     // Queue
     QueueMgr m_queueMgr;
 
     // Shader
     VulkanShader* m_pShader;
+
+	// Pipeline
+	VDeleter<VkPipeline>       m_graphicsPipeline;
+    VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;
