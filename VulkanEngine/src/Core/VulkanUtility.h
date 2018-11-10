@@ -54,6 +54,10 @@ public:
     static UINT GetSwapchainImageCount(
         const VkSurfaceCapabilitiesKHR& surfaceCapabilities);
 
+    static std::vector<char> ReadFile(
+        const std::string& fileName,
+        const BOOL         isBinary);
+
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,

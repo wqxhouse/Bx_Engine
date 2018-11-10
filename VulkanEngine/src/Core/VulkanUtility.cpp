@@ -407,6 +407,34 @@ UINT VulkanUtility::GetSwapchainImageCount(
     return imageCount;
 }
 
+std::vector<char> VulkanUtility::ReadFile(
+    const std::string & fileName,
+    const BOOL         isBinary)
+{
+    std::vector<char> fileString;
+
+    INT binaryBit = ((isBinary == TRUE) ? std::ios::binary : 0);
+    std::ifstream fileStream(fileName, std::ios::ate | binaryBit);
+
+    if (fileStream.is_open() == TRUE)
+    {
+        UINT fileSize = static_cast<UINT>(fileStream.tellg());
+        fileString.resize(fileSize);
+
+        fileStream.seekg(0);
+        fileStream.read(fileString.data(), fileSize);
+    }
+    else
+    {
+        printf("Failed to open file!\n");
+        assert(FALSE);
+    }
+
+    fileStream.close();
+
+    return fileString;
+}
+
 VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,
 	VkDebugUtilsMessageTypeFlagsEXT				type,

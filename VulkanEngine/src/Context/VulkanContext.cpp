@@ -372,7 +372,15 @@ BOOL VulkanContext::initDevice()
     VkResult vkResult = vkCreateDevice(m_vkActiveHwGpuDeviceList[0], &deviceCreateInfo, NULL, m_vkDevice.replace());
     result            = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
+    VkDevice localDevice(m_vkDevice);
+    VkDevice localDevice2 = m_vkDevice;
+
     m_queueMgr.retriveQueueHandle(m_vkDevice);
+
+    if (result == BX_SUCCESS)
+    {
+        m_pShader = new VulkanShader(m_vkDevice);
+    }
 
     return result;
 }

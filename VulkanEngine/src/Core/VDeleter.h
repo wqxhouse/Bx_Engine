@@ -25,6 +25,12 @@ public:
 		this->deleter = [&device, deletef](T obj) { deletef(device, obj, nullptr); };
 	}
 
+    VDeleter(const T& t)
+    {
+        printf("Hello");
+        *this = t;
+    }
+
 	~VDeleter()
     {
 		cleanup();

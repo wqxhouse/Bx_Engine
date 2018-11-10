@@ -16,6 +16,9 @@
     <Filter Include="src\Math\Trans">
       <UniqueIdentifier>{97575a32-4225-472b-b2df-59104013ec84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Shader">
+      <UniqueIdentifier>{e1de3521-64c5-416f-aafb-3d9377e6be49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context\VulkanContext.cpp">
@@ -35,6 +38,12 @@
     </ClCompile>
     <ClCompile Include="src\Context\BxQueue.cpp">
       <Filter>src\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader\VulkanShader.cpp">
+      <Filter>src\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp">
+      <Filter>src\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="src\Context\BxQueue.h">
       <Filter>src\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader\VulkanShader.h">
+      <Filter>src\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader\VulkanGraphicsShader.h">
+      <Filter>src\Shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

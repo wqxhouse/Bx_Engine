@@ -41,6 +41,8 @@
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Math\Transform\Trans.cpp" />
+    <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
+    <ClCompile Include="src\Shader\VulkanShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Context\BxQueue.h" />
@@ -61,6 +63,8 @@
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
+    <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
+    <ClInclude Include="src\Shader\VulkanShader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

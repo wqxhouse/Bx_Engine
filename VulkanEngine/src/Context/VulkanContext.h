@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../Core/VulkanPCH.h"
-#include "../Core/VulkanUtility.h"
 #include "BxQueue.h"
 #include "Setting.h"
+#include "../Core/VulkanPCH.h"
+#include "../Core/VulkanUtility.h"
+#include "../Shader/VulkanGraphicsShader.h"
 
 #include <map>
 
@@ -58,6 +59,9 @@ private:
 
     // Queue
     QueueMgr m_queueMgr;
+
+    // Shader
+    VulkanShader* m_pShader;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;
