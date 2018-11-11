@@ -12,7 +12,6 @@ const std::vector<const char*> VulkanContext::m_deviceExts =
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
-
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
@@ -29,12 +28,13 @@ VulkanContext::VulkanContext(
       m_deviceExtSupport(FALSE)
 {
     // Set resource release callback functions
-    m_vkInstance             = { vkDestroyInstance                 };
-    m_vkSurface              = { m_vkInstance, vkDestroySurfaceKHR };
-    m_vkDevice               = { vkDestroyDevice                   };
-    m_swapchain              = { m_vkDevice, vkDestroySwapchainKHR };
-    m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline     };
+    m_vkInstance             = { vkDestroyInstance                   };
+    m_vkSurface              = { m_vkInstance, vkDestroySurfaceKHR   };
+    m_vkDevice               = { vkDestroyDevice                     };
+    m_swapchain              = { m_vkDevice, vkDestroySwapchainKHR   };
     m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
+    m_renderPass             = { m_vkDevice, vkDestroyRenderPass     };
+    m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline       };
 
 #if _DEBUG
     m_vkDebugMsg = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -43,6 +43,7 @@ VulkanContext::VulkanContext(
 
 VulkanContext::~VulkanContext()
 {
+    SafeDelete(m_pShader);
 }
 
 void VulkanContext::initialize()
@@ -182,6 +183,17 @@ BOOL VulkanContext::initVulkan()
         if (status == BX_FAIL)
         {
             printf("Failed to created swapchain!\n");
+            assert(BX_FAIL);
+        }
+    }
+
+    if (status = BX_SUCCESS)
+    {
+        status = createGraphicsPipeline();
+
+        if (status == BX_FAIL)
+        {
+            printf("Failed to created graphics pipeline!\n");
             assert(BX_FAIL);
         }
     }
@@ -374,14 +386,11 @@ BOOL VulkanContext::initDevice()
     VkResult vkResult = vkCreateDevice(m_vkActiveHwGpuDeviceList[0], &deviceCreateInfo, NULL, m_vkDevice.replace());
     result            = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
-    VkDevice localDevice(m_vkDevice);
-    VkDevice localDevice2 = m_vkDevice;
-
     m_queueMgr.retriveQueueHandle(m_vkDevice);
 
     if (result == BX_SUCCESS)
     {
-        m_pShader = new VulkanShader(m_vkDevice);
+        m_pShader = new VulkanGraphicsShader(m_vkDevice);
     }
 
     return result;
@@ -391,16 +400,19 @@ BOOL VulkanContext::createSwapchain()
 {
     BOOL status = BX_SUCCESS;
 
-    VkSurfaceFormatKHR swapchainSurfaceFormat = VulkanUtility::GetSwapchainSurfaceFormat(m_swapchainHwProperties.m_surfaceFormats, TRUE);
     UINT			   swapchainMinImageCount = VulkanUtility::GetSwapchainImageCount(m_swapchainHwProperties.m_surfaceCapabilities);
 
     VkPresentModeKHR   swapchainPresentMode	  = VulkanUtility::GetSwapchainPresentMode(m_swapchainHwProperties.m_presentModes,
                                                                                        BX_SWAPCHAIN_SURFACE_BUFFER_TRIPLE,
                                                                                        TRUE);
 
-    m_swapchainExtent		                  = VulkanUtility::GetSwapchainExtent(m_swapchainHwProperties.m_surfaceCapabilities,
-                                                                                  m_pSetting->resolution.width,
-                                                                                  m_pSetting->resolution.height);
+    m_swapchainSurfaceFormat = 
+        VulkanUtility::GetSwapchainSurfaceFormat(m_swapchainHwProperties.m_surfaceFormats, TRUE);
+    m_swapchainExtent        =
+        VulkanUtility::GetSwapchainExtent(m_swapchainHwProperties.m_surfaceCapabilities,
+                                          m_pSetting->resolution.width,
+                                          m_pSetting->resolution.height);
+
     QueueFamilyIndices queueIndices = m_queueMgr.GetHwQueueIndices();
 
     VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
@@ -410,8 +422,8 @@ BOOL VulkanContext::createSwapchain()
     swapchainCreateInfo.presentMode				 = swapchainPresentMode;
     swapchainCreateInfo.imageUsage               = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     swapchainCreateInfo.imageArrayLayers         = 1; // TODO: Stereoscopic 3D app needs to modify this property
-    swapchainCreateInfo.imageFormat				 = swapchainSurfaceFormat.format;
-    swapchainCreateInfo.imageColorSpace			 = swapchainSurfaceFormat.colorSpace;
+    swapchainCreateInfo.imageFormat				 = m_swapchainSurfaceFormat.format;
+    swapchainCreateInfo.imageColorSpace			 = m_swapchainSurfaceFormat.colorSpace;
     swapchainCreateInfo.minImageCount            = swapchainMinImageCount;
     swapchainCreateInfo.imageExtent              = m_swapchainExtent;
     swapchainCreateInfo.preTransform			 = m_swapchainHwProperties.m_surfaceCapabilities.currentTransform;
@@ -472,14 +484,14 @@ BOOL VulkanContext::createSwapchain()
         for (UINT i = 0; i < swapchainImageNum; ++i)
         {
             VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
-            swapchainImageViewCreateInfo.sType                 = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-            swapchainImageViewCreateInfo.viewType              = VK_IMAGE_VIEW_TYPE_2D;
-            swapchainImageViewCreateInfo.image                 = m_swapchainImages[i];
-            swapchainImageViewCreateInfo.format                = swapchainSurfaceFormat.format;
-            swapchainImageViewCreateInfo.components.r          = VK_COMPONENT_SWIZZLE_R;
-            swapchainImageViewCreateInfo.components.g          = VK_COMPONENT_SWIZZLE_G;
-            swapchainImageViewCreateInfo.components.b          = VK_COMPONENT_SWIZZLE_B;
-            swapchainImageViewCreateInfo.components.a          = VK_COMPONENT_SWIZZLE_A;
+            swapchainImageViewCreateInfo.sType        = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            swapchainImageViewCreateInfo.viewType     = VK_IMAGE_VIEW_TYPE_2D;
+            swapchainImageViewCreateInfo.image        = m_swapchainImages[i];
+            swapchainImageViewCreateInfo.format       = m_swapchainSurfaceFormat.format;
+            swapchainImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+            swapchainImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+            swapchainImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+            swapchainImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
 
             swapchainImageViewCreateInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
             swapchainImageViewCreateInfo.subresourceRange.baseMipLevel   = 0;
@@ -507,41 +519,41 @@ BOOL VulkanContext::createGraphicsPipeline()
     /// Setup Fixed pipeline stages
     // VS input
     VkPipelineVertexInputStateCreateInfo vsInputCreateInfo = {};
-    vsInputCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    // TODO
-    vsInputCreateInfo.vertexAttributeDescriptionCount      = 0;
-    vsInputCreateInfo.pVertexAttributeDescriptions	       = NULL;
-    vsInputCreateInfo.vertexBindingDescriptionCount	       = 0;
-    vsInputCreateInfo.pVertexBindingDescriptions	       = NULL;
+    vsInputCreateInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    // TODO                                           
+    vsInputCreateInfo.vertexAttributeDescriptionCount = 0;
+    vsInputCreateInfo.pVertexAttributeDescriptions	  = NULL;
+    vsInputCreateInfo.vertexBindingDescriptionCount	  = 0;
+    vsInputCreateInfo.pVertexBindingDescriptions	  = NULL;
 
     // Input assembly state
     VkPipelineInputAssemblyStateCreateInfo inputAsmCreateInfo = {};
-    inputAsmCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    inputAsmCreateInfo.topology                               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    inputAsmCreateInfo.primitiveRestartEnable                 = VK_FALSE;
+    inputAsmCreateInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAsmCreateInfo.topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    inputAsmCreateInfo.primitiveRestartEnable = VK_FALSE;
 
     // Rasterizer
     VkPipelineRasterizationStateCreateInfo rasterizerCreateInfo = {};
-    rasterizerCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-    rasterizerCreateInfo.depthClampEnable                       = VK_FALSE;
-    rasterizerCreateInfo.rasterizerDiscardEnable                = VK_FALSE;
-    rasterizerCreateInfo.polygonMode                            = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
-    rasterizerCreateInfo.lineWidth                              = 1.0f;
-    rasterizerCreateInfo.cullMode                               = VK_CULL_MODE_BACK_BIT;
-    rasterizerCreateInfo.depthBiasEnable                        = VK_FALSE;
+    rasterizerCreateInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizerCreateInfo.depthClampEnable        = VK_FALSE;
+    rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
+    rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
+    rasterizerCreateInfo.lineWidth               = 1.0f;
+    rasterizerCreateInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
+    rasterizerCreateInfo.depthBiasEnable         = VK_FALSE;
 
     // Multisampling
     VkPipelineMultisampleStateCreateInfo multiSamplingCreateInfo = {};
-    multiSamplingCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    multiSamplingCreateInfo.rasterizationSamples                 = VulkanUtility::GetSampleCount(m_pSetting->m_graphicsSetting.antialasing);
-    multiSamplingCreateInfo.sampleShadingEnable                  = VK_FALSE;
+    multiSamplingCreateInfo.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multiSamplingCreateInfo.rasterizationSamples = VulkanUtility::GetSampleCount(m_pSetting->m_graphicsSetting.antialasing);
+    multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
 
     // Depth/Stencil
     VkPipelineColorBlendAttachmentState blendAttachmentState = {};
-    blendAttachmentState.colorWriteMask                      = VK_COLOR_COMPONENT_R_BIT |
-                                                               VK_COLOR_COMPONENT_G_BIT |
-                                                               VK_COLOR_COMPONENT_B_BIT |
-                                                               VK_COLOR_COMPONENT_A_BIT;
+    blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+                                          VK_COLOR_COMPONENT_G_BIT |
+                                          VK_COLOR_COMPONENT_B_BIT |
+                                          VK_COLOR_COMPONENT_A_BIT;
     if (m_pSetting->m_graphicsSetting.blend == TRUE)
     {
         blendAttachmentState.blendEnable         = VK_TRUE;
@@ -558,30 +570,30 @@ BOOL VulkanContext::createGraphicsPipeline()
     }
 
     VkPipelineColorBlendStateCreateInfo blendState = {};
-    blendState.sType                               = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-    blendState.attachmentCount                     = 1;
-    blendState.pAttachments                        = &blendAttachmentState;
-    blendState.logicOpEnable                       = VK_FALSE; // Enable will disable the states in pAttachments
+    blendState.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    blendState.attachmentCount = 1;
+    blendState.pAttachments    = &blendAttachmentState;
+    blendState.logicOpEnable   = VK_FALSE; // Enable will disable the states in pAttachments
 
     // Viewport and scissor
     VkViewport viewport = {};
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = m_swapchainExtent.width;
-    viewport.height = m_swapchainExtent.height;
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
+    viewport.x          = 0.0f;
+    viewport.y          = 0.0f;
+    viewport.width      = static_cast<float>(m_swapchainExtent.width);
+    viewport.height     = static_cast<float>(m_swapchainExtent.height);
+    viewport.minDepth   = 0.0f;
+    viewport.maxDepth   = 1.0f;
 
     VkRect2D scissor = {};
     scissor.extent = m_swapchainExtent;
     scissor.offset = { 0, 0 };
 
     VkPipelineViewportStateCreateInfo viewportCreateInfo = {};
-    viewportCreateInfo.sType                             = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    viewportCreateInfo.viewportCount                     = 1;
-    viewportCreateInfo.pViewports                        = &viewport;
-    viewportCreateInfo.scissorCount                      = 1;
-    viewportCreateInfo.pScissors                         = &scissor;
+    viewportCreateInfo.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportCreateInfo.viewportCount = 1;
+    viewportCreateInfo.pViewports    = &viewport;
+    viewportCreateInfo.scissorCount  = 1;
+    viewportCreateInfo.pScissors     = &scissor;
 
     // Pipeline Layout
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
@@ -591,6 +603,39 @@ BOOL VulkanContext::createGraphicsPipeline()
         m_vkDevice, &pipelineLayoutCreateInfo, NULL, m_graphicsPipelineLayout.replace());
 
     status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+    assert(status == BX_SUCCESS);
+
+    // Render pass
+    VkAttachmentDescription colorAttachement = {};
+    colorAttachement.format                  = m_swapchainSurfaceFormat.format;
+    colorAttachement.samples                 = VulkanUtility::GetSampleCount(m_pSetting->m_graphicsSetting.antialasing);
+    colorAttachement.loadOp                  = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachement.storeOp                 = VK_ATTACHMENT_STORE_OP_STORE;
+    colorAttachement.stencilLoadOp           = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachement.stencilStoreOp          = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachement.initialLayout           = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachement.finalLayout             = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    VkAttachmentReference colorAttachmentRef = {};
+    colorAttachmentRef.attachment            = 0; // Output layout index in shader,
+                                                  // e.g. layout(location = 0) out vec4 outColor
+    colorAttachmentRef.layout                = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    VkSubpassDescription subpassDescription  = {};
+    subpassDescription.pipelineBindPoint     = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpassDescription.colorAttachmentCount  = 1;
+    subpassDescription.pColorAttachments     = &colorAttachmentRef;
+
+    VkRenderPassCreateInfo renderPassCreateInfo = {};
+    renderPassCreateInfo.sType                  = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassCreateInfo.attachmentCount        = 1;
+    renderPassCreateInfo.pAttachments           = &colorAttachement;
+    renderPassCreateInfo.subpassCount           = 1;
+    renderPassCreateInfo.pSubpasses             = &subpassDescription;
+
+    VkResult createRenderpassResult = vkCreateRenderPass(m_vkDevice, &renderPassCreateInfo, NULL, m_renderPass.replace());
+    status = ((createRenderpassResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
     assert(status == BX_SUCCESS);
 
     /// End fixed pipeline stages setup

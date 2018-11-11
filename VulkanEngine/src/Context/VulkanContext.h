@@ -58,16 +58,18 @@ private:
     std::vector<VkImage>	           m_swapchainImages;
     std::vector<VDeleter<VkImageView>> m_swapchainImagesView;
     VkExtent2D                         m_swapchainExtent;
+    VkSurfaceFormatKHR                 m_swapchainSurfaceFormat;
 
     // Queue
     QueueMgr m_queueMgr;
 
     // Shader
-    VulkanShader* m_pShader;
+    VulkanGraphicsShader* m_pShader;
 
 	// Pipeline
-	VDeleter<VkPipeline>       m_graphicsPipeline;
     VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
+    VDeleter<VkRenderPass>     m_renderPass;
+    VDeleter<VkPipeline>       m_graphicsPipeline;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;

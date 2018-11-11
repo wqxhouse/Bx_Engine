@@ -26,6 +26,70 @@
 #define LIGHT_INDEX_LIST_BINDING_POINT  2
 #define LIGHT_BUFFER_SSBO_BINDING_POINT 3
 
+
+#define IN
+#define OUT
+
+#define DEBUG
+
+#define DEFAULT_SHADER_PATH "../Resources/shaders/"
+
+#define CLAMP(v, l, r) \
+	((v) = (((v) < (l)) ? (l) : (v))); \
+	((v) = (((v) > (r)) ? (r) : (v))); \
+
+enum AllocateMode
+{
+    MALLOC, NEW, NEW_ARRAY
+};
+
+inline void SafeRelease(void* ptr, AllocateMode allocateMode)
+{
+    if (ptr != NULL)
+    {
+        switch (allocateMode)
+        {
+            case MALLOC:
+                free(ptr);
+                break;
+            case NEW:
+                delete ptr;
+                break;
+            case NEW_ARRAY:
+                delete[] ptr;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+template<typename T>
+inline void SafeFree(T* ptr)
+{
+    if (ptr != NULL)
+    {
+        free(ptr);
+    }
+}
+
+template<typename T>
+inline void SafeDelete(T* ptr)
+{
+    if (ptr != NULL)
+    {
+        delete ptr;
+    }
+}
+
+inline void SafeDeleteArray(void *ptr)
+{
+    if (ptr != NULL)
+    {
+        delete[] ptr;
+    }
+}
+
 enum BX_SWAPCHAIN_SURFACE_BUFFER
 {
     BX_SWAPCHAIN_SURFACE_BUFFER_SINGLE,
@@ -69,7 +133,7 @@ enum RenderingMethod
 
 enum Antialasing
 {
-    AA_NONE  = 0x00000000,
+    AA_NONE  = 0x00000001,
     AA_LOW   = 0x00000002,
     AA_HIGH  = 0x00000004,
     AA_EXTRA = 0x00000008,
