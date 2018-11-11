@@ -388,11 +388,6 @@ BOOL VulkanContext::initDevice()
 
     m_queueMgr.retriveQueueHandle(m_vkDevice);
 
-    if (result == BX_SUCCESS)
-    {
-        m_pShader = new VulkanGraphicsShader(m_vkDevice);
-    }
-
     return result;
 }
 
@@ -641,8 +636,47 @@ BOOL VulkanContext::createGraphicsPipeline()
     /// End fixed pipeline stages setup
 
     /// Setup programmable pipeline stages
-
+    std::vector<VkPipelineShaderStageCreateInfo> shaderCreateInfo;
+    BxShaderMeta                                 shaderMeta;
+    if (status == BX_SUCCESS)
+    {
+        m_pShader = new VulkanGraphicsShader(m_vkDevice);
+        shaderMeta.vertexShaderInfo.shaderFile   = "SimpleTriangle.vert.spv";
+        shaderMeta.fragmentShaderInfo.shaderFile = "SimpleTriangle.frag.spv";
+        shaderCreateInfo                         = m_pShader->createPipelineShaderStages(shaderMeta);
+    }
     /// End programmable pipeline stages setup
+
+    // Create pipeline
+    if (status == BX_SUCCESS)
+    {
+        VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {};
+        graphicsPipelineCreateInfo.sType                        = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        graphicsPipelineCreateInfo.pVertexInputState            = &vsInputCreateInfo;
+        graphicsPipelineCreateInfo.pInputAssemblyState          = &inputAsmCreateInfo;
+        graphicsPipelineCreateInfo.pRasterizationState          = &rasterizerCreateInfo;
+        graphicsPipelineCreateInfo.pMultisampleState            = &multiSamplingCreateInfo;
+        graphicsPipelineCreateInfo.pColorBlendState             = &blendState;
+        graphicsPipelineCreateInfo.pDepthStencilState           = NULL;
+        graphicsPipelineCreateInfo.pViewportState               = &viewportCreateInfo;
+        graphicsPipelineCreateInfo.layout                       = m_graphicsPipelineLayout;
+        graphicsPipelineCreateInfo.renderPass                   = m_renderPass;
+        graphicsPipelineCreateInfo.stageCount                   = static_cast<UINT>(shaderCreateInfo.size());
+        graphicsPipelineCreateInfo.pStages                      = shaderCreateInfo.data();
+        graphicsPipelineCreateInfo.pDynamicState                = NULL;
+        graphicsPipelineCreateInfo.subpass                      = 0;
+
+        VkResult graphicsPipelineCreateResult = vkCreateGraphicsPipelines(m_vkDevice,
+                                                                          VK_NULL_HANDLE,
+                                                                          1,
+                                                                          &graphicsPipelineCreateInfo,
+                                                                          NULL,
+                                                                          m_graphicsPipeline.replace());
+
+        status = ((graphicsPipelineCreateResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+        assert(status == BX_SUCCESS);
+    }
 
     return status;
 }

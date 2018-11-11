@@ -25,10 +25,11 @@ public:
 		this->deleter = [&device, deletef](T obj) { deletef(device, obj, nullptr); };
 	}
 
-    VDeleter(const T& t)
+    VDeleter(
+        const VkDevice&                                          device,
+        std::function<void(VkDevice, T, VkAllocationCallbacks*)> deletef)
     {
-        printf("Hello");
-        *this = t;
+        this->deleter = [device, deletef](T obj) { deletef(device, obj, nullptr); };
     }
 
 	~VDeleter()

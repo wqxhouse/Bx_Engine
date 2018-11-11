@@ -409,7 +409,7 @@ UINT VulkanUtility::GetSwapchainImageCount(
 
 std::vector<char> VulkanUtility::ReadFile(
     const std::string & fileName,
-    const BOOL         isBinary)
+    const BOOL          isBinary)
 {
     std::vector<char> fileString;
 

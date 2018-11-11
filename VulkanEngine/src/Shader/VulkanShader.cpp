@@ -4,7 +4,6 @@ VulkanShader::VulkanShader(
     const VkDevice& device)
     : m_device(device)
 {
-    // vkCreateShaderModule(device, NULL, NULL, NULL);
 }
 
 VulkanShader::~VulkanShader()

@@ -25,7 +25,7 @@ public:
 
     ~VulkanGraphicsShader();
 
-    BOOL createPipelineShaderStages(
+    const std::vector<VkPipelineShaderStageCreateInfo>& createPipelineShaderStages(
         const BxShaderMeta& shaderMeta);
 
     inline const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStages() const
@@ -34,20 +34,23 @@ public:
     }
 
 private:
-    VkShaderModule createShaderModule(
+    void createShaderModule(
         const std::string&   shaderFile,
         const BX_SHADER_TYPE shaderType);
 
     VkPipelineShaderStageCreateInfo createShaderStage(
-        const VkShaderModule& shaderModule,
-        const std::string&    shaderEntry);
+        const VkShaderModule&       shaderModule,
+        const VkShaderStageFlagBits stageBit,
+        const std::string&          shaderEntry);
 
     struct BxShaderSource
     {
-        BX_SHADER_TYPE    shaderType;
-        std::vector<char> source;
+        BX_SHADER_TYPE           shaderType;
+        std::vector<char>        source;
+        VDeleter<VkShaderModule> shaderModule;
     };
 
+    std::string                                  m_shaderPath;
     std::vector<BxShaderSource>                  m_shaderSources;
     std::vector<VkPipelineShaderStageCreateInfo> m_shaderStages;
 

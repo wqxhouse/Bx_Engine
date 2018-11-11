@@ -4,6 +4,8 @@ VulkanGraphicsShader::VulkanGraphicsShader(
     const VkDevice& device)
     : VulkanShader(device)
 {
+    m_shaderPath = DEFAULT_VULKAN_SHADER_PATH;
+
     m_shaderSources.resize(BX_MAX_SHADER);
 
     m_shaderFlags.value = 0;
@@ -13,81 +15,101 @@ VulkanGraphicsShader::~VulkanGraphicsShader()
 {
 }
 
-BOOL VulkanGraphicsShader::createPipelineShaderStages(
+const std::vector<VkPipelineShaderStageCreateInfo>& VulkanGraphicsShader::createPipelineShaderStages(
     const BxShaderMeta& shaderMeta)
 {
-    BOOL result = BX_SUCCESS;
-
     // Vertex Shader
-    const std::string& vsFile = shaderMeta.vertexShaderInfo.shaderFile;
-    if (vsFile.empty() == FALSE)
+    if (shaderMeta.vertexShaderInfo.shaderFile.empty() == FALSE)
     {
+        const std::string& vsFile = m_shaderPath + shaderMeta.vertexShaderInfo.shaderFile;
+
         m_shaderFlags.vertexShaderBit = TRUE;
-        VDeleter<VkShaderModule> vertexShaderModule =
-            createShaderModule(vsFile, BX_VERTEX_SHADER);
+
+        createShaderModule(vsFile, BX_VERTEX_SHADER);
 
         m_shaderStages.push_back(
-            createShaderStage(vertexShaderModule, shaderMeta.vertexShaderInfo.shaderEntry));
+            createShaderStage(
+                m_shaderSources[BX_VERTEX_SHADER].shaderModule,
+                VK_SHADER_STAGE_VERTEX_BIT,
+                shaderMeta.vertexShaderInfo.shaderEntry));
     }
 
     // Tessellation
-    const std::string& tesFile = shaderMeta.tesShaderInfo.shaderFile;
-    if (tesFile.empty() == FALSE)
+    if (shaderMeta.tesShaderInfo.shaderFile.empty() == FALSE)
     {
+        const std::string& tesFile = m_shaderPath + shaderMeta.tesShaderInfo.shaderFile;
+
         m_shaderFlags.tesShaderBit = TRUE;
-        VDeleter<VkShaderModule> tesShaderModule =
-            createShaderModule(tesFile, BX_TES_SHADER);
+
+        createShaderModule(tesFile, BX_TES_SHADER);
 
         m_shaderStages.push_back(
-            createShaderStage(tesShaderModule, shaderMeta.tesShaderInfo.shaderEntry));
+            createShaderStage(
+                m_shaderSources[BX_TES_SHADER].shaderModule,
+                VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+                shaderMeta.tesShaderInfo.shaderEntry));
     }
 
-    const std::string& tcsFile = shaderMeta.tcsShaderInfo.shaderFile;
-    if (tcsFile.empty() == FALSE)
+    if (shaderMeta.tcsShaderInfo.shaderFile.empty() == FALSE)
     {
+        const std::string& tcsFile = m_shaderPath + shaderMeta.tcsShaderInfo.shaderFile;
+
         m_shaderFlags.tcsShaderBit = TRUE;
-        VDeleter<VkShaderModule> tcsShaderModule =
-            createShaderModule(tcsFile, BX_TCS_SHADER);
+
+        createShaderModule(tcsFile, BX_TCS_SHADER);
 
         m_shaderStages.push_back(
-            createShaderStage(tcsShaderModule, shaderMeta.tcsShaderInfo.shaderEntry));
+            createShaderStage(
+                m_shaderSources[BX_TCS_SHADER].shaderModule,
+                VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+                shaderMeta.tcsShaderInfo.shaderEntry));
     }
 
     // Geometry shader
-    const std::string& gsFile = shaderMeta.geometryShaderInfo.shaderFile;
-    if (gsFile.empty() == FALSE)
+    if (shaderMeta.geometryShaderInfo.shaderFile.empty() == FALSE)
     {
+        const std::string& gsFile = m_shaderPath + shaderMeta.geometryShaderInfo.shaderFile;
+
         m_shaderFlags.geometryShaderBit = TRUE;
-        VDeleter<VkShaderModule> geometryShaderModule =
-            createShaderModule(gsFile, BX_GEOMETRY_SHADER);
+
+        createShaderModule(gsFile, BX_GEOMETRY_SHADER);
 
         m_shaderStages.push_back(
-            createShaderStage(geometryShaderModule, shaderMeta.geometryShaderInfo.shaderEntry));
+            createShaderStage(
+                m_shaderSources[BX_GEOMETRY_SHADER].shaderModule,
+                VK_SHADER_STAGE_GEOMETRY_BIT,
+                shaderMeta.geometryShaderInfo.shaderEntry));
     }
 
     // Fragment(Pixel) shader
-    const std::string& fsFile = shaderMeta.fragmentShaderInfo.shaderFile;
-    if (fsFile.empty() == FALSE)
+    if (shaderMeta.fragmentShaderInfo.shaderFile.empty() == FALSE)
     {
+        const std::string& fsFile = m_shaderPath + shaderMeta.fragmentShaderInfo.shaderFile;
+
         m_shaderFlags.fragmentShaderBit = TRUE;
 
-        VDeleter<VkShaderModule> fragmentShaderModule =
-            createShaderModule(fsFile, BX_FRAGMENT_SHADER);
+        createShaderModule(fsFile, BX_FRAGMENT_SHADER);
 
         m_shaderStages.push_back(
-            createShaderStage(fragmentShaderModule, shaderMeta.fragmentShaderInfo.shaderEntry));
+            createShaderStage(
+                m_shaderSources[BX_FRAGMENT_SHADER].shaderModule,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                shaderMeta.fragmentShaderInfo.shaderEntry));
     }
 
-    return result;
+    return m_shaderStages;
 }
 
-VkShaderModule VulkanGraphicsShader::createShaderModule(
+void VulkanGraphicsShader::createShaderModule(
     const std::string&   shaderFile,
     const BX_SHADER_TYPE shaderType)
 {
-    VDeleter<VkShaderModule> shaderModule = { m_device, vkDestroyShaderModule };
-
-    m_shaderSources[shaderType] = { shaderType, VulkanUtility::ReadFile(shaderFile, TRUE) };
+    m_shaderSources[shaderType] =
+    {
+        shaderType,
+        VulkanUtility::ReadFile(shaderFile, TRUE),
+        { m_device, vkDestroyShaderModule }
+    };
 
     VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
     shaderModuleCreateInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -96,20 +118,19 @@ VkShaderModule VulkanGraphicsShader::createShaderModule(
                                       m_shaderSources[shaderType].source.data());
 
     VkResult result = vkCreateShaderModule(
-        m_device, &shaderModuleCreateInfo, NULL, shaderModule.replace());
+        m_device, &shaderModuleCreateInfo, NULL, m_shaderSources[shaderType].shaderModule.replace());
 
     assert(result == VK_SUCCESS);
-
-    return shaderModule;
 }
 
 VkPipelineShaderStageCreateInfo VulkanGraphicsShader::createShaderStage(
-    const VkShaderModule& shaderModule,
-    const std::string&    shaderEntry)
+    const VkShaderModule&       shaderModule,
+    const VkShaderStageFlagBits stageBit,
+    const std::string&          shaderEntry)
 {
     VkPipelineShaderStageCreateInfo shaderStageCreateInfo = {};
     shaderStageCreateInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    shaderStageCreateInfo.stage  = VK_SHADER_STAGE_VERTEX_BIT;
+    shaderStageCreateInfo.stage  = stageBit;
     shaderStageCreateInfo.module = shaderModule;
     shaderStageCreateInfo.pName  = shaderEntry.data();
 
