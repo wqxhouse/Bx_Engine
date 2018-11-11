@@ -21,6 +21,43 @@
 #define LIGHT_INDEX_LIST_BINDING_POINT  2
 #define LIGHT_BUFFER_SSBO_BINDING_POINT 3
 
+#define IN
+#define OUT
+
+#define DEBUG
+
+#define DEFAULT_SHADER_PATH "../Resources/shaders/"
+
+#define CLAMP(v, l, r) \
+	((v) = (((v) < (l)) ? (l) : (v))); \
+	((v) = (((v) > (r)) ? (r) : (v))); \
+
+template<typename T>
+inline void SafeFree(T* ptr)
+{
+    if (ptr != NULL)
+    {
+        free(ptr);
+    }
+}
+
+template<typename T>
+inline void SafeDelete(T* ptr)
+{
+    if (ptr != NULL)
+    {
+        delete ptr;
+    }
+}
+
+inline void SafeDeleteArray(void *ptr)
+{
+    if (ptr != NULL)
+    {
+        delete[] ptr;
+    }
+}
+
 enum PolyMode
 {
     POLYMODE_POINT     = 0x00000000,
