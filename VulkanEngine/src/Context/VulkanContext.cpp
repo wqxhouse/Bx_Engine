@@ -198,6 +198,18 @@ BOOL VulkanContext::initVulkan()
         }
     }
 
+
+    if (status = BX_SUCCESS)
+    {
+        status = createSwapchainFramebuffer();;
+
+        if (status == BX_FAIL)
+        {
+            printf("Failed to created swapchain framebuffer!\n");
+            assert(BX_FAIL);
+        }
+    }
+
     return status;
 }
 
@@ -474,7 +486,8 @@ BOOL VulkanContext::createSwapchain()
     // Create Image views for the swapchain images
     if (status == BX_SUCCESS)
     {
-        m_swapchainImagesView.resize(swapchainImageNum, { m_vkDevice, vkDestroyImageView });
+        m_swapchainImagesViews.resize (swapchainImageNum, { m_vkDevice, vkDestroyImageView   });
+        m_swapchainFramebuffers.resize(swapchainImageNum, { m_vkDevice, vkDestroyFramebuffer });
 
         for (UINT i = 0; i < swapchainImageNum; ++i)
         {
@@ -494,7 +507,7 @@ BOOL VulkanContext::createSwapchain()
             swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
             swapchainImageViewCreateInfo.subresourceRange.layerCount     = 1;
 
-            VkResult vkResult = vkCreateImageView(m_vkDevice, &swapchainImageViewCreateInfo, NULL, m_swapchainImagesView[i].replace());
+            VkResult vkResult = vkCreateImageView(m_vkDevice, &swapchainImageViewCreateInfo, NULL, m_swapchainImagesViews[i].replace());
             if (vkResult != VK_SUCCESS)
             {
                 assert(BX_FAIL);
@@ -674,6 +687,34 @@ BOOL VulkanContext::createGraphicsPipeline()
                                                                           m_graphicsPipeline.replace());
 
         status = ((graphicsPipelineCreateResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+        assert(status == BX_SUCCESS);
+    }
+
+    return status;
+}
+
+BOOL VulkanContext::createSwapchainFramebuffer()
+{
+    BOOL status = BX_SUCCESS;
+
+    for (size_t i = 0; i < m_swapchainImagesViews.size(); ++i)
+    {
+        VkImageView imageViews[] = { m_swapchainImagesViews[i] };
+
+        VkFramebufferCreateInfo swapchainFramebufferCreateInfo = {};
+        swapchainFramebufferCreateInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        swapchainFramebufferCreateInfo.renderPass      = m_renderPass;
+        swapchainFramebufferCreateInfo.attachmentCount = 1;
+        swapchainFramebufferCreateInfo.pAttachments    = imageViews;
+        swapchainFramebufferCreateInfo.width           = m_swapchainExtent.width;
+        swapchainFramebufferCreateInfo.height          = m_swapchainExtent.height;
+        swapchainFramebufferCreateInfo.layers          = 1;
+
+        VkResult createSwapchainFramebufferResult = vkCreateFramebuffer(
+            m_vkDevice, &swapchainFramebufferCreateInfo, NULL, m_swapchainFramebuffers[i].replace());
+
+        status = ((createSwapchainFramebufferResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
         assert(status == BX_SUCCESS);
     }

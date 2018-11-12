@@ -30,6 +30,7 @@ private:
     BOOL initDevice();
     BOOL createSwapchain();
 	BOOL createGraphicsPipeline();
+    BOOL createSwapchainFramebuffer();
 
     /// Context attributes
     // Window pointer and settings
@@ -53,12 +54,13 @@ private:
     std::multimap<UINT, VkPhysicalDevice, std::greater<UINT>> m_avaliableHwGpuDevices;
 
     // Swapchain
-    VDeleter<VkSwapchainKHR>           m_swapchain;
-    SwapChainHwProperties              m_swapchainHwProperties;
-    std::vector<VkImage>	           m_swapchainImages;
-    std::vector<VDeleter<VkImageView>> m_swapchainImagesView;
-    VkExtent2D                         m_swapchainExtent;
-    VkSurfaceFormatKHR                 m_swapchainSurfaceFormat;
+    VDeleter<VkSwapchainKHR>             m_swapchain;
+    SwapChainHwProperties                m_swapchainHwProperties;
+    VkExtent2D                           m_swapchainExtent;
+    VkSurfaceFormatKHR                   m_swapchainSurfaceFormat;
+    std::vector<VkImage>	             m_swapchainImages;
+    std::vector<VDeleter<VkImageView>>   m_swapchainImagesViews;
+    std::vector<VDeleter<VkFramebuffer>> m_swapchainFramebuffers;
 
     // Queue
     QueueMgr m_queueMgr;
