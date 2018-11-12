@@ -43,7 +43,6 @@ VulkanContext::VulkanContext(
 
 VulkanContext::~VulkanContext()
 {
-    SafeDelete(m_pShader);
 }
 
 void VulkanContext::initialize()
@@ -210,6 +209,16 @@ BOOL VulkanContext::initVulkan()
         }
     }
 
+    if (status == BX_SUCCESS)
+    {
+        const QueueFamilyIndices& queueFamilyIndices = m_queueMgr.GetHwQueueIndices() ;
+        m_pCmdBufferMgr = std::unique_ptr<CmdBufferMgr>(
+            new CmdBufferMgr(m_vkDevice, queueFamilyIndices.GetIndexNum()));
+
+        status = m_pCmdBufferMgr->
+            createCmdBufferPool(BX_QUEUE_GRAPHICS, queueFamilyIndices.GetQueueFamilyIndex(BX_QUEUE_GRAPHICS));
+    }
+
     return status;
 }
 
@@ -349,7 +358,7 @@ BOOL VulkanContext::initDevice()
     for (UINT i = 0; i < queueFamilyIndicesNum; ++i)
     {
         UINT index = queueFamilyIndices.GetQueueFamilyIndex(i);
-        if ((index != -1) &&
+        if ((index                       != -1) &&
             (queueIndicesSet.find(index) == queueIndicesSet.end()))
         {
             VkDeviceQueueCreateInfo queueCreateInfo = {};
@@ -653,7 +662,7 @@ BOOL VulkanContext::createGraphicsPipeline()
     BxShaderMeta                                 shaderMeta;
     if (status == BX_SUCCESS)
     {
-        m_pShader = new VulkanGraphicsShader(m_vkDevice);
+        m_pShader = std::unique_ptr<VulkanGraphicsShader>(new VulkanGraphicsShader(m_vkDevice));
         shaderMeta.vertexShaderInfo.shaderFile   = "SimpleTriangle.vert.spv";
         shaderMeta.fragmentShaderInfo.shaderFile = "SimpleTriangle.frag.spv";
         shaderCreateInfo                         = m_pShader->createPipelineShaderStages(shaderMeta);

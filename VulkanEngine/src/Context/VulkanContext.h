@@ -1,9 +1,8 @@
 #pragma once
 
 #include "BxQueue.h"
+#include "CmdBufferMgr.h"
 #include "Setting.h"
-#include "../Core/VulkanPCH.h"
-#include "../Core/VulkanUtility.h"
 #include "../Shader/VulkanGraphicsShader.h"
 
 #include <map>
@@ -66,12 +65,15 @@ private:
     QueueMgr m_queueMgr;
 
     // Shader
-    VulkanGraphicsShader* m_pShader;
+    std::unique_ptr<VulkanGraphicsShader> m_pShader;
 
 	// Pipeline
     VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
     VDeleter<VkRenderPass>     m_renderPass;
     VDeleter<VkPipeline>       m_graphicsPipeline;
+
+    // Command buffer
+    std::unique_ptr<CmdBufferMgr> m_pCmdBufferMgr;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;

@@ -116,6 +116,35 @@ public:
         return sampleCountFlagBit;
     }
 
+    static inline INT GetQueueCmdPoolIndex(
+        const VkQueueFlags queueFlag)
+    {
+        INT queueCmdPoolIndex = -1;
+
+        switch (queueFlag)
+        {
+            case VK_QUEUE_GRAPHICS_BIT:
+                queueCmdPoolIndex = BX_QUEUE_GRAPHICS;
+                break;
+            case VK_QUEUE_COMPUTE_BIT:
+                queueCmdPoolIndex = BX_QUEUE_COMPUTE;
+                break;
+            default:
+                assert(FALSE);
+                break;
+        }
+
+        assert(queueCmdPoolIndex != -1);
+
+        return queueCmdPoolIndex;
+    }
+
+    static inline BOOL GetBxStatus(
+        const VkResult vkResult)
+    {
+        return ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+    }
+
 #if _DEBUG
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,

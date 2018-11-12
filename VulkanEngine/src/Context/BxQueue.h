@@ -4,9 +4,9 @@
 
 struct QueueFamilyIndices
 {
-    INT presentSurfaceFamilyIndex = -1;
     INT graphicsFamilyIndex       = -1;
     INT computeFamilyIndex        = -1;
+    INT presentSurfaceFamilyIndex = -1;
 
     inline BOOL IsCompleted() const
     {
@@ -25,14 +25,14 @@ struct QueueFamilyIndices
         UINT result;
         switch (i)
         {
-        case 0:
-            result = presentSurfaceFamilyIndex;
-            break;
-        case 1:
+        case BX_QUEUE_GRAPHICS:
             result = graphicsFamilyIndex;
             break;
-        case 2:
+        case BX_QUEUE_COMPUTE:
             result = computeFamilyIndex;
+            break;
+        case BX_QUEUE_PRESENT:
+            result = presentSurfaceFamilyIndex;
             break;
         default:
             result = -1;

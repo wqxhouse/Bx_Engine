@@ -19,6 +19,9 @@
     <Filter Include="src\Shader">
       <UniqueIdentifier>{e1de3521-64c5-416f-aafb-3d9377e6be49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Buffer">
+      <UniqueIdentifier>{e76a4ffa-602c-4cc1-8caf-285b209175c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context\VulkanContext.cpp">
@@ -44,6 +47,15 @@
     </ClCompile>
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp">
       <Filter>src\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\VertexBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\CmdBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Context\CmdBufferMgr.cpp">
+      <Filter>src\Context</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h">
       <Filter>src\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\VertexBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\CmdBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Context\CmdBufferMgr.h">
+      <Filter>src\Context</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

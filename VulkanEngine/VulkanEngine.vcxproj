@@ -35,7 +35,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Buffer\CmdBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Context\BxQueue.cpp" />
+    <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
@@ -45,7 +48,10 @@
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Buffer\CmdBuffer.h" />
+    <ClInclude Include="src\Buffer\VertexBuffer.h" />
     <ClInclude Include="src\Context\BxQueue.h" />
+    <ClInclude Include="src\Context\CmdBufferMgr.h" />
     <ClInclude Include="src\Context\Setting.h" />
     <ClInclude Include="src\Context\VulkanContext.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
