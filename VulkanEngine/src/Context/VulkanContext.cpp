@@ -217,6 +217,66 @@ BOOL VulkanContext::initVulkan()
 
         status = m_pCmdBufferMgr->
             createCmdBufferPool(BX_QUEUE_GRAPHICS, queueFamilyIndices.GetQueueFamilyIndex(BX_QUEUE_GRAPHICS));
+
+        if (status == BX_FAIL)
+        {
+            printf("Failed to created graphics command pool!\n");
+            assert(BX_FAIL);
+        }
+    }
+
+    if (status == BX_SUCCESS)
+    {
+        status = m_pCmdBufferMgr->
+            addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
+                                  BX_DIRECT_COMMAND_BUFFER,
+                                  static_cast<UINT>(m_swapchainFramebuffers.size()));
+
+        if (status == BX_FAIL)
+        {
+            printf("Failed to create graphics command buffers!\n");
+            assert(BX_FAIL);
+        }
+
+        for (size_t i = 0; i < m_swapchainFramebuffers.size(); ++i)
+        {
+            // Start recording to command buffer
+            CmdBuffer* const pCmdBuffer = m_pCmdBufferMgr->
+                GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, static_cast<UINT>(i));
+
+            status = pCmdBuffer->beginCmdBuffer(TRUE);
+
+            // Start render pass, write draw commands
+            if (status == BX_SUCCESS)
+            {
+                // TODO: Remove the hard code here
+                VkRect2D renderArea = { { 0, 0 }, m_swapchainExtent };
+                std::vector<VkClearValue> clearColorValue = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+
+                pCmdBuffer->beginRenderPass(m_renderPass,
+                                            m_swapchainFramebuffers[i],
+                                            renderArea,
+                                            clearColorValue);
+
+                pCmdBuffer->cmdDrawArrays(m_graphicsPipeline, 3, 0);
+
+                pCmdBuffer->endRenderPass();
+            }
+            else
+            {
+                printf("Failed to begin graphics command buffers!\n");
+                assert(BX_FAIL);
+            }
+
+            // Finish recording to command buffer
+            status = pCmdBuffer->endCmdBuffer();
+
+            if (status == BX_FAIL)
+            {
+                printf("Failed to end graphics command buffers!\n");
+                assert(BX_FAIL);
+            }
+        }
     }
 
     return status;
@@ -554,15 +614,16 @@ BOOL VulkanContext::createGraphicsPipeline()
     rasterizerCreateInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     rasterizerCreateInfo.depthClampEnable        = VK_FALSE;
     rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-    rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
+    rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkSampleCount(m_pSetting->polyMode);
     rasterizerCreateInfo.lineWidth               = 1.0f;
     rasterizerCreateInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
+    rasterizerCreateInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizerCreateInfo.depthBiasEnable         = VK_FALSE;
 
     // Multisampling
     VkPipelineMultisampleStateCreateInfo multiSamplingCreateInfo = {};
     multiSamplingCreateInfo.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    multiSamplingCreateInfo.rasterizationSamples = VulkanUtility::GetSampleCount(m_pSetting->m_graphicsSetting.antialasing);
+    multiSamplingCreateInfo.rasterizationSamples = VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
     multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
 
     // Depth/Stencil
@@ -625,7 +686,7 @@ BOOL VulkanContext::createGraphicsPipeline()
     // Render pass
     VkAttachmentDescription colorAttachement = {};
     colorAttachement.format                  = m_swapchainSurfaceFormat.format;
-    colorAttachement.samples                 = VulkanUtility::GetSampleCount(m_pSetting->m_graphicsSetting.antialasing);
+    colorAttachement.samples                 = VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
     colorAttachement.loadOp                  = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachement.storeOp                 = VK_ATTACHMENT_STORE_OP_STORE;
     colorAttachement.stencilLoadOp           = VK_ATTACHMENT_LOAD_OP_DONT_CARE;

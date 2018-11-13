@@ -58,7 +58,7 @@ public:
         const std::string& fileName,
         const BOOL         isBinary);
 
-    static inline VkPolygonMode GetVkPolygonMode(
+    static inline VkPolygonMode GetVkSampleCount(
         const PolyMode polyMode)
     {
         VkPolygonMode vkPolyMode = VK_POLYGON_MODE_BEGIN_RANGE;
@@ -81,7 +81,7 @@ public:
         return vkPolyMode;
     }
 
-    static inline VkSampleCountFlagBits GetSampleCount(
+    static inline VkSampleCountFlagBits GetVkSampleCount(
         const UINT sampleCount)
     {
         VkSampleCountFlagBits sampleCountFlagBit = VK_SAMPLE_COUNT_1_BIT;
@@ -137,6 +137,27 @@ public:
         assert(queueCmdPoolIndex != -1);
 
         return queueCmdPoolIndex;
+    }
+
+    static inline VkCommandBufferLevel GetVkCmdBufferLevel(
+        const BX_COMMAND_BUFFER_LEVLE cmdBufferLevel)
+    {
+        VkCommandBufferLevel vkCmdBufferLevel;
+
+        switch (cmdBufferLevel)
+        {
+            case BX_DIRECT_COMMAND_BUFFER:
+                vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+                break;
+            case BX_INDIRECT_COMMAND_BUFFER:
+                vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+                break;
+            default:
+                assert(FALSE);
+                break;
+        }
+
+        return vkCmdBufferLevel;
     }
 
     static inline BOOL GetBxStatus(
