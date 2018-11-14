@@ -287,6 +287,17 @@ BOOL VulkanContext::initVulkan()
                 assert(BX_FAIL);
             }
         }
+
+        if (status == BX_FAIL)
+        {
+            status = createSemaphores();
+
+            if (status == BX_FAIL)
+            {
+                printf("Failed to create semaphores!\n");
+                assert(BX_FAIL);
+            }
+        }
     }
 
     if (status == BX_SUCCESS)
