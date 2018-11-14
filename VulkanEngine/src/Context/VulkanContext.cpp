@@ -75,11 +75,19 @@ void VulkanContext::initialize()
 
 void VulkanContext::run()
 {
+    BOOL status = BX_SUCCESS;
+
     while (glfwWindowShouldClose(m_pWindow) == FALSE)
     {
         glfwSwapBuffers(m_pWindow);
         glfwPollEvents();
+
+        status = draw();
+
+        assert(status == BX_SUCCESS);
     }
+
+    vkDeviceWaitIdle(m_vkDevice);
 
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
@@ -290,6 +298,82 @@ BOOL VulkanContext::initVulkan()
             printf("Failed to create semaphores!\n");
             assert(BX_FAIL);
         }
+    }
+
+    return status;
+}
+
+BOOL VulkanContext::draw()
+{
+    BOOL status = BX_SUCCESS;
+
+    // Get the render image index
+    UINT renderImageIndex = 0;
+    VkResult acquireImageResult = vkAcquireNextImageKHR(m_vkDevice,
+                                                        m_swapchain,
+                                                        std::numeric_limits<UINT64>::max(),
+                                                        m_renderSemaphore,
+                                                        VK_NULL_HANDLE,
+                                                        &renderImageIndex);
+
+    status = VulkanUtility::GetBxStatus(acquireImageResult);
+    assert(status == BX_SUCCESS);
+
+    // Submit commands to queue
+    if (status == BX_SUCCESS)
+    {
+        const VkQueue& submitQueue =
+            m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().graphicsFamilyIndex).m_queue;
+
+        VkPipelineStageFlags waitStages[]      = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
+        VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
+
+        VkSubmitInfo submitInfo       = {};
+        submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.pWaitDstStageMask  = waitStages;
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores    = waitSemaphore;
+        submitInfo.pSignalSemaphores  = signalSemaphore;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers    = m_pCmdBufferMgr->
+            GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, renderImageIndex)->GetCmdBufferPtr();
+
+        VkResult submitResult = vkQueueSubmit(
+            submitQueue,
+            1,
+            &submitInfo,
+            VK_NULL_HANDLE);
+
+        status = VulkanUtility::GetBxStatus(submitResult);
+        assert(status == BX_SUCCESS);
+    }
+
+    // Present
+    if (status == BX_SUCCESS)
+    {
+        const VkQueue& presentQueue =
+            m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().presentSurfaceFamilyIndex).m_queue;
+
+        VkSemaphore    waitSemaphore[] = { m_presentSemaphore };
+        VkSwapchainKHR swapchain[]     = { m_swapchain        };
+
+        VkPresentInfoKHR presentInfo   = {};
+        presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.swapchainCount     = 1;
+        presentInfo.pSwapchains        = swapchain;
+        presentInfo.pImageIndices      = &renderImageIndex;
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores    = waitSemaphore;
+
+        VkResult presentResult = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+        status = VulkanUtility::GetBxStatus(acquireImageResult);
+        assert(status == BX_SUCCESS);
+
+        VkResult queueWaitResult = vkQueueWaitIdle(presentQueue);
+        status = VulkanUtility::GetBxStatus(queueWaitResult);
+        assert(status == BX_SUCCESS);
     }
 
     return status;

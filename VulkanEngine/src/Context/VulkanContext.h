@@ -22,6 +22,7 @@ public:
 private:
     BOOL initWindow();
     BOOL initVulkan();
+    BOOL draw();
 
     // Initialization sub-tasks
     BOOL createInstance();
