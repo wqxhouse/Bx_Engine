@@ -35,6 +35,8 @@ VulkanContext::VulkanContext(
     m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
     m_renderPass             = { m_vkDevice, vkDestroyRenderPass     };
     m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline       };
+    m_renderSemaphore        = { m_vkDevice, vkDestroySemaphore      };
+    m_presentSemaphore       = { m_vkDevice, vkDestroySemaphore      };
 
 #if _DEBUG
     m_vkDebugMsg = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -279,8 +281,20 @@ BOOL VulkanContext::initVulkan()
         }
     }
 
+    if (status == BX_SUCCESS)
+    {
+        status = createSemaphores();
+
+        if (status == BX_FAIL)
+        {
+            printf("Failed to create semaphores!\n");
+            assert(BX_FAIL);
+        }
+    }
+
     return status;
 }
+
 
 BOOL VulkanContext::createInstance()
 {
@@ -788,6 +802,31 @@ BOOL VulkanContext::createSwapchainFramebuffer()
 
         assert(status == BX_SUCCESS);
     }
+
+    return status;
+}
+
+BOOL VulkanContext::createSemaphores()
+{
+    BOOL status = BX_SUCCESS;
+
+    VkSemaphoreCreateInfo semaphoreCreateInfo = {};
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    semaphoreCreateInfo.flags = 0; // For future usage
+
+    VkResult semaphoreCreateResult = vkCreateSemaphore(
+        m_vkDevice, &semaphoreCreateInfo, NULL, m_renderSemaphore.replace());
+
+    assert(semaphoreCreateResult == VK_SUCCESS);
+
+    semaphoreCreateResult = vkCreateSemaphore(
+        m_vkDevice, &semaphoreCreateInfo, NULL, m_presentSemaphore.replace());
+
+    assert(semaphoreCreateResult == VK_SUCCESS);
+
+    status = VulkanUtility::GetBxStatus(semaphoreCreateResult);
+
+    assert(status == BX_SUCCESS);
 
     return status;
 }

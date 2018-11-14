@@ -23,6 +23,7 @@ private:
     BOOL initWindow();
     BOOL initVulkan();
 
+    // Initialization sub-tasks
     BOOL createInstance();
     BOOL createSurface();
     BOOL initHwDevice();
@@ -30,6 +31,7 @@ private:
     BOOL createSwapchain();
 	BOOL createGraphicsPipeline();
     BOOL createSwapchainFramebuffer();
+    BOOL createSemaphores();
 
     /// Context attributes
     // Window pointer and settings
@@ -74,6 +76,10 @@ private:
 
     // Command buffer
     std::unique_ptr<CmdBufferMgr> m_pCmdBufferMgr;
+
+    // Semaphores
+    VDeleter<VkSemaphore> m_renderSemaphore;
+    VDeleter<VkSemaphore> m_presentSemaphore;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;

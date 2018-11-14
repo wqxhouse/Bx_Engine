@@ -60,7 +60,7 @@ public:
         return m_cmdBuffer;
     }
 
-    inline VkCommandBuffer* GetCmdBufferPtr()
+    inline const VkCommandBuffer* GetCmdBufferPtr()
     {
         return &m_cmdBuffer;
     }
