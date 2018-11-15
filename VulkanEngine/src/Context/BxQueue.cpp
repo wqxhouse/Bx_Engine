@@ -28,26 +28,18 @@ QueueFamilyIndices QueueMgr::retriveHwQueueIndices(
                 if ((prop.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
                 {
                     m_hwQueueIndices.graphicsFamilyIndex = index;
-                    if (m_hwQueueIndices.IsCompleted() == TRUE)
+
+                    VkBool32 isSurfacePresentSupport = VK_FALSE;
+                    vkGetPhysicalDeviceSurfaceSupportKHR(hwGpuDevice, index, surface, &isSurfacePresentSupport);
+
+                    if (isSurfacePresentSupport == VK_TRUE)
                     {
-                        //break;
+                        m_hwQueueIndices.presentSurfaceFamilyIndex = index;
                     }
                 }
                 else if ((prop.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
                 {
                     m_hwQueueIndices.computeFamilyIndex = index;
-                    if (m_hwQueueIndices.IsCompleted() == TRUE)
-                    {
-                        //break;
-                    }
-                }
-
-                VkBool32 isSurfacePresentSupport = VK_FALSE;
-                vkGetPhysicalDeviceSurfaceSupportKHR(hwGpuDevice, index, surface, &isSurfacePresentSupport);
-
-                if (isSurfacePresentSupport == VK_TRUE)
-                {
-                    m_hwQueueIndices.presentSurfaceFamilyIndex = index;
                 }
 
                 if (m_hwQueueIndices.IsCompleted() == TRUE)
