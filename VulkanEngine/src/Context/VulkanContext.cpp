@@ -351,14 +351,15 @@ BOOL VulkanContext::draw()
         VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
         VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
 
-        VkSubmitInfo submitInfo       = {};
-        submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.pWaitDstStageMask  = waitStages;
-        submitInfo.waitSemaphoreCount = 1;
-        submitInfo.pWaitSemaphores    = waitSemaphore;
-        submitInfo.pSignalSemaphores  = signalSemaphore;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers    = m_pCmdBufferMgr->
+        VkSubmitInfo submitInfo         = {};
+        submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.pWaitDstStageMask    = waitStages;
+        submitInfo.waitSemaphoreCount   = 1;
+        submitInfo.pWaitSemaphores      = waitSemaphore;
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores    = signalSemaphore;
+        submitInfo.commandBufferCount   = 1;
+        submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
             GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, renderImageIndex)->GetCmdBufferPtr();
 
         VkResult submitResult = vkQueueSubmit(
