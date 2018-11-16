@@ -154,8 +154,8 @@
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform);..\lib\OpenGL\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform);..\lib\Core\$(Platform)\$(Configuration)\;..\lib\OpenGL\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;Core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|Win32'">
@@ -170,7 +170,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform);..\lib\OpenGL\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;Core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -182,8 +182,8 @@
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Platform)\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform)\;..\lib\OpenGL\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew_d.lib;glfw3_d.lib;OpenGLEngine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Platform)\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform)\;..\lib\Core\$(Platform)\$(Configuration)\;..\lib\OpenGL\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew_d.lib;glfw3_d.lib;OpenGLEngine_d.lib;%(AdditionalDependencies)Core_d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|x64'">
@@ -195,8 +195,8 @@
       <PreprocessorDefinitions>BX_VULKAN;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.85.0\Lib;..\lib\Vulkan\$(Platform)\Debug\;..\extern\glfw-3.2.1\bin\$(Platform)\Debug\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;VulkanEngine_d.lib;glfw3_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.85.0\Lib;..\lib\Core\$(Platform)\Debug\;..\lib\Vulkan\$(Platform)\Debug\;..\extern\glfw-3.2.1\bin\$(Platform)\Debug\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;VulkanEngine_d.lib;glfw3_d.lib;Core_d.lib;%(AdditionalDependencies)Core_d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -212,7 +212,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\Win32\;..\lib\OpenGL\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\Win32\;..\lib\Core\$(Platform)\$(Configuration)\;..\lib\OpenGL\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;OpenGLEngine.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -247,7 +247,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew.lib;OpenGLEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Platform)\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform)\;..\lib\OpenGL\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Platform)\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform)\;..\lib\Core\$(Platform)\$(Configuration)\;..\lib\OpenGL\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|x64'">
@@ -263,8 +263,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>vulkan-1.lib;VulkanEngine.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.85.0\Lib;..\lib\Vulkan\$(Platform)\Release\;..\extern\glfw-3.2.1\bin\$(Platform)\Release\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;VulkanEngine.lib;glfw3.lib;Core.lib%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.85.0\Lib;..\lib\Core\$(Platform)\Release\;..\lib\Vulkan\$(Platform)\Release\;..\extern\glfw-3.2.1\bin\$(Platform)\Release\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -9,6 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BxEngine", "OpenGLTemplate\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLEngine", "OpenGLEngine\OpenGLEngine.vcxproj", "{855C7BF4-681D-4EA9-A240-FA9483CED820}"
+	ProjectSection(ProjectDependencies) = postProject
+		{977DDCA4-DF08-475B-94CD-78FF0D932889} = {977DDCA4-DF08-475B-94CD-78FF0D932889}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLEngineTest", "OpenGLEngineTest\OpenGLEngineTest.vcxproj", "{00FBBDB7-52F5-4DC8-BB28-988D159296D1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -21,6 +24,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MeshlessDeformation", "Mesh
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanEngine", "VulkanEngine\VulkanEngine.vcxproj", "{7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{977DDCA4-DF08-475B-94CD-78FF0D932889} = {977DDCA4-DF08-475B-94CD-78FF0D932889}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{977DDCA4-DF08-475B-94CD-78FF0D932889}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +94,22 @@ Global
 		{7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0}.Vulkan_Release|Win32.ActiveCfg = Vulkan_Release|Win32
 		{7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0}.Vulkan_Release|x64.ActiveCfg = Vulkan_Release|x64
 		{7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0}.Vulkan_Release|x64.Build.0 = Vulkan_Release|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Debug|Win32.ActiveCfg = Debug|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Debug|Win32.Build.0 = Debug|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Debug|x64.ActiveCfg = Debug|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Debug|x64.Build.0 = Debug|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Release|Win32.ActiveCfg = Release|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Release|Win32.Build.0 = Release|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Release|x64.ActiveCfg = Release|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Release|x64.Build.0 = Release|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Debug|Win32.ActiveCfg = Debug|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Debug|Win32.Build.0 = Debug|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Debug|x64.ActiveCfg = Debug|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Debug|x64.Build.0 = Debug|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Release|Win32.ActiveCfg = Release|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Release|Win32.Build.0 = Release|Win32
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Release|x64.ActiveCfg = Release|x64
+		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

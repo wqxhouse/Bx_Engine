@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{275f2b8b-f8a2-4d5e-b982-139fa72a2369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core">
+      <UniqueIdentifier>{10181c5d-7497-4434-be05-d4b4f46024bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Model">
+      <UniqueIdentifier>{0a8a55d4-ecd7-41f4-976e-37fa3ee0d57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Model\Mesh">
+      <UniqueIdentifier>{76cd38c9-2938-49ba-ae02-9f16aa2a713e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Math">
+      <UniqueIdentifier>{d0ca92a1-f27a-4832-b441-fc42b9244cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Math\Transform">
+      <UniqueIdentifier>{3bf1929c-b9ab-4756-af92-45448fcdf146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Model\Material">
+      <UniqueIdentifier>{d18d3660-2172-457c-98c9-a58536f37929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Camera">
+      <UniqueIdentifier>{17499af6-8e77-4a7a-9640-bff884373af6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Core\TypeDef.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Utility.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\ModelLoaderBase.h">
+      <Filter>src\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\ObjModelLoader.h">
+      <Filter>src\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Model.h">
+      <Filter>src\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Math.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix2x2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix3x3.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix4x4.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Quaternion.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Structures.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector3.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector4.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Transform\Trans.h">
+      <Filter>src\Math\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Material\Material.h">
+      <Filter>src\Model\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\PCH.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model\Mesh\Mesh.h">
+      <Filter>src\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\Camera.h">
+      <Filter>src\Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Core\Utility.cpp">
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
+      <Filter>src\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp">
+      <Filter>src\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Model.cpp">
+      <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Math.cpp">
+      <Filter>src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Transform\Trans.cpp">
+      <Filter>src\Math\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Material\Material.cpp">
+      <Filter>src\Model\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\PCH.cpp">
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model\Mesh\Mesh.cpp">
+      <Filter>src\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera\ProspectiveCamera.cpp">
+      <Filter>src\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera\Camera.cpp">
+      <Filter>src\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera\OrthographicCamera.cpp">
+      <Filter>src\Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

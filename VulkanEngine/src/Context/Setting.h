@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/TypeDef.h"
+#include "../Core/VulkanTypeDef.h"
 
 struct AmbientOcclutionSetting
 {

@@ -40,10 +40,7 @@
     <ClCompile Include="src\Context\BxQueue.cpp" />
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
-    <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
-    <ClCompile Include="src\Math\Math.cpp" />
-    <ClCompile Include="src\Math\Transform\Trans.cpp" />
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
   </ItemGroup>
@@ -54,21 +51,10 @@
     <ClInclude Include="src\Context\CmdBufferMgr.h" />
     <ClInclude Include="src\Context\Setting.h" />
     <ClInclude Include="src\Context\VulkanContext.h" />
-    <ClInclude Include="src\Core\TypeDef.h" />
-    <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Core\VulkanTypeDef.h" />
     <ClInclude Include="src\Core\VDeleter.h" />
     <ClInclude Include="src\Core\VulkanPCH.h" />
     <ClInclude Include="src\Core\VulkanUtility.h" />
-    <ClInclude Include="src\Math\Math.h" />
-    <ClInclude Include="src\Math\Matrix2x2.h" />
-    <ClInclude Include="src\Math\Matrix3x3.h" />
-    <ClInclude Include="src\Math\Matrix4x4.h" />
-    <ClInclude Include="src\Math\Quaternion.h" />
-    <ClInclude Include="src\Math\Structures.h" />
-    <ClInclude Include="src\Math\Transform\Trans.h" />
-    <ClInclude Include="src\Math\Vector2.h" />
-    <ClInclude Include="src\Math\Vector3.h" />
-    <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
   </ItemGroup>
@@ -209,7 +195,7 @@ xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\Vulk
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Core\include\;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <PostBuildEvent>
@@ -304,7 +290,7 @@ xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\Vulk
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Core\include\;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

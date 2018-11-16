@@ -25,7 +25,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "TypeDef.h"
+#include "../Core/VulkanTypeDef.h"
 #define DEFAULT_VULKAN_SHADER_PATH "../Resources/shaders/SPIR-V/"
 
 #include "VDeleter.h"
