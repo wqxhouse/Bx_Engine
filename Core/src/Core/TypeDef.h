@@ -32,6 +32,9 @@
 	((v) = (((v) < (l)) ? (l) : (v))); \
 	((v) = (((v) > (r)) ? (r) : (v))); \
 
+typedef unsigned char  image_data;
+typedef unsigned char* image_ptr;
+
 template<typename T>
 inline void SafeFree(T* ptr)
 {

@@ -5,46 +5,72 @@
 #include <sstream>
 #include <vector>
 
+#include "TypeDef.h"
 #include "../Math/Math.h"
 
 #define LOWER_UPPER_CASE_ASCII_DIFF 32
 
-struct CallbackInfo
+namespace Utility
 {
-	int keyboardCallBack[1024];
+    struct CallbackInfo
+    {
+        int keyboardCallBack[1024];
 
-	struct MousePosCallback
-	{
-		MousePosCallback() 
-            : delta_x(0),
-              delta_y(0) 
+        struct MousePosCallback
         {
+            MousePosCallback()
+                : delta_x(0),
+                delta_y(0)
+            {
+            }
+
+            inline void reset()
+            {
+                delta_x = 0.0;
+                delta_y = 0.0;
+            }
+
+            double delta_x;
+            double delta_y;
+
+        }cursorPosCallBack;
+
+        CallbackInfo()
+            :cursorPosCallBack()
+        {
+            memset(keyboardCallBack, 0, 1024 * sizeof(int));
         }
+    };
 
-		inline void reset()
-		{
-			delta_x = 0.0;
-			delta_y = 0.0;
-		}
+    class UtilityBase
+    {
+    public:
+        static void StringReplace(
+            std::string*       pStr,
+            const char         src,
+            const char         dst = ' ');
 
-        double delta_x;
-        double delta_y;
+        static std::vector<std::string> Split(
+            const std::string& str,
+            const char         delim);
 
-	}cursorPosCallBack;
+        static std::string ToLowercase(
+            const std::string& str);
 
-	CallbackInfo()
-		:cursorPosCallBack()
-	{
-		 memset(keyboardCallBack, 0, 1024 * sizeof(int));
-	}
-};
+        static std::string ToUppercase(
+            const std::string& str);
 
-void stringReplace(std::string* pStr, char src, char dst = ' ');
+        static std::unique_ptr<image_data> ReadImageData(
+            const std::string& imageFile,
+            int* const         width,
+            int* const         height,
+            int* const         type);
 
-std::vector<std::string> split(const std::string& str, char delim);
+        static void ReleaseImageData(
+            std::unique_ptr<image_data> imageData);
 
-std::string ToLowercase(const std::string& str);
-std::string ToUppercase(const std::string& str);
-
-// Test
-glm::mat4 ToGLMMat4(Math::Mat4 m);
+        // Test
+        glm::mat4 ToGLMMat4(
+            Math::Mat4 m);
+    };
+}

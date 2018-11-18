@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <array>
 #include <vector>
 #include <ctime>
 
@@ -18,4 +19,4 @@
 #include "TypeDef.h"
 
 #include "Utility.h"
-extern CallbackInfo callbackInfo;
+extern Utility::CallbackInfo callbackInfo;

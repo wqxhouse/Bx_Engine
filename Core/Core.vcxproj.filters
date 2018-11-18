@@ -28,6 +28,9 @@
     <Filter Include="src\Setting">
       <UniqueIdentifier>{0097f7ea-7ec0-41f1-a265-b635761b5aeb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Texture">
+      <UniqueIdentifier>{b75b9b63-43fd-4a0c-9c48-a0664c834238}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\TypeDef.h">
@@ -90,6 +93,18 @@
     <ClInclude Include="src\Camera\Camera.h">
       <Filter>src\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="src\Texture\Texture2D.h">
+      <Filter>src\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture\Texture3D.h">
+      <Filter>src\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture\Cubemap.h">
+      <Filter>src\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture\TextureBase.h">
+      <Filter>src\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp">
@@ -127,6 +142,18 @@
     </ClCompile>
     <ClCompile Include="src\Core\Utility.cpp">
       <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\Texture2D.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\Texture3D.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\Cubemap.cpp">
+      <Filter>src\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\TextureBase.cpp">
+      <Filter>src\Texture</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

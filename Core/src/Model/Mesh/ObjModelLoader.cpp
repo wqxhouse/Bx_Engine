@@ -7,6 +7,8 @@
 
 #include "ObjModelLoader.h"
 
+using namespace Utility;
+
 ObjModelLoader::ObjModelLoader()
     :vertexCount(0), normalCount(0), texCoordCount(0), indicesCount(0)
 {}
@@ -36,7 +38,7 @@ void ObjModelLoader::LoadModel(
 
         while (std::getline(inputStream, modelFileLine))
         {
-            vector<string> vecPtr = split(modelFileLine, ' ');
+            vector<string> vecPtr = UtilityBase::Split(modelFileLine, ' ');
 
             if (vecPtr.size() > 2)
             {
@@ -76,7 +78,7 @@ void ObjModelLoader::LoadModel(
                         throw;
                     }
                 }
-                else if (ToLowercase(vecPtr[1]) == "object")
+                else if (UtilityBase::ToLowercase(vecPtr[1]) == "object")
                 {
                     if (tempMeshName == "")
                     {
@@ -132,7 +134,7 @@ void ObjModelLoader::parseIndices(
     int* counter)
 {
     //TODO: parse poly surface indices
-    vector<string> indexData = split(str, '/');
+    vector<string> indexData = UtilityBase::Split(str, '/');
     UINT indexDataSize = static_cast<UINT>(indexData.size());
 
     if (indexDataSize == 1)
@@ -208,9 +210,9 @@ void ObjModelLoader::counter(const string& modelFile)
 
     while (std::getline(inputStream, line))
     {
-        stringReplace(&line, '\t');
+        UtilityBase::StringReplace(&line, '\t');
 
-        vector<string> vecPtr = split(line, ' ');
+        vector<string> vecPtr = UtilityBase::Split(line, ' ');
         if (vecPtr.size() > 2)
         {
             if (vecPtr[0] == "v") 
@@ -263,9 +265,9 @@ void ObjModelLoader::loadMaterial(const string & materialFile)
 
         while (std::getline(inputStream, line))
         {
-            stringReplace(&line, '\t');
+            UtilityBase::StringReplace(&line, '\t');
 
-            vector<string> materialStrs = split(line, ' ');
+            vector<string> materialStrs = UtilityBase::Split(line, ' ');
             size_t strLength = materialStrs.size();
 
             if (strLength > 2)
