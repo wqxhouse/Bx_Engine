@@ -17,22 +17,6 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Vulkan_Debug|Win32">
-      <Configuration>Vulkan_Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Vulkan_Debug|x64">
-      <Configuration>Vulkan_Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Vulkan_Release|Win32">
-      <Configuration>Vulkan_Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Vulkan_Release|x64">
-      <Configuration>Vulkan_Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{855C7BF4-681D-4EA9-A240-FA9483CED820}</ProjectGuid>
@@ -47,20 +31,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
@@ -73,20 +44,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
@@ -101,25 +59,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -127,28 +73,14 @@
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|Win32'">
-    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)_d</TargetName>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|Win32'">
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|x64'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)_d</TargetName>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|x64'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -169,33 +101,6 @@ mkdir $(SolutionDir)lib\OpenGL\include\
 
 copy  /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
 xcopy  "$(ProjectDir)$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)lib\OpenGL\$(Configuration) mkdir $(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)
-if exist $(SolutionDir)lib\OpenGL\include\ RD /S/Q $(SolutionDir)lib\OpenGL\include\
-
-mkdir $(SolutionDir)lib\OpenGL\include\
-
-copy  /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
-xcopy  "$(ProjectDir)$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -219,27 +124,6 @@ mkdir $(SolutionDir)lib\OpenGL\include\
 
 copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)lib\OpenGL\$(Configuration) mkdir $(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)
-if exist $(SolutionDir)lib\OpenGL\include\ RD /S/Q $(SolutionDir)lib\OpenGL\include\
-
-mkdir $(SolutionDir)lib\OpenGL\include\
-
-copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -267,39 +151,6 @@ mkdir $(SolutionDir)lib\OpenGL\include\
 
 copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName).lib"
 xcopy  "$(ProjectDir)$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)lib\OpenGL\$(Configuration) mkdir $(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)
-if exist $(SolutionDir)lib\OpenGL\include\ RD /S/Q $(SolutionDir)lib\OpenGL\include\
-
-mkdir $(SolutionDir)lib\OpenGL\include\
-
-copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName).lib"
-xcopy  "$(ProjectDir)$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -330,34 +181,6 @@ mkdir $(SolutionDir)lib\OpenGL\include\
 
 copy /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName).lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)lib\OpenGL\$(Configuration) mkdir $(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)
-if exist $(SolutionDir)lib\OpenGL\include\ RD /S/Q $(SolutionDir)lib\OpenGL\include\
-
-mkdir $(SolutionDir)lib\OpenGL\include\
-
-copy /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\$(ProjectName).lib"
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\OpenGL\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\OpenGL\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

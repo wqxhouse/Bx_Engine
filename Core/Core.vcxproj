@@ -32,7 +32,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -45,7 +45,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -79,6 +79,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -97,7 +101,6 @@ mkdir $(SolutionDir)lib\Core\include\
 
 copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -116,9 +119,8 @@ if exist $(SolutionDir)lib\Core\include\ RD /S/Q $(SolutionDir)lib\Core\include\
 
 mkdir $(SolutionDir)lib\Core\include\
 
-copy  /Y "$(ProjectDir)$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
-xcopy  "$(ProjectDir)$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Configuration)\*.obj" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
+copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
+xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -130,33 +132,8 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)lib\Core\$(Configuration) mkdir $(SolutionDir)lib\Core\$(Platform)\$(Configuration)
-if exist $(SolutionDir)lib\Core\include\ RD /S/Q $(SolutionDir)lib\Core\include\
-
-mkdir $(SolutionDir)lib\Core\include\
-
-copy /Y "$(ProjectDir)$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName).lib"
-xcopy  "$(ProjectDir)$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Configuration)\*.obj" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -170,7 +147,32 @@ mkdir $(SolutionDir)lib\Core\include\
 
 copy /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName).lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.obj" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(SolutionDir)lib\Core\$(Configuration) mkdir $(SolutionDir)lib\Core\$(Platform)\$(Configuration)
+if exist $(SolutionDir)lib\Core\include\ RD /S/Q $(SolutionDir)lib\Core\include\
+
+mkdir $(SolutionDir)lib\Core\include\
+
+copy /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName).lib"
+xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
 xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -195,8 +197,6 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     <ClInclude Include="src\Model\Mesh\ObjModelLoader.h" />
     <ClInclude Include="src\Model\Model.h" />
     <ClInclude Include="src\Setting\Setting.h" />
-    <ClInclude Include="src\Texture\Texture.h" />
-    <ClInclude Include="src\Texture\Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera\Camera.cpp" />
@@ -211,10 +211,6 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     <ClCompile Include="src\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Model\Mesh\ObjModelLoader.cpp" />
     <ClCompile Include="src\Model\Model.cpp" />
-    <ClCompile Include="src\Texture\Cubemap.cpp" />
-    <ClCompile Include="src\Texture\Texture.cpp" />
-    <ClCompile Include="src\Texture\Texture2D.cpp" />
-    <ClCompile Include="src\Texture\Texture3D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
