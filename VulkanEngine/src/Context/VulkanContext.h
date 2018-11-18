@@ -1,8 +1,9 @@
 #pragma once
 
+#include <Setting/Setting.h>
+
 #include "BxQueue.h"
 #include "CmdBufferMgr.h"
-#include "Setting.h"
 #include "../Shader/VulkanGraphicsShader.h"
 
 #include <map>

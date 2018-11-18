@@ -7,7 +7,7 @@ Mesh::Mesh(
     const std::vector<Math::Vector3>& posBuf, 
     const std::vector<Math::Vector3>& normalBuf,
     const std::vector<Math::Vector2>& texCoords, 
-    const std::vector<UINT>&        indices)
+    const std::vector<UINT>&          indices)
     : m_name(name),
       m_materialName(materialFile),
       m_pMaterial(NULL),
@@ -21,10 +21,10 @@ Mesh::Mesh(
 //    const std::string&                name,
 //    const std::string&                materialFile,
 //    const int                         counter[],
-//    const std::vector<Math::Vector3>& posBuf, 
+//    const std::vector<Math::Vector3>& posBuf,
 //    const std::vector<Math::Vector3>& normalBuf,
 //    const std::vector<Math::Vector2>& texCoords, 
-//    const std::vector<UINT>&        indices, 
+//    const std::vector<UINT>&          indices, 
 //    const std::vector<Texture*>&      textures)
 //    : m_name(name),
 //      m_materialName(materialFile),
@@ -125,9 +125,9 @@ void Mesh::combineVertexData(
     const std::vector<Math::Vector3>& posBuf,
     const std::vector<Math::Vector3>& normalBuf,
     const std::vector<Math::Vector2>& texCoords,
-    const std::vector<UINT>&        posIndices,
-    const std::vector<UINT>&        normalIndices,
-    const std::vector<UINT>&        texCoordIndices)
+    const std::vector<UINT>&          posIndices,
+    const std::vector<UINT>&          normalIndices,
+    const std::vector<UINT>&          texCoordIndices)
 {
     std::map<Vertex, UINT> vertexIndexKey;
 
@@ -187,7 +187,7 @@ void Mesh::combineVertexData(
 
 bool Mesh::findSimilarVertex(
     const std::map<Vertex, UINT>& map,
-    const Vertex&                   vertex,
+    const Vertex&                 vertex,
     UINT*                         index)
 {
     auto it = map.find(vertex);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/TypeDef.h"
+#include <Core/TypeDef.h>
 
 #define FRUSTUM_GRID_SSBO_BINDING_POINT 0
 #define LIGHT_GRID_SSBO_BINDING_POINT   1

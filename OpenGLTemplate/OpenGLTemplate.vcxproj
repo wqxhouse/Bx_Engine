@@ -148,7 +148,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\OpenGL\include;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\Core\include;..\lib\OpenGL\include;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>OpenGLPCH.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -178,7 +178,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\Core\include;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -191,7 +191,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Core\include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_VULKAN;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -206,7 +206,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\Core\include;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -240,7 +240,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\Core\include;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -257,7 +257,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Core\include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_VULKAN;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
