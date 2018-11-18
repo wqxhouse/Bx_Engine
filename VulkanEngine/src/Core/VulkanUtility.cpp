@@ -201,6 +201,19 @@ VkResult VulkanUtility::DestroyDebugUtilsMessenger(
     return result;
 }
 
+VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,
+    VkDebugUtilsMessageTypeFlagsEXT				type,
+    const VkDebugUtilsMessengerCallbackDataEXT* pData,
+    void*										pUserData)
+{
+    std::cerr << "BxEngine validation layer: " << pData->pMessage << std::endl;
+
+    return VK_FALSE;
+}
+
+#endif
+
 BOOL VulkanUtility::CheckDeviceExtSupport(
 	const VkPhysicalDevice&         hwGpuDevice,
     const std::vector<const char*>& deviceExts)
@@ -434,16 +447,3 @@ std::vector<char> VulkanUtility::ReadFile(
 
     return fileString;
 }
-
-VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtility::debugCallback(
-	VkDebugUtilsMessageSeverityFlagBitsEXT		severiry,
-	VkDebugUtilsMessageTypeFlagsEXT				type,
-	const VkDebugUtilsMessengerCallbackDataEXT* pData,
-	void*										pUserData)
-{
-	std::cerr << "BxEngine validation layer: " << pData->pMessage << std::endl;
-
-	return VK_FALSE;
-}
-
-#endif

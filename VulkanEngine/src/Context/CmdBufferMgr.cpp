@@ -49,7 +49,6 @@ BOOL CmdBufferMgr::addGraphicsCmdBuffers(
     std::vector<VkCommandBuffer> graphicsCmdBuffers(size);
     VkResult cmdBufferAllocResult =
         vkAllocateCommandBuffers(m_device, &cmdBufferAllocInfo, graphicsCmdBuffers.data());
-
     status = VulkanUtility::GetBxStatus(cmdBufferAllocResult);
 
     assert(status == BX_SUCCESS);
