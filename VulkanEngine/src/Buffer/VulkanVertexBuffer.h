@@ -9,8 +9,8 @@ class VulkanVertexBuffer
 {
 public:
     VulkanVertexBuffer(
-        const VkDevice&                             device,
-        const std::unique_ptr<Object::Model::Mesh>& pMesh);
+        const VkDevice&                            device,
+        const std::shared_ptr<Object::Model::Mesh> pMesh);
 
     VkVertexInputBindingDescription createDescription(
         const UINT                 binding,
@@ -21,7 +21,7 @@ public:
     ~VulkanVertexBuffer();
 
 private:
-    std::shared_ptr<std::vector<Object::Model::Vertex>> m_vertexBufferData;
+    std::vector<Object::Model::Vertex>* m_vertexBufferData;
 
     VDeleter<VkBuffer>       m_vertexBuffer;
     VDeleter<VkDeviceMemory> m_vertexBufferMemory;

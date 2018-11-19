@@ -3,10 +3,13 @@
 using namespace Object::Model;
 
 VulkanVertexBuffer::VulkanVertexBuffer(
-    const VkDevice&              device,
-    const std::unique_ptr<Mesh>& pMesh)
+    const VkDevice&             device,
+    const std::shared_ptr<Mesh> pMesh)
 {
+    m_vertexBuffer       = { device, vkDestroyBuffer };
+    m_vertexBufferMemory = { device, vkFreeMemory };
 
+    m_vertexBufferData = &(pMesh->m_vertexBuffer);
 }
 
 VkVertexInputBindingDescription VulkanVertexBuffer::createDescription(

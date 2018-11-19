@@ -8,6 +8,7 @@
 #include <array>
 #include <vector>
 #include <ctime>
+#include <memory>
 
 // Include GLM Libarary
 #include <glm/glm.hpp>

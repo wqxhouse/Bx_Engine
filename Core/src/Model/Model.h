@@ -38,7 +38,10 @@ namespace Object
                 const UINT        materialBufferIndex,
                 const UINT        meshIndex);*/
 
-            void AddMesh(Mesh* pMesh, Material* pMaterial, MaterialMap* pMaterialMap)
+            inline void AddMesh(
+                Mesh*        pMesh,
+                Material*    pMaterial,
+                MaterialMap* pMaterialMap)
             {
                 if (pMaterial != NULL)
                 {
@@ -52,7 +55,7 @@ namespace Object
                     pMesh->setMaterialMap(pMaterialMap);
                 }
 
-                m_pMeshList.push_back(pMesh);
+                m_pMeshList.push_back(std::shared_ptr<Mesh>(std::move(pMesh)));
             }
 
             inline MaterialType GetModelMaterialType() const
@@ -63,8 +66,13 @@ namespace Object
                 return m_pMeshList[0]->GetMaterial()->GetMaterialType();
             }
 
-            inline Mesh*  GetMesh(const UINT i) const { return m_pMeshList[i]; }
-            inline Trans* GetTrans()            const { return m_pTrans; }
+            inline std::shared_ptr<Object::Model::Mesh> GetMesh(
+                const UINT i) const 
+            {
+                return m_pMeshList[i];
+            }
+
+            inline Trans* GetTrans() const { return m_pTrans; }
 
             void UseLocalMaterial();
             void UseGlobalMaterial();
@@ -73,7 +81,7 @@ namespace Object
             inline void UseGlobalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseGlobalMaterial(); }
 
         private:
-            std::vector<Mesh*> m_pMeshList;
+            std::vector<std::shared_ptr<Mesh>> m_pMeshList;
 
             std::unordered_set<Material*> m_pMaterialSet;
             std::unordered_set<MaterialMap*> m_pMaterialMapSet;

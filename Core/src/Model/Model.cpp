@@ -17,10 +17,6 @@ namespace Object
 
         ModelObject::~ModelObject()
         {
-            for (Mesh* pMesh : m_pMeshList)
-            {
-                SafeDelete(pMesh);
-            }
             m_pMeshList.clear();
 
             for (Material* pMaterial : m_pMaterialSet)
@@ -41,7 +37,7 @@ namespace Object
         void ModelObject::updateMaterialData(
             Material* pMaterial)
         {
-            for (Mesh* pMesh : m_pMeshList)
+            for (shared_ptr<Mesh> pMesh : m_pMeshList)
             {
                 pMesh->setMaterial(pMaterial);
             }
@@ -56,7 +52,7 @@ namespace Object
 
         void ModelObject::UseLocalMaterial()
         {
-            for (Mesh* pMesh : m_pMeshList)
+            for (shared_ptr<Mesh> pMesh : m_pMeshList)
             {
                 pMesh->UseLocalMaterial();
             }
@@ -64,7 +60,7 @@ namespace Object
 
         void ModelObject::UseGlobalMaterial()
         {
-            for (Mesh* pMesh : m_pMeshList)
+            for (shared_ptr<Mesh> pMesh : m_pMeshList)
             {
                 pMesh->UseGlobalMaterial();
             }
