@@ -5,11 +5,16 @@
 
 using namespace std;
 
-class ModelLoaderBase
+namespace Object
 {
-public:
-	ModelLoaderBase();
-	void virtual LoadModel(const string &fileName);
-	~ModelLoaderBase();
-};
-
+    namespace Model
+    {
+        class ModelLoaderBase
+        {
+        public:
+            ModelLoaderBase();
+            void virtual LoadModel(const string &fileName);
+            ~ModelLoaderBase();
+        };
+    }
+}

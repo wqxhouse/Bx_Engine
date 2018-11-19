@@ -6,95 +6,98 @@
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI          1.57079632f
 
-namespace Camera
+namespace Object
 {
-    class CameraBase
+    namespace Camera
     {
-    public:
-        CameraBase(
-            CameraType       type,
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up,
-            const float      speed,
-            const float      nearClip,
-            const float      farClip);
+        class CameraBase
+        {
+        public:
+            CameraBase(
+                CameraType       type,
+                const glm::vec3& pos,
+                const glm::vec3& center,
+                const glm::vec3& up,
+                const float      speed,
+                const float      nearClip,
+                const float      farClip);
 
-        virtual ~CameraBase();
+            virtual ~CameraBase();
 
-        void translate(glm::vec3 trans);
-        void rotate(float pitch, float yaw);
+            void translate(glm::vec3 trans);
+            void rotate(float pitch, float yaw);
 
-        virtual void update(float deltaTime);
-        //virtual void draw() {}
+            virtual void update(float deltaTime);
+            //virtual void draw() {}
 
-        inline CameraType GetCameraType() const { return m_cameraType; }
+            inline CameraType GetCameraType() const { return m_cameraType; }
 
-        inline Trans      GetTrans()            const { return m_trans; }
-        inline Math::Mat4 GetViewMatrix() { return m_trans.GetViewMat(); }
-        inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
-        inline float      GetNearClip()         const { return m_nearClip; }
-        inline float      GetFarClip()          const { return m_farClip; }
+            inline Trans      GetTrans()            const { return m_trans; }
+            inline Math::Mat4 GetViewMatrix() { return m_trans.GetViewMat(); }
+            inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
+            inline float      GetNearClip()         const { return m_nearClip; }
+            inline float      GetFarClip()          const { return m_farClip; }
 
-        void setCamTrans(
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up);
+            void setCamTrans(
+                const glm::vec3& pos,
+                const glm::vec3& center,
+                const glm::vec3& up);
 
-    protected:
-        Trans m_trans;
+        protected:
+            Trans m_trans;
 
-        float speed;
+            float speed;
 
-        Math::Mat4 m_projectionMatrix;
+            Math::Mat4 m_projectionMatrix;
 
-        glm::vec3 worldUp;
+            glm::vec3 worldUp;
 
-        glm::vec3 curFront;
-        glm::vec3 curRight;
+            glm::vec3 curFront;
+            glm::vec3 curRight;
 
-    private:
-        CameraType m_cameraType;
+        private:
+            CameraType m_cameraType;
 
-        float m_nearClip;
-        float m_farClip;
-    };
+            float m_nearClip;
+            float m_farClip;
+        };
 
-    class ProspectiveCamera : public CameraBase
-    {
-    public:
-        ProspectiveCamera(
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up,
-            const float speed,
-            const float invAspectRatio,
-            const float nearClip = 0.1f,
-            const float farClip = 100.0f,
-            const float fov = 45.0f);
+        class ProspectiveCamera : public CameraBase
+        {
+        public:
+            ProspectiveCamera(
+                const glm::vec3& pos,
+                const glm::vec3& center,
+                const glm::vec3& up,
+                const float speed,
+                const float invAspectRatio,
+                const float nearClip = 0.1f,
+                const float farClip = 100.0f,
+                const float fov = 45.0f);
 
-        void update(float deltaTime);
+            void update(float deltaTime);
 
-    private:
-        float fov;
-    };
+        private:
+            float fov;
+        };
 
-    class OrthographicCamera : public CameraBase
-    {
-    public:
-        OrthographicCamera(
-            const glm::vec3&    pos,
-            const glm::vec3&    center,
-            const glm::vec3&    up,
-            const float         speed,
-            const BxsRectangle& viewport,
-            const float         nearClip = 0.1f,
-            const float         farClip = 100.0f);
-        ~OrthographicCamera();
+        class OrthographicCamera : public CameraBase
+        {
+        public:
+            OrthographicCamera(
+                const glm::vec3&    pos,
+                const glm::vec3&    center,
+                const glm::vec3&    up,
+                const float         speed,
+                const BxsRectangle& viewport,
+                const float         nearClip = 0.1f,
+                const float         farClip = 100.0f);
+            ~OrthographicCamera();
 
-        void update(float deltaTime);
+            void update(float deltaTime);
 
-    private:
-        BxsRectangle m_viewport;
-    };
+        private:
+            BxsRectangle m_viewport;
+        };
+    }
 }

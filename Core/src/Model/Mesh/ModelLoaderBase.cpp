@@ -3,17 +3,22 @@
 
 #include "ModelLoaderBase.h"
 
-
-ModelLoaderBase::ModelLoaderBase()
+namespace Object
 {
-}
+    namespace Model
+    {
+        ModelLoaderBase::ModelLoaderBase()
+        {
+        }
 
-void ModelLoaderBase::LoadModel(const string& fileName)
-{
+        void ModelLoaderBase::LoadModel(const string& fileName)
+        {
 
-}
+        }
 
 
-ModelLoaderBase::~ModelLoaderBase()
-{
+        ModelLoaderBase::~ModelLoaderBase()
+        {
+        }
+    }
 }
