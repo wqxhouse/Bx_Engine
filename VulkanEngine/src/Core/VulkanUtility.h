@@ -160,6 +160,27 @@ public:
         return vkCmdBufferLevel;
     }
 
+    static inline VkVertexInputRate GetVkVertexInputRate(
+        const BX_VERTEX_INPUT_RATE rate)
+    {
+        VkVertexInputRate inputRate;
+
+        switch (rate)
+        {
+            case BX_VERTEX_INPUT_RATE_VERTEX:
+                inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                break;
+            case BX_VERTEX_INPUT_RATE_INSTANCE:
+                inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+                break;
+            default:
+                assert(FALSE);
+                break;
+        }
+
+        return inputRate;
+    }
+
     static inline BOOL GetBxStatus(
         const VkResult vkResult)
     {
