@@ -1,3 +1,12 @@
+//=================================================================================================
+//
+//  Bx Engine
+//  bxs3514 (Xiangshun Bei) @ 2016 - 2018
+//
+//  All code licensed under the MIT license
+//
+//================================================================================================
+
 #include "VulkanContext.h"
 
 #include <set>
@@ -54,6 +63,19 @@ void VulkanContext::initialize()
     status = initWindow();
     if (status == BX_SUCCESS)
     {
+        pModel = std::unique_ptr<Object::Model::ModelObject>(
+            new Object::Model::ModelObject(
+                "../resources/models/box/box.obj",
+                "../resources/models/box/box.mtl",
+                new Trans(glm::vec3(0.0f, 0.0f, 0.0f),
+                    glm::vec3(),
+                    glm::vec3(0.0f, 1.0f, 0.0f))));
+
+        m_pVertexBuffer = std::unique_ptr<VulkanVertexBuffer>(
+            new VulkanVertexBuffer(
+                &m_vkDevice,
+                pModel->GetMesh(0)));
+
         status = initVulkan();
 
         if (status == BX_SUCCESS)
@@ -694,13 +716,16 @@ BOOL VulkanContext::createGraphicsPipeline()
 
     /// Setup Fixed pipeline stages
     // VS input
+    VkVertexInputBindingDescription descriptions =
+        m_pVertexBuffer->createDescription(0, BX_VERTEX_INPUT_RATE_VERTEX);
+    auto attributeDescriptions = m_pVertexBuffer->createAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vsInputCreateInfo = {};
     vsInputCreateInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    // TODO                                           
-    vsInputCreateInfo.vertexAttributeDescriptionCount = 0;
-    vsInputCreateInfo.pVertexAttributeDescriptions	  = NULL;
-    vsInputCreateInfo.vertexBindingDescriptionCount	  = 0;
-    vsInputCreateInfo.pVertexBindingDescriptions	  = NULL;
+    vsInputCreateInfo.vertexBindingDescriptionCount   = 1;
+    vsInputCreateInfo.pVertexBindingDescriptions      = &descriptions;
+    vsInputCreateInfo.vertexAttributeDescriptionCount = static_cast<UINT>(attributeDescriptions.size());
+    vsInputCreateInfo.pVertexAttributeDescriptions	  = attributeDescriptions.data();
 
     // Input assembly state
     VkPipelineInputAssemblyStateCreateInfo inputAsmCreateInfo = {};

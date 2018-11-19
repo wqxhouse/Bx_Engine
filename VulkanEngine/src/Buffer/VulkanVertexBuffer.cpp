@@ -1,15 +1,45 @@
+//=================================================================================================
+//
+//  Bx Engine
+//  bxs3514 (Xiangshun Bei) @ 2016 - 2018
+//
+//  All code licensed under the MIT license
+//
+//================================================================================================
+
 #include "VulkanVertexBuffer.h"
 
 using namespace Object::Model;
 
 VulkanVertexBuffer::VulkanVertexBuffer(
-    const VkDevice&             device,
+    const VkDevice* const       pDevice,
     const std::shared_ptr<Mesh> pMesh)
+    : m_pDevice(pDevice)
 {
-    m_vertexBuffer       = { device, vkDestroyBuffer };
-    m_vertexBufferMemory = { device, vkFreeMemory };
+    m_vertexBuffer       = { *m_pDevice, vkDestroyBuffer };
+    m_vertexBufferMemory = { *m_pDevice, vkFreeMemory    };
 
     m_vertexBufferData = &(pMesh->m_vertexBuffer);
+}
+
+BOOL VulkanVertexBuffer::createVulkanVertexBuffer()
+{
+    BOOL result = BX_SUCCESS;
+
+    VkBufferCreateInfo bufferCreateInfo = {};
+    bufferCreateInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCreateInfo.size        = sizeof(Vertex) * static_cast<UINT64>(m_vertexBufferData->size());
+    bufferCreateInfo.usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VkResult vertexBufferCreateResult =
+        vkCreateBuffer(*m_pDevice, &bufferCreateInfo, NULL, m_vertexBuffer.replace());
+    
+    result = VulkanUtility::GetBxStatus(vertexBufferCreateResult);
+
+    assert(result == BX_SUCCESS);
+
+    return result;
 }
 
 VkVertexInputBindingDescription VulkanVertexBuffer::createDescription(

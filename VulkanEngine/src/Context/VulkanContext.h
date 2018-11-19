@@ -1,10 +1,21 @@
+//=================================================================================================
+//
+//  Bx Engine
+//  bxs3514 (Xiangshun Bei) @ 2016 - 2018
+//
+//  All code licensed under the MIT license
+//
+//================================================================================================
+
 #pragma once
 
 #include <Setting/Setting.h>
+#include <Model/Model.h>
 
 #include "BxQueue.h"
 #include "CmdBufferMgr.h"
 #include "../Shader/VulkanGraphicsShader.h"
+#include "../Buffer/VulkanVertexBuffer.h"
 
 #include <map>
 
@@ -83,6 +94,9 @@ private:
     VDeleter<VkSemaphore> m_renderSemaphore;
     VDeleter<VkSemaphore> m_presentSemaphore;
 
+    // Vertex buffers
+    std::unique_ptr<VulkanVertexBuffer> m_pVertexBuffer;
+
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;
 
@@ -100,4 +114,6 @@ private:
 
     const static std::vector<const char*> m_validationLayers;
     const static std::vector<const char*> m_deviceExts;
+
+    std::unique_ptr<Object::Model::ModelObject> pModel;
 };
