@@ -67,6 +67,11 @@ public:
         const std::string& fileName,
         const BOOL         isBinary);
 
+    static UINT FindMemoryType(
+        const VkPhysicalDeviceMemoryProperties& hwMemProps,
+        const UINT                              filter,
+        const VkMemoryPropertyFlags&            props);
+
     static inline VkPolygonMode GetVkSampleCount(
         const PolyMode polyMode)
     {

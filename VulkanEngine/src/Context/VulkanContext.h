@@ -42,7 +42,7 @@ private:
     BOOL initHwDevice();
     BOOL initDevice();
     BOOL createSwapchain();
-	BOOL createGraphicsPipeline();
+    BOOL createGraphicsPipeline();
     BOOL createSwapchainFramebuffer();
     BOOL createSemaphores();
 
@@ -82,7 +82,7 @@ private:
     // Shader
     std::unique_ptr<VulkanGraphicsShader> m_pShader;
 
-	// Pipeline
+    // Pipeline
     VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
     VDeleter<VkRenderPass>     m_renderPass;
     VDeleter<VkPipeline>       m_graphicsPipeline;
@@ -93,9 +93,6 @@ private:
     // Semaphores
     VDeleter<VkSemaphore> m_renderSemaphore;
     VDeleter<VkSemaphore> m_presentSemaphore;
-
-    // Vertex buffers
-    std::unique_ptr<VulkanVertexBuffer> m_pVertexBuffer;
 
 #if _DEBUG
     const static BOOL m_enableValidationLayer = TRUE;
@@ -114,6 +111,4 @@ private:
 
     const static std::vector<const char*> m_validationLayers;
     const static std::vector<const char*> m_deviceExts;
-
-    std::unique_ptr<Object::Model::ModelObject> pModel;
 };

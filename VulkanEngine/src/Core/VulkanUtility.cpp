@@ -456,3 +456,23 @@ std::vector<char> VulkanUtility::ReadFile(
 
     return fileString;
 }
+
+UINT VulkanUtility::FindMemoryType(
+    const VkPhysicalDeviceMemoryProperties& hwMemProps,
+    const UINT                              filter,
+    const VkMemoryPropertyFlags&            props)
+{
+    UINT memType = 0;
+
+    for (UINT i = 0; i < hwMemProps.memoryTypeCount; ++i)
+    {
+        if (((filter & (1 << i))                               != 0) &&
+            ((hwMemProps.memoryTypes[i].propertyFlags & props) != 0))
+        {
+            memType = i;
+            break;
+        }
+    }
+
+    return memType;
+}

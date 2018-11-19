@@ -21,13 +21,19 @@ public:
         const VkDevice* const                      pDevice,
         const std::shared_ptr<Object::Model::Mesh> pMesh);
 
-    BOOL createVulkanVertexBuffer();
+    BOOL createVulkanVertexBuffer(
+        const VkPhysicalDevice* const pHwDevice);
 
     VkVertexInputBindingDescription createDescription(
         const UINT                 binding,
         const BX_VERTEX_INPUT_RATE rate);
 
     std::array<VkVertexInputAttributeDescription, 3> createAttributeDescriptions();
+
+    inline const VkBuffer GetVertexBuffer() const
+    {
+        return m_vertexBuffer;
+    }
 
     ~VulkanVertexBuffer();
 

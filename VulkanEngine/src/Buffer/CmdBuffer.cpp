@@ -17,6 +17,7 @@ CmdBuffer::CmdBuffer(
       m_cmdBufferLevel(bufferLevel),
       m_cmdBuffer(cmdBuffer)
 {
+    m_cmdStageFlags.value = 0;
 }
 
 CmdBuffer::~CmdBuffer()
@@ -41,6 +42,8 @@ BOOL CmdBuffer::beginCmdBuffer(
     result = VulkanUtility::GetBxStatus(beginCmdBufferResult);
 
     assert(result == BX_SUCCESS);
+
+    m_cmdStageFlags.begin = 1;
 
     return result;
 }
@@ -77,6 +80,8 @@ BOOL CmdBuffer::beginCmdBuffer(
 
     assert(result == BX_SUCCESS);
 
+    m_cmdStageFlags.begin = 1;
+
     return result;
 }
 
@@ -99,6 +104,18 @@ void CmdBuffer::beginRenderPass(
                                          VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS;
 
     vkCmdBeginRenderPass(m_cmdBuffer, &renderPassBeginInfo, subpassContents);
+
+    m_cmdStageFlags.render = 1;
+}
+
+void CmdBuffer::cmdBindVertexBuffers(
+    const std::vector<VkBuffer>&     vertexBuffers,
+    const std::vector<VkDeviceSize>& offsets)
+{
+    assert(m_cmdStageFlags.begin  == 1 && m_cmdStageFlags.render == 1);
+
+    vkCmdBindVertexBuffers(
+        m_cmdBuffer, 0, static_cast<UINT>(vertexBuffers.size()), vertexBuffers.data(), offsets.data());
 }
 
 void CmdBuffer::cmdDrawArrays(
@@ -106,6 +123,8 @@ void CmdBuffer::cmdDrawArrays(
     const UINT        vertexCount,
     const UINT        vertexOffset)
 {
+    assert(m_cmdStageFlags.begin == 1 && m_cmdStageFlags.render == 1);
+
     vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
     vkCmdDraw(m_cmdBuffer, vertexCount, 1, vertexOffset, 0);
 }
@@ -117,6 +136,8 @@ void CmdBuffer::cmdDrawArraysInstanced(
     const UINT        vertexOffset,
     const UINT        instanceOffset)
 {
+    assert(m_cmdStageFlags.begin == 1 && m_cmdStageFlags.render == 1);
+
     vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
     vkCmdDraw(m_cmdBuffer, vertexCount, instanceCount, vertexOffset, instanceOffset);
 }
