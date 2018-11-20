@@ -11,103 +11,109 @@
 
 #include "../Core/VulkanPCH.h"
 
-struct QueueFamilyIndices
+namespace VulkanEngine
 {
-    INT graphicsFamilyIndex       = -1;
-    INT computeFamilyIndex        = -1;
-    INT presentSurfaceFamilyIndex = -1;
-
-    inline BOOL IsCompleted() const
+    namespace Queue
     {
-        return ((graphicsFamilyIndex >= 0) &&
-                (computeFamilyIndex >= 0) &&
-                (presentSurfaceFamilyIndex >= 0));
-    }
-
-    inline UINT GetIndexNum() const
-    {
-        return (sizeof(QueueFamilyIndices) / sizeof(UINT));
-    }
-
-    inline UINT GetQueueFamilyIndex(const UINT i) const
-    {
-        UINT result;
-        switch (i)
+        struct QueueFamilyIndices
         {
-        case BX_QUEUE_GRAPHICS:
-            result = graphicsFamilyIndex;
-            break;
-        case BX_QUEUE_COMPUTE:
-            result = computeFamilyIndex;
-            break;
-        case BX_QUEUE_PRESENT:
-            result = presentSurfaceFamilyIndex;
-            break;
-        default:
-            result = -1;
-            break;
-        }
+            INT graphicsFamilyIndex = -1;
+            INT computeFamilyIndex = -1;
+            INT presentSurfaceFamilyIndex = -1;
 
-        return result;
-    }
-};
+            inline BOOL IsCompleted() const
+            {
+                return ((graphicsFamilyIndex >= 0) &&
+                    /*(computeFamilyIndex >= 0) &&*/
+                    (presentSurfaceFamilyIndex >= 0));
+            }
 
-struct BxQueue
-{
-    VkQueue m_queue  = VK_NULL_HANDLE;
-    float   priority = 1.0f;
-};
+            inline UINT GetIndexNum() const
+            {
+                return (sizeof(QueueFamilyIndices) / sizeof(UINT));
+            }
 
-class QueueMgr
-{
-public:
-    QueueMgr();
-    ~QueueMgr();
+            inline UINT GetQueueFamilyIndex(const UINT i) const
+            {
+                UINT result;
+                switch (i)
+                {
+                case BX_QUEUE_GRAPHICS:
+                    result = graphicsFamilyIndex;
+                    break;
+                case BX_QUEUE_COMPUTE:
+                    result = computeFamilyIndex;
+                    break;
+                case BX_QUEUE_PRESENT:
+                    result = presentSurfaceFamilyIndex;
+                    break;
+                default:
+                    result = -1;
+                    break;
+                }
 
-    QueueFamilyIndices retriveHwQueueIndices(
-        const VkPhysicalDevice& hwGpuDevice,
-        const VkSurfaceKHR&     surface);
+                return result;
+            }
+        };
 
-    void retriveQueueHandle(
-        const VkDevice& device);
-
-    inline QueueFamilyIndices GetHwQueueIndices() const
-    {
-        return m_hwQueueIndices;
-    }
-
-    inline BOOL IsQueueIndicesCompleted() const
-    {
-        return m_hwQueueIndices.IsCompleted();
-    }
-
-    inline BxQueue GetQueue(const UINT i) const
-    {
-        BxQueue result;
-        switch (i)
+        struct BxQueue
         {
-        case 0:
-            result = m_presentQueue;
-            break;
-        case 1:
-            result = m_graphicsQueue;
-            break;
-        case 2:
-            result = m_computeQueue;
-            break;
-        default:
-            printf("Query index exceed the queue number!\n");
-            assert(FALSE);
-            break;
-        }
+            VkQueue m_queue = VK_NULL_HANDLE;
+            float   priority = 1.0f;
+        };
 
-        return result;
+        class QueueMgr
+        {
+        public:
+            QueueMgr();
+            ~QueueMgr();
+
+            QueueFamilyIndices retriveHwQueueIndices(
+                const VkPhysicalDevice& hwGpuDevice,
+                const VkSurfaceKHR&     surface);
+
+            void retriveQueueHandle(
+                const VkDevice& device);
+
+            inline QueueFamilyIndices GetHwQueueIndices() const
+            {
+                return m_hwQueueIndices;
+            }
+
+            inline BOOL IsQueueIndicesCompleted() const
+            {
+                return m_hwQueueIndices.IsCompleted();
+            }
+
+            inline BxQueue GetQueue(const UINT i) const
+            {
+                BxQueue result;
+                switch (i)
+                {
+                case 0:
+                    result = m_presentQueue;
+                    break;
+                case 1:
+                    result = m_graphicsQueue;
+                    break;
+                case 2:
+                    result = m_computeQueue;
+                    break;
+                default:
+                    printf("Query index exceed the queue number!\n");
+                    assert(FALSE);
+                    break;
+                }
+
+                return result;
+            }
+
+        private:
+            QueueFamilyIndices m_hwQueueIndices;
+
+            BxQueue m_presentQueue;
+            BxQueue m_graphicsQueue;
+            BxQueue m_computeQueue;
+        };
     }
-
-private:
-    QueueFamilyIndices m_hwQueueIndices;
-
-    BxQueue m_presentQueue;
-    BxQueue m_graphicsQueue;
-    BxQueue m_computeQueue;
-};
+}

@@ -14,34 +14,40 @@
 #include "../Core/VulkanPCH.h"
 #include "../Core/VulkanUtility.h"
 
-class VulkanVertexBuffer
+namespace VulkanEngine
 {
-public:
-    VulkanVertexBuffer(
-        const VkDevice* const                      pDevice,
-        const std::shared_ptr<Object::Model::Mesh> pMesh);
-
-    BOOL createVulkanVertexBuffer(
-        const VkPhysicalDevice* const pHwDevice);
-
-    VkVertexInputBindingDescription createDescription(
-        const UINT                 binding,
-        const BX_VERTEX_INPUT_RATE rate);
-
-    std::array<VkVertexInputAttributeDescription, 3> createAttributeDescriptions();
-
-    inline const VkBuffer GetVertexBuffer() const
+    namespace Buffer
     {
-        return m_vertexBuffer;
+        class VulkanVertexBuffer
+        {
+        public:
+            VulkanVertexBuffer(
+                const VkDevice* const                      pDevice,
+                const std::shared_ptr<Object::Model::Mesh> pMesh);
+
+            BOOL createVulkanVertexBuffer(
+                const VkPhysicalDevice* const pHwDevice);
+
+            VkVertexInputBindingDescription createDescription(
+                const UINT                 binding,
+                const BX_VERTEX_INPUT_RATE rate);
+
+            std::array<VkVertexInputAttributeDescription, 3> createAttributeDescriptions();
+
+            inline const VkBuffer GetVertexBuffer() const
+            {
+                return m_vertexBuffer;
+            }
+
+            ~VulkanVertexBuffer();
+
+        private:
+            const VkDevice* const m_pDevice;
+
+            std::vector<Object::Model::Vertex>* m_vertexBufferData;
+
+            VDeleter<VkBuffer>       m_vertexBuffer;
+            VDeleter<VkDeviceMemory> m_vertexBufferMemory;
+        };
     }
-
-    ~VulkanVertexBuffer();
-
-private:
-    const VkDevice* const m_pDevice;
-
-    std::vector<Object::Model::Vertex>* m_vertexBufferData;
-
-    VDeleter<VkBuffer>       m_vertexBuffer;
-    VDeleter<VkDeviceMemory> m_vertexBufferMemory;
-};
+}
