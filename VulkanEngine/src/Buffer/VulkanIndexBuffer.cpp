@@ -20,6 +20,26 @@ namespace VulkanEngine
             : VulkanBufferBase(pDevice, pCmdBufferMgr)
         {
             m_pIndexBufferData = &(pMesh->m_indexBuffer);
+
+            assert(m_pIndexBufferData->size() > 0);
+
+            if (typeid(m_pIndexBufferData->at(0)) == typeid(uint32_t))
+            {
+                m_indexType = BX_INDEX_UINT32;
+            }
+            else if (typeid(m_pIndexBufferData->at(0)) == typeid(uint16_t))
+            {
+                m_indexType = BX_INDEX_UINT16;
+            }
+            else
+            {
+                printf("Unsupported index format!\n");
+                assert(FALSE);
+            }
+        }
+
+        VulkanIndexBuffer::~VulkanIndexBuffer()
+        {
         }
 
         BOOL VulkanIndexBuffer::createIndexBuffer(
@@ -31,7 +51,9 @@ namespace VulkanEngine
             BxBufferCreateInfo indexBufferCreateInfo = {};
             indexBufferCreateInfo.bufferUsage        = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
             indexBufferCreateInfo.bufferSize         =
-                sizeof(UINT) * static_cast<UINT>(m_pIndexBufferData->size());
+                (m_indexType == BX_INDEX_UINT32) ?
+                sizeof(UINT) * static_cast<UINT>(m_pIndexBufferData->size()) :
+                sizeof(UINT) * static_cast<UINT16>(m_pIndexBufferData->size());
             indexBufferCreateInfo.bufferData         = m_pIndexBufferData->data();
             indexBufferCreateInfo.bufferOptimization = optimize;
 
@@ -40,10 +62,6 @@ namespace VulkanEngine
             assert(result == BX_SUCCESS);
 
             return result;
-        }
-
-        VulkanIndexBuffer::~VulkanIndexBuffer()
-        {
         }
     }
 }

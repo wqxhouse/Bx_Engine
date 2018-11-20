@@ -45,6 +45,9 @@
     <ClCompile Include="src\Context\QueueMgr.cpp">
       <Filter>src\Context</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buffer\VulkanIndexBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Context\VulkanContext.h">
@@ -84,6 +87,9 @@
       <Filter>src\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buffer\BufferInfo.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\VulkanIndexBuffer.h">
       <Filter>src\Buffer</Filter>
     </ClInclude>
   </ItemGroup>

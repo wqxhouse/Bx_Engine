@@ -199,6 +199,27 @@ namespace VulkanEngine
                 return inputRate;
             }
 
+            static inline VkIndexType GetVkIndexType(
+                const BX_INDEX_TYPE type)
+            {
+                VkIndexType indexType;
+
+                switch (type)
+                {
+                    case BX_INDEX_UINT16:
+                        indexType = VK_INDEX_TYPE_UINT16;
+                        break;
+                    case BX_INDEX_UINT32:
+                        indexType = VK_INDEX_TYPE_UINT32;
+                        break;
+                    default:
+                        assert(FALSE);
+                        break;
+                }
+
+                return indexType;
+            }
+
             static inline BOOL GetBxStatus(
                 const VkResult vkResult)
             {

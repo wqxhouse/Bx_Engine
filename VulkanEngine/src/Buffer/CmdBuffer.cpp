@@ -141,8 +141,24 @@ namespace VulkanEngine
         {
             assert(m_cmdStageFlags.begin == 1 && m_cmdStageFlags.render == 1);
 
-            vkCmdBindVertexBuffers(
-                m_cmdBuffer, 0, static_cast<UINT>(vertexBuffers.size()), vertexBuffers.data(), offsets.data());
+            vkCmdBindVertexBuffers(m_cmdBuffer,
+                                   0,
+                                   static_cast<UINT>(vertexBuffers.size()),
+                                   vertexBuffers.data(),
+                                   offsets.data());
+        }
+
+        void CmdBuffer::cmdBindIndexBuffers(
+            const VkBuffer&     indexBuffer,
+            const VkDeviceSize& offset,
+            const BX_INDEX_TYPE indexType)
+        {
+            assert(m_cmdStageFlags.begin == 1 && m_cmdStageFlags.render == 1);
+
+            vkCmdBindIndexBuffer(m_cmdBuffer,
+                                 indexBuffer,
+                                 offset,
+                                 Utility::VulkanUtility::GetVkIndexType(indexType));
         }
 
         void CmdBuffer::cmdCopyBuffer(
@@ -180,6 +196,29 @@ namespace VulkanEngine
 
             vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
             vkCmdDraw(m_cmdBuffer, vertexCount, instanceCount, vertexOffset, instanceOffset);
+        }
+
+        void CmdBuffer::cmdDrawElements(
+            const VkPipeline& graphicsPipeline,
+            const UINT        indexCount,
+            const UINT        indexOffset,
+            const UINT        vertexOffset)
+        {
+            vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+            vkCmdDrawIndexed(m_cmdBuffer, indexCount, 1, indexOffset, vertexOffset, 0);
+        }
+
+        void CmdBuffer::cmdDrawElementsInstanced(
+            const VkPipeline& graphicsPipeline,
+            const UINT        indexCount,
+            const UINT        instanceCount,
+            const UINT        indexOffset,
+            const UINT        vertexOffset,
+            const UINT        instanceOffset)
+        {
+            vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+            vkCmdDrawIndexed(
+                m_cmdBuffer, indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
         }
     }
 }

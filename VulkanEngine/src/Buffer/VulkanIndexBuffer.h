@@ -25,13 +25,22 @@ namespace VulkanEngine
                 Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
                 const std::shared_ptr<Object::Model::Mesh> pMesh);
 
+            ~VulkanIndexBuffer();
+
             BOOL createIndexBuffer(
                 const VkPhysicalDevice& hwDevice,
                 const BOOL              optimize);
 
-            ~VulkanIndexBuffer();
+            inline BX_INDEX_TYPE GetIndexType() const { return m_indexType; }
+
+            inline UINT          GetIndexNum()  const
+            {
+                return static_cast<UINT>(m_pIndexBufferData->size());
+            }
 
         private:
+            BX_INDEX_TYPE      m_indexType;
+
             std::vector<UINT>* m_pIndexBufferData;
         };
     }

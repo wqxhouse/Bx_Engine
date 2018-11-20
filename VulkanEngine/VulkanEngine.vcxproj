@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="src\Buffer\CmdBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VulkanIndexBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\Context\QueueMgr.cpp" />
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
@@ -25,6 +26,7 @@
     <ClInclude Include="src\Buffer\BufferInfo.h" />
     <ClInclude Include="src\Buffer\CmdBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanBuffer.h" />
+    <ClInclude Include="src\Buffer\VulkanIndexBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h" />
     <ClInclude Include="src\Context\BxQueue.h" />
     <ClInclude Include="src\Context\CmdBufferMgr.h" />

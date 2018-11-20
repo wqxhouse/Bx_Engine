@@ -55,6 +55,11 @@ namespace VulkanEngine
                 const std::vector<VkBuffer>&     vertexBuffers,
                 const std::vector<VkDeviceSize>& offsets);
 
+            void cmdBindIndexBuffers(
+                const VkBuffer&     indexBuffer,
+                const VkDeviceSize& offset,
+                const BX_INDEX_TYPE indexType);
+
             void cmdCopyBuffer(
                 const VkBuffer&         srcBuffer,
                 const VkBuffer&         dstBuffer,
@@ -72,7 +77,19 @@ namespace VulkanEngine
                 const UINT        vertexOffset,
                 const UINT        instanceOffset);
 
-            // TODO: Indexed draws
+            void cmdDrawElements(
+                const VkPipeline& graphicsPipeline,
+                const UINT        indexCount,
+                const UINT        indexOffset,
+                const UINT        vertexOffset);
+
+            void cmdDrawElementsInstanced(
+                const VkPipeline& graphicsPipeline,
+                const UINT        indexCount,
+                const UINT        instanceCount,
+                const UINT        indexOffset,
+                const UINT        vertexOffset,
+                const UINT        instanceOffset);
 
             inline void endRenderPass()
             {
