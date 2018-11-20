@@ -15,6 +15,7 @@
 #include "CmdBufferMgr.h"
 #include "../Shader/VulkanGraphicsShader.h"
 #include "../Buffer/VulkanVertexBuffer.h"
+#include "../Buffer/VulkanIndexBuffer.h"
 
 #include <map>
 
@@ -121,5 +122,6 @@ namespace VulkanEngine
 
         std::unique_ptr<ModelObject>        m_pModel;
         std::unique_ptr<VulkanVertexBuffer> m_pVertexBuffer;
+        std::unique_ptr<VulkanIndexBuffer>  m_pIndexBuffer;
     };
 }
