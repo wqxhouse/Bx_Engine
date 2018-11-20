@@ -22,7 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Buffer\CmdBuffer.h" />
-    <ClInclude Include="src\Buffer\VulkanBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h" />
     <ClInclude Include="src\Context\BxQueue.h" />
     <ClInclude Include="src\Context\CmdBufferMgr.h" />

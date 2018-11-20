@@ -28,7 +28,7 @@ int main()
     OpenGLTemplate m_oglTemplate(&setting);
     m_oglTemplate.run();
 #elif BX_VULKAN
-    VulkanEngine::VulkanContext m_vulkanContext(&setting);
+    VulkanContext m_vulkanContext(&setting);
     m_vulkanContext.initialize();
     m_vulkanContext.run();
 #endif

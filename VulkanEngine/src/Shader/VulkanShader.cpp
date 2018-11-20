@@ -9,29 +9,23 @@
 
 #include "VulkanShader.h"
 
-namespace VulkanEngine
+VulkanShader::VulkanShader(
+    const VkDevice& device)
+    : m_device(device)
 {
-    namespace Shader
-    {
-        VulkanShader::VulkanShader(
-            const VkDevice& device)
-            : m_device(device)
-        {
-        }
+}
 
-        VulkanShader::~VulkanShader()
-        {
-        }
+VulkanShader::~VulkanShader()
+{
+}
 
-        void VulkanShader::PreprocessingGLSL(
-            const std::string& glslFileName)
-        {
-        }
+void VulkanShader::PreprocessingGLSL(
+    const std::string& glslFileName)
+{
+}
 
-        void VulkanShader::CompileGLSL(
-            const std::string& glslFileName,
-            const BOOL         preprocess)
-        {
-        }
-    }
+void VulkanShader::CompileGLSL(
+    const std::string& glslFileName,
+    const BOOL         preprocess)
+{
 }
