@@ -77,5 +77,8 @@
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h">
       <Filter>src\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\VulkanBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

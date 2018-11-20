@@ -12,21 +12,27 @@
 #include "../Core/VulkanPCH.h"
 #include "../Core/VulkanUtility.h"
 
-class VulkanShader
+namespace VulkanEngine
 {
-public:
-    VulkanShader(
-        const VkDevice& device);
+    namespace Shader
+    {
+        class VulkanShader
+        {
+        public:
+            VulkanShader(
+                const VkDevice& device);
 
-    ~VulkanShader();
+            ~VulkanShader();
 
-    static void PreprocessingGLSL(
-        const std::string& glslFileName);
+            static void PreprocessingGLSL(
+                const std::string& glslFileName);
 
-    static void CompileGLSL(
-        const std::string& glslFileName,
-        const BOOL         preprocess);
+            static void CompileGLSL(
+                const std::string& glslFileName,
+                const BOOL         preprocess);
 
-protected:
-    const VkDevice& m_device; // Reference to device
-};
+        protected:
+            const VkDevice& m_device; // Reference to device
+        };
+    }
+}
