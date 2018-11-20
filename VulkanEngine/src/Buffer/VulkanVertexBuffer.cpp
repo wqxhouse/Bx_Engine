@@ -18,14 +18,16 @@ namespace VulkanEngine
     {
         VulkanVertexBuffer::VulkanVertexBuffer(
             const VkDevice* const       pDevice,
+            Mgr::CmdBufferMgr* const    pCmdBufferMgr,
             const std::shared_ptr<Mesh> pMesh)
-            : VulkanBufferBase(pDevice)
+            : VulkanBufferBase(pDevice, pCmdBufferMgr)
         {
             m_pVertexBufferData = &(pMesh->m_vertexBuffer);
         }
 
-        BOOL VulkanVertexBuffer::createVulkanVertexBuffer(
-            const VkPhysicalDevice& hwDevice)
+        BOOL VulkanVertexBuffer::createVertexBuffer(
+            const VkPhysicalDevice& hwDevice,
+            const BOOL              optimize)
         {
             BOOL result = BX_SUCCESS;
 
@@ -34,6 +36,7 @@ namespace VulkanEngine
             bufferCreateInfo.bufferSize         =
                 sizeof(Vertex) * static_cast<UINT64>(m_pVertexBufferData->size());
             bufferCreateInfo.bufferData         = static_cast<void*>(m_pVertexBufferData->data());
+            bufferCreateInfo.bufferOptimization = optimize;
 
             result = createBuffer(hwDevice, bufferCreateInfo);
 

@@ -22,20 +22,33 @@ namespace VulkanEngine
         public:
             VulkanVertexBuffer(
                 const VkDevice* const                      pDevice,
+                Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
                 const std::shared_ptr<Object::Model::Mesh> pMesh);
 
-            BOOL createVulkanVertexBuffer(
-                const VkPhysicalDevice& hwDevice);
+            BOOL createVertexBuffer(
+                const VkPhysicalDevice& hwDevice,
+                const BOOL              optimize);
 
-            VkVertexInputBindingDescription createDescription(
+            static VkVertexInputBindingDescription createDescription(
                 const UINT                 binding,
                 const BX_VERTEX_INPUT_RATE rate);
 
-            std::array<VkVertexInputAttributeDescription, 3> createAttributeDescriptions();
+            static std::array<VkVertexInputAttributeDescription, 3>
+            createAttributeDescriptions();
 
             inline const VkBuffer GetVertexBuffer() const
             {
                 return GetBuffer();
+            }
+
+            inline UINT GetVertexNum() const
+            {
+                return static_cast<UINT>(m_pVertexBufferData->size());
+            }
+
+            inline UINT GetVertexBufferSize() const
+            {
+                return GetVertexNum() * sizeof(Object::Model::Vertex);
             }
 
             ~VulkanVertexBuffer();

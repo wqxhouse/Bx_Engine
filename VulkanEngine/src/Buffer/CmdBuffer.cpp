@@ -8,6 +8,7 @@
 //================================================================================================
 
 #include "CmdBuffer.h"
+#include "VulkanBuffer.h"
 
 namespace VulkanEngine
 {
@@ -18,14 +19,36 @@ namespace VulkanEngine
             const BX_COMMAND_BUFFER_LEVLE bufferLevel,
             const VkCommandBuffer&        cmdBuffer)
             : m_cmdBufferType(cmdBufferType),
-            m_cmdBufferLevel(bufferLevel),
-            m_cmdBuffer(cmdBuffer)
+              m_cmdBufferLevel(bufferLevel),
+              m_cmdBuffer(cmdBuffer)
         {
             m_cmdStageFlags.value = 0;
         }
 
         CmdBuffer::~CmdBuffer()
         {
+        }
+
+        CmdBuffer CmdBuffer::CreateCmdBuffer(
+            const VkDevice* const        pDevice,
+            const BxCmdBufferCreateInfo& cmdBufferCreateInfo)
+        {
+            VkCommandBuffer vkCmdBuffer;
+
+            VkCommandBufferAllocateInfo cmdBufferAllocInfo = {};
+            cmdBufferAllocInfo.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+            cmdBufferAllocInfo.commandPool                 = *cmdBufferCreateInfo.pCommandPool;
+            cmdBufferAllocInfo.level                       =
+                Utility::VulkanUtility::GetVkCmdBufferLevel(cmdBufferCreateInfo.bufferLevel);
+            cmdBufferAllocInfo.commandBufferCount          = 1;
+
+            VkResult createCmdBufferResult = vkAllocateCommandBuffers(*pDevice, &cmdBufferAllocInfo, &vkCmdBuffer);
+
+            CmdBuffer cmdBuffer(cmdBufferCreateInfo.cmdBufferType,
+                                cmdBufferCreateInfo.bufferLevel,
+                                vkCmdBuffer);
+
+            return cmdBuffer;
         }
 
         BOOL CmdBuffer::beginCmdBuffer(
@@ -120,6 +143,19 @@ namespace VulkanEngine
 
             vkCmdBindVertexBuffers(
                 m_cmdBuffer, 0, static_cast<UINT>(vertexBuffers.size()), vertexBuffers.data(), offsets.data());
+        }
+
+        void CmdBuffer::cmdCopyBuffer(
+            const VkBuffer&         srcBuffer,
+            const VkBuffer&         dstBuffer,
+            const BxBufferCopyInfo& copyInfo)
+        {
+            VkBufferCopy bufferCopy = {};
+            bufferCopy.size         = copyInfo.copySize;
+            bufferCopy.srcOffset    = copyInfo.srcOffset;
+            bufferCopy.dstOffset    = copyInfo.dstOffset;
+
+            vkCmdCopyBuffer(m_cmdBuffer, srcBuffer, dstBuffer, 1, &bufferCopy);
         }
 
         void CmdBuffer::cmdDrawArrays(

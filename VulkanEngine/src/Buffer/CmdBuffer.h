@@ -11,11 +11,19 @@
 
 #include "../Core/VulkanPCH.h"
 #include "../Core/VulkanUtility.h"
+#include "../Buffer/BufferInfo.h"
 
 namespace VulkanEngine
 {
     namespace Buffer
     {
+        struct BxCmdBufferCreateInfo
+        {
+            const VkCommandPool*    pCommandPool;
+            BX_COMMAND_BUFFER_TYPE  cmdBufferType;
+            BX_COMMAND_BUFFER_LEVLE bufferLevel;
+        };
+
         class CmdBuffer
         {
         public:
@@ -25,6 +33,10 @@ namespace VulkanEngine
                 const VkCommandBuffer&        cmdBuffer);
 
             ~CmdBuffer();
+
+            static CmdBuffer CreateCmdBuffer(
+                const VkDevice* const        pDevice,
+                const BxCmdBufferCreateInfo& cmdBufferCreateInfo);
 
             BOOL beginCmdBuffer(
                 const BOOL reuse);
@@ -42,6 +54,11 @@ namespace VulkanEngine
             void cmdBindVertexBuffers(
                 const std::vector<VkBuffer>&     vertexBuffers,
                 const std::vector<VkDeviceSize>& offsets);
+
+            void cmdCopyBuffer(
+                const VkBuffer&         srcBuffer,
+                const VkBuffer&         dstBuffer,
+                const BxBufferCopyInfo& copyInfo);
 
             void cmdDrawArrays(
                 const VkPipeline& graphicsPipeline,

@@ -19,8 +19,9 @@ namespace VulkanEngine
         {
         public:
             CmdBufferMgr(
-                const VkDevice& device,
-                const UINT      queueFamilyNum);
+                const VkDevice* const pDevice,
+                const QueueMgr* const pQueueMgr,
+                const UINT            queueFamilyNum);
 
             ~CmdBufferMgr();
 
@@ -32,6 +33,22 @@ namespace VulkanEngine
                 const BX_QUEUE_TYPE          queueType,
                 const BX_COMMAND_BUFFER_LEVLE level,
                 const UINT                   size);
+
+            BOOL copyBuffer(
+                const VkBuffer&                 srcBuffer,
+                const VkBuffer&                 dstBuffer,
+                const Buffer::BxBufferCopyInfo& copyInfo);
+
+            BOOL submitCommandBufferToQueue(
+                const UINT               queueFamilyIndex,
+                const UINT               submitNum,
+                const VkSubmitInfo*      submitInfos,
+                const VkFence&           fence);
+
+            void freeCommandBuffer(
+                const VkCommandPool&     cmdPool,
+                const UINT               bufferNum,
+                const Buffer::CmdBuffer* pCmdBuffers);
 
             inline Buffer::CmdBuffer* GetCmdBuffer(
                 const BX_COMMAND_BUFFER_TYPE type,
@@ -57,7 +74,8 @@ namespace VulkanEngine
             }
 
         private:
-            const VkDevice& m_device;
+            const VkDevice* m_pDevice;
+            const QueueMgr* m_pQueueMgr;
 
             std::vector<VDeleter<VkCommandPool>> m_cmdPool;
 

@@ -24,8 +24,8 @@ namespace VulkanEngine
             inline BOOL IsCompleted() const
             {
                 return ((graphicsFamilyIndex >= 0) &&
-                    /*(computeFamilyIndex >= 0) &&*/
-                    (presentSurfaceFamilyIndex >= 0));
+                        //(computeFamilyIndex >= 0) &&
+                        (presentSurfaceFamilyIndex >= 0));
             }
 
             inline UINT GetIndexNum() const
@@ -61,21 +61,24 @@ namespace VulkanEngine
             VkQueue m_queue = VK_NULL_HANDLE;
             float   priority = 1.0f;
         };
+    }
 
+    namespace Mgr
+    {
         class QueueMgr
         {
         public:
             QueueMgr();
             ~QueueMgr();
 
-            QueueFamilyIndices retriveHwQueueIndices(
+            Queue::QueueFamilyIndices retriveHwQueueIndices(
                 const VkPhysicalDevice& hwGpuDevice,
                 const VkSurfaceKHR&     surface);
 
             void retriveQueueHandle(
                 const VkDevice& device);
 
-            inline QueueFamilyIndices GetHwQueueIndices() const
+            inline Queue::QueueFamilyIndices GetHwQueueIndices() const
             {
                 return m_hwQueueIndices;
             }
@@ -85,9 +88,9 @@ namespace VulkanEngine
                 return m_hwQueueIndices.IsCompleted();
             }
 
-            inline BxQueue GetQueue(const UINT i) const
+            inline Queue::BxQueue GetQueue(const UINT i) const
             {
-                BxQueue result;
+                Queue::BxQueue result;
                 switch (i)
                 {
                 case 0:
@@ -109,11 +112,11 @@ namespace VulkanEngine
             }
 
         private:
-            QueueFamilyIndices m_hwQueueIndices;
+            Queue::QueueFamilyIndices m_hwQueueIndices;
 
-            BxQueue m_presentQueue;
-            BxQueue m_graphicsQueue;
-            BxQueue m_computeQueue;
+            Queue::BxQueue m_presentQueue;
+            Queue::BxQueue m_graphicsQueue;
+            Queue::BxQueue m_computeQueue;
         };
     }
 }

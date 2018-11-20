@@ -11,7 +11,7 @@
 
 namespace VulkanEngine
 {
-    namespace Queue
+    namespace Mgr
     {
         QueueMgr::QueueMgr()
         {
@@ -21,7 +21,7 @@ namespace VulkanEngine
         {
         }
 
-        QueueFamilyIndices QueueMgr::retriveHwQueueIndices(
+        Queue::QueueFamilyIndices QueueMgr::retriveHwQueueIndices(
             const VkPhysicalDevice& hwGpuDevice,
             const VkSurfaceKHR&     surface)
         {
@@ -73,10 +73,7 @@ namespace VulkanEngine
         {
             vkGetDeviceQueue(device, m_hwQueueIndices.presentSurfaceFamilyIndex, 0, &(m_presentQueue.m_queue));
             vkGetDeviceQueue(device, m_hwQueueIndices.graphicsFamilyIndex, 0, &(m_graphicsQueue.m_queue));
-            if (m_hwQueueIndices.computeFamilyIndex != -1)
-            {
-                vkGetDeviceQueue(device, m_hwQueueIndices.computeFamilyIndex, 0, &(m_computeQueue.m_queue));
-            }
+            //vkGetDeviceQueue(device, m_hwQueueIndices.computeFamilyIndex, 0, &(m_computeQueue.m_queue));
         }
     }
 }
