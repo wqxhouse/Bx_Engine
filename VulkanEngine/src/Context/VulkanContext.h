@@ -18,6 +18,9 @@
 
 #include <map>
 
+using namespace Object::Model;
+using namespace VulkanEngine::Buffer;
+
 namespace VulkanEngine
 {
     class VulkanContext
@@ -115,5 +118,8 @@ namespace VulkanEngine
 
         const static std::vector<const char*> m_validationLayers;
         const static std::vector<const char*> m_deviceExts;
+
+        std::unique_ptr<ModelObject>        m_pModel;
+        std::unique_ptr<VulkanVertexBuffer> m_pVertexBuffer;
     };
 }
