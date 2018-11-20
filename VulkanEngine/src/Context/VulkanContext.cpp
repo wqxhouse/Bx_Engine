@@ -236,7 +236,7 @@ namespace VulkanEngine
         {
             const QueueFamilyIndices& queueFamilyIndices = m_queueMgr.GetHwQueueIndices();
             m_pCmdBufferMgr = std::unique_ptr<Mgr::CmdBufferMgr>(
-                new Mgr::CmdBufferMgr(m_vkDevice, queueFamilyIndices.GetIndexNum()));
+                new Mgr::CmdBufferMgr(&m_vkDevice, &m_queueMgr, queueFamilyIndices.GetIndexNum()));
 
             status = m_pCmdBufferMgr->
                 createCmdBufferPool(BX_QUEUE_GRAPHICS, queueFamilyIndices.GetQueueFamilyIndex(BX_QUEUE_GRAPHICS));

@@ -14,7 +14,7 @@
     <ClCompile Include="src\Buffer\CmdBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanVertexBuffer.cpp" />
-    <ClCompile Include="src\Context\BxQueue.cpp" />
+    <ClCompile Include="src\Context\QueueMgr.cpp" />
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
@@ -22,6 +22,7 @@
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Buffer\BufferInfo.h" />
     <ClInclude Include="src\Buffer\CmdBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h" />

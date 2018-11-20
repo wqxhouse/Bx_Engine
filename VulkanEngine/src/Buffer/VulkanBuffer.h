@@ -9,46 +9,58 @@
 
 #pragma once
 
-#include "../Core/VulkanPCH.h"
 #include "../Core/VulkanUtility.h"
+#include "../Context/CmdBufferMgr.h"
+#include "BufferInfo.h"
 
 namespace VulkanEngine
 {
     namespace Buffer
     {
-        struct BxBufferCreateInfo
-        {
-            VkBufferUsageFlags bufferUsage;
-            UINT64             bufferSize;
-            void*              bufferData;
-        };
-
         class VulkanBufferBase
         {
         public:
             explicit VulkanBufferBase(
-                const VkDevice* const pDevice);
+                const VkDevice* const    pDevice,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr);
 
             ~VulkanBufferBase();
 
             BOOL createBuffer(
                 const VkPhysicalDevice&   hwDevice,
                 const BxBufferCreateInfo& bufferCreateInfo);
-            
-            BOOL updateBufferData(
-                const UINT64      bufferSize,
-                const void* const bufferData);
+
+            BOOL copyBuffer(
+                const VkBuffer&          srcBuffer,
+                const VkBuffer&          dstBuffer,
+                const BxBufferCopyInfo&  copyInfo);
+
+            // TODO: Update buffer data
 
             inline const VkBuffer GetBuffer() const
             {
-                return m_vulkanBuffer;
+                return ((m_enableOptimization == TRUE) ? m_gpuBuffer : m_hostBuffer);
             }
 
         private:
-            const VkDevice* const    m_pDevice;
+            BOOL updateHostBufferData(
+                const VkDeviceSize bufferSize,
+                const void* const  bufferData);
 
-            VDeleter<VkBuffer>       m_vulkanBuffer;
-            VDeleter<VkDeviceMemory> m_vulkanBufferMemory;
+            BOOL createRawBuffer(
+                const VkPhysicalDevice&      hwDevice,
+                const BxRawBufferCreateInfo& rawBufferCreateInfo);
+
+            const VkDevice* const    m_pDevice;
+            Mgr::CmdBufferMgr* const m_pCmdBufferMgr;
+
+            VDeleter<VkBuffer>       m_hostBuffer;
+            VDeleter<VkDeviceMemory> m_hostBufferMemory;
+
+            VDeleter<VkBuffer>       m_gpuBuffer;
+            VDeleter<VkDeviceMemory> m_gpuBufferMemory;
+
+            BOOL m_enableOptimization; // If enable staging buffer opt
         };
     }
 }

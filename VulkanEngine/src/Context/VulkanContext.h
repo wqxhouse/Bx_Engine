@@ -79,7 +79,7 @@ namespace VulkanEngine
         std::vector<VDeleter<VkFramebuffer>> m_swapchainFramebuffers;
 
         // Queue
-        Queue::QueueMgr m_queueMgr;
+        Mgr::QueueMgr m_queueMgr;
 
         // Shader
         std::unique_ptr<Shader::VulkanGraphicsShader> m_pShader;
