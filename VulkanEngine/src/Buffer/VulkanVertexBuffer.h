@@ -11,14 +11,13 @@
 
 #include <Model/Mesh/Mesh.h>
 
-#include "../Core/VulkanPCH.h"
-#include "../Core/VulkanUtility.h"
+#include "VulkanBuffer.h"
 
 namespace VulkanEngine
 {
     namespace Buffer
     {
-        class VulkanVertexBuffer
+        class VulkanVertexBuffer : public VulkanBufferBase
         {
         public:
             VulkanVertexBuffer(
@@ -26,7 +25,7 @@ namespace VulkanEngine
                 const std::shared_ptr<Object::Model::Mesh> pMesh);
 
             BOOL createVulkanVertexBuffer(
-                const VkPhysicalDevice* const pHwDevice);
+                const VkPhysicalDevice& hwDevice);
 
             VkVertexInputBindingDescription createDescription(
                 const UINT                 binding,
@@ -36,18 +35,13 @@ namespace VulkanEngine
 
             inline const VkBuffer GetVertexBuffer() const
             {
-                return m_vertexBuffer;
+                return GetBuffer();
             }
 
             ~VulkanVertexBuffer();
 
         private:
-            const VkDevice* const m_pDevice;
-
-            std::vector<Object::Model::Vertex>* m_vertexBufferData;
-
-            VDeleter<VkBuffer>       m_vertexBuffer;
-            VDeleter<VkDeviceMemory> m_vertexBufferMemory;
+            std::vector<Object::Model::Vertex>* m_pVertexBufferData;
         };
     }
 }

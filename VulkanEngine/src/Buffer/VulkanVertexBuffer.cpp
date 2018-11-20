@@ -19,67 +19,25 @@ namespace VulkanEngine
         VulkanVertexBuffer::VulkanVertexBuffer(
             const VkDevice* const       pDevice,
             const std::shared_ptr<Mesh> pMesh)
-            : m_pDevice(pDevice)
+            : VulkanBufferBase(pDevice)
         {
-            m_vertexBuffer = { *m_pDevice, vkDestroyBuffer };
-            m_vertexBufferMemory = { *m_pDevice, vkFreeMemory };
-
-            m_vertexBufferData = &(pMesh->m_vertexBuffer);
+            m_pVertexBufferData = &(pMesh->m_vertexBuffer);
         }
 
         BOOL VulkanVertexBuffer::createVulkanVertexBuffer(
-            const VkPhysicalDevice* const pHwDevice)
+            const VkPhysicalDevice& hwDevice)
         {
             BOOL result = BX_SUCCESS;
 
-            VkBufferCreateInfo bufferCreateInfo = {};
-            bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-            bufferCreateInfo.size = sizeof(Vertex) * static_cast<UINT64>(m_vertexBufferData->size());
-            bufferCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-            bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            BxBufferCreateInfo bufferCreateInfo = {};
+            bufferCreateInfo.bufferUsage        = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+            bufferCreateInfo.bufferSize         =
+                sizeof(Vertex) * static_cast<UINT64>(m_pVertexBufferData->size());
+            bufferCreateInfo.bufferData         = static_cast<void*>(m_pVertexBufferData->data());
 
-            VkResult vertexBufferCreateResult =
-                vkCreateBuffer(*m_pDevice, &bufferCreateInfo, NULL, m_vertexBuffer.replace());
-
-            result = VulkanUtility::GetBxStatus(vertexBufferCreateResult);
+            result = createBuffer(hwDevice, bufferCreateInfo);
 
             assert(result == BX_SUCCESS);
-            if (result == BX_SUCCESS)
-            {
-                VkMemoryRequirements memRequirements;
-
-                vkGetBufferMemoryRequirements(*m_pDevice, m_vertexBuffer, &memRequirements);
-
-                VkPhysicalDeviceMemoryProperties hwMemoryProps;
-                vkGetPhysicalDeviceMemoryProperties(*pHwDevice, &hwMemoryProps);
-
-                UINT memTypeIndex = VulkanUtility::FindMemoryType(
-                    hwMemoryProps,
-                    memRequirements.memoryTypeBits,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-                assert(memTypeIndex != 0);
-
-                VkMemoryAllocateInfo memAllocInfo = {};
-                memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-                memAllocInfo.allocationSize = memRequirements.size;
-                memAllocInfo.memoryTypeIndex = memTypeIndex;
-
-                VkResult memAllocResult = vkAllocateMemory(*m_pDevice, &memAllocInfo, NULL, m_vertexBufferMemory.replace());
-                result = VulkanUtility::GetBxStatus(vertexBufferCreateResult);
-
-                assert(result == BX_SUCCESS);
-
-                vkBindBufferMemory(*m_pDevice, m_vertexBuffer, m_vertexBufferMemory, 0);
-
-                if (result == BX_SUCCESS)
-                {
-                    void* bufferDataPtr;
-                    vkMapMemory(*m_pDevice, m_vertexBufferMemory, 0, bufferCreateInfo.size, 0, &bufferDataPtr);
-                    memcpy(bufferDataPtr, m_vertexBufferData->data(), bufferCreateInfo.size);
-                    vkUnmapMemory(*m_pDevice, m_vertexBufferMemory);
-                }
-            }
 
             return result;
         }

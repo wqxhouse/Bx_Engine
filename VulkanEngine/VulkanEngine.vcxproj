@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buffer\CmdBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VulkanBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\Context\BxQueue.cpp" />
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
