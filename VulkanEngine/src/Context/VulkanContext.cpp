@@ -250,6 +250,10 @@ namespace VulkanEngine
 
         if (status == BX_SUCCESS)
         {
+            m_pVertexBuffer = std::unique_ptr<VulkanVertexBuffer>(
+                new VulkanVertexBuffer(&m_vkDevice, m_pCmdBufferMgr._Myptr(), m_pModel->GetMesh(0)));
+            m_pVertexBuffer->createVertexBuffer(m_vkActiveHwGpuDeviceList[0], TRUE);
+
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
                     BX_DIRECT_COMMAND_BUFFER,
@@ -281,7 +285,9 @@ namespace VulkanEngine
                         renderArea,
                         clearColorValue);
 
-                    pCmdBuffer->cmdDrawArrays(m_graphicsPipeline, 3, 0);
+                    pCmdBuffer->cmdBindVertexBuffers({ m_pVertexBuffer->GetVertexBuffer() }, { 0 });
+
+                    pCmdBuffer->cmdDrawArrays(m_graphicsPipeline, m_pVertexBuffer->GetVertexNum(), 0);
 
                     pCmdBuffer->endRenderPass();
                 }
@@ -338,8 +344,8 @@ namespace VulkanEngine
             const VkQueue& submitQueue =
                 m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().graphicsFamilyIndex).m_queue;
 
-            VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-            VkSemaphore          waitSemaphore[] = { m_renderSemaphore };
+            VkPipelineStageFlags waitStages[]      = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+            VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
             VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
 
             VkSubmitInfo submitInfo         = {};
@@ -711,12 +717,20 @@ namespace VulkanEngine
 
         /// Setup Fixed pipeline stages
         // VS input
+
+        m_pModel = std::unique_ptr<ModelObject>(
+            new ModelObject("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+                new Trans(glm::vec3(-70.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f))));
+
+        auto bindingDescription   = VulkanVertexBuffer::createDescription(0, BX_VERTEX_INPUT_RATE_VERTEX);
+        auto attributeDescription = VulkanVertexBuffer::createAttributeDescriptions();
+
         VkPipelineVertexInputStateCreateInfo vsInputCreateInfo = {};
         vsInputCreateInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vsInputCreateInfo.vertexBindingDescriptionCount   = 0;
-        vsInputCreateInfo.pVertexBindingDescriptions      = NULL;
-        vsInputCreateInfo.vertexAttributeDescriptionCount = 0;
-        vsInputCreateInfo.pVertexAttributeDescriptions    = NULL;
+        vsInputCreateInfo.vertexBindingDescriptionCount   = 1;
+        vsInputCreateInfo.pVertexBindingDescriptions      = &bindingDescription;
+        vsInputCreateInfo.vertexAttributeDescriptionCount = static_cast<UINT>(attributeDescription.size());
+        vsInputCreateInfo.pVertexAttributeDescriptions    = attributeDescription.data();
 
         // Input assembly state
         VkPipelineInputAssemblyStateCreateInfo inputAsmCreateInfo = {};
@@ -841,8 +855,8 @@ namespace VulkanEngine
             m_pShader                                = 
                 std::unique_ptr<Shader::VulkanGraphicsShader>(
                     new Shader::VulkanGraphicsShader(m_vkDevice));
-            shaderMeta.vertexShaderInfo.shaderFile   = "SimpleTriangle.vert.spv";
-            shaderMeta.fragmentShaderInfo.shaderFile = "SimpleTriangle.frag.spv";
+            shaderMeta.vertexShaderInfo.shaderFile   = "SimpleMesh.vert.spv";
+            shaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag.spv";
             shaderCreateInfo                         =
                 m_pShader->createPipelineShaderStages(shaderMeta);
         }
