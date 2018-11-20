@@ -254,6 +254,10 @@ namespace VulkanEngine
                 new VulkanVertexBuffer(&m_vkDevice, m_pCmdBufferMgr._Myptr(), m_pModel->GetMesh(0)));
             m_pVertexBuffer->createVertexBuffer(m_vkActiveHwGpuDeviceList[0], TRUE);
 
+            m_pIndexBuffer = std::unique_ptr<VulkanIndexBuffer>(
+                new VulkanIndexBuffer(&m_vkDevice, m_pCmdBufferMgr._Myptr(), m_pModel->GetMesh(0)));
+            m_pIndexBuffer->createIndexBuffer(m_vkActiveHwGpuDeviceList[0], TRUE);
+
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
                     BX_DIRECT_COMMAND_BUFFER,
@@ -285,9 +289,15 @@ namespace VulkanEngine
                         renderArea,
                         clearColorValue);
 
-                    pCmdBuffer->cmdBindVertexBuffers({ m_pVertexBuffer->GetVertexBuffer() }, { 0 });
+                    pCmdBuffer->cmdBindVertexBuffers({ m_pVertexBuffer->GetVertexBuffer() },
+                                                     { 0 });
 
-                    pCmdBuffer->cmdDrawArrays(m_graphicsPipeline, m_pVertexBuffer->GetVertexNum(), 0);
+                    pCmdBuffer->cmdBindIndexBuffers(m_pIndexBuffer->GetBuffer(),
+                                                    0,
+                                                    m_pIndexBuffer->GetIndexType());
+
+                    //pCmdBuffer->cmdDrawrrays(m_graphicsPipeline, m_pVertexBuffer->GetVertexNum(), 0);
+                    pCmdBuffer->cmdDrawElements(m_graphicsPipeline, m_pIndexBuffer->GetIndexNum(), 0, 0);
 
                     pCmdBuffer->endRenderPass();
                 }
