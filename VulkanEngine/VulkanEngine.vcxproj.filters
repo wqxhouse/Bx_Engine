@@ -48,6 +48,15 @@
     <ClCompile Include="src\Buffer\VulkanIndexBuffer.cpp">
       <Filter>src\Buffer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buffer\VulkanUniformBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer\VulkanDescriptorBuffer.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Context\DescriptorMgr.cpp">
+      <Filter>src\Context</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Context\VulkanContext.h">
@@ -92,5 +101,17 @@
     <ClInclude Include="src\Buffer\VulkanIndexBuffer.h">
       <Filter>src\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buffer\VulkanUniformBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\VulkanDescriptorBuffer.h">
+      <Filter>src\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Context\DescriptorMgr.h">
+      <Filter>src\Context</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VulkanEngine.licenseheader" />
   </ItemGroup>
 </Project>

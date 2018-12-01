@@ -35,12 +35,17 @@ namespace VulkanEngine
                 const VkBuffer&          dstBuffer,
                 const BxBufferCopyInfo&  copyInfo);
 
-            // TODO: Update buffer data
+            BOOL updateBufferData(
+                const VkDeviceSize bufferSize,
+                const void* const  bufferData);
 
             inline const VkBuffer GetBuffer() const
             {
                 return ((m_enableOptimization == TRUE) ? m_gpuBuffer : m_hostBuffer);
             }
+
+        protected:
+            inline const VkDevice* const GetDevice() const { return m_pDevice; }
 
         private:
             BOOL updateHostBufferData(
@@ -51,7 +56,7 @@ namespace VulkanEngine
                 const VkPhysicalDevice&      hwDevice,
                 const BxRawBufferCreateInfo& rawBufferCreateInfo);
 
-            const VkDevice* const    m_pDevice;
+            const VkDevice*    const m_pDevice;
             Mgr::CmdBufferMgr* const m_pCmdBufferMgr;
 
             VDeleter<VkBuffer>       m_hostBuffer;

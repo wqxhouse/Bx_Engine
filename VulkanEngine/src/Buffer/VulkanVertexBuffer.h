@@ -21,7 +21,7 @@ namespace VulkanEngine
         {
         public:
             VulkanVertexBuffer(
-                const VkDevice* const                      pDevice,
+                const VkDevice*    const                   pDevice,
                 Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
                 const std::shared_ptr<Object::Model::Mesh> pMesh);
 

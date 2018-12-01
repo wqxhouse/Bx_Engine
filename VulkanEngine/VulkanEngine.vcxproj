@@ -13,8 +13,11 @@
   <ItemGroup>
     <ClCompile Include="src\Buffer\CmdBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VulkanDescriptorBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanIndexBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanVertexBuffer.cpp" />
+    <ClCompile Include="src\Context\DescriptorMgr.cpp" />
     <ClCompile Include="src\Context\QueueMgr.cpp" />
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
@@ -26,10 +29,13 @@
     <ClInclude Include="src\Buffer\BufferInfo.h" />
     <ClInclude Include="src\Buffer\CmdBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanBuffer.h" />
+    <ClInclude Include="src\Buffer\VulkanDescriptorBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanIndexBuffer.h" />
+    <ClInclude Include="src\Buffer\VulkanUniformBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h" />
     <ClInclude Include="src\Context\BxQueue.h" />
     <ClInclude Include="src\Context\CmdBufferMgr.h" />
+    <ClInclude Include="src\Context\DescriptorMgr.h" />
     <ClInclude Include="src\Context\VulkanContext.h" />
     <ClInclude Include="src\Core\VulkanTypeDef.h" />
     <ClInclude Include="src\Core\VDeleter.h" />
@@ -37,6 +43,9 @@
     <ClInclude Include="src\Core\VulkanUtility.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VulkanEngine.licenseheader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

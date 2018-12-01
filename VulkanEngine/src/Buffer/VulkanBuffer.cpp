@@ -14,7 +14,7 @@ namespace VulkanEngine
     namespace Buffer
     {
         VulkanBufferBase::VulkanBufferBase(
-            const VkDevice* const pDevice,
+            const VkDevice*    const pDevice,
             Mgr::CmdBufferMgr* const pCmdBufferMgr)
             : m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr)
@@ -37,6 +37,9 @@ namespace VulkanEngine
             BOOL result = BX_SUCCESS;
 
             m_enableOptimization = bufferCreateInfo.bufferOptimization;
+
+            assert((m_pCmdBufferMgr == NULL && m_enableOptimization == FALSE) ||
+                   (m_pCmdBufferMgr != NULL));
 
             if (m_enableOptimization == TRUE)
             {
@@ -121,6 +124,27 @@ namespace VulkanEngine
             BOOL result = BX_SUCCESS;
 
             result = m_pCmdBufferMgr->copyBuffer(srcBuffer, dstBuffer, copyInfo);
+
+            assert(result == BX_SUCCESS);
+
+            return result;
+        }
+
+        BOOL VulkanBufferBase::updateBufferData(
+            const VkDeviceSize bufferSize,
+            const void * const bufferData)
+        {
+            BOOL result = BX_SUCCESS;
+
+            if (m_enableOptimization == TRUE)
+            {
+                // TODO: Update data for optimized buffer
+                assert(FALSE);
+            }
+            else
+            {
+                result = updateHostBufferData(bufferSize, bufferData);
+            }
 
             assert(result == BX_SUCCESS);
 

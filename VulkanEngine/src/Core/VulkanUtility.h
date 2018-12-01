@@ -220,6 +220,27 @@ namespace VulkanEngine
                 return indexType;
             }
 
+            static inline VkDescriptorType GetVkDescriptorType(
+                const BX_DESCRIPTOR_TYPE type)
+            {
+                VkDescriptorType descriptorType;
+
+                switch (type)
+                {
+                    case BX_UNIFORM_DESCRIPTOR:
+                        descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                        break;
+                    case BX_STORAGE_BUFFER_DESCRIPTOR:
+                        descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                        break;
+                    default:
+                        assert(FALSE);
+                        break;
+                }
+
+                return descriptorType;
+            }
+
             static inline BOOL GetBxStatus(
                 const VkResult vkResult)
             {

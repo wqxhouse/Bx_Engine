@@ -35,7 +35,7 @@ namespace VulkanEngine
             bufferCreateInfo.bufferUsage        = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
             bufferCreateInfo.bufferSize         =
                 sizeof(Vertex) * static_cast<UINT64>(m_pVertexBufferData->size());
-            bufferCreateInfo.bufferData         = static_cast<void*>(m_pVertexBufferData->data());
+            bufferCreateInfo.bufferData         = static_cast<const void*>(m_pVertexBufferData->data());
             bufferCreateInfo.bufferOptimization = optimize;
 
             result = createBuffer(hwDevice, bufferCreateInfo);

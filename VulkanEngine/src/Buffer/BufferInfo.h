@@ -19,7 +19,7 @@ namespace VulkanEngine
         {
             VkBufferUsageFlags bufferUsage;
             VkDeviceSize       bufferSize;
-            void*              bufferData;
+            const void*        bufferData;
             BOOL               bufferOptimization;
         };
 
