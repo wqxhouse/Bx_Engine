@@ -22,6 +22,7 @@
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
+    <ClCompile Include="src\Render\VulkanRender.cpp" />
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
   </ItemGroup>
@@ -41,6 +42,7 @@
     <ClInclude Include="src\Core\VDeleter.h" />
     <ClInclude Include="src\Core\VulkanPCH.h" />
     <ClInclude Include="src\Core\VulkanUtility.h" />
+    <ClInclude Include="src\Render\VulkanRender.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
   </ItemGroup>
@@ -110,6 +112,10 @@ xcopy "$(ProjectDir)\src\*.h" "$(SolutionDir)lib\Vulkan\include\" /Y/D/E
 copy  /Y "$(ProjectDir)$(Platform)\Debug\$(ProjectName)_d.lib" "$(SolutionDir)lib\Vulkan\$(Platform)\Debug\$(ProjectName)_d.lib"
 xcopy  "$(ProjectDir)$(Platform)\Debug\*.pdb" "$(SolutionDir)lib\Vulkan\$(Platform)\Debug\" /Y</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)resources\shaders\SPIR-V\
+CompileShader.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -137,6 +143,9 @@ xcopy "$(ProjectDir)\src\*.h" "$(SolutionDir)lib\Vulkan\include\" /Y/D/E
 copy  /Y "$(ProjectDir)$(Platform)\Release\$(ProjectName).lib" "$(SolutionDir)lib\Vulkan\$(Platform)\Release\$(ProjectName).lib"
 xcopy  "$(ProjectDir)$(Platform)\Release\*.pdb" "$(SolutionDir)lib\Vulkan\$(Platform)\Release\" /Y</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>../Resources/shaders/SPIR-V/CompileShader.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

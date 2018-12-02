@@ -16,6 +16,9 @@
     <Filter Include="src\Buffer">
       <UniqueIdentifier>{e76a4ffa-602c-4cc1-8caf-285b209175c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Render">
+      <UniqueIdentifier>{2de46290-84dd-409a-914e-e012f32c77a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context\VulkanContext.cpp">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="src\Context\DescriptorMgr.cpp">
       <Filter>src\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\VulkanRender.cpp">
+      <Filter>src\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="src\Context\DescriptorMgr.h">
       <Filter>src\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\VulkanRender.h">
+      <Filter>src\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
