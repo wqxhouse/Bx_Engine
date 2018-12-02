@@ -29,7 +29,7 @@ namespace VulkanEngine
         class DescriptorMgr
         {
         public:
-            DescriptorMgr(
+            explicit DescriptorMgr(
                 const VkDevice* const pDevice);
 
             ~DescriptorMgr();
@@ -39,7 +39,7 @@ namespace VulkanEngine
                 const UINT               descriptorNum,
                 const UINT               descriptorMaxSet);
 
-            BOOL createDescriptorSet(
+            BOOL createDescriptorSets(
                 const BX_DESCRIPTOR_TYPE              descriptorType,
                 const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
                 const UINT                            descriptorSetNum);
@@ -48,6 +48,19 @@ namespace VulkanEngine
                 const BX_DESCRIPTOR_TYPE              descriptorType,
                 const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
                 const UINT                            descriptorSetIndex);
+
+            inline const VkDescriptorSet GetDescriptorSet(
+                const BX_DESCRIPTOR_TYPE descriptorType,
+                const UINT               descriptorIndex) const
+            {
+                return m_descriptors[descriptorType].m_descriptorSets[descriptorIndex];
+            }
+
+            inline const std::vector<VkDescriptorSet>& GetDescriptorSetList(
+                const BX_DESCRIPTOR_TYPE descriptorType) const
+            {
+                return m_descriptors[descriptorType].m_descriptorSets;
+            }
 
         private:
             const VkDevice* m_pDevice;

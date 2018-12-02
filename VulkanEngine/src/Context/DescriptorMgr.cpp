@@ -53,7 +53,7 @@ namespace VulkanEngine
             return result;
         }
         
-        BOOL DescriptorMgr::createDescriptorSet(
+        BOOL DescriptorMgr::createDescriptorSets(
             const BX_DESCRIPTOR_TYPE              descriptorType,
             const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
             const UINT                            descriptorSetNum)
