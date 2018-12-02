@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "../Core/PCH.h"
-#include "../Math/Math.h"
+#include "../../Core/PCH.h"
+#include "../../Math/Math.h"
 
 namespace Object
 {

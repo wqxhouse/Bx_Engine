@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "../../Core/PCH.h"
-#include "../../Math/Vector3.h"
+#include "../../../Core/PCH.h"
+#include "../../../Math/Vector3.h"
 
 using namespace std;
 

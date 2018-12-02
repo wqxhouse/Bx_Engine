@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "../Math/Transform/Trans.h"
-#include "../Math/Structures.h"
+#include "../../Math/Transform/Trans.h"
+#include "../../Math/Structures.h"
 
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI          1.57079632f

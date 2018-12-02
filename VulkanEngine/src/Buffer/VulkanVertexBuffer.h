@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <Model/Mesh/Mesh.h>
+#include <Object/Model/Mesh/Mesh.h>
 
 #include "VulkanBuffer.h"
 

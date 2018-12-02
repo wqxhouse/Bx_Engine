@@ -11,10 +11,10 @@
 
 #include <map>
 
-#include "../../Core/PCH.h"
+#include "../../../Core/PCH.h"
 #include "../Material/Material.h"
-#include "../../Math/Vector2.h"
-#include "../../Math/Vector3.h"
+#include "../../../Math/Vector2.h"
+#include "../../../Math/Vector3.h"
 
 namespace Object
 {

@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "../../Math/Matrix4x4.h"
-#include "../../Core/TypeDef.h"
+#include "../../../Math/Matrix4x4.h"
+#include "../../../Core/TypeDef.h"
 
 class Texture2D;
 

@@ -12,7 +12,7 @@
 #include <unordered_set>
 
 #include "Mesh/Mesh.h"
-#include "../Math/Transform/Trans.h"
+#include "../../Math/Transform/Trans.h"
 
 namespace Object
 {

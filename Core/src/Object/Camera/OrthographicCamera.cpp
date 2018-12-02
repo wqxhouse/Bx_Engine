@@ -8,29 +8,31 @@
 //================================================================================================
 
 #include "Camera.h"
-#include "../Math/Math.h"
+#include "../../Math/Math.h"
 
 namespace Object
 {
     namespace Camera
     {
-        ProspectiveCamera::ProspectiveCamera(
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up,
-            const float speed,
-            const float invAspectRatio,
-            const float nearClip,
-            const float farClip,
-            const float fov)
-            : CameraBase(CameraType::PROSPECTIVE_CAM, pos, center, up, speed, nearClip, farClip)
+        OrthographicCamera::OrthographicCamera(
+            const glm::vec3&    pos,
+            const glm::vec3&    center,
+            const glm::vec3&    up,
+            const float         speed,
+            const BxsRectangle& viewport,
+            const float         nearClip,
+            const float         farClip)
+            : CameraBase(ORTHOGRAPHIC_CAM, pos, center, up, speed, nearClip, farClip),
+            m_viewport(viewport)
         {
-            m_projectionMatrix = Math::prospectiveProjectionMatrix(Math::Radians(fov), invAspectRatio, nearClip, farClip);
-
-            this->fov = fov;
+            m_projectionMatrix = Math::orthographicProjectionMatrix(viewport, nearClip, farClip);
         }
 
-        void ProspectiveCamera::update(float deltaTime)
+        OrthographicCamera::~OrthographicCamera()
+        {
+        }
+
+        void OrthographicCamera::update(float deltaTime)
         {
             rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE,
                 static_cast<float>(callbackInfo.cursorPosCallBack.delta_x) * CAMERA_SENSATIVE);

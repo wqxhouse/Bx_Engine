@@ -10,7 +10,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Camera.h"
-#include "../Math/Math.h"
+#include "../../Math/Math.h"
 
 namespace Object
 {
