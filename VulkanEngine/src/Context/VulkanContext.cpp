@@ -210,6 +210,20 @@ namespace VulkanEngine
             }
         }
 
+        const UINT swapChainImageNum = static_cast<UINT>(m_swapchainImages.size());
+        if (status == BX_SUCCESS)
+        {
+            m_descriptorBufferList.resize(swapChainImageNum, VulkanUniformBuffer(&m_vkDevice));
+            std::vector<VulkanDescriptorBuffer*> descriptorBuffer(swapChainImageNum);
+            for (UINT i = 0; i < swapChainImageNum; ++i)
+            {
+                status = m_descriptorBufferList[i].createDescriptorSetLayout(0, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
+                assert(status == BX_SUCCESS);
+                status = m_descriptorBufferList[i].createUniformBuffer(m_vkActiveHwGpuDeviceList[0], sizeof(testColor), &testColor);
+                assert(status == BX_SUCCESS);
+            }
+        }
+
         if (status = BX_SUCCESS)
         {
             status = createGraphicsPipeline();
@@ -258,6 +272,22 @@ namespace VulkanEngine
                 new VulkanIndexBuffer(&m_vkDevice, m_pCmdBufferMgr._Myptr(), m_pModel->GetMesh(0)));
             m_pIndexBuffer->createIndexBuffer(m_vkActiveHwGpuDeviceList[0], TRUE);
 
+            // Test UBO
+            m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(new Mgr::DescriptorMgr(&m_vkDevice));
+            status = m_pDescriptorMgr->createDescriptorPool(BX_UNIFORM_DESCRIPTOR, 1, swapChainImageNum);
+            assert(status == BX_SUCCESS);
+
+            status = m_pDescriptorMgr->
+                createDescriptorSets(BX_UNIFORM_DESCRIPTOR,
+                                     m_descriptorBufferList.data(),
+                                     static_cast<UINT>(m_descriptorBufferList.size()));
+            for (UINT i = 0; i < swapChainImageNum; ++i)
+            {
+                m_pDescriptorMgr->updateUniformDescriptorSet(BX_UNIFORM_DESCRIPTOR, &(m_descriptorBufferList[i]), i);
+            }
+
+            assert(status == BX_SUCCESS);
+
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
                     BX_DIRECT_COMMAND_BUFFER,
@@ -295,6 +325,9 @@ namespace VulkanEngine
                     pCmdBuffer->cmdBindIndexBuffers(m_pIndexBuffer->GetBuffer(),
                                                     0,
                                                     m_pIndexBuffer->GetIndexType());
+
+                    pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
+                                                      { m_pDescriptorMgr->GetDescriptorSet(BX_UNIFORM_DESCRIPTOR, static_cast<UINT>(i)) });
 
                     //pCmdBuffer->cmdDrawrrays(m_graphicsPipeline, m_pVertexBuffer->GetVertexNum(), 0);
                     pCmdBuffer->cmdDrawElements(m_graphicsPipeline, m_pIndexBuffer->GetIndexNum(), 0, 0);
@@ -755,7 +788,7 @@ namespace VulkanEngine
         rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
         rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
         rasterizerCreateInfo.lineWidth               = 1.0f;
-        rasterizerCreateInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
+        rasterizerCreateInfo.cullMode                = VK_CULL_MODE_FRONT_BIT;
         rasterizerCreateInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizerCreateInfo.depthBiasEnable         = VK_FALSE;
 
@@ -813,8 +846,18 @@ namespace VulkanEngine
         viewportCreateInfo.pScissors     = &scissor;
 
         // Pipeline Layout
+        UINT descriptorSetLayoutCount = static_cast<UINT>(m_descriptorBufferList.size());
+
+        std::vector<VkDescriptorSetLayout> descriptorSetLayoutList(descriptorSetLayoutCount);
+        for (UINT i = 0; i < descriptorSetLayoutCount; ++i)
+        {
+            descriptorSetLayoutList[i] = m_descriptorBufferList[i].GetDescriptorSetLayout();
+        }
+
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
-        pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutCreateInfo.sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutCreateInfo.setLayoutCount = descriptorSetLayoutCount;
+        pipelineLayoutCreateInfo.pSetLayouts    = descriptorSetLayoutList.data();
 
         VkResult vkResult = vkCreatePipelineLayout(
             m_vkDevice, &pipelineLayoutCreateInfo, NULL, m_graphicsPipelineLayout.replace());

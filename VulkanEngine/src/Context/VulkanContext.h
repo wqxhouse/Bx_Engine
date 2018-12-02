@@ -13,9 +13,11 @@
 
 #include "BxQueue.h"
 #include "CmdBufferMgr.h"
+#include "DescriptorMgr.h"
 #include "../Shader/VulkanGraphicsShader.h"
 #include "../Buffer/VulkanVertexBuffer.h"
 #include "../Buffer/VulkanIndexBuffer.h"
+#include "../Buffer/VulkanUniformBuffer.h"
 
 #include <map>
 
@@ -93,7 +95,7 @@ namespace VulkanEngine
         VDeleter<VkPipeline>       m_graphicsPipeline;
 
         // Command buffer
-        std::unique_ptr<Mgr::CmdBufferMgr> m_pCmdBufferMgr;
+        std::unique_ptr<Mgr::CmdBufferMgr>  m_pCmdBufferMgr;
 
         // Semaphores
         VDeleter<VkSemaphore> m_renderSemaphore;
@@ -120,8 +122,15 @@ namespace VulkanEngine
         const static std::vector<const char*> m_validationLayers;
         const static std::vector<const char*> m_deviceExts;
 
-        std::unique_ptr<ModelObject>        m_pModel;
-        std::unique_ptr<VulkanVertexBuffer> m_pVertexBuffer;
-        std::unique_ptr<VulkanIndexBuffer>  m_pIndexBuffer;
+        // Test
+        // Vertex/Index Buffer Test
+        std::unique_ptr<ModelObject>         m_pModel;
+        std::unique_ptr<VulkanVertexBuffer>  m_pVertexBuffer;
+        std::unique_ptr<VulkanIndexBuffer>   m_pIndexBuffer;
+
+        // Descriptor buffer/mgr test
+        Math::Vector4 testColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+        std::unique_ptr<Mgr::DescriptorMgr> m_pDescriptorMgr;
+        std::vector<VulkanUniformBuffer>    m_descriptorBufferList;
     };
 }
