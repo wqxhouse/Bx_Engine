@@ -60,6 +60,10 @@ namespace VulkanEngine
                 const VkDeviceSize& offset,
                 const BX_INDEX_TYPE indexType);
 
+            void cmdBindDescriptorSets(
+                const VkPipelineLayout&             pipelineLayout,
+                const std::vector<VkDescriptorSet>& descriptorSets);
+
             void cmdCopyBuffer(
                 const VkBuffer&         srcBuffer,
                 const VkBuffer&         dstBuffer,
