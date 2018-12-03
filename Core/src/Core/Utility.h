@@ -79,7 +79,7 @@ namespace Utility
             std::unique_ptr<image_data> imageData);
 
         // Test
-        glm::mat4 ToGLMMat4(
-            Math::Mat4 m);
+        /*glm::mat4 ToGLMMat4(
+            Math::Mat4 m);*/
     };
 }

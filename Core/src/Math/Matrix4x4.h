@@ -59,14 +59,14 @@ namespace Math
                 x41, x42, x43, x44);
         }
 
-        Matrix4x4(const glm::mat4& glmMat4)
+        /*Matrix4x4(const glm::mat4& glmMat4)
         {
             setMember(
                 glmMat4[0][0], glmMat4[0][1], glmMat4[0][2], glmMat4[0][3],
                 glmMat4[1][0], glmMat4[1][1], glmMat4[1][2], glmMat4[1][3],
                 glmMat4[2][0], glmMat4[2][1], glmMat4[2][2], glmMat4[2][3],
                 glmMat4[3][0], glmMat4[3][1], glmMat4[3][2], glmMat4[3][3]);
-        }
+        }*/
 
         void setMember(float f)
         {
@@ -164,12 +164,17 @@ namespace Math
             memcpy(m, &m2, sizeof(m2));
         }
 
-        void operator=(const glm::mat4& m2)
+        /*void operator=(const glm::mat4& m2)
         {
             memcpy(m, &m2, sizeof(m2));
-        }
+        }*/
 
         Vector4& operator[](int i)
+        {
+            return r[i];
+        }
+
+        const Vector4& operator[](int i) const
         {
             return r[i];
         }

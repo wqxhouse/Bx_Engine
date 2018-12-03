@@ -13,7 +13,6 @@
 #include <cstring>
 #include <iostream>
 #include <typeinfo>
-#include <glm/glm.hpp>
 
 #include "Vector2.h"
 
@@ -30,13 +29,6 @@ namespace Math
 		{
 			//"Warning: Uncontrolled memory block.(Ignore if you assign memory on stack)
 		}
-
-        Vector3(const glm::vec3& v)
-        {
-            x = v.x;
-            y = v.y;
-            z = v.z;
-        }
 
 		static Vector3Ptr New(float x = 0.0f, float y = 0.0f, float z = 0.0f)
 		{
@@ -148,13 +140,6 @@ namespace Math
 			z = v.z;
 		}
 
-        void operator=(const glm::vec3& v)
-        {
-            x = v.x;
-            y = v.y;
-            z = v.z;
-        }
-
 		Vector3 operator-()
 		{
 			Vector3 result;
@@ -175,20 +160,15 @@ namespace Math
 			return result;
 		}
 
-		float& operator[](int index)
+		float& operator[](const int i)
 		{
-			switch (index)
-			{
-			case 0:
-				return X;
-			case 1:
-				return Y;
-			case 2:
-				return Z;
-			default:
-				throw std::exception("Index out of range of vector3.(Should be between 0-2)\n");
-			}
+			return v[i];
 		}
+
+        const float& operator[](const int i) const
+        {
+            return v[i];
+        }
 
 		union
 		{
@@ -205,8 +185,34 @@ namespace Math
 				float y;
 				float z;
 			};
+
+            float v[3];
 		};
 	};
+    
+    inline const Vector3 operator+(
+        const Vector3& v1,
+        const Vector3& v2)
+    {
+        Vector3 result;
+        result.x = v1.x + v2.x;
+        result.y = v1.y + v2.y;
+        result.z = v1.z + v2.z;
+
+        return result;
+    }
+
+    inline const Vector3 operator-(
+        const Vector3& v1,
+        const Vector3& v2)
+    {
+        Vector3 result;
+        result.x = v1.x - v2.x;
+        result.y = v1.y - v2.y;
+        result.z = v1.z - v2.z;
+
+        return result;
+    }
 
 	inline Vector3 operator*(const float f, const Vector3& v)
 	{
@@ -217,6 +223,16 @@ namespace Math
 
 		return result;
 	}
+
+    inline Vector3 operator*(const Vector3& v, const float f)
+    {
+        Vector3 result;
+        result.X = f * v.X;
+        result.Y = f * v.Y;
+        result.Z = f * v.Z;
+
+        return result;
+    }
 
 	inline std::ostream& operator<<(std::ostream& out, const Vector3 &v)
 	{

@@ -58,7 +58,8 @@ namespace Math
             }
 		}
 
-		void setMember(const float r0, const float r1, const float r2)
+		void setMember(
+            const float r0, const float r1, const float r2)
 		{
             m[0][0] = m[0][1] = m[0][2] = r0;
             m[1][0] = m[1][1] = m[1][2] = r1;
@@ -194,10 +195,15 @@ namespace Math
 			memcpy(m, &m2, sizeof(m2));
 		}
 
-		Vector3 operator[](int i)
+		Vector3& operator[](int i)
 		{
-			return Vector3(m[i][0], m[i][1], m[i][2]);
+			return r0;
 		}
+
+        const Vector3& operator[](int i) const
+        {
+            return r0;
+        }
 
         void operator+=(const Matrix3x3& m2)
         {
@@ -237,6 +243,7 @@ namespace Math
                 Vector3 r1;
                 Vector3 r2;
             };
+
             float m[3][3];
         };
 	};

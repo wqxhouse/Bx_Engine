@@ -19,9 +19,9 @@ namespace Object
             const float          radius)
             : LightBase(POINT_LIGHT,
                         color,
-                        new Trans(glm::vec3(position.x, position.y, position.z),
-                                  glm::vec3(0.0f, 0.0f, 0.0f),
-                                  glm::vec3(0.0f, 1.0f, 0.0f)))
+                        new Trans(position,
+                                  Math::Vector3(0.0f, 0.0f, 0.0f),
+                                  Math::Vector3(0.0f, 1.0f, 0.0f)))
         {
             m_position = position;
             m_radius   = radius;

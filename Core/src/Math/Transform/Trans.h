@@ -17,16 +17,16 @@ class Trans
 {
 public:
     Trans(
-        const glm::vec3& pos,
-        const glm::vec3& center,
-        const glm::vec3& up)
+        const Math::Vector3& pos,
+        const Math::Vector3& center,
+        const Math::Vector3& up)
         : scale(1.0f, 1.0f, 1.0f),
           pitch(0.0f), yaw(0.0f), roll(0.0f)
 	{
 		this->pos = pos;
-		this->front = glm::normalize(center - pos);
-		this->up    = glm::normalize(up);
-		this->right = glm::normalize(glm::cross(front, up));
+		this->front = Math::Vector3::Normalize(center - pos);
+		this->up    = Math::Vector3::Normalize(up);
+		this->right = Math::Vector3::Normalize(Math::Vector3::crossProduct(front, up));
 
         initialize();
 
@@ -34,18 +34,18 @@ public:
 	}
 
     Trans(
-        const glm::vec3& pos,
-        const glm::vec3& center,
-        const glm::vec3& up,
-        const glm::vec3& scale,
+        const Math::Vector3& pos,
+        const Math::Vector3& center,
+        const Math::Vector3& up,
+        const Math::Vector3& scale,
         const float      pitch,
         const float      yaw,
         const float      roll)
     {
         this->pos   = pos;
-        this->front = glm::normalize(center - pos);
-        this->up    = glm::normalize(up);
-        this->right = glm::normalize(glm::cross(front, up));
+        this->front = Math::Vector3::Normalize(center - pos);
+        this->up    = Math::Vector3::Normalize(up);
+        this->right = Math::Vector3::Normalize(Math::Vector3::crossProduct(front, up));
 
         this->scale = scale;
         this->pitch = pitch;
@@ -59,22 +59,22 @@ public:
 
     void update();
 
-    inline glm::vec3 GetPos() const
+    inline Math::Vector3 GetPos() const
     {
         return pos;
     }
 
-    inline glm::vec3 GetFront() const
+    inline Math::Vector3 GetFront() const
     {
         return front;
     }
 
-    inline glm::vec3 GetRight() const
+    inline Math::Vector3 GetRight() const
     {
         return right;
     }
 
-    inline glm::vec3 GetUp() const
+    inline Math::Vector3 GetUp() const
     {
         return up;
     }
@@ -89,33 +89,33 @@ public:
 		return viewMatrix;
 	}
 
-    inline glm::mat4 GetTranslateMatrix()
+    inline Math::Mat4 GetTranslateMatrix()
     {
         if (m_transFlags.bits.posFlag == 1)
         {
             assert(m_transFlags.bits.viewFlag == 1);
 
-            translationMatrix = glm::translate(glm::mat4(), pos);
+            translationMatrix = Math::Translate(Math::Mat4(), pos);
             m_transFlags.bits.posFlag = 0;
         }
 
         return translationMatrix;
     }
 
-    inline glm::mat4 GetScaleMatrix()
+    inline Math::Mat4 GetScaleMatrix()
     {
         if (m_transFlags.bits.scaleFlag == 1)
         {
-            scaleMatrix = glm::scale(glm::mat4(), scale);
+            scaleMatrix = Math::Scale(Math::Mat4(), scale);
             m_transFlags.bits.scaleFlag = 0;
         }
 
         return scaleMatrix;
     }
 
-    glm::mat4 GetTransMatrix();
+    Math::Mat4 GetTransMatrix();
 
-    inline void TransPos(const glm::vec3& trans)
+    inline void TransPos(const Math::Vector3& trans)
     {
         this->pos += trans;
 
@@ -125,14 +125,14 @@ public:
     }
 
     inline void SetTrans(
-        const glm::vec3& pos,
-        const glm::vec3& center,
-        const glm::vec3& up)
+        const Math::Vector3& pos,
+        const Math::Vector3& center,
+        const Math::Vector3& up)
     {
         this->pos   = pos;
-        this->front = glm::normalize(center - pos);
-        this->up    = glm::normalize(up);
-        this->right = glm::normalize(glm::cross(front, up));
+        this->front = Math::Vector3::Vector3::Normalize(center - pos);
+        this->up    = Math::Vector3::Normalize(up);
+        this->right = Math::Vector3::Normalize(Math::Vector3::crossProduct(front, up));
 
         m_transFlags.bits.transFlag = 1;
         m_transFlags.bits.posFlag   = 1;
@@ -140,17 +140,17 @@ public:
     }
 
     inline void SetTransBase(
-        const glm::vec3& front,
-        const glm::vec3& right)
+        const Math::Vector3& front,
+        const Math::Vector3& right)
     {
         this->front = front;
         this->right = right;
-        this->up    = glm::normalize(glm::cross(right, front));
+        this->up    = Math::Vector3::Normalize(Math::Vector3::crossProduct(right, front));
 
         m_transFlags.bits.viewFlag = 1;
     }
 
-    inline void SetScale(const glm::vec3& scale)
+    inline void SetScale(const Math::Vector3& scale)
     {
         this->scale = scale;
 
@@ -172,15 +172,15 @@ private:
     void initialize();
 
     // Trans members
-    glm::vec3 front;
-    glm::vec3 up;
-    glm::vec3 right;
+    Math::Vector3 front;
+    Math::Vector3 up;
+    Math::Vector3 right;
 
     // Translation
-    glm::vec3 pos;
+    Math::Vector3 pos;
 
     // Scale
-    glm::vec3 scale;
+    Math::Vector3 scale;
 
     // Rotation
     float pitch;
@@ -188,11 +188,11 @@ private:
     float roll;
 
     // Matrix
-    glm::mat4 transMatrix;
+    Math::Mat4 transMatrix;
 
-    glm::mat4 translationMatrix;
-    glm::mat4 scaleMatrix;
-    glm::mat4 rotationMatrix;
+    Math::Mat4 translationMatrix;
+    Math::Mat4 scaleMatrix;
+    Math::Mat4 rotationMatrix;
 
     Math::Mat4 viewMatrix;
 

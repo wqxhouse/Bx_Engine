@@ -12,8 +12,8 @@
 
 void Trans::initialize()
 {
-    translationMatrix = glm::translate(glm::mat4(), pos);
-    scaleMatrix       = glm::scale(glm::mat4(), scale);
+    translationMatrix = Math::Translate(Math::Mat4(), pos);
+    scaleMatrix       = Math::Scale(Math::Mat4(), scale);
 
     transMatrix = translationMatrix * scaleMatrix;
 
@@ -26,8 +26,8 @@ void Trans::update()
 {
     if (m_transFlags.flags != 0)
     {
-        glm::mat4 translate = GetTranslateMatrix();
-        glm::mat4 scale     = GetScaleMatrix();
+        Math::Mat4 translate = GetTranslateMatrix();
+        Math::Mat4 scale     = GetScaleMatrix();
 
         // TODO: Rotation matrix
 
@@ -38,7 +38,7 @@ void Trans::update()
 
         if (m_transFlags.bits.viewFlag == 1)
         {
-            viewMatrix = glm::lookAt(pos, pos + front, up);
+            viewMatrix = Math::viewMatrix(pos, pos + front, up);
         }
 
         // Reset all transform matrix flags
@@ -46,7 +46,7 @@ void Trans::update()
     }
 }
 
-glm::mat4 Trans::GetTransMatrix()
+Math::Mat4 Trans::GetTransMatrix()
 {
     update();
 

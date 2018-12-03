@@ -46,6 +46,14 @@ namespace Math
         const std::vector<Vector3>& axisList,
         const std::vector<float>    angles);
 
+    Mat4 Translate(
+        const Mat4&    m,
+        const Vector3& v);
+
+    Mat4 Scale(
+        const Mat4&    m,
+        const Vector3& scale);
+
 	float Dot(const Quaternion& q1, const Quaternion& q2);
 
 	Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, const float u);

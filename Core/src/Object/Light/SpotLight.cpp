@@ -22,11 +22,9 @@ namespace Object
             float out_angle)
             : LightBase(SPOT_LIGHT,
                         color,
-                        new Trans(glm::vec3(position.x, position.y, position.z),
-                                  glm::vec3(position.x + direction.x,
-                                            position.y + direction.y,
-                                            position.z + direction.z),
-                                  glm::vec3(0.0f, 1.0f, 0.0f))),
+                        new Trans(position,
+                                  position + direction,
+                                  Math::Vector3(0.0f, 1.0f, 0.0f))),
               m_position(position),
               m_direction(direction)
         {

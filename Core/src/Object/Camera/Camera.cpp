@@ -17,13 +17,13 @@ namespace Object
     namespace Camera
     {
         CameraBase::CameraBase(
-            CameraType type,
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up,
-            const float      speed,
-            const float      nearClip,
-            const float      farClip)
+            CameraType           type,
+            const Math::Vector3& pos,
+            const Math::Vector3& center,
+            const Math::Vector3& up,
+            const float          speed,
+            const float          nearClip,
+            const float          farClip)
             : ObjectBase(new Trans(pos, center, up)),
               m_cameraType(type),
               curFront(m_pTrans->GetFront()),
@@ -39,32 +39,33 @@ namespace Object
         {
         }
 
-        void CameraBase::translate(glm::vec3 translate)
+        void CameraBase::translate(
+            const Math::Vector3& translate)
         {
             m_pTrans->TransPos(translate * speed);
         }
 
         void CameraBase::rotate(float pitch, float yaw)
-        {
+        {            
             CLAMP(pitch, -89.0f, 89.0f);
 
             Math::Vector3 m_front = Math::Vector3::Normalize(
                 Math::rotate(Math::Vector3(curFront),
                     Math::Vector3(0.0f, 1.0f, 0.0f),
-                    glm::radians(-yaw)));
+                    Math::Radians(-yaw)));
 
             m_front = Math::rotate(
-                m_front, Math::Vector3(-m_front.z, 0.0f, m_front.x), glm::radians(pitch));
+                m_front, Math::Vector3(-m_front.z, 0.0f, m_front.x), Math::Radians(pitch));
 
             Math::Vector3 m_right = Math::rotate(
-                Math::Vector3(curRight), Math::Vector3(0.0f, 1.0f, 0.0f), glm::radians(-yaw));
+                Math::Vector3(curRight), Math::Vector3(0.0f, 1.0f, 0.0f), Math::Radians(-yaw));
 
-            // m_pTrans->front = glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z));
-            // m_pTrans->right = glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z));
+            // m_pTrans->front = glm::normalize(Math::Vector3(m_front.x, m_front.y, m_front.z));
+            // m_pTrans->right = glm::normalize(Math::Vector3(m_right.x, m_right.y, m_right.z));
             // m_pTrans->up    = glm::normalize(glm::cross(m_pTrans->right, m_pTrans->front));
 
-            m_pTrans->SetTransBase(glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z)),
-                glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z)));
+            m_pTrans->SetTransBase(Math::Vector3::Normalize(m_front),
+                                   Math::Vector3::Normalize(Math::Vector3(m_right)));
 
             curFront = m_pTrans->GetFront();
             curRight = m_pTrans->GetRight();
@@ -111,9 +112,9 @@ namespace Object
         }
 
         void CameraBase::setCamTrans(
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up)
+            const Math::Vector3& pos,
+            const Math::Vector3& center,
+            const Math::Vector3& up)
         {
             m_pTrans->SetTrans(pos, center, up);
 

@@ -170,21 +170,14 @@ namespace Math
             return result;
         }
 
-        float& operator[](int index)
+        float& operator[](const int i)
         {
-            switch (index)
-            {
-            case 0:
-                return x;
-            case 1:
-                return y;
-            case 2:
-                return z;
-            case 3:
-                return w;
-            default:
-                throw std::exception("Index out of range of vector4.(Should be between 0-3)\n");
-            }
+            return v[i];
+        }
+
+        const float& operator[](const int i) const
+        {
+            return v[i];
         }
         
         union
@@ -218,6 +211,8 @@ namespace Math
                 float b;
                 float a;
             };
+
+            float v[4];
         };
     };
     

@@ -96,6 +96,35 @@ namespace Math
         return result.m_v;
     }
 
+    Mat4 Translate(
+        const Mat4&    m,
+        const Vector3& v)
+    {
+        Mat4 result(m);
+
+        Vector4 transVec(v, 1.0f);
+
+        result[0][3] = transVec.dot(m[0]);
+        result[1][3] = transVec.dot(m[1]);
+        result[2][3] = transVec.dot(m[2]);
+        result[3][3] = transVec.dot(m[3]);
+
+        return result;
+    }
+
+    Mat4 Scale(
+        const Mat4&    m,
+        const Vector3& scale)
+    {
+        Mat4 result(m);
+
+        result[0] *= scale.x;
+        result[1] *= scale.y;
+        result[2] *= scale.z;
+
+        return result;
+    }
+
     float Dot(
         const Quaternion& q1,
         const Quaternion& q2)

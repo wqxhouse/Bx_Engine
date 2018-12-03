@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <PostBuildEvent>
@@ -110,7 +110,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <PostBuildEvent>
@@ -132,7 +132,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -158,7 +158,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\extern\glm;..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
