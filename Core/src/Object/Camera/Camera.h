@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "../../Math/Transform/Trans.h"
 #include "../../Math/Structures.h"
+#include "../ObjectBase.h"
 
 #define CAMERA_SENSATIVE 0.05f
 #define HALF_PI          1.57079632f
@@ -19,7 +19,7 @@ namespace Object
 {
     namespace Camera
     {
-        class CameraBase
+        class CameraBase : public ObjectBase
         {
         public:
             CameraBase(
@@ -39,10 +39,9 @@ namespace Object
             virtual void update(float deltaTime);
             //virtual void draw() {}
 
-            inline CameraType GetCameraType() const { return m_cameraType; }
+            inline CameraType GetCameraType()       const { return m_cameraType; }
 
-            inline Trans      GetTrans()            const { return m_trans; }
-            inline Math::Mat4 GetViewMatrix() { return m_trans.GetViewMat(); }
+            inline Math::Mat4 GetViewMatrix()             { return m_pTrans->GetViewMat(); }
             inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
             inline float      GetNearClip()         const { return m_nearClip; }
             inline float      GetFarClip()          const { return m_farClip; }
@@ -53,8 +52,6 @@ namespace Object
                 const glm::vec3& up);
 
         protected:
-            Trans m_trans;
-
             float speed;
 
             Math::Mat4 m_projectionMatrix;

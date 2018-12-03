@@ -9,18 +9,21 @@
 
 #pragma once
 
-#include "../../Core/PCH.h"
 #include "../../Math/Math.h"
+#include "../ObjectBase.h"
 
 namespace Object
 {
     namespace Light
     {
-        class LightBase
+        class LightBase : public ObjectBase
         {
         public:
-            LightBase();
-            LightBase(const LightType lightType, const Math::Vector3& color);
+            LightBase(
+                const LightType      lightType,
+                const Math::Vector3& color,
+                Trans*               pTrans);
+
             ~LightBase();
 
             virtual void translate(const Math::Vector3& transVector) {}
@@ -69,7 +72,10 @@ namespace Object
         class DirectionalLight : public LightBase
         {
         public:
-            DirectionalLight(const Math::Vector3& direction, const Math::Vector3& color);
+            DirectionalLight(
+                const Math::Vector3& direction,
+                const Math::Vector3& color);
+
             ~DirectionalLight();
 
             void rotate(const Math::Vector3& axis, const float angle);
@@ -95,7 +101,11 @@ namespace Object
         class PointLight : public LightBase
         {
         public:
-            PointLight(const Math::Vector3& position, const Math::Vector3& color, float radius);
+            PointLight(
+                const Math::Vector3& position,
+                const Math::Vector3& color,
+                const float          radius);
+
             ~PointLight();
 
             void translate(const Math::Vector3& transVector);

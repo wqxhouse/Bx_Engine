@@ -42,7 +42,7 @@ public:
         const float      yaw,
         const float      roll)
     {
-        this->pos = pos;
+        this->pos   = pos;
         this->front = glm::normalize(center - pos);
         this->up    = glm::normalize(up);
         this->right = glm::normalize(glm::cross(front, up));

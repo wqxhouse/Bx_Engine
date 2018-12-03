@@ -12,19 +12,19 @@
 #include <unordered_set>
 
 #include "Mesh/Mesh.h"
-#include "../../Math/Transform/Trans.h"
+#include "../ObjectBase.h"
 
 namespace Object
 {
     namespace Model
     {
-        class ModelObject
+        class ModelObject : public ObjectBase
         {
         public:
             ModelObject(
                 const std::string& modelFile,
                 const std::string& materialFile,
-                Trans* modelTrans);
+                Trans*             modelTrans);
 
             ~ModelObject();
 
@@ -81,8 +81,6 @@ namespace Object
                 return m_pMeshList[i];
             }
 
-            inline Trans* GetTrans() const { return m_pTrans; }
-
             void UseLocalMaterial();
             void UseGlobalMaterial();
 
@@ -92,11 +90,8 @@ namespace Object
         private:
             std::vector<std::shared_ptr<Mesh>> m_pMeshList;
 
-            std::unordered_set<Material*> m_pMaterialSet;
-            std::unordered_set<MaterialMap*> m_pMaterialMapSet;
-
-            Trans* m_pTrans;
-
+            std::unordered_set<Material*>      m_pMaterialSet;
+            std::unordered_set<MaterialMap*>   m_pMaterialMapSet;
         };
     }
 }

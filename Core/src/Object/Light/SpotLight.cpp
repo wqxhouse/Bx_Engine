@@ -20,9 +20,15 @@ namespace Object
             float distance,
             float in_angle,
             float out_angle)
-            : LightBase(SPOT_LIGHT, color),
-            m_position(position),
-            m_direction(direction)
+            : LightBase(SPOT_LIGHT,
+                        color,
+                        new Trans(glm::vec3(position.x, position.y, position.z),
+                                  glm::vec3(position.x + direction.x,
+                                            position.y + direction.y,
+                                            position.z + direction.z),
+                                  glm::vec3(0.0f, 1.0f, 0.0f))),
+              m_position(position),
+              m_direction(direction)
         {
             assert(in_angle <= out_angle);
 

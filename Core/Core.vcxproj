@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -197,6 +197,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     <ClInclude Include="src\Object\Model\Mesh\ModelLoaderBase.h" />
     <ClInclude Include="src\Object\Model\Mesh\ObjModelLoader.h" />
     <ClInclude Include="src\Object\Model\Model.h" />
+    <ClInclude Include="src\Object\ObjectBase.h" />
     <ClInclude Include="src\Scene\RenderScene.h" />
     <ClInclude Include="src\Setting\Setting.h" />
     <ClInclude Include="src\Texture\Cubemap.h" />
@@ -221,6 +222,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     <ClCompile Include="src\Object\Model\Mesh\ModelLoaderBase.cpp" />
     <ClCompile Include="src\Object\Model\Mesh\ObjModelLoader.cpp" />
     <ClCompile Include="src\Object\Model\Model.cpp" />
+    <ClCompile Include="src\Object\ObjectBase.cpp" />
     <ClCompile Include="src\Scene\RenderScene.cpp" />
     <ClCompile Include="src\Texture\Cubemap.cpp" />
     <ClCompile Include="src\Texture\TextureBase.cpp" />

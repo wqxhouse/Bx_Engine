@@ -24,13 +24,13 @@ namespace Object
             const float      speed,
             const float      nearClip,
             const float      farClip)
-            : m_cameraType(type),
-            m_trans(pos, center, up),
-            curFront(m_trans.GetFront()),
-            curRight(m_trans.GetRight()),
-            worldUp(up),
-            m_nearClip(nearClip),
-            m_farClip(farClip)
+            : ObjectBase(new Trans(pos, center, up)),
+              m_cameraType(type),
+              curFront(m_pTrans->GetFront()),
+              curRight(m_pTrans->GetRight()),
+              worldUp(up),
+              m_nearClip(nearClip),
+              m_farClip(farClip)
         {
             this->speed = speed;
         }
@@ -41,7 +41,7 @@ namespace Object
 
         void CameraBase::translate(glm::vec3 translate)
         {
-            m_trans.TransPos(translate * speed);
+            m_pTrans->TransPos(translate * speed);
         }
 
         void CameraBase::rotate(float pitch, float yaw)
@@ -59,42 +59,42 @@ namespace Object
             Math::Vector3 m_right = Math::rotate(
                 Math::Vector3(curRight), Math::Vector3(0.0f, 1.0f, 0.0f), glm::radians(-yaw));
 
-            //m_trans.front = glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z));
-            //m_trans.right = glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z));
-            //m_trans.up    = glm::normalize(glm::cross(m_trans.right, m_trans.front));
+            // m_pTrans->front = glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z));
+            // m_pTrans->right = glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z));
+            // m_pTrans->up    = glm::normalize(glm::cross(m_pTrans->right, m_pTrans->front));
 
-            m_trans.SetTransBase(glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z)),
+            m_pTrans->SetTransBase(glm::normalize(glm::vec3(m_front.x, m_front.y, m_front.z)),
                 glm::normalize(glm::vec3(m_right.x, m_right.y, m_right.z)));
 
-            curFront = m_trans.GetFront();
-            curRight = m_trans.GetRight();
+            curFront = m_pTrans->GetFront();
+            curRight = m_pTrans->GetRight();
         }
 
         void CameraBase::update(float deltaTime)
         {
             if (callbackInfo.keyboardCallBack[GLFW_KEY_W] == 1)
             {
-                translate(m_trans.GetFront() * deltaTime);
+                translate(m_pTrans->GetFront() * deltaTime);
             }
             if (callbackInfo.keyboardCallBack[GLFW_KEY_S] == 1)
             {
-                translate(-m_trans.GetFront() * deltaTime);
+                translate(-m_pTrans->GetFront() * deltaTime);
             }
             if (callbackInfo.keyboardCallBack[GLFW_KEY_A] == 1)
             {
-                translate(-m_trans.GetRight() * deltaTime);
+                translate(-m_pTrans->GetRight() * deltaTime);
             }
             if (callbackInfo.keyboardCallBack[GLFW_KEY_D] == 1)
             {
-                translate(m_trans.GetRight() * deltaTime);
+                translate(m_pTrans->GetRight() * deltaTime);
             }
             if (callbackInfo.keyboardCallBack[GLFW_KEY_Q] == 1)
             {
-                translate(m_trans.GetUp() * deltaTime);
+                translate(m_pTrans->GetUp() * deltaTime);
             }
             if (callbackInfo.keyboardCallBack[GLFW_KEY_E] == 1)
             {
-                translate(-m_trans.GetUp() * deltaTime);
+                translate(-m_pTrans->GetUp() * deltaTime);
             }
 
             static float originSpeed = speed;
@@ -107,7 +107,7 @@ namespace Object
                 speed = originSpeed;
             }
 
-            m_trans.update();
+            m_pTrans->update();
         }
 
         void CameraBase::setCamTrans(
@@ -115,10 +115,10 @@ namespace Object
             const glm::vec3& center,
             const glm::vec3& up)
         {
-            m_trans.SetTrans(pos, center, up);
+            m_pTrans->SetTrans(pos, center, up);
 
-            curFront = m_trans.GetFront();
-            curRight = m_trans.GetRight();
+            curFront = m_pTrans->GetFront();
+            curRight = m_pTrans->GetRight();
         }
     }
 }

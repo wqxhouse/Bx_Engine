@@ -16,7 +16,11 @@ namespace Object
         DirectionalLight::DirectionalLight(
             const Math::Vector3& direction,
             const Math::Vector3& color)
-            : LightBase(DIRECTIONAL_LIGHT, color)
+            : LightBase(DIRECTIONAL_LIGHT,
+                        color,
+                        new Trans(glm::vec3(0.0f, 0.0f, 0.0f),
+                                  glm::vec3(direction.x, direction.y, direction.z),
+                                  glm::vec3(0.0f, 1.0f, 0.0f)))
         {
             m_direction = Math::Vector3::Normalize(direction);
             m_direction_vec4 = Math::Vector4(m_direction, 0.0f);

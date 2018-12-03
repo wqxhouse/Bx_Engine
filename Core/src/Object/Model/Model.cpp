@@ -18,7 +18,7 @@ namespace Object
             const std::string& modelFile,
             const std::string& materialFile,
             Trans*             modelTrans)
-            : m_pTrans(modelTrans)
+            : ObjectBase(modelTrans)
         {
             ObjModelLoader objLoader;
             objLoader.LoadModel(modelFile, materialFile, this);
@@ -39,8 +39,6 @@ namespace Object
                 SafeDelete(pMaterialMap);
             }
             m_pMaterialMapSet.clear();
-
-            SafeDelete(m_pTrans);
         }
 
         void ModelObject::updateMaterialData(

@@ -120,6 +120,9 @@
     <ClInclude Include="src\Object\Model\Material\Material.h">
       <Filter>src\Object\Model\Material</Filter>
     </ClInclude>
+    <ClInclude Include="src\Object\ObjectBase.h">
+      <Filter>src\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Math\Math.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="src\Object\Model\Material\Material.cpp">
       <Filter>src\Object\Model\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Object\ObjectBase.cpp">
+      <Filter>src\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

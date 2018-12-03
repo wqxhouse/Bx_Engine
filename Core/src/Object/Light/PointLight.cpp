@@ -16,11 +16,15 @@ namespace Object
         PointLight::PointLight(
             const Math::Vector3& position,
             const Math::Vector3& color,
-            float radius)
-            :LightBase(POINT_LIGHT, color)
+            const float          radius)
+            : LightBase(POINT_LIGHT,
+                        color,
+                        new Trans(glm::vec3(position.x, position.y, position.z),
+                                  glm::vec3(0.0f, 0.0f, 0.0f),
+                                  glm::vec3(0.0f, 1.0f, 0.0f)))
         {
             m_position = position;
-            m_radius = radius;
+            m_radius   = radius;
         }
 
         PointLight::~PointLight()
