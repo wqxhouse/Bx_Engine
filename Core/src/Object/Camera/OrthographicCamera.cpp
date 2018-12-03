@@ -15,13 +15,13 @@ namespace Object
     namespace Camera
     {
         OrthographicCamera::OrthographicCamera(
-            const glm::vec3&    pos,
-            const glm::vec3&    center,
-            const glm::vec3&    up,
-            const float         speed,
-            const BxsRectangle& viewport,
-            const float         nearClip,
-            const float         farClip)
+            const Math::Vector3&    pos,
+            const Math::Vector3&    center,
+            const Math::Vector3&    up,
+            const float             speed,
+            const BxsRectangle&     viewport,
+            const float             nearClip,
+            const float             farClip)
             : CameraBase(ORTHOGRAPHIC_CAM, pos, center, up, speed, nearClip, farClip),
             m_viewport(viewport)
         {

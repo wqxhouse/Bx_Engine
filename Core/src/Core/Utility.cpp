@@ -110,7 +110,7 @@ namespace Utility
         stbi_image_free(imageData._Myptr());
     }
 
-    glm::mat4 UtilityBase::ToGLMMat4(
+    /*glm::mat4 UtilityBase::ToGLMMat4(
         Math::Mat4 m)
     {
         glm::mat4 result;
@@ -123,5 +123,5 @@ namespace Utility
         }
 
         return result;
-    }
+    }*/
 }

@@ -23,17 +23,19 @@ namespace Object
         {
         public:
             CameraBase(
-                CameraType       type,
-                const glm::vec3& pos,
-                const glm::vec3& center,
-                const glm::vec3& up,
-                const float      speed,
-                const float      nearClip,
-                const float      farClip);
+                CameraType           type,
+                const Math::Vector3& pos,
+                const Math::Vector3& center,
+                const Math::Vector3& up,
+                const float          speed,
+                const float          nearClip,
+                const float          farClip);
 
             virtual ~CameraBase();
 
-            void translate(glm::vec3 trans);
+            void translate(
+                const Math::Vector3& trans);
+
             void rotate(float pitch, float yaw);
 
             virtual void update(float deltaTime);
@@ -47,19 +49,19 @@ namespace Object
             inline float      GetFarClip()          const { return m_farClip; }
 
             void setCamTrans(
-                const glm::vec3& pos,
-                const glm::vec3& center,
-                const glm::vec3& up);
+                const Math::Vector3& pos,
+                const Math::Vector3& center,
+                const Math::Vector3& up);
 
         protected:
             float speed;
 
             Math::Mat4 m_projectionMatrix;
 
-            glm::vec3 worldUp;
+            Math::Vector3 worldUp;
 
-            glm::vec3 curFront;
-            glm::vec3 curRight;
+            Math::Vector3 curFront;
+            Math::Vector3 curRight;
 
         private:
             CameraType m_cameraType;
@@ -72,14 +74,16 @@ namespace Object
         {
         public:
             ProspectiveCamera(
-                const glm::vec3& pos,
-                const glm::vec3& center,
-                const glm::vec3& up,
-                const float speed,
-                const float invAspectRatio,
-                const float nearClip = 0.1f,
-                const float farClip = 100.0f,
-                const float fov = 45.0f);
+                const Math::Vector3& pos,
+                const Math::Vector3& center,
+                const Math::Vector3& up,
+                const float          speed,
+                const float          invAspectRatio,
+                const float          nearClip = 0.1f,
+                const float          farClip = 100.0f,
+                const float          fov = 45.0f);
+
+            ~ProspectiveCamera();
 
             void update(float deltaTime);
 
@@ -91,13 +95,14 @@ namespace Object
         {
         public:
             OrthographicCamera(
-                const glm::vec3&    pos,
-                const glm::vec3&    center,
-                const glm::vec3&    up,
-                const float         speed,
-                const BxsRectangle& viewport,
-                const float         nearClip = 0.1f,
-                const float         farClip = 100.0f);
+                const Math::Vector3&    pos,
+                const Math::Vector3&    center,
+                const Math::Vector3&    up,
+                const float             speed,
+                const BxsRectangle&     viewport,
+                const float             nearClip = 0.1f,
+                const float             farClip = 100.0f);
+
             ~OrthographicCamera();
 
             void update(float deltaTime);

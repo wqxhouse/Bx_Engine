@@ -15,19 +15,24 @@ namespace Object
     namespace Camera
     {
         ProspectiveCamera::ProspectiveCamera(
-            const glm::vec3& pos,
-            const glm::vec3& center,
-            const glm::vec3& up,
-            const float speed,
-            const float invAspectRatio,
-            const float nearClip,
-            const float farClip,
-            const float fov)
+            const Math::Vector3& pos,
+            const Math::Vector3& center,
+            const Math::Vector3& up,
+            const float          speed,
+            const float          invAspectRatio,
+            const float          nearClip,
+            const float          farClip,
+            const float          fov)
             : CameraBase(CameraType::PROSPECTIVE_CAM, pos, center, up, speed, nearClip, farClip)
         {
-            m_projectionMatrix = Math::prospectiveProjectionMatrix(Math::Radians(fov), invAspectRatio, nearClip, farClip);
+            m_projectionMatrix = Math::prospectiveProjectionMatrix(
+                Math::Radians(fov), invAspectRatio, nearClip, farClip);
 
             this->fov = fov;
+        }
+
+        ProspectiveCamera::~ProspectiveCamera()
+        {
         }
 
         void ProspectiveCamera::update(float deltaTime)

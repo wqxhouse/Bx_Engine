@@ -18,12 +18,13 @@
 #include <vector>
 #include <ctime>
 #include <memory>
+#include <assert.h>
 
 // Include GLM Libarary
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/matrix_inverse.hpp>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/type_ptr.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/matrix_inverse.hpp>
 
 // Include define types
 #include "TypeDef.h"
