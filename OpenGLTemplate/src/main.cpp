@@ -18,8 +18,18 @@
 #include "Context\VulkanContext.h"
 #endif
 
+#include "Structure\LinkedList.h"
+
 int main()
 {
+
+    Structure::LinkedList<int> linkedList;
+    linkedList.insertBack(1);
+    linkedList.insertBack(2);
+    linkedList.clear();
+
+    linkedList.insertBack(1);
+
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
     setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
@@ -32,6 +42,6 @@ int main()
     m_vulkanContext.initialize();
     m_vulkanContext.run();
 #endif
-
+    
 	return 0;
 }

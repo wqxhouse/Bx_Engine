@@ -198,4 +198,9 @@
       <Filter>src\Object</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Structure\LinkedList.inl">
+      <Filter>src\Structure</Filter>
+    </None>
+  </ItemGroup>
 </Project>

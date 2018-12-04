@@ -101,7 +101,8 @@ mkdir $(SolutionDir)lib\Core\include\
 
 copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E
+xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -121,7 +122,8 @@ mkdir $(SolutionDir)lib\Core\include\
 
 copy  /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)_d.lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName)_d.lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E
+xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,7 +149,8 @@ mkdir $(SolutionDir)lib\Core\include\
 
 copy /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName).lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E
+xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -173,7 +176,8 @@ mkdir $(SolutionDir)lib\Core\include\
 
 copy /Y "$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName).lib" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\$(ProjectName).lib"
 xcopy  "$(ProjectDir)$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)lib\Core\$(Platform)\$(Configuration)\" /Y
-xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
+xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E
+xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -229,6 +233,9 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     <ClCompile Include="src\Texture\TextureBase.cpp" />
     <ClCompile Include="src\Texture\Texture2D.cpp" />
     <ClCompile Include="src\Texture\Texture3D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Structure\LinkedList.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

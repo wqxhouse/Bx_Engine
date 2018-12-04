@@ -272,12 +272,6 @@
     <ClCompile Include="src\OpenGLTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\shaders\SimpleTexture.frag" />
-    <None Include="..\Resources\shaders\SimpleTexture.vert" />
-    <None Include="..\Resources\shaders\SingleTriangle.frag" />
-    <None Include="..\Resources\shaders\SingleTriangle.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\OpenGLTemplate.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
