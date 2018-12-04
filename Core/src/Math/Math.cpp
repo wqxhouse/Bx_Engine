@@ -104,10 +104,10 @@ namespace Math
 
         Vector4 transVec(v, 1.0f);
 
-        result[0][3] = transVec.dot(m[0]);
-        result[1][3] = transVec.dot(m[1]);
-        result[2][3] = transVec.dot(m[2]);
-        result[3][3] = transVec.dot(m[3]);
+        result[3] = Vector4(transVec.dot(m[0]),
+                            transVec.dot(m[1]),
+                            transVec.dot(m[2]),
+                            m[3].w);
 
         return result;
     }
