@@ -40,6 +40,9 @@
     <Filter Include="src\Object\Model\Material">
       <UniqueIdentifier>{d18d3660-2172-457c-98c9-a58536f37929}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Structure">
+      <UniqueIdentifier>{ff230ee4-cd91-4ff7-ab5d-3e2489d18a31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\TypeDef.h">
@@ -122,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="src\Object\ObjectBase.h">
       <Filter>src\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Structure\LinkedList.h">
+      <Filter>src\Structure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -200,6 +200,7 @@ xcopy "$(ProjectDir)src\*.h" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command>
     <ClInclude Include="src\Object\ObjectBase.h" />
     <ClInclude Include="src\Scene\RenderScene.h" />
     <ClInclude Include="src\Setting\Setting.h" />
+    <ClInclude Include="src\Structure\LinkedList.h" />
     <ClInclude Include="src\Texture\Cubemap.h" />
     <ClInclude Include="src\Texture\TextureBase.h" />
     <ClInclude Include="src\Texture\Texture2D.h" />
