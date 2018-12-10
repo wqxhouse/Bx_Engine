@@ -43,6 +43,12 @@
     <Filter Include="src\Structure">
       <UniqueIdentifier>{ff230ee4-cd91-4ff7-ab5d-3e2489d18a31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Memory">
+      <UniqueIdentifier>{0a51aa4d-58d2-4d2a-af02-6231f2914fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Thread">
+      <UniqueIdentifier>{fce1aad6-4986-4a2a-8de6-df2c831bdec0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\TypeDef.h">
@@ -129,6 +135,18 @@
     <ClInclude Include="src\Structure\LinkedList.h">
       <Filter>src\Structure</Filter>
     </ClInclude>
+    <ClInclude Include="src\Memory\MemoryArena.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryRaw.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryUtilities.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryAllocator.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Math\Math.cpp">
@@ -197,10 +215,19 @@
     <ClCompile Include="src\Object\ObjectBase.cpp">
       <Filter>src\Object</Filter>
     </ClCompile>
+    <ClCompile Include="src\Memory\MemoryRaw.cpp">
+      <Filter>src\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryAllocator.cpp">
+      <Filter>src\Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Structure\LinkedList.inl">
       <Filter>src\Structure</Filter>
+    </None>
+    <None Include="src\Memory\MemoryArena.inl">
+      <Filter>src\Memory</Filter>
     </None>
   </ItemGroup>
 </Project>

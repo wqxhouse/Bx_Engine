@@ -1,4 +1,3 @@
-#include "LinkedList.h"
 //=================================================================================================
 //
 //  Bx Engine
@@ -13,8 +12,8 @@ namespace Structure
     template<typename T>
     inline LinkedList<T>::LinkedList()
     {
-        m_pHead = NULL;
-        m_pTail = NULL;
+        m_pHead  = NULL;
+        m_pTail  = NULL;
         m_length = 0;
     }
 

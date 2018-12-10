@@ -194,6 +194,10 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
+    <ClInclude Include="src\Memory\MemoryAllocator.h" />
+    <ClInclude Include="src\Memory\MemoryArena.h" />
+    <ClInclude Include="src\Memory\MemoryRaw.h" />
+    <ClInclude Include="src\Memory\MemoryUtilities.h" />
     <ClInclude Include="src\Object\Camera\Camera.h" />
     <ClInclude Include="src\Object\Light\Light.h" />
     <ClInclude Include="src\Object\Model\Material\Material.h" />
@@ -215,6 +219,8 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Math\Transform\Trans.cpp" />
+    <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
+    <ClCompile Include="src\Memory\MemoryRaw.cpp" />
     <ClCompile Include="src\Object\Camera\Camera.cpp" />
     <ClCompile Include="src\Object\Camera\OrthographicCamera.cpp" />
     <ClCompile Include="src\Object\Camera\ProspectiveCamera.cpp" />
@@ -235,6 +241,7 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClCompile Include="src\Texture\Texture3D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\Memory\MemoryArena.inl" />
     <None Include="src\Structure\LinkedList.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
