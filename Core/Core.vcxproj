@@ -214,7 +214,6 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Texture\TextureBase.h" />
     <ClInclude Include="src\Texture\Texture2D.h" />
     <ClInclude Include="src\Texture\Texture3D.h" />
-    <ClInclude Include="src\Thread\ThreadPrimitve.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\PCH.cpp" />
