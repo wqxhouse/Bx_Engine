@@ -77,9 +77,5 @@ namespace Utility
 
         static void ReleaseImageData(
             std::unique_ptr<image_data> imageData);
-
-        // Test
-        /*glm::mat4 ToGLMMat4(
-            Math::Mat4 m);*/
     };
 }

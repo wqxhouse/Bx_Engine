@@ -9,10 +9,16 @@
 
 #pragma once
 
+#include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
+
+#define INLINE  __forceinline
 
 #define BOOL    uint32_t
 #define BOOL_F  float
+#define BYTE    int8_t
+#define UBYTE   uint8_t
 #define INT16   int16_t
 #define INT     int32_t
 #define INT64   int64_t
@@ -70,6 +76,12 @@ inline void SafeDeleteArray(void *ptr)
     {
         delete[] ptr;
     }
+}
+
+inline void NotImplemented()
+{
+    printf("This feature hasn't been implemented yet.\n");
+    assert(FALSE);
 }
 
 enum PolyMode
