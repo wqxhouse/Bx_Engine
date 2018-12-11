@@ -46,16 +46,16 @@ namespace Memory
         m_pCurrent =
             MemoryUtility::MemoryAlignmentCeil(m_pCurrent + offset, alignment) - offset;
 
-        void* resPtr = m_pCurrent;
+        void* resPtr = static_cast<void*>(m_pCurrent);
         m_pCurrent += size;
 
-        assert(m_pCurrent < m_pEnd);
+        assert(m_pCurrent <= m_pEnd);
 
         return resPtr;
     }
     
     /// Stack Allocator
-    StackAllocator::StackAllocator(MemoryRaw * pMem)
+    StackAllocator::StackAllocator(MemoryRaw* pMem)
         : Allocator(pMem)
     {
     }
@@ -65,13 +65,37 @@ namespace Memory
     }
 
     void* StackAllocator::alloc(
-        const size_t size,
+        const UINT   size,
         const size_t alignment,
         const size_t offset)
     {
-        NotImplemented();
+        // Added the header (allocation offset) size
+        UINT allocSize = size + ALLOC_OFFSET_HEADER_SIZE + ALLOC_SIZE_HEADER_SIZE;
 
-        return NULL;
+        m_pCurrent =
+            MemoryUtility::MemoryAlignmentCeil(m_pCurrent + offset, alignment) - offset;
+
+        union
+        {
+            void* pRes;
+            BYTE* pByte;
+            UINT* pUint;
+        };
+
+        pByte  = m_pCurrent;
+        *pUint = static_cast<UINT>(m_pCurrent - m_pStart); // Write the offset value into the header of
+                                                           // each allocation
+
+        pByte += ALLOC_OFFSET_HEADER_SIZE;
+        *pUint = size;  // Write the allocation size into the header of each allocation
+
+        pByte += ALLOC_SIZE_HEADER_SIZE;
+
+        m_pCurrent += allocSize; // Move the current pointer to the end of data region
+
+        assert(m_pCurrent <= m_pEnd);
+
+        return pRes;
     }
 
     BOOL StackAllocator::free(
@@ -79,13 +103,22 @@ namespace Memory
     {
         BOOL result = BX_SUCCESS;
 
-        NotImplemented();
+        union
+        {
+            BYTE* pByte;
+            UINT* pUint;
+        };
+
+        pByte = static_cast<BYTE*>(freeAddr) - ALLOC_SIZE_HEADER_SIZE - ALLOC_OFFSET_HEADER_SIZE;
+        UINT offset = *pUint;
+
+        pByte += ALLOC_SIZE_HEADER_SIZE;
+        UINT size = *pUint;
+
+        assert(pByte + size == m_pCurrent); // The free should follow LIFO rule
+        
+        m_pCurrent = m_pStart + offset;
 
         return result;
-    }
-
-    void StackAllocator::clear()
-    {
-        NotImplemented();
     }
 }

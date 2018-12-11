@@ -54,6 +54,7 @@ namespace Memory
         INLINE void clear() { m_pCurrent = m_pStart; }
     };
 
+    /// @note Assump the maxmium allocation size is 4GB
     class StackAllocator : public Allocator
     {
     public:
@@ -62,12 +63,16 @@ namespace Memory
         ~StackAllocator();
 
         void* alloc(
-            const size_t size,
+            const UINT   size,
             const size_t alignment,
             const size_t offset);
 
         BOOL free(void* freeAddr);
 
-        void clear();
+        void clear() { m_pCurrent = m_pStart; }
+
+    private:
+        static const UINT ALLOC_OFFSET_HEADER_SIZE = sizeof(UINT);
+        static const UINT ALLOC_SIZE_HEADER_SIZE   = sizeof(UINT);
     };
 }
