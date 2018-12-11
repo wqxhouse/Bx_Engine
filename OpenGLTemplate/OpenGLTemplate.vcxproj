@@ -148,14 +148,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\Core\include;..\lib\OpenGL\include;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\OpenGL\include;..\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>OpenGLPCH.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\extern\glfw-3.2.1\bin\$(Configuration)\;..\extern\glew-2.0.0\lib\$(Configuration)\$(Platform);..\lib\Core\$(Platform)\$(Configuration)\;..\lib\OpenGL\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;Core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3_d.lib;glew32d.lib;OpenGLEngine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Debug|Win32'">
@@ -206,7 +206,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\Core\include;..\lib\OpenGL\include;..\extern\stb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\extern\glfw-3.2.1\include;..\extern\glew-2.0.0\include;..\extern\glm;..\lib\OpenGL\include;..\extern\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_OPENGL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
