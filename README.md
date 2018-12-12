@@ -13,9 +13,9 @@ Forward shading
 
 Deferred shading
 
-Forward+ (Tile based forward) shading
+Forward+ (Tile based forward) shading (2.5D culling)
 
-Tiled Deferred shading
+Tiled Deferred shading (2.5D culling)
 
 In progress: Clustered shading
 ```
