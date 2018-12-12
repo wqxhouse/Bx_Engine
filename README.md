@@ -1,33 +1,54 @@
 # Bx_Engine
 Render engine by bxs
 
-Graphics API support:
+# Graphics API support:
+```
 OpenGL
+
 Vulkan
-
-Render method implemented:
+```
+# Render method implemented:
+```
 Forward shading
+
 Deferred shading
+
 Forward+ (Tile based forward) shading
+
 Tiled Deferred shading
+
 TODO: Clustered shading
-
-Light type support:
+```
+# Light type support:
+```
 Directional light
+
 Point light
+
 Spot light
-
-Effects implemented:
+```
+# Effects supported:
+```
 Shadow Map
+
 Light Probes
+
 Blur
+
 Skybox
+```
 
-Shader:
+# Shader:
+```
 Graphics shader compiler
-Compute shader compiler
-Preprocessor for #include
 
-Tools implemented:
+Compute shader compiler
+
+Preprocessor for #include
+```
+
+# Tools:
+```
 Math library: Basic 3D transformations, Quaternions, Linear algebra for 3x3 and 4x4 matrix
 Camera: Prospective and Orthographic camera
+```
