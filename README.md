@@ -5,7 +5,7 @@ Render engine by bxs
 ```
 OpenGL
 
-Vulkan
+In progress: Vulkan
 ```
 # Render method implemented:
 ```
@@ -17,7 +17,7 @@ Forward+ (Tile based forward) shading
 
 Tiled Deferred shading
 
-TODO: Clustered shading
+In progress: Clustered shading
 ```
 # Light type support:
 ```
