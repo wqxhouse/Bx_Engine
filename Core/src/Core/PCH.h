@@ -12,6 +12,7 @@
 // General C++ Library
 #include <stdio.h>
 #include <iostream>
+#include <cstdint>
 #include <fstream>
 #include <string>
 #include <array>

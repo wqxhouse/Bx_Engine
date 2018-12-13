@@ -13,7 +13,7 @@
 
 namespace Structure
 {
-    template<typename T>
+    template <typename T>
     struct LinkedListNode
     {
         LinkedListNode(
@@ -21,11 +21,16 @@ namespace Structure
             LinkedListNode*       pNext)
             : m_data(data), m_pNext(pNext) {}
 
-        T               m_data;
-        LinkedListNode* m_pNext;
+        T m_data;
+
+        union
+        {
+            LinkedListNode<T>* m_pNext; // Pointer to next node
+            LinkedListNode<T>* m_pMask; // XOR linked list mask
+        };
     };
 
-    template<typename T>
+    template <typename T>
     struct DoublyLinkedListNode
     {
         DoublyLinkedListNode(
@@ -39,12 +44,64 @@ namespace Structure
         DoublyLinkedListNode* m_pPrevious;
     };
 
-    template<typename T>
-    class LinkedList
+    template <typename T>
+    class LinkedListBase
     {
     public:
-        LinkedList();
-        ~LinkedList();
+        LinkedListBase()
+        {
+            m_pHead = NULL;
+            m_pTail = NULL;
+            m_length = 0;
+        }
+
+        ~LinkedListBase()
+        {
+            m_pHead = NULL;
+            m_pTail = NULL;
+        }
+
+        virtual void insertBack(const T& data)           = 0;
+        virtual void insertFront(const T& data)          = 0;
+        virtual void insert(const UINT i, const T& data) = 0;
+
+        virtual void removeBack()             = 0;
+        virtual void removeFront()            = 0;
+        virtual void removeNode(const UINT i) = 0;
+
+        virtual void clear() = 0;
+
+    protected:
+        LinkedListNode<T>* m_pHead;
+        LinkedListNode<T>* m_pTail;
+
+        UINT m_length;
+    };
+
+    template <typename T>
+    class LinkedList : public LinkedListBase<T>
+    {
+    public:
+        LinkedList()  {}
+        ~LinkedList() {}
+
+        void insertBack(const T& data);
+        void insertFront(const T& data);
+        void insert(const UINT i, const T& data);
+
+        void removeBack();
+        void removeFront();
+        void removeNode(const UINT i);
+
+        void clear();
+    };
+
+    template<typename T>
+    class XorLinkedList : public LinkedListBase<T>
+    {
+    public:
+        XorLinkedList()  {}
+        ~XorLinkedList() {}
 
         void insertBack(const T& data);
         void insertFront(const T& data);
@@ -56,11 +113,6 @@ namespace Structure
 
         void clear();
 
-    private:
-        LinkedListNode<T>* m_pHead;
-        LinkedListNode<T>* m_pTail;
-
-        UINT m_length;
     };
 }
 
