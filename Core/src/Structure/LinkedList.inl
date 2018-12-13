@@ -10,7 +10,7 @@
 namespace Structure
 {
     template<typename T>
-    inline LinkedList<T>::LinkedList()
+    INLINE LinkedList<T>::LinkedList()
     {
         m_pHead  = NULL;
         m_pTail  = NULL;
@@ -18,13 +18,13 @@ namespace Structure
     }
 
     template<typename T>
-    inline LinkedList<T>::~LinkedList()
+    INLINE LinkedList<T>::~LinkedList()
     {
         clear();
     }
 
     template<typename T>
-    inline void LinkedList<T>::insertBack(const T& data)
+    INLINE void LinkedList<T>::insertBack(const T& data)
     {
         if (m_pHead != NULL)
         {
@@ -42,32 +42,32 @@ namespace Structure
     }
 
     template<typename T>
-    inline void LinkedList<T>::insertFront(const T& data)
+    INLINE void LinkedList<T>::insertFront(const T& data)
     {
     }
 
     template<typename T>
-    inline void LinkedList<T>::insert(const UINT i, const T& data)
+    INLINE void LinkedList<T>::insert(const UINT i, const T& data)
     {
     }
 
     template<typename T>
-    inline void LinkedList<T>::removeBack()
+    INLINE void LinkedList<T>::removeBack()
     {
     }
 
     template<typename T>
-    inline void LinkedList<T>::removeFront()
+    INLINE void LinkedList<T>::removeFront()
     {
     }
 
     template<typename T>
-    inline void LinkedList<T>::removeNode(const UINT i)
+    INLINE void LinkedList<T>::removeNode(const UINT i)
     {
     }
 
     template<typename T>
-    inline void LinkedList<T>::clear()
+    INLINE void LinkedList<T>::clear()
     {
         LinkedListNode<T>** ppCur = &m_pHead;
         LinkedListNode<T>** ppNext;

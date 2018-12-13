@@ -150,6 +150,9 @@
     <ClInclude Include="src\Memory\BxMemory.h">
       <Filter>src\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="src\Structure\Queue.h">
+      <Filter>src\Structure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Math\Math.cpp">
@@ -231,6 +234,9 @@
     </None>
     <None Include="src\Memory\MemoryArena.inl">
       <Filter>src\Memory</Filter>
+    </None>
+    <None Include="src\Structure\Queue.inl">
+      <Filter>src\Structure</Filter>
     </None>
   </ItemGroup>
 </Project>

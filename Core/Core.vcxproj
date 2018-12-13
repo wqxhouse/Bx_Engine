@@ -210,6 +210,7 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Scene\RenderScene.h" />
     <ClInclude Include="src\Setting\Setting.h" />
     <ClInclude Include="src\Structure\LinkedList.h" />
+    <ClInclude Include="src\Structure\Queue.h" />
     <ClInclude Include="src\Texture\Cubemap.h" />
     <ClInclude Include="src\Texture\TextureBase.h" />
     <ClInclude Include="src\Texture\Texture2D.h" />
@@ -244,6 +245,7 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
   <ItemGroup>
     <None Include="src\Memory\MemoryArena.inl" />
     <None Include="src\Structure\LinkedList.inl" />
+    <None Include="src\Structure\Queue.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
