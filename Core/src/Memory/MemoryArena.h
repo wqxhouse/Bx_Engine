@@ -18,8 +18,7 @@ namespace Memory
     class MemoryArena
     {
     public:
-        MemoryArena(
-            MemoryRaw*       pMem,
+        explicit MemoryArena(
             const Allocator* pAllocator);
 
         ~MemoryArena();
@@ -38,7 +37,6 @@ namespace Memory
         void clear();
 
     private:
-        MemoryRaw*           m_pMem;
         const Allocator*     m_pAllocator;
 
         size_t m_memoryUsage;

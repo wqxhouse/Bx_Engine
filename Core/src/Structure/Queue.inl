@@ -9,32 +9,29 @@
 
 namespace Structure
 {
-    template<typename T>
-    INLINE Queue<T>::Queue(
-        const UINT capacity,
+    template<typename T, size_t SIZE>
+    INLINE QueueFixed<T, SIZE>::QueueFixed(
         const BOOL isRing)
-        : m_capacity(capacity),
-        m_isRing(isRing)
+        : m_capacity(SIZE),
+          m_isRing(isRing)
     {
-        m_pDataQueue = static_cast<T*>(malloc(capacity * sizeof(T));
-        m_front = m_back = 0;
-
-        m_size = 0;
+        m_front = 0;
+        m_back  = 0;
+        m_size  = 0;
     }
 
-    template<typename T>
-    INLINE Queue<T>::~Queue()
+    template<typename T, size_t SIZE>
+    INLINE QueueFixed<T, SIZE>::~QueueFixed()
     {
-        free(static_cast<void*>(m_pDataQueue));
     }
 
-    template<typename T>
-    INLINE void Queue<T>::push(
+    template<typename T, size_t SIZE>
+    INLINE void QueueFixed<T, SIZE>::push(
         const T& val)
     {
         assert(m_size <= m_capacity);
 
-        m_pDataQueue[m_back] = val;
+        m_dataQueue[m_back] = val;
         m_back++;
 
         m_size++;
@@ -53,10 +50,10 @@ namespace Structure
         }
     }
 
-    template<typename T>
-    INLINE T Queue<T>::pop()
+    template<typename T, size_t SIZE>
+    INLINE T QueueFixed<T, SIZE>::pop()
     {
-        T& result = m_pDataQueue[m_front];
+        T& result = m_dataQueue[m_front++];
         m_size--;
 
         if (m_isRing == TRUE)

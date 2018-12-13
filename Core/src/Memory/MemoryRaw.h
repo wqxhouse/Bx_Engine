@@ -35,7 +35,7 @@ namespace Memory
             : MemoryRaw(m_linearMem, m_linearMem + SIZE),
             m_size(SIZE) {}
 
-        ~MemoryStack() {}
+        ~MemoryLinear() {}
 
     private:
         BYTE         m_linearMem[SIZE];

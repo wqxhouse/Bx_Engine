@@ -13,29 +13,25 @@
 
 namespace Structure
 {
-	template<typename T>
-	class Queue
+	template<typename T, size_t SIZE>
+	class QueueFixed
 	{
 	public:
-		Queue(
-			const UINT capacity,
-			const BOOL isRing);
+		explicit QueueFixed(const BOOL isRing);
 
-		~Queue();
+		~QueueFixed();
 
 		void push(const T& val);
 
         T pop();
 
 	private:
-		Memory::LinearMemoryArena* m_pMemArena;
-
         UINT m_capacity;
         UINT m_size;
 
         BOOL m_isRing;
 
-        T* m_pDataQueue;
+        T m_dataQueue[SIZE];
 
         UINT m_front;
         UINT m_back;

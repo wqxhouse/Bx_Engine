@@ -12,10 +12,8 @@ namespace Memory
 {
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
     INLINE MemoryArena<Allocator, Thread, BoundChecking, MemoryTracker>::MemoryArena(
-        MemoryRaw*       pMem,
         const Allocator* pAllocator)
-        : m_pMem(pMem),
-          m_pAllocator(pAllocator)
+        : m_pAllocator(pAllocator)
     {
         m_memoryUsage = 0;
     }
@@ -32,7 +30,7 @@ namespace Memory
     {
         UINT allocSize = size + BoundChecking::FRONT_SIZE + BoundChecking::BACK_SIZE;
 
-        assert(allocSize <= ((m_pMem->m_pMemEnd - m_pMem->m_pMemStart) - m_memoryUsage));
+        assert(allocSize <= (m_pAllocator->TotalMemory() - m_memoryUsage));
 
         void* allocPtr = m_pAllocator->alloc(allocSize,
                                              Allocator::DEFAULT_ALIGNMENT_SIZE,
@@ -56,7 +54,7 @@ namespace Memory
     {
         UINT allocSize = size + BoundChecking::FRONT_SIZE + BoundChecking::BACK_SIZE;
 
-        assert(allocSize <= ((m_pMem->m_pMemEnd - m_pMem->m_pMemStart) - m_memoryUsage));
+        assert(allocSize <= (m_pAllocator->TotalMemory() - m_memoryUsage));
 
         void* allocPtr = m_pAllocator->alloc(allocSize,
                                              Allocator::DEFAULT_ALIGNMENT_SIZE,

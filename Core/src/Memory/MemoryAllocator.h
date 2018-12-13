@@ -16,7 +16,7 @@ namespace Memory
     class Allocator
     {
     public:
-        Allocator(MemoryRaw* pMem);
+        explicit Allocator(MemoryRaw* pMem);
 
         ~Allocator();
 
@@ -27,6 +27,16 @@ namespace Memory
         virtual BOOL free(void* freeAddr) = 0;
 
         virtual void clear() = 0;
+
+        INLINE UINT MemoryUsage() const
+        {
+            return static_cast<UINT>(m_pCurrent - m_pStart);
+        }
+
+        INLINE UINT TotalMemory() const
+        {
+            return static_cast<UINT>(m_pEnd - m_pStart);
+        }
 
         static const size_t DEFAULT_ALIGNMENT_SIZE = 4;
 
@@ -39,7 +49,7 @@ namespace Memory
     class LinearAllocator : public Allocator
     {
     public:
-        LinearAllocator(MemoryRaw* pMem);
+        explicit LinearAllocator(MemoryRaw* pMem);
 
         ~LinearAllocator();
 
@@ -58,7 +68,7 @@ namespace Memory
     class StackAllocator : public Allocator
     {
     public:
-        StackAllocator(MemoryRaw* pMem);
+        explicit StackAllocator(MemoryRaw* pMem);
         
         ~StackAllocator();
 
