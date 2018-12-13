@@ -27,7 +27,7 @@ namespace Memory
 
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
     INLINE void* MemoryArena<Allocator, Thread, BoundChecking, MemoryTracker>::alloc(
-        const UINT size,
+        const UINT        size,
         const MemoryLogs& logs)
     {
         UINT allocSize = size + BoundChecking::FRONT_SIZE + BoundChecking::BACK_SIZE;

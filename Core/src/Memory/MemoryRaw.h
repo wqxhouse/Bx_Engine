@@ -27,6 +27,21 @@ namespace Memory
         void* m_pMemEnd;
     };
 
+    template <size_t SIZE> // Linear memory size in byte
+    class MemoryLinear : MemoryRaw
+    {
+    public:
+        MemoryLinear()
+            : MemoryRaw(m_linearMem, m_linearMem + SIZE),
+            m_size(SIZE) {}
+
+        ~MemoryStack() {}
+
+    private:
+        BYTE         m_linearMem[SIZE];
+        const size_t m_size;
+    };
+
     template <size_t SIZE> // Stack memory size in byte
     class MemoryStack : MemoryRaw
     {
