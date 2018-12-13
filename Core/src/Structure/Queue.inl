@@ -16,7 +16,7 @@ namespace Structure
         : m_capacity(capacity),
         m_isRing(isRing)
     {
-        m_pDataQueue = static_cast<T*>(malloc(capacity));
+        m_pDataQueue = static_cast<T*>(malloc(capacity * sizeof(T));
         m_front = m_back = 0;
 
         m_size = 0;
