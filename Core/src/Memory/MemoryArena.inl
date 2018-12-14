@@ -43,7 +43,7 @@ namespace Memory
 
         m_memoryUsage += size;
 
-        return result;
+        return allocPtr;
     }
 
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
@@ -67,7 +67,7 @@ namespace Memory
 
         m_memoryUsage += size;
 
-        return result;
+        return allocPtr;
     }
 
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>

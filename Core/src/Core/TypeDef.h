@@ -53,7 +53,7 @@ typedef unsigned char  image_data;
 typedef unsigned char* image_ptr;
 
 template<typename T>
-inline void SafeFree(T* ptr)
+INLINE void SafeFree(T* ptr)
 {
     if (ptr != NULL)
     {
@@ -62,7 +62,7 @@ inline void SafeFree(T* ptr)
 }
 
 template<typename T>
-inline void SafeDelete(T* ptr)
+INLINE void SafeDelete(T* ptr)
 {
     if (ptr != NULL)
     {
@@ -70,7 +70,7 @@ inline void SafeDelete(T* ptr)
     }
 }
 
-inline void SafeDeleteArray(void *ptr)
+INLINE void SafeDeleteArray(void *ptr)
 {
     if (ptr != NULL)
     {
@@ -78,7 +78,13 @@ inline void SafeDeleteArray(void *ptr)
     }
 }
 
-inline void NotImplemented()
+INLINE void NotSupported()
+{
+    printf("This feature is not supported.\n");
+    assert(FALSE);
+}
+
+INLINE void NotImplemented()
 {
     printf("This feature hasn't been implemented yet.\n");
     assert(FALSE);
