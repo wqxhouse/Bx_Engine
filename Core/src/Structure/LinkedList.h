@@ -62,18 +62,18 @@ namespace Structure
         }
 
         // Modify functions
-        virtual void insertBack(const T& data)           = 0;
-        virtual void insertFront(const T& data)          = 0;
+        virtual void insertBack(const T& data) = 0;
+        virtual void insertFront(const T& data) = 0;
         virtual void insert(const UINT i, const T& data) = 0;
 
-        virtual void removeBack()             = 0;
-        virtual void removeFront()            = 0;
+        virtual void removeBack() = 0;
+        virtual void removeFront() = 0;
         virtual void removeNode(const UINT i) = 0;
 
         virtual void clear() = 0;
 
         virtual void modify(const UINT i,
-                            const T& data) = 0;
+            const T& data) = 0;
 
         // Data functions
         virtual const T& get(const UINT i) const = 0;
@@ -91,7 +91,7 @@ namespace Structure
     class LinkedList : public LinkedListBase<T>
     {
     public:
-        LinkedList()  {}
+        LinkedList() {}
         ~LinkedList() {}
 
         void insertBack(const T& data);
@@ -105,7 +105,7 @@ namespace Structure
         void clear();
 
         void modify(const UINT i,
-                    const T& data);
+            const T& data);
 
         const T& get(const UINT i) const;
 
@@ -117,7 +117,7 @@ namespace Structure
     class XorLinkedList : public LinkedListBase<T>
     {
     public:
-        XorLinkedList()  {}
+        XorLinkedList() {}
         ~XorLinkedList() {}
 
         void insertBack(const T& data);
@@ -131,7 +131,7 @@ namespace Structure
         void clear();
 
         void modify(const UINT i,
-                    const T& data);
+            const T& data);
 
         const T& get(const UINT i) const;
 

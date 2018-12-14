@@ -19,7 +19,7 @@ namespace Structure
         if (m_pHead != NULL)
         {
             m_pTail->m_pNext = newNode;
-            m_pTail          = newNode;
+            m_pTail = newNode;
         }
         else
         {
@@ -57,8 +57,8 @@ namespace Structure
     {
         assert(i <= m_length);
 
-        if      (i == 0)        { insertFront(data); }
-        else if (i == m_length) { insertBack(data);  }
+        if (i == 0) { insertFront(data); }
+        else if (i == m_length) { insertBack(data); }
         else
         {
             LinkedListNode<T>* pPrev = m_pHead;
@@ -74,7 +74,7 @@ namespace Structure
 
             LinkedListNode<T>* newNode = new LinkedListNode<T>(data, NULL);
 
-            pPrev->m_pNext   = newNode;
+            pPrev->m_pNext = newNode;
             newNode->m_pNext = pCur;
 
             m_length++;
@@ -97,7 +97,7 @@ namespace Structure
             SafeDelete(m_pTail);
 
             ptr->m_pNext = NULL;
-            m_pTail      = ptr;
+            m_pTail = ptr;
         }
         else
         {
@@ -127,8 +127,8 @@ namespace Structure
     {
         assert(i <= m_length);
 
-        if      (i == 0)        { removeFront(); }
-        else if (i == m_length) { removeBack();  }
+        if (i == 0) { removeFront(); }
+        else if (i == m_length) { removeBack(); }
         else
         {
             LinkedListNode<T>* pPrev = m_pHead;
@@ -176,7 +176,7 @@ namespace Structure
         assert(i < m_length);
 
         T& oriData = getRef(i);
-        oriData    = data;
+        oriData = data;
     }
 
     template<typename T>
@@ -298,7 +298,7 @@ namespace Structure
             SafeDelete(m_pTail);
 
             pCur->m_pMask = pPrev;
-            m_pTail       = pCur;
+            m_pTail = pCur;
         }
         else
         {
@@ -315,14 +315,14 @@ namespace Structure
     {
         if (m_length > 1)
         {
-            LinkedListNode<T>* pCur  = m_pHead->m_pMask;
+            LinkedListNode<T>* pCur = m_pHead->m_pMask;
             LinkedListNode<T>* pNext = reinterpret_cast<LinkedListNode<T>*>(
                 reinterpret_cast<uintptr_t>(m_pHead) ^ reinterpret_cast<uintptr_t>(pCur->m_pMask));
 
             SafeDelete(m_pHead);
 
             pCur->m_pMask = pNext;
-            m_pHead       = pCur;
+            m_pHead = pCur;
         }
         else
         {
@@ -346,7 +346,7 @@ namespace Structure
     INLINE void XorLinkedList<T>::clear()
     {
         LinkedListNode<T>** ppPrev = &m_pHead;
-        LinkedListNode<T>*  pCur   = ((m_pHead != NULL) ? (m_pHead->m_pMask) : NULL);
+        LinkedListNode<T>*  pCur = ((m_pHead != NULL) ? (m_pHead->m_pMask) : NULL);
 
         if (m_pHead != NULL && pCur == NULL)
         {
@@ -364,8 +364,8 @@ namespace Structure
             *ppPrev = NULL;
 
             tempPCur = pCur;
-            ppPrev   = &tempPCur;
-            pCur     = pNext;
+            ppPrev = &tempPCur;
+            pCur = pNext;
 
             // Release the last element
             if (*ppPrev == m_pTail)
@@ -384,7 +384,7 @@ namespace Structure
         assert(i < m_length);
 
         T& oriData = getRef(i);
-        oriData    = data;
+        oriData = data;
     }
 
     template<typename T>
