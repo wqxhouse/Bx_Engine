@@ -98,7 +98,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Core\include\;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.92.1\Include;..\lib\Core\include\;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <PostBuildEvent>
@@ -125,7 +125,7 @@ CompileShader.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.85.0\Include;..\lib\Core\include\;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.92.1\Include;..\lib\Core\include\;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
