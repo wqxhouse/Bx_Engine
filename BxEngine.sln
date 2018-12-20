@@ -124,6 +124,7 @@ Global
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|Win32.ActiveCfg = Debug|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|Win32.Build.0 = Debug|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|x64.ActiveCfg = Debug|x64
+		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|x64.Build.0 = Debug|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|Win32.ActiveCfg = Release|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|Win32.Build.0 = Release|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|x64.ActiveCfg = Release|x64

@@ -93,6 +93,7 @@
       <AdditionalIncludeDirectories>..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <PostBuildEvent>
       <Command>if not exist $(SolutionDir)lib\Core\$(Configuration) mkdir $(SolutionDir)lib\Core\$(Platform)\$(Configuration)
