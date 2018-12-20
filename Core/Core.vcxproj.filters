@@ -167,9 +167,6 @@
     <ClCompile Include="src\Math\Transform\Trans.cpp">
       <Filter>src\Math\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\PCH.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Utility.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>

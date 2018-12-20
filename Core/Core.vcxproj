@@ -92,6 +92,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\extern\stb;..\extern\glfw-3.2.1\include;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <PostBuildEvent>
       <Command>if not exist $(SolutionDir)lib\Core\$(Configuration) mkdir $(SolutionDir)lib\Core\$(Platform)\$(Configuration)
@@ -219,7 +220,6 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Texture\Texture3D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Core\PCH.cpp" />
     <ClCompile Include="src\Core\Utility.cpp" />
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Math\Transform\Trans.cpp" />
