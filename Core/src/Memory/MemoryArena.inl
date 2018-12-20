@@ -12,15 +12,18 @@ namespace Memory
 {
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
     INLINE MemoryArena<Allocator, Thread, BoundChecking, MemoryTracker>::MemoryArena(
-        const Allocator* pAllocator)
+        Allocator* pAllocator)
         : m_pAllocator(pAllocator)
     {
+        m_pAllocator->init(BoundChecking::FRONT_SIZE, BoundChecking::BACK_SIZE);
+
         m_memoryUsage = 0;
     }
 
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
     INLINE MemoryArena<Allocator, Thread, BoundChecking, MemoryTracker>::~MemoryArena()
     {
+        release();
     }
 
     template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
@@ -39,7 +42,7 @@ namespace Memory
         assert(allocPtr != NULL);
 
         BoundChecking::GuardFront(allocPtr);
-        BoundChecking::GuardBack(allocPtr + BoundChecking::FROND_SIZE + size);
+        BoundChecking::GuardBack(static_cast<void*>(static_cast<BYTE*>(allocPtr) + BoundChecking::FRONT_SIZE + size));
 
         m_memoryUsage += size;
 
@@ -63,7 +66,7 @@ namespace Memory
         assert(allocPtr != NULL);
 
         BoundChecking::GuardFront(allocPtr);
-        BoundChecking::GuardBack(allocPtr + BoundChecking::FROND_SIZE + size);
+        BoundChecking::GuardBack(static_cast<void*>(static_cast<BYTE*>(allocPtr) + BoundChecking::FRONT_SIZE + size));
 
         m_memoryUsage += size;
 
@@ -82,5 +85,11 @@ namespace Memory
     INLINE void MemoryArena<Allocator, Thread, BoundChecking, MemoryTracker>::clear()
     {
         m_pAllocator->clear();
+    }
+
+    template<class Allocator, class Thread, class BoundChecking, class MemoryTracker>
+    inline void Memory::MemoryArena<Allocator, Thread, BoundChecking, MemoryTracker>::release()
+    {
+        m_pAllocator->release();
     }
 }

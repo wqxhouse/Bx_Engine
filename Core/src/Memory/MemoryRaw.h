@@ -16,8 +16,13 @@ namespace Memory
     class MemoryRaw
     {
     public:
-        MemoryRaw(void* pMemStart, void* pMemEnd);
-        ~MemoryRaw();
+        MemoryRaw(void* pMemStart, void* pMemEnd)
+            : m_pMemStart(pMemStart),
+            m_pMemEnd(pMemEnd)
+        {
+        }
+
+        ~MemoryRaw() {};
 
         INLINE void* GetMemStartAddr() const { return m_pMemStart; }
         INLINE void* GetMemEndAddr()   const { return m_pMemEnd;   }
@@ -28,12 +33,12 @@ namespace Memory
     };
 
     template <size_t SIZE> // Linear memory size in byte
-    class MemoryLinear : MemoryRaw
+    class MemoryLinear : public MemoryRaw
     {
     public:
         MemoryLinear()
             : MemoryRaw(m_linearMem, m_linearMem + SIZE),
-            m_size(SIZE) {}
+              m_size(SIZE) {}
 
         ~MemoryLinear() {}
 
@@ -43,7 +48,7 @@ namespace Memory
     };
 
     template <size_t SIZE> // Stack memory size in byte
-    class MemoryStack : MemoryRaw
+    class MemoryStack : public MemoryRaw
     {
     public:
         MemoryStack()
@@ -57,5 +62,18 @@ namespace Memory
         const size_t m_size;
     };
 
-    // TODO: Heap memory
+    class MemoryHeap : public MemoryRaw
+    {
+    public:
+        explicit MemoryHeap(void* pMemStart, void* pMemEnd)
+            : MemoryRaw(pMemStart, pMemEnd),
+              m_size(static_cast<BYTE*>(pMemEnd) - static_cast<BYTE*>(pMemStart))
+        {
+        }
+
+        ~MemoryHeap() {};
+
+    private:
+        const size_t m_size;
+    };
 }

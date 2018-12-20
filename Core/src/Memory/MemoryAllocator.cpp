@@ -15,10 +15,13 @@
 namespace Memory
 {
     /// Base Allocator
+    Allocator::Allocator()
+    {
+    }
+
     Allocator::Allocator(MemoryRaw* pMem)
         : m_pStart(static_cast<BYTE*>(pMem->GetMemStartAddr())),
-          m_pEnd(static_cast<BYTE*>(pMem->GetMemEndAddr())),
-          m_pCurrent(m_pStart)
+          m_pEnd(static_cast<BYTE*>(pMem->GetMemEndAddr()))
     {
     }
 
@@ -29,7 +32,8 @@ namespace Memory
     /// Linear Allocator
     LinearAllocator::LinearAllocator(
         MemoryRaw* pMem)
-        : Allocator(pMem)
+        : Allocator(pMem),
+          m_pCurrent(m_pStart)
     {
 
     }
@@ -56,7 +60,8 @@ namespace Memory
     
     /// Stack Allocator
     StackAllocator::StackAllocator(MemoryRaw* pMem)
-        : Allocator(pMem)
+        : Allocator(pMem),
+          m_pCurrent(m_pStart)
     {
     }
 

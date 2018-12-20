@@ -25,7 +25,7 @@ namespace Scene
         
         RenderScene(
             const Setting* const pSetting,
-            const std::string& sceneFile);
+            const std::string&   sceneFile);
 
         ~RenderScene();
 

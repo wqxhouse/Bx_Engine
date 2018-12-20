@@ -87,12 +87,30 @@ namespace Memory
     struct MemoryLogs
     {
         const char* fileName;
-        const char* lineNum;
+        const int   lineNum;
     };
 
     class MemoryUtility
     {
     public:
+        template <typename T>
+        static INLINE T AlignmentCeil(
+            const T&     val,
+            const size_t alignmentNum)
+        {
+            size_t valInt = static_cast<size_t>(val);
+            T res         = static_cast<T>(valInt);
+
+            size_t mod    = valInt % alignmentNum;
+
+            if (mod != 0)
+            {
+                res = static_cast<T>(valInt + mod);
+            }
+
+            return res;
+        }
+
         template <typename T>
         static INLINE T* MemoryAlignmentCeil(
             T*           pAddr,

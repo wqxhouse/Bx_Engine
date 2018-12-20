@@ -195,6 +195,8 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\Memory\BxMemory.h" />
+    <ClInclude Include="src\Memory\MemoryPool.h" />
+    <ClInclude Include="src\Memory\MemoryPoolAllocator.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryArena.h" />
     <ClInclude Include="src\Memory\MemoryRaw.h" />
@@ -222,7 +224,8 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Math\Transform\Trans.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
-    <ClCompile Include="src\Memory\MemoryRaw.cpp" />
+    <ClCompile Include="src\Memory\MemoryPool.cpp" />
+    <ClCompile Include="src\Memory\MemoryPoolAllocator.cpp" />
     <ClCompile Include="src\Object\Camera\Camera.cpp" />
     <ClCompile Include="src\Object\Camera\OrthographicCamera.cpp" />
     <ClCompile Include="src\Object\Camera\ProspectiveCamera.cpp" />

@@ -16,6 +16,14 @@ using namespace Structure;
 
 int main()
 {
+    Memory::MemoryPool m_memPool(1024);
+
+    Memory::MemoryPoolAllocator m_allocator(&m_memPool, 3, 4, 0, Memory::Allocator::DEFAULT_ALIGNMENT_SIZE);
+    Memory::MemoryPoolArena arena(&m_allocator);
+
+    int* a = BX_NEW(int, arena)(5);
+    //BX_DELETE(*a, arena);
+
     /*LinkedList<int> list;
     list.insert(0, 1);
     list.insertBack(2);

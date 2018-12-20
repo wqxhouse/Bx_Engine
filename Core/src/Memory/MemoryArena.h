@@ -19,7 +19,7 @@ namespace Memory
     {
     public:
         explicit MemoryArena(
-            const Allocator* pAllocator);
+            Allocator* pAllocator);
 
         ~MemoryArena();
 
@@ -36,8 +36,10 @@ namespace Memory
 
         void clear();
 
+        void release();
+
     private:
-        const Allocator*     m_pAllocator;
+        Allocator* m_pAllocator;
 
         size_t m_memoryUsage;
     };

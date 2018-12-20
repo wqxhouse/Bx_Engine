@@ -153,6 +153,12 @@
     <ClInclude Include="src\Structure\Queue.h">
       <Filter>src\Structure</Filter>
     </ClInclude>
+    <ClInclude Include="src\Memory\MemoryPoolAllocator.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryPool.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Math\Math.cpp">
@@ -221,10 +227,13 @@
     <ClCompile Include="src\Object\ObjectBase.cpp">
       <Filter>src\Object</Filter>
     </ClCompile>
-    <ClCompile Include="src\Memory\MemoryRaw.cpp">
+    <ClCompile Include="src\Memory\MemoryAllocator.cpp">
       <Filter>src\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="src\Memory\MemoryAllocator.cpp">
+    <ClCompile Include="src\Memory\MemoryPoolAllocator.cpp">
+      <Filter>src\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryPool.cpp">
       <Filter>src\Memory</Filter>
     </ClCompile>
   </ItemGroup>
