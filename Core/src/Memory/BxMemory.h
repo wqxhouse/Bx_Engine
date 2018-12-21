@@ -12,9 +12,9 @@
 #include "MemoryPoolAllocator.h"
 #include "MemoryArena.h"
 
-#define BX_NEW(T, arena)      new(arena.alloc(sizeof(T), {__FILE__, __LINE__})) T
-#define BX_DELETE(ptr, arena) (Memory::BxMemory::Delete(&ptr, arena))
-#define BX_RELEASE(arena)     (arena.release())
+#define BX_NEW(T, arena)      new((arena).alloc(sizeof(T), {__FILE__, __LINE__})) (T)
+#define BX_DELETE(ptr, arena) (Memory::BxMemory::Delete(&(ptr), (arena)))
+#define BX_RELEASE(arena)     ((arena).release())
 
 namespace Memory
 {
