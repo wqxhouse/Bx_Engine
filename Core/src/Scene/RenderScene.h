@@ -32,49 +32,42 @@ namespace Scene
 
         ~RenderScene();
 
-        INLINE void addProspectiveCamera(
+        INLINE void AddProspectiveCamera(
             const Object::Camera::ProspectiveCameraCreateInfo& prosCamCreateInfo)
         {
             m_pCameraList.push_back(
                 BX_NEW(Object::Camera::ProspectiveCamera, *m_pObjArena)(prosCamCreateInfo));
         }
 
-        INLINE void addOrthographicCamera(
+        INLINE void AddOrthographicCamera(
             const Object::Camera::OrthographicCameraCreateInfo& orthoCamCreateInfo)
         {
             m_pCameraList.push_back(
                 BX_NEW(Object::Camera::OrthographicCamera, *m_pObjArena)(orthoCamCreateInfo));
         }
 
-        INLINE void addDirectionalLight(
+        INLINE void AddDirectionalLight(
             const Object::Light::LightCreateInfo& lightCreateInfo)
         {
             m_pLightList.push_back(
                 BX_NEW(Object::Light::DirectionalLight, *m_pObjArena)(lightCreateInfo));
         }
 
-        INLINE void addDirectionalLight(
-            const Object::Light::LightCreateInfo& lightCreateInfo)
-        {
-            m_pLightList.push_back(
-                BX_NEW(Object::Light::DirectionalLight, *m_pObjArena)(lightCreateInfo));
-        }
-
-        INLINE void addPointLight(
+        INLINE void AddPointLight(
             const Object::Light::PointLightCreateInfo& pointLightCreateInfo)
         {
             m_pLightList.push_back(
                 BX_NEW(Object::Light::PointLight, *m_pObjArena)(pointLightCreateInfo));
         }
 
-        INLINE void addDirectionalLight(
+        INLINE void AddSpotLight(
             const Object::Light::SpotLightCreateInfo& spotLightCreateInfo)
         {
             m_pLightList.push_back(
                 BX_NEW(Object::Light::SpotLight, *m_pObjArena)(spotLightCreateInfo));
         }
 
-        INLINE void addObjModel(
+        INLINE void AddObjModel(
             const std::string& modelFile,
             const std::string& materialFile,
             Trans*             modelTrans)
