@@ -11,6 +11,7 @@
 
 #include "../Core/PCH.h"
 #include "../Setting/Setting.h"
+#include "../Memory/BxMemory.h"
 #include "../Object/Camera/Camera.h"
 #include "../Object/Light/Light.h"
 #include "../Object/Model/Model.h"
@@ -21,19 +22,37 @@ namespace Scene
     {
     public:
         RenderScene(
-            const Setting* const pSetting);
+            const Setting* const     pSetting,
+            Memory::MemoryPoolArena* pObjArena);
         
         RenderScene(
-            const Setting* const pSetting,
-            const std::string&   sceneFile);
+            const Setting* const     pSetting,
+            Memory::MemoryPoolArena* pObjArena,
+            const std::string&       sceneFile);
 
         ~RenderScene();
 
-    private:
-        const Setting* const m_pSetting;
+        INLINE void addProspectiveCamera(
+            const Object::Camera::ProspectiveCameraCreateInfo& prosCamCreateInfo)
+        {
+            m_pCameraList.push_back(
+                BX_NEW(Object::Camera::ProspectiveCamera, *m_pObjArena)(prosCamCreateInfo));
+        }
 
-        std::vector<std::unique_ptr<Object::Camera::CameraBase>> m_pCameraList;
-        std::vector<std::unique_ptr<Object::Light::LightBase>>   m_pLightList;
-        std::vector<std::unique_ptr<Object::Model::ModelObject>> m_pModelList;
+        INLINE void addOrthographicCamera(
+            const Object::Camera::OrthographicCameraCreateInfo& orthoCamCreateInfo)
+        {
+            m_pCameraList.push_back(
+                BX_NEW(Object::Camera::OrthographicCamera, *m_pObjArena)(orthoCamCreateInfo));
+        }
+
+    private:
+        const Setting* const           m_pSetting;
+
+        Memory::MemoryPoolArena* const m_pObjArena;
+
+        std::vector<Object::Camera::CameraBase*> m_pCameraList;
+        std::vector<Object::Light::LightBase*>   m_pLightList;
+        std::vector<Object::Model::ModelObject*> m_pModelList;
     };
 }

@@ -17,20 +17,17 @@ namespace Object
     namespace Camera
     {
         CameraBase::CameraBase(
-            CameraType           type,
-            const Math::Vector3& pos,
-            const Math::Vector3& center,
-            const Math::Vector3& up,
-            const float          speed,
-            const float          nearClip,
-            const float          farClip)
-            : ObjectBase(new Trans(pos, center, up)),
+
+            const CameraType        type,
+            const CameraCreateInfo& camCreateInfo)
+            : ObjectBase(
+                new Trans(camCreateInfo.pos, camCreateInfo.center, camCreateInfo.up)),
               m_cameraType(type),
-              curFront(m_pTrans->GetFront()),
-              curRight(m_pTrans->GetRight()),
-              worldUp(up),
-              m_nearClip(nearClip),
-              m_farClip(farClip)
+              m_curFront(m_pTrans->GetFront()),
+              m_curRight(m_pTrans->GetRight()),
+              m_worldUp(camCreateInfo.up),
+              m_nearClip(camCreateInfo.nearClip),
+              m_farClip(camCreateInfo.farClip)
         {
             this->speed = speed;
         }
@@ -50,7 +47,7 @@ namespace Object
             CLAMP(pitch, -89.0f, 89.0f);
 
             Math::Vector3 m_front = Math::Vector3::Normalize(
-                Math::rotate(Math::Vector3(curFront),
+                Math::rotate(Math::Vector3(m_curFront),
                     Math::Vector3(0.0f, 1.0f, 0.0f),
                     Math::Radians(-yaw)));
 
@@ -58,7 +55,7 @@ namespace Object
                 m_front, Math::Vector3(-m_front.z, 0.0f, m_front.x), Math::Radians(pitch));
 
             Math::Vector3 m_right = Math::rotate(
-                Math::Vector3(curRight), Math::Vector3(0.0f, 1.0f, 0.0f), Math::Radians(-yaw));
+                Math::Vector3(m_curRight), Math::Vector3(0.0f, 1.0f, 0.0f), Math::Radians(-yaw));
 
             // m_pTrans->front = glm::normalize(Math::Vector3(m_front.x, m_front.y, m_front.z));
             // m_pTrans->right = glm::normalize(Math::Vector3(m_right.x, m_right.y, m_right.z));
@@ -67,8 +64,8 @@ namespace Object
             m_pTrans->SetTransBase(Math::Vector3::Normalize(m_front),
                                    Math::Vector3::Normalize(Math::Vector3(m_right)));
 
-            curFront = m_pTrans->GetFront();
-            curRight = m_pTrans->GetRight();
+            m_curFront = m_pTrans->GetFront();
+            m_curRight = m_pTrans->GetRight();
         }
 
         void CameraBase::update(float deltaTime)
@@ -118,8 +115,8 @@ namespace Object
         {
             m_pTrans->SetTrans(pos, center, up);
 
-            curFront = m_pTrans->GetFront();
-            curRight = m_pTrans->GetRight();
+            m_curFront = m_pTrans->GetFront();
+            m_curRight = m_pTrans->GetRight();
         }
     }
 }

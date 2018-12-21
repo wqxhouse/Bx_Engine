@@ -70,7 +70,7 @@ namespace Math
         const float farClip);        ///< Far clip
 
     Mat4 orthographicProjectionMatrix(
-        const BxsRectangle& viewport,   ///< Viewport for the orthographic camera
+        const Rectangle& viewport,   ///< Viewport for the orthographic camera
         const float         nearClip,   ///< Near clip
         const float         farClip);    ///< Far clip
 

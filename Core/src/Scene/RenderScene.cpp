@@ -12,15 +12,19 @@
 namespace Scene
 {
     RenderScene::RenderScene(
-        const Setting* const pSetting)
-        : m_pSetting(pSetting)
+        const Setting* const     pSetting,
+        Memory::MemoryPoolArena* pObjArena)
+        : m_pSetting(pSetting),
+          m_pObjArena(pObjArena)
     {
     }
 
     RenderScene::RenderScene(
-        const Setting* const pSetting,
-        const std::string&   sceneFile)
-        : m_pSetting(pSetting)
+        const Setting* const     pSetting,
+        Memory::MemoryPoolArena* pObjArena,
+        const std::string&       sceneFile)
+        : m_pSetting(pSetting),
+          m_pObjArena(pObjArena)
     {
         // TODO: Load scene from XML file
     }

@@ -15,17 +15,13 @@ namespace Object
     namespace Camera
     {
         OrthographicCamera::OrthographicCamera(
-            const Math::Vector3&    pos,
-            const Math::Vector3&    center,
-            const Math::Vector3&    up,
-            const float             speed,
-            const BxsRectangle&     viewport,
-            const float             nearClip,
-            const float             farClip)
-            : CameraBase(ORTHOGRAPHIC_CAM, pos, center, up, speed, nearClip, farClip),
-            m_viewport(viewport)
+            const OrthographicCameraCreateInfo& prosCamCreateInfo)
+            : CameraBase(ORTHOGRAPHIC_CAM, static_cast<CameraCreateInfo>(prosCamCreateInfo)),
+              m_viewport(prosCamCreateInfo.viewport)
         {
-            m_projectionMatrix = Math::orthographicProjectionMatrix(viewport, nearClip, farClip);
+            m_projectionMatrix = Math::orthographicProjectionMatrix(prosCamCreateInfo.viewport,
+                                                                    prosCamCreateInfo.nearClip,
+                                                                    prosCamCreateInfo.farClip);
         }
 
         OrthographicCamera::~OrthographicCamera()
@@ -35,7 +31,7 @@ namespace Object
         void OrthographicCamera::update(float deltaTime)
         {
             rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE,
-                static_cast<float>(callbackInfo.cursorPosCallBack.delta_x) * CAMERA_SENSATIVE);
+                   static_cast<float>(callbackInfo.cursorPosCallBack.delta_x)  * CAMERA_SENSATIVE);
 
             callbackInfo.cursorPosCallBack.reset();
             CameraBase::update(deltaTime);

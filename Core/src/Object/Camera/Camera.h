@@ -19,17 +19,33 @@ namespace Object
 {
     namespace Camera
     {
+        struct CameraCreateInfo
+        {
+            Math::Vector3 pos;
+            Math::Vector3 center;
+            Math::Vector3 up;
+            float         speed;
+            float         nearClip;
+            float         farClip;
+        };
+
+        struct ProspectiveCameraCreateInfo : public CameraCreateInfo
+        {
+            float aspectRatio;
+            float fov;
+        };
+
+        struct OrthographicCameraCreateInfo : public CameraCreateInfo
+        {
+            Rectangle viewport;
+        };
+
         class CameraBase : public ObjectBase
         {
         public:
             CameraBase(
-                CameraType           type,
-                const Math::Vector3& pos,
-                const Math::Vector3& center,
-                const Math::Vector3& up,
-                const float          speed,
-                const float          nearClip,
-                const float          farClip);
+                const CameraType        type,
+                const CameraCreateInfo& camCreateInfo);
 
             virtual ~CameraBase();
 
@@ -56,12 +72,11 @@ namespace Object
         protected:
             float speed;
 
-            Math::Mat4 m_projectionMatrix;
+            Math::Mat4    m_projectionMatrix;
 
-            Math::Vector3 worldUp;
-
-            Math::Vector3 curFront;
-            Math::Vector3 curRight;
+            Math::Vector3 m_worldUp;
+            Math::Vector3 m_curFront;
+            Math::Vector3 m_curRight;
 
         private:
             CameraType m_cameraType;
@@ -74,14 +89,7 @@ namespace Object
         {
         public:
             ProspectiveCamera(
-                const Math::Vector3& pos,
-                const Math::Vector3& center,
-                const Math::Vector3& up,
-                const float          speed,
-                const float          invAspectRatio,
-                const float          nearClip = 0.1f,
-                const float          farClip = 100.0f,
-                const float          fov = 45.0f);
+                const ProspectiveCameraCreateInfo& prosCamCreateInfo);
 
             ~ProspectiveCamera();
 
@@ -95,20 +103,14 @@ namespace Object
         {
         public:
             OrthographicCamera(
-                const Math::Vector3&    pos,
-                const Math::Vector3&    center,
-                const Math::Vector3&    up,
-                const float             speed,
-                const BxsRectangle&     viewport,
-                const float             nearClip = 0.1f,
-                const float             farClip = 100.0f);
+                const OrthographicCameraCreateInfo& prosCamCreateInfo);
 
             ~OrthographicCamera();
 
             void update(float deltaTime);
 
         private:
-            BxsRectangle m_viewport;
+            Rectangle m_viewport;
         };
     }
 }

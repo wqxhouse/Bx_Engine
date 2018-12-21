@@ -18,9 +18,9 @@ struct Plane
     float d;
 };
 
-struct BxsRectangle
+struct Rectangle
 {
-    BxsRectangle(const float left,
+    Rectangle(const float left,
               const float right,
               const float bottom,
               const float top)
