@@ -16,13 +16,30 @@ namespace Object
 {
     namespace Light
     {
+        struct LightCreateInfo
+        {
+            Trans*        pTrans;
+            Math::Vector3 lightColor;
+        };
+
+        struct PointLightCreateInfo : public LightCreateInfo
+        {
+            float radius;
+        };
+
+        struct SpotLightCreateInfo : public LightCreateInfo
+        {
+            float distance;
+            float in_angle;
+            float out_angle;
+        };
+
         class LightBase : public ObjectBase
         {
         public:
             LightBase(
-                const LightType      lightType,
-                const Math::Vector3& color,
-                Trans*               pTrans);
+                const LightType        lightType,
+                const LightCreateInfo& lightCreateInfo);
 
             ~LightBase();
 
@@ -73,8 +90,7 @@ namespace Object
         {
         public:
             DirectionalLight(
-                const Math::Vector3& direction,
-                const Math::Vector3& color);
+                const LightCreateInfo& lightCreateInfo);
 
             ~DirectionalLight();
 
@@ -102,9 +118,7 @@ namespace Object
         {
         public:
             PointLight(
-                const Math::Vector3& position,
-                const Math::Vector3& color,
-                const float          radius);
+                const PointLightCreateInfo& pointLightCreateInfo);
 
             ~PointLight();
 
@@ -131,12 +145,7 @@ namespace Object
         {
         public:
             SpotLight(
-                const Math::Vector3& position,
-                const Math::Vector3& direction,
-                const Math::Vector3& color,
-                float distance,
-                float in_angle,
-                float out_angle);
+                const SpotLightCreateInfo& spotLightCreateInfo);
 
             ~SpotLight();
 

@@ -14,15 +14,13 @@ namespace Object
     namespace Light
     {
         DirectionalLight::DirectionalLight(
-            const Math::Vector3& direction,
-            const Math::Vector3& color)
-            : LightBase(DIRECTIONAL_LIGHT,
-                        color,
-                        new Trans(Math::Vector3(0.0f, 0.0f, 0.0f),
+            const LightCreateInfo& lightCreateInfo)
+            : LightBase(DIRECTIONAL_LIGHT, lightCreateInfo)
+                        /*new Trans(Math::Vector3(0.0f, 0.0f, 0.0f),
                                   direction,
-                                  Math::Vector3(0.0f, 1.0f, 0.0f)))
+                                  Math::Vector3(0.0f, 1.0f, 0.0f))*/
         {
-            m_direction = Math::Vector3::Normalize(direction);
+            m_direction      = m_pTrans->GetFront();
             m_direction_vec4 = Math::Vector4(m_direction, 0.0f);
         }
 

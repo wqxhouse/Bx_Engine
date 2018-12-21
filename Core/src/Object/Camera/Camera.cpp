@@ -17,15 +17,13 @@ namespace Object
     namespace Camera
     {
         CameraBase::CameraBase(
-
             const CameraType        type,
             const CameraCreateInfo& camCreateInfo)
-            : ObjectBase(
-                new Trans(camCreateInfo.pos, camCreateInfo.center, camCreateInfo.up)),
+            : ObjectBase(camCreateInfo.pTrans),
               m_cameraType(type),
               m_curFront(m_pTrans->GetFront()),
               m_curRight(m_pTrans->GetRight()),
-              m_worldUp(camCreateInfo.up),
+              m_worldUp(camCreateInfo.pTrans->GetUp()),
               m_nearClip(camCreateInfo.nearClip),
               m_farClip(camCreateInfo.farClip)
         {
@@ -56,10 +54,6 @@ namespace Object
 
             Math::Vector3 m_right = Math::rotate(
                 Math::Vector3(m_curRight), Math::Vector3(0.0f, 1.0f, 0.0f), Math::Radians(-yaw));
-
-            // m_pTrans->front = glm::normalize(Math::Vector3(m_front.x, m_front.y, m_front.z));
-            // m_pTrans->right = glm::normalize(Math::Vector3(m_right.x, m_right.y, m_right.z));
-            // m_pTrans->up    = glm::normalize(glm::cross(m_pTrans->right, m_pTrans->front));
 
             m_pTrans->SetTransBase(Math::Vector3::Normalize(m_front),
                                    Math::Vector3::Normalize(Math::Vector3(m_right)));

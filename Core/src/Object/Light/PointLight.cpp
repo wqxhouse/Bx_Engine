@@ -14,17 +14,11 @@ namespace Object
     namespace Light
     {
         PointLight::PointLight(
-            const Math::Vector3& position,
-            const Math::Vector3& color,
-            const float          radius)
-            : LightBase(POINT_LIGHT,
-                        color,
-                        new Trans(position,
-                                  Math::Vector3(0.0f, 0.0f, 0.0f),
-                                  Math::Vector3(0.0f, 1.0f, 0.0f)))
+            const PointLightCreateInfo& pointLightCreateInfo)
+            : LightBase(POINT_LIGHT, static_cast<LightCreateInfo>(pointLightCreateInfo))
         {
-            m_position = position;
-            m_radius   = radius;
+            m_position = m_pTrans->GetPos();
+            m_radius   = pointLightCreateInfo.radius;
         }
 
         PointLight::~PointLight()

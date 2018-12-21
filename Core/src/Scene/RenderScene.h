@@ -46,6 +46,34 @@ namespace Scene
                 BX_NEW(Object::Camera::OrthographicCamera, *m_pObjArena)(orthoCamCreateInfo));
         }
 
+        INLINE void addDirectionalLight(
+            const Object::Light::LightCreateInfo& lightCreateInfo)
+        {
+            m_pLightList.push_back(
+                BX_NEW(Object::Light::DirectionalLight, *m_pObjArena)(lightCreateInfo));
+        }
+
+        INLINE void addDirectionalLight(
+            const Object::Light::LightCreateInfo& lightCreateInfo)
+        {
+            m_pLightList.push_back(
+                BX_NEW(Object::Light::DirectionalLight, *m_pObjArena)(lightCreateInfo));
+        }
+
+        INLINE void addPointLight(
+            const Object::Light::PointLightCreateInfo& pointLightCreateInfo)
+        {
+            m_pLightList.push_back(
+                BX_NEW(Object::Light::PointLight, *m_pObjArena)(pointLightCreateInfo));
+        }
+
+        INLINE void addDirectionalLight(
+            const Object::Light::SpotLightCreateInfo& spotLightCreateInfo)
+        {
+            m_pLightList.push_back(
+                BX_NEW(Object::Light::SpotLight, *m_pObjArena)(spotLightCreateInfo));
+        }
+
     private:
         const Setting* const           m_pSetting;
 

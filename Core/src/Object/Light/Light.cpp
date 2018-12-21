@@ -13,23 +13,14 @@ namespace Object
 {
     namespace Light
     {
-        /*LightBase::LightBase()
-            : m_lightType(UNKNOWN_LIGHT),
-            enableLight(1.0f),
-            reserve(0.0f),
-            m_light_vec4(Math::Vector3(), 0.0f)
-        {
-        }*/
-
         LightBase::LightBase(
-            const LightType      lightType,
-            const Math::Vector3& color,
-            Trans*               pTrans)
-            : ObjectBase(pTrans),
+            const LightType        lightType,
+            const LightCreateInfo& lightCreateInfo)
+            : ObjectBase(lightCreateInfo.pTrans),
               m_lightType(lightType),
               enableLight(1.0f),
               reserve(0.0f),
-              m_light_vec4(color, 0.0f)
+              m_light_vec4(lightCreateInfo.lightColor, 0.0f)
         {
         }
 

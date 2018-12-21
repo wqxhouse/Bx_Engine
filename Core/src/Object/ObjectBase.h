@@ -25,10 +25,10 @@ namespace Object
         inline void DisableObject() { m_enable = FALSE; }
 
         inline const UINT   GetObjectId() const { return m_objectId;        }
-        inline const Trans* GetTransPtr() const { return m_pTrans._Myptr(); }
+        inline const Trans* GetTransPtr() const { return m_pTrans; }
 
     protected:
-        std::unique_ptr<Trans> m_pTrans;
+        Trans* m_pTrans;
 
     private:
         UINT   m_objectId;

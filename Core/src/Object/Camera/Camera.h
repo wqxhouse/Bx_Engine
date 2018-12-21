@@ -21,12 +21,10 @@ namespace Object
     {
         struct CameraCreateInfo
         {
-            Math::Vector3 pos;
-            Math::Vector3 center;
-            Math::Vector3 up;
-            float         speed;
-            float         nearClip;
-            float         farClip;
+            Trans* pTrans;
+            float  speed;
+            float  nearClip;
+            float  farClip;
         };
 
         struct ProspectiveCameraCreateInfo : public CameraCreateInfo
