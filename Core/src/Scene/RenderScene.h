@@ -74,6 +74,15 @@ namespace Scene
                 BX_NEW(Object::Light::SpotLight, *m_pObjArena)(spotLightCreateInfo));
         }
 
+        INLINE void addObjModel(
+            const std::string& modelFile,
+            const std::string& materialFile,
+            Trans*             modelTrans)
+        {
+            m_pModelList.push_back(
+                BX_NEW(Object::Model::ModelObject, *m_pObjArena)(modelFile, materialFile, modelTrans));
+        }
+
     private:
         const Setting* const           m_pSetting;
 
