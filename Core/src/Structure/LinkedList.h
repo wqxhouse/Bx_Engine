@@ -72,10 +72,11 @@ namespace Structure
 
         virtual void clear() = 0;
 
-        virtual void modify(const UINT i,
-            const T& data) = 0;
+        virtual void modify(
+            const UINT i,
+            const T&   data) = 0;
 
-        // Data functions
+        // Data fetch functions
         virtual const T& get(const UINT i) const = 0;
 
     protected:
@@ -107,6 +108,8 @@ namespace Structure
         void modify(const UINT i,
             const T& data);
 
+        LinkedList<T> copy();
+
         const T& get(const UINT i) const;
 
     private:
@@ -130,8 +133,9 @@ namespace Structure
 
         void clear();
 
-        void modify(const UINT i,
-            const T& data);
+        void modify(
+            const UINT i,
+            const T&   data);
 
         const T& get(const UINT i) const;
 

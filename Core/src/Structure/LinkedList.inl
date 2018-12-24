@@ -1,3 +1,4 @@
+#include "LinkedList.h"
 //=================================================================================================
 //
 //  Bx Engine
@@ -180,7 +181,22 @@ namespace Structure
     }
 
     template<typename T>
-    inline const T& LinkedList<T>::get(
+    INLINE LinkedList<T> LinkedList<T>::copy()
+    {
+        LinkedList<T> newLinkedList;
+
+        LinkedListNode<T>* ptr = m_pHead;
+        for (UINT i = 0; i < m_length; ++i)
+        {
+            newLinkedList.insertBack(ptr->m_data);
+            ptr = ptr->m_pNext;
+        }
+
+        return newLinkedList;
+    }
+
+    template<typename T>
+    INLINE const T& LinkedList<T>::get(
         const UINT i) const
     {
         assert(i < m_length);
@@ -195,7 +211,7 @@ namespace Structure
     }
 
     template<typename T>
-    inline T& LinkedList<T>::getRef(
+    INLINE T& LinkedList<T>::getRef(
         const UINT i)
     {
         assert(i < m_length);
@@ -377,7 +393,7 @@ namespace Structure
         }
     }
     template<typename T>
-    inline void XorLinkedList<T>::modify(
+    INLINE void XorLinkedList<T>::modify(
         const UINT i,
         const T&   data)
     {
@@ -388,7 +404,7 @@ namespace Structure
     }
 
     template<typename T>
-    inline const T& XorLinkedList<T>::get(
+    INLINE const T& XorLinkedList<T>::get(
         const UINT i) const
     {
         assert(i < m_length);
@@ -445,7 +461,7 @@ namespace Structure
     }
 
     template<typename T>
-    inline T& XorLinkedList<T>::getRef(
+    INLINE T& XorLinkedList<T>::getRef(
         const UINT i)
     {
         assert(i < m_length);

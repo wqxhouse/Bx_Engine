@@ -37,7 +37,7 @@ int main()
 
     BX_RELEASE(arena);
 
-    /*LinkedList<int> list;
+    LinkedList<int> list;
     list.insert(0, 1);
     list.insertBack(2);
     list.insertFront(3);
@@ -46,53 +46,57 @@ int main()
     val     = list.get(1);
     val     = list.get(2);
 
+    LinkedList<int> newList = list.copy();
+    newList.insertBack(4);
+    newList.clear();
+
     list.removeBack();
     list.removeFront();
     list.insertBack(4);
     list.removeFront();
-
-    list.clear();*/
-
-    Structure::XorLinkedList<int> list;
-    list.insertBack(3);
-    list.insertBack(4);
-    list.insertBack(5);
-    list.insertFront(2);
-    list.insertFront(1);
-
-    int val = list.get(0);
-    val = list.get(1);
-    val = list.get(2);
-    val = list.get(3);
-    val = list.get(4);
-
-    list.removeBack();
-
-    val = list.get(0);
-    val = list.get(1);
-    val = list.get(2);
-    val = list.get(3);
-
-    list.removeFront();
-
-    val = list.get(0);
-    val = list.get(1);
-    val = list.get(2);
-
-    list.insertBack(6);
-
-    val = list.get(0);
-    val = list.get(1);
-    val = list.get(2);
-    val = list.get(3);
-
-    list.removeFront();
-
-    val = list.get(0);
-    val = list.get(1);
-    val = list.get(2);
 
     list.clear();
+
+    Structure::XorLinkedList<int> xorList;
+    xorList.insertBack(3);
+    xorList.insertBack(4);
+    xorList.insertBack(5);
+    xorList.insertFront(2);
+    xorList.insertFront(1);
+
+    val = xorList.get(0);
+    val = xorList.get(1);
+    val = xorList.get(2);
+    val = xorList.get(3);
+    val = xorList.get(4);
+
+    xorList.removeBack();
+
+    val = xorList.get(0);
+    val = xorList.get(1);
+    val = xorList.get(2);
+    val = xorList.get(3);
+
+    xorList.removeFront();
+
+    val = xorList.get(0);
+    val = xorList.get(1);
+    val = xorList.get(2);
+
+    xorList.insertBack(6);
+
+    val = xorList.get(0);
+    val = xorList.get(1);
+    val = xorList.get(2);
+    val = xorList.get(3);
+
+    xorList.removeFront();
+
+    val = xorList.get(0);
+    val = xorList.get(1);
+    val = xorList.get(2);
+
+    xorList.clear();
 
     return 0;
 }

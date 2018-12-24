@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BxEngine", "BxEngine\BxEngine.vcxproj", "{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BxEngine", "BxEngine\BxEngine.vcxproj", "{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{855C7BF4-681D-4EA9-A240-FA9483CED820} = {855C7BF4-681D-4EA9-A240-FA9483CED820}
 	EndProjectSection
@@ -47,20 +47,20 @@ Global
 		Vulkan_Release|x64 = Vulkan_Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|Win32.Build.0 = Debug|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|x64.ActiveCfg = Debug|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Debug|x64.Build.0 = Debug|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|Win32.ActiveCfg = Release|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|Win32.Build.0 = Release|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|x64.ActiveCfg = Release|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Release|x64.Build.0 = Release|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Vulkan_Debug|Win32.ActiveCfg = Vulkan_Debug|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Vulkan_Debug|x64.ActiveCfg = Vulkan_Debug|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Vulkan_Debug|x64.Build.0 = Vulkan_Debug|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Vulkan_Release|Win32.ActiveCfg = Vulkan_Release|Win32
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Vulkan_Release|x64.ActiveCfg = Vulkan_Release|x64
-		{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}.Vulkan_Release|x64.Build.0 = Vulkan_Release|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|Win32.Build.0 = Debug|Win32
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|x64.ActiveCfg = Debug|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|x64.Build.0 = Debug|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|Win32.ActiveCfg = Release|Win32
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|Win32.Build.0 = Release|Win32
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|x64.ActiveCfg = Release|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|x64.Build.0 = Release|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|Win32.ActiveCfg = Vulkan_Debug|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|x64.ActiveCfg = Vulkan_Debug|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|x64.Build.0 = Vulkan_Debug|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|Win32.ActiveCfg = Vulkan_Release|Win32
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|x64.ActiveCfg = Vulkan_Release|x64
+		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|x64.Build.0 = Vulkan_Release|x64
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|Win32.ActiveCfg = Debug|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|Win32.Build.0 = Debug|Win32
 		{855C7BF4-681D-4EA9-A240-FA9483CED820}.Debug|x64.ActiveCfg = Debug|x64
@@ -119,24 +119,9 @@ Global
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Release|x64.ActiveCfg = Release|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|Win32.ActiveCfg = Debug|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|x64.ActiveCfg = Debug|x64
+		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|x64.Build.0 = Debug|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|Win32.ActiveCfg = Release|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|x64.ActiveCfg = Release|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|Win32.Build.0 = Debug|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|x64.ActiveCfg = Debug|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Debug|x64.Build.0 = Debug|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|Win32.ActiveCfg = Release|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|Win32.Build.0 = Release|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|x64.ActiveCfg = Release|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Release|x64.Build.0 = Release|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|Win32.ActiveCfg = Vulkan_Debug|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|Win32.Build.0 = Vulkan_Debug|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|x64.ActiveCfg = Vulkan_Debug|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Debug|x64.Build.0 = Vulkan_Debug|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|Win32.ActiveCfg = Vulkan_Release|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|Win32.Build.0 = Vulkan_Release|Win32
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|x64.ActiveCfg = Vulkan_Release|x64
-		{2B1DDAAF-2765-4F2F-AE5B-A1C7BDFD722F}.Vulkan_Release|x64.Build.0 = Vulkan_Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
