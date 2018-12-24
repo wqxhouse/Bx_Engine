@@ -56,7 +56,6 @@ namespace Math
         static Vector4Ptr New(float x = 0, float y = 0, float z = 0, float w = 0)
         {
             Vector4Ptr newVec4Ptr = new Vector4(x, y, z, w);
-            Memory::MemoryPool::registerMemory<Vector4Ptr>(newVec4Ptr);
 
             return newVec4Ptr;
         }

@@ -68,25 +68,25 @@ void OpenGLTemplate::createDefaultScene()
     pScene->AddPointLight(Vector3( 1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f), 2.0f);
     pScene->AddPointLight(Vector3(-1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.5f), 2.0f);*/
 
-    /*for (int i = 0; i < 63; ++i)
+    for (int i = 0; i < 64; ++i)
     {
-        for (int j = 0; j < 32; ++j)
+        for (int j = 0; j < 63; ++j)
         {
-            pScene->AddPointLight(Vector3(-100.0f + i * 2.0f, 0.0f, 0.0f + j * 5.0f),
+            pScene->AddPointLight(Vector3(-100.0f + i * 2.0f, 0.0f, -100.0f + j * 2.0f),
                                   Vector3(distribution(generator),
                                           distribution(generator),
                                           distribution(generator)),
                                           5.0f);
         }
-    }*/
-    for (int i = 0; i < 2040; ++i)
+    }
+    /*for (int i = 0; i < 2040; ++i)
     {
         pScene->AddPointLight(Vector3(-70.0f + i * 0.1f, 0.0f, 0.5f),
             Vector3(distribution(generator),
                     distribution(generator),
                     distribution(generator)),
                     5.0f);
-    }
+    }*/
 
     /*pScene->AddDirectionalLight(Vector3( 1.0f, -1.0f, -1.0f), Vector3(0.5f, 0.0f, 0.0f));
     pScene->AddDirectionalLight(Vector3(-1.0f, -1.0f,  1.0f), Vector3(0.0f, 0.5f, 0.0f));
@@ -132,7 +132,7 @@ void OpenGLTemplate::createDefaultScene()
     //Load model and texture(Hardcode here)
     pScene->addModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
     new Trans(glm::vec3(-70.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));
-#elif
+#else
     /*pScene->addModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
     new Trans(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f)));*/
     

@@ -8,7 +8,6 @@
 //================================================================================================
 
 #include "Mesh.h"
-#include "../../Memory/MemoryPool.h"
 
 Mesh::Mesh(
     const std::string&                name,

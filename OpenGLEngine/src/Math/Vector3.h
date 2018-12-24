@@ -15,8 +15,6 @@
 #include <typeinfo>
 #include <glm/glm.hpp>
 
-#include "../Memory/MemoryPool.h"
-
 #include "Vector2.h"
 
 namespace Math
@@ -43,7 +41,6 @@ namespace Math
 		static Vector3Ptr New(float x = 0.0f, float y = 0.0f, float z = 0.0f)
 		{
 			Vector3Ptr vec3Ptr = new Vector3(x, y, z);
-			Memory::MemoryPool::registerMemory<Vector3Ptr>(vec3Ptr);
 
 			return vec3Ptr;
 		}

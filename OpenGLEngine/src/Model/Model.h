@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <unordered_set>
+
 #include "Mesh/Mesh.h"
 #include "../Math/Transform/Trans.h"
 

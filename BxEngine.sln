@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BxEngine", "OpenGLTemplate\OpenGLTemplate.vcxproj", "{3E791E73-AAEE-4BF3-AC97-5BF440777F4F}"
 	ProjectSection(ProjectDependencies) = postProject
-		{7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0} = {7BE2FCDB-DD2A-49B1-9AA4-CCEA2135EDE0}
+		{855C7BF4-681D-4EA9-A240-FA9483CED820} = {855C7BF4-681D-4EA9-A240-FA9483CED820}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLEngine", "OpenGLEngine\OpenGLEngine.vcxproj", "{855C7BF4-681D-4EA9-A240-FA9483CED820}"
@@ -114,21 +114,13 @@ Global
 		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Release|x64.ActiveCfg = Release|x64
 		{977DDCA4-DF08-475B-94CD-78FF0D932889}.Vulkan_Release|x64.Build.0 = Release|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Debug|Win32.Build.0 = Debug|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Debug|x64.ActiveCfg = Debug|x64
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Debug|x64.Build.0 = Debug|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Release|Win32.ActiveCfg = Release|Win32
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Release|Win32.Build.0 = Release|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Release|x64.ActiveCfg = Release|x64
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Release|x64.Build.0 = Release|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|Win32.ActiveCfg = Debug|Win32
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|Win32.Build.0 = Debug|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|x64.ActiveCfg = Debug|x64
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Debug|x64.Build.0 = Debug|x64
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|Win32.ActiveCfg = Release|Win32
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|Win32.Build.0 = Release|Win32
 		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|x64.ActiveCfg = Release|x64
-		{AE637326-E7C1-4DA8-9D7C-153F7837A1C4}.Vulkan_Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

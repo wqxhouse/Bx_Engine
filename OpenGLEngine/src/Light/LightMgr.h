@@ -15,7 +15,7 @@
 #include "../Shadow/ShadowMgr.h"
 
 #define MAX_LIGHT_UBO_NUM 256
-#define MAX_LIGHT_NUM     2048
+#define MAX_LIGHT_NUM     4096
 
 class LightMgr
 {

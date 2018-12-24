@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "Quaternion.h"
 #include "Matrix4x4.h"
 #include "Structures.h"
