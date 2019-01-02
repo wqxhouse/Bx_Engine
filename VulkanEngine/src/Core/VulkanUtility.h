@@ -76,7 +76,7 @@ namespace VulkanEngine
                 const UINT                              filter,
                 const VkMemoryPropertyFlags&            props);
 
-            static inline VkPolygonMode GetVkSampleCount(
+            static INLINE VkPolygonMode GetVkSampleCount(
                 const PolyMode polyMode)
             {
                 VkPolygonMode vkPolyMode = VK_POLYGON_MODE_BEGIN_RANGE;
@@ -99,7 +99,7 @@ namespace VulkanEngine
                 return vkPolyMode;
             }
 
-            static inline VkSampleCountFlagBits GetVkSampleCount(
+            static INLINE VkSampleCountFlagBits GetVkSampleCount(
                 const UINT sampleCount)
             {
                 VkSampleCountFlagBits sampleCountFlagBit = VK_SAMPLE_COUNT_1_BIT;
@@ -134,7 +134,7 @@ namespace VulkanEngine
                 return sampleCountFlagBit;
             }
 
-            static inline INT GetQueueCmdPoolIndex(
+            static INLINE INT GetQueueCmdPoolIndex(
                 const VkQueueFlags queueFlag)
             {
                 INT queueCmdPoolIndex = -1;
@@ -157,7 +157,7 @@ namespace VulkanEngine
                 return queueCmdPoolIndex;
             }
 
-            static inline VkCommandBufferLevel GetVkCmdBufferLevel(
+            static INLINE VkCommandBufferLevel GetVkCmdBufferLevel(
                 const BX_COMMAND_BUFFER_LEVLE cmdBufferLevel)
             {
                 VkCommandBufferLevel vkCmdBufferLevel;
@@ -178,7 +178,7 @@ namespace VulkanEngine
                 return vkCmdBufferLevel;
             }
 
-            static inline VkVertexInputRate GetVkVertexInputRate(
+            static INLINE VkVertexInputRate GetVkVertexInputRate(
                 const BX_VERTEX_INPUT_RATE rate)
             {
                 VkVertexInputRate inputRate;
@@ -199,7 +199,7 @@ namespace VulkanEngine
                 return inputRate;
             }
 
-            static inline VkIndexType GetVkIndexType(
+            static INLINE VkIndexType GetVkIndexType(
                 const BX_INDEX_TYPE type)
             {
                 VkIndexType indexType;
@@ -220,7 +220,7 @@ namespace VulkanEngine
                 return indexType;
             }
 
-            static inline VkDescriptorType GetVkDescriptorType(
+            static INLINE VkDescriptorType GetVkDescriptorType(
                 const BX_DESCRIPTOR_TYPE type)
             {
                 VkDescriptorType descriptorType;
@@ -241,7 +241,61 @@ namespace VulkanEngine
                 return descriptorType;
             }
 
-            static inline BOOL GetBxStatus(
+            static INLINE VkFormat GetVkImageFormat(TextureFormat format)
+            {
+                VkFormat imageFormat;
+
+                switch (format)
+                {
+                    case BX_FORMAT_R8:
+                        imageFormat = VK_FORMAT_R8_UNORM;
+                        break;
+                    case BX_FORMAT_RG8:
+                        imageFormat = VK_FORMAT_R8G8_UNORM;
+                        break;
+                    case BX_FORMAT_RGB8:
+                        imageFormat = VK_FORMAT_R8G8B8_UNORM;
+                        break;
+                    case BX_FORMAT_RGBA8:
+                        imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
+                        break;
+                    case BX_FORMAT_RGBA16:
+                        imageFormat = VK_FORMAT_R16G16B16A16_UNORM;
+                        break;
+                    case BX_FORMAT_RGBA32:
+                        imageFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGBA64:
+                        imageFormat = VK_FORMAT_R64G64B64A64_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGBA:
+                        imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
+                        break;
+                    case BX_FORMAT_SRGB:
+                        imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
+                        break;
+                    case BX_FORMAT_DEPTH16:
+                        imageFormat = VK_FORMAT_D16_UNORM;
+                        break;
+                    case BX_FORMAT_DEPTH16_STENCIL:
+                        imageFormat = VK_FORMAT_D16_UNORM_S8_UINT;
+                        break;
+                    case BX_FORMAT_DEPTH24_STENCIL:
+                        imageFormat = VK_FORMAT_D24_UNORM_S8_UINT;
+                        break;
+                    case BX_FORMAT_DEPTH32:
+                        imageFormat = VK_FORMAT_D32_SFLOAT;
+                        break;
+                    case BX_FORMAT_DEPTH32_STENCIL:
+                        imageFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
+                        break;
+                    default:
+                        assert(FALSE);
+                        break;
+                }
+            }
+
+            static INLINE BOOL GetBxStatus(
                 const VkResult vkResult)
             {
                 return ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);

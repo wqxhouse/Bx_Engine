@@ -15,12 +15,12 @@ namespace Texture
 {
     struct TextureCreateData
     {
-        UINT                  texWidth;
-        UINT                  texHeight;
-        UINT                  samples;
-        BOOL                  mipmap;
-        TextureFormat         texLoadFormat;
-        TextureFormat         texStoreFormat;
+        UINT          texWidth;
+        UINT          texHeight;
+        UINT          samples;
+        BOOL          mipmap;
+        TextureFormat texLoadFormat;
+        TextureFormat texStoreFormat;
     };
 
     class TextureBase
