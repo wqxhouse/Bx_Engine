@@ -7,6 +7,9 @@
 //
 //================================================================================================
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include "VulkanTexture2D.h"
 #include "../Core/VulkanUtility.h"
 
@@ -102,10 +105,24 @@ namespace VulkanEngine
             return result;
         }
 
-        /*VulkanTexture2D VulkanTexture2D::CreateTexture2D(
+        VulkanTexture2D VulkanTexture2D::CreateTexture2D(
             const std::string&     fileName,
-            const VkPhysicalDevice hwDevice)
+            const VkPhysicalDevice hwDevice,
+            const VkDevice* const  pDevice,
+            Texture2DCreateData*   pTex2DCreateData)
         {
-        }*/
+            Texture2DCreateData createData = {};
+
+            int texChannels;
+
+            createData.textureData = std::unique_ptr<image_data>(
+                stbi_load(fileName.c_str(),
+                          reinterpret_cast<int*>(&createData.texWidth),
+                          reinterpret_cast<int*>(&createData.texHeight),
+                          &texChannels,
+                          STBI_rgb_alpha));
+
+            return VulkanTexture2D(pDevice, pTex2DCreateData);
+        }
     }
 }

@@ -32,8 +32,10 @@ namespace VulkanEngine
                 const VkPhysicalDevice hwDevice);
 
             static VulkanTexture2D CreateTexture2D(
-                const std::string& fileName,
-                const VkPhysicalDevice hwDevice);
+                const std::string&     fileName,
+                const VkPhysicalDevice hwDevice,
+                const VkDevice* const  pDevice,
+                Texture2DCreateData*   pTex2DCreateData);
 
         private:
             const VkDevice* const m_pDevice;
