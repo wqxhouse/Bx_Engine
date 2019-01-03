@@ -727,7 +727,7 @@ namespace VulkanEngine
         rasterizerCreateInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
         rasterizerCreateInfo.depthClampEnable        = VK_FALSE;
         rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-        rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkSampleCount(m_pSetting->polyMode);
+        rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
         rasterizerCreateInfo.lineWidth               = 1.0f;
         rasterizerCreateInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
         rasterizerCreateInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;

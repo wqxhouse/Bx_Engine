@@ -102,10 +102,10 @@ namespace VulkanEngine
             return result;
         }
 
-        VulkanTexture2D VulkanTexture2D::CreateTexture2D(
+        /*VulkanTexture2D VulkanTexture2D::CreateTexture2D(
             const std::string&     fileName,
             const VkPhysicalDevice hwDevice)
         {
-        }
+        }*/
     }
 }

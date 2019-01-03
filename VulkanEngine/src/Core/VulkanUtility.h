@@ -76,7 +76,7 @@ namespace VulkanEngine
                 const UINT                              filter,
                 const VkMemoryPropertyFlags&            props);
 
-            static INLINE VkPolygonMode GetVkSampleCount(
+            static INLINE VkPolygonMode GetVkPolygonMode(
                 const PolyMode polyMode)
             {
                 VkPolygonMode vkPolyMode = VK_POLYGON_MODE_BEGIN_RANGE;
@@ -295,42 +295,6 @@ namespace VulkanEngine
                 }
 
                 return imageFormat;
-            }
-
-            static INLINE VkSampleCountFlagBits GetVkSampleCount(
-                const UINT sampleCount)
-            {
-                VkSampleCountFlagBits sampleCountBits;
-
-                switch (sampleCount)
-                {
-                    case 1:
-                        sampleCountBits = VK_SAMPLE_COUNT_1_BIT;
-                        break;
-                    case 2:
-                        sampleCountBits = VK_SAMPLE_COUNT_2_BIT;
-                        break;
-                    case 4:
-                        sampleCountBits = VK_SAMPLE_COUNT_4_BIT;
-                        break;
-                    case 8:
-                        sampleCountBits = VK_SAMPLE_COUNT_8_BIT;
-                        break;
-                    case 16:
-                        sampleCountBits = VK_SAMPLE_COUNT_16_BIT;
-                        break;
-                    case 32:
-                        sampleCountBits = VK_SAMPLE_COUNT_32_BIT;
-                        break;
-                    case 64:
-                        sampleCountBits = VK_SAMPLE_COUNT_64_BIT;
-                        break;
-                    default:
-                        assert(FALSE);
-                        break;
-                }
-
-                return sampleCountBits;
             }
 
             static INLINE BOOL GetBxStatus(
