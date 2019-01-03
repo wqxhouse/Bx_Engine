@@ -16,10 +16,12 @@ namespace Texture
         const TextureCreateData* pTextureCreateData)
         : m_textureType(textureType)
     {
-        m_textureWidth = pTextureCreateData->texWidth;
+        m_textureWidth  = pTextureCreateData->texWidth;
         m_textureHeight = pTextureCreateData->texHeight;
-        m_samples = pTextureCreateData->samples;
-        m_mipmap = pTextureCreateData->mipmap;
+        m_samples       = pTextureCreateData->samples;
+        m_mipmap        = pTextureCreateData->mipmap;
+        m_texOptimize   = pTextureCreateData->texOptimize;
+        m_texPerserve   = pTextureCreateData->texPerserve;
     }
 
     TextureBase::~TextureBase()

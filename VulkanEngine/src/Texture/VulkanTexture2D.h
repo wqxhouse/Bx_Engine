@@ -23,13 +23,23 @@ namespace VulkanEngine
         {
         public:
             VulkanTexture2D(
-                Texture2DCreateData* pTex2DCreateData);
+                const VkDevice* const pDevice,
+                Texture2DCreateData*  pTex2DCreateData);
 
             ~VulkanTexture2D();
 
+            BOOL create(
+                const VkPhysicalDevice hwDevice);
+
+            static VulkanTexture2D CreateTexture2D(
+                const std::string& fileName,
+                const VkPhysicalDevice hwDevice);
+
         private:
-            VkImage        m_texImage;
-            VkDeviceMemory m_texImageMemory;
+            const VkDevice* const m_pDevice;
+
+            VDeleter<VkImage>        m_texImage;
+            VDeleter<VkDeviceMemory> m_texImageMemory;
         };
     }
 }

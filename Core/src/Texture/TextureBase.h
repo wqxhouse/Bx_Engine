@@ -21,6 +21,8 @@ namespace Texture
         BOOL          mipmap;
         TextureFormat texLoadFormat;
         TextureFormat texStoreFormat;
+        BOOL          texOptimize;
+        BOOL          texPerserve;
     };
 
     class TextureBase
@@ -48,6 +50,9 @@ namespace Texture
 
         TextureFormat m_loadFormat;
         TextureFormat m_storeFormat;
+
+        BOOL  m_texOptimize;
+        BOOL  m_texPerserve;
 
     private:
         TextureType m_textureType;
