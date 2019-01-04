@@ -324,6 +324,38 @@ namespace VulkanEngine
                 return imageUsageFlagBits;
             }
 
+            static INLINE VkImageAspectFlagBits GetVkImageAspect(TextureFormat format)
+            {
+                VkImageAspectFlagBits aspectMask;
+
+                switch (format)
+                {
+                    case BX_FORMAT_R8:
+                    case BX_FORMAT_RG8:
+                    case BX_FORMAT_RGB8:
+                    case BX_FORMAT_RGBA8:
+                    case BX_FORMAT_RGBA:
+                    case BX_FORMAT_RGBA16:
+                    case BX_FORMAT_RGBA32:
+                    case BX_FORMAT_RGBA64:
+                    case BX_FORMAT_SRGB:
+                        aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                        break;
+                    case BX_FORMAT_DEPTH16:
+                    case BX_FORMAT_DEPTH16_STENCIL:
+                    case BX_FORMAT_DEPTH24_STENCIL:
+                    case BX_FORMAT_DEPTH32:
+                    case BX_FORMAT_DEPTH32_STENCIL:
+                        aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+                        break;
+                    default:
+                        assert(FALSE);
+                        break;
+                }
+
+                return aspectMask;
+            }
+
             static INLINE BOOL GetBxStatus(
                 const VkResult vkResult)
             {

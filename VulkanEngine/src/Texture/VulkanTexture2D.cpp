@@ -120,7 +120,29 @@ namespace VulkanEngine
             
             FreeTextureData();
 
+            std::vector<Buffer::BxLayoutTransitionInfo> transitionInfo(1);
+            transitionInfo[0].oldLayout                      = VK_IMAGE_LAYOUT_UNDEFINED;
+            transitionInfo[0].newLayout                      = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            transitionInfo[0].srcAccessMask                  = 0;
+            transitionInfo[0].dstAccessMask                  = 0;
+            transitionInfo[0].subResourceInfo.aspectMask     =
+                Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
+            transitionInfo[0].subResourceInfo.baseArrayLayer = 0;
+            transitionInfo[0].subResourceInfo.layerNum       = 1;
+            transitionInfo[0].subResourceInfo.baseMipLevel   = 0;
+            transitionInfo[0].subResourceInfo.mipmapLevelNum = m_mipmap;
 
+            m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+
+            std::vector<Buffer::BxBufferToImageCopyInfo> bufferToImageCopyInfo(1);
+            bufferToImageCopyInfo[0].bufferInfo.bufferOffset      = 0;
+            bufferToImageCopyInfo[0].bufferInfo.bufferRowLength   = 0;
+            bufferToImageCopyInfo[0].bufferInfo.bufferImageHeight = 0;
+            bufferToImageCopyInfo[0].subResourceInfo              = transitionInfo[0].subResourceInfo;
+            bufferToImageCopyInfo[0].imageInfo.imageOffset        = { 0, 0, 0 };
+            bufferToImageCopyInfo[0].imageInfo.imageExtent        = { m_textureWidth, m_textureHeight, 1};
+
+            m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
 
             return result;
         }
