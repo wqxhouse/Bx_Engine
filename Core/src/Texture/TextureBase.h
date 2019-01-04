@@ -9,6 +9,13 @@
 
 #pragma once
 
+//Image loader
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif // STB_IMAGE_IMPLEMENTATION
+
+#include <stb_image.h>
+
 #include "../Core/PCH.h"
 
 namespace Texture
@@ -21,8 +28,17 @@ namespace Texture
         BOOL          mipmap;
         TextureFormat texLoadFormat;
         TextureFormat texStoreFormat;
+        TextureUsage  texUsage;
         BOOL          texOptimize;
         BOOL          texPerserve;
+    };
+
+    struct TextureDeleter
+    {
+        void operator()(void* ptr)
+        {
+            stbi_image_free(ptr);
+        }
     };
 
     class TextureBase
@@ -34,12 +50,18 @@ namespace Texture
 
         ~TextureBase();
 
-        inline TextureType GetTextureType()   const { return m_textureType; }
+        INLINE TextureType GetTextureType()   const { return m_textureType;   }
 
-        inline UINT        GetTextureWidth()  const { return m_textureWidth; }
-        inline UINT        GetTextureHeight() const { return m_textureHeight; }
+        INLINE UINT        GetTextureWidth()  const { return m_textureWidth;  }
+        INLINE UINT        GetTextureHeight() const { return m_textureHeight; }
 
-        inline UINT        GetSampleNumber()  const { return m_samples; }
+        INLINE UINT        GetSampleNumber()  const { return m_samples;       }
+
+        static std::unique_ptr<image_data, TextureDeleter> ReadImageData(
+                const std::string& imageFile,
+                int* const         width,
+                int* const         height,
+                int* const         channels);
 
     protected:
         UINT  m_textureWidth;
@@ -50,6 +72,7 @@ namespace Texture
 
         TextureFormat m_loadFormat;
         TextureFormat m_storeFormat;
+        TextureUsage  m_usage;
 
         BOOL  m_texOptimize;
         BOOL  m_texPerserve;

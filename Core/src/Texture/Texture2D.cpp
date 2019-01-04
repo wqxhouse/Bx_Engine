@@ -24,7 +24,7 @@ namespace Texture
     {
         if (m_textureData != NULL)
         {
-            Utility::UtilityBase::ReleaseImageData(std::move(m_textureData));
+            m_textureData.release();
         }
     }
 }

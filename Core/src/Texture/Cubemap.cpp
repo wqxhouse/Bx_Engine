@@ -24,7 +24,7 @@ namespace Texture
         {
             if (m_cubeMapData[i] != NULL)
             {
-                Utility::UtilityBase::ReleaseImageData(std::move(m_cubeMapData[i]));
+                m_cubeMapData[i].release();
             }
         }
     }

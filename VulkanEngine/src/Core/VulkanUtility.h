@@ -297,6 +297,33 @@ namespace VulkanEngine
                 return imageFormat;
             }
 
+            static INLINE VkImageUsageFlags GetVkImageUsage(TextureUsage texUsage)
+            {
+                VkImageUsageFlags imageUsageFlagBits;
+
+                if ((texUsage | BX_TEXTURE_USAGE_SAMPLED) != 0)
+                {
+                    imageUsageFlagBits |= VK_IMAGE_USAGE_SAMPLED_BIT;
+                }
+
+                if ((texUsage | BX_TEXTURE_USAGE_RENDER_TARGET) != 0)
+                {
+                    imageUsageFlagBits |= VK_IMAGE_USAGE_STORAGE_BIT;
+                }
+
+                if ((texUsage | BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)
+                {
+                    imageUsageFlagBits |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                }
+
+                if ((texUsage | BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) != 0)
+                {
+                    imageUsageFlagBits |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                }
+
+                return imageUsageFlagBits;
+            }
+
             static INLINE BOOL GetBxStatus(
                 const VkResult vkResult)
             {

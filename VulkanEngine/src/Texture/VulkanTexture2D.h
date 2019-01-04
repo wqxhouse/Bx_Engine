@@ -12,6 +12,7 @@
 #include <Texture/Texture2D.h>
 
 #include "../Core/VulkanPCH.h"
+#include "../Context/CmdBufferMgr.h"
 
 using namespace Texture;
 
@@ -23,22 +24,25 @@ namespace VulkanEngine
         {
         public:
             VulkanTexture2D(
-                const VkDevice* const pDevice,
-                Texture2DCreateData*  pTex2DCreateData);
+                const VkDevice* const    pDevice,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr,
+                Texture2DCreateData*     pTex2DCreateData);
 
             ~VulkanTexture2D();
 
             BOOL create(
                 const VkPhysicalDevice hwDevice);
 
-            static VulkanTexture2D CreateTexture2D(
-                const std::string&     fileName,
-                const VkPhysicalDevice hwDevice,
-                const VkDevice* const  pDevice,
-                Texture2DCreateData*   pTex2DCreateData);
+            static VulkanTexture2D& CreateTexture2D(
+                const std::string&       fileName,
+                const VkPhysicalDevice   hwDevice,
+                const VkDevice* const    pDevice,
+                Texture2DCreateData*     pTex2DCreateData,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr);
 
         private:
-            const VkDevice* const m_pDevice;
+            const VkDevice* const    m_pDevice;
+            Mgr::CmdBufferMgr* const m_pCmdBufferMgr;
 
             VDeleter<VkImage>        m_texImage;
             VDeleter<VkDeviceMemory> m_texImageMemory;

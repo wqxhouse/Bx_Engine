@@ -179,6 +179,16 @@ enum TextureFormat
     BX_FORMAT_MAX = 0x7FFFFFFF
 };
 
+enum TextureUsage
+{
+    BX_TEXTURE_USAGE_NONE                     = 0x0,
+    BX_TEXTURE_USAGE_SAMPLED                  = 0x1,
+    BX_TEXTURE_USAGE_RENDER_TARGET            = 0x2,
+    BX_TEXTURE_USAGE_COLOR_ATTACHMENT         = 0x4,
+    BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT = 0x8,
+    BX_TEXTURE_USAGE_MAX                      = 0x7FFFFFFF
+};
+
 enum MESH_TEXTURE_MAP_TYPES
 {
     DIFFUSE_MAP       = 0,
