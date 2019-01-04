@@ -119,6 +119,32 @@ namespace VulkanEngine
             return status;
         }
 
+        BOOL CmdBufferMgr::imageLayoutTransition(
+            const VkImage&                                     image,
+            const std::vector<Buffer::BxLayoutTransitionInfo>& layoutTransInfoList)
+        {
+            BOOL status = BX_SUCCESS;
+
+            Buffer::BxCmdBufferCreateInfo cmdBufferCreateInfo = {};
+            cmdBufferCreateInfo.cmdBufferType                 = BX_GRAPHICS_COMMAND_BUFFER;
+            cmdBufferCreateInfo.bufferLevel                   = BX_DIRECT_COMMAND_BUFFER;
+            cmdBufferCreateInfo.pCommandPool                  = &(m_cmdPool[BX_QUEUE_GRAPHICS]);
+
+            Buffer::CmdBuffer imageLayoutTransitionBuffer =
+                Buffer::CmdBuffer::CreateCmdBuffer(m_pDevice, cmdBufferCreateInfo);
+            status = imageLayoutTransitionBuffer.beginCmdBuffer(FALSE);
+
+            assert(status == BX_SUCCESS);
+
+            if (status == BX_SUCCESS)
+            {
+                imageLayoutTransitionBuffer.cmdImageLayoutTransition(image, layoutTransInfoList);
+                imageLayoutTransitionBuffer.endCmdBuffer();
+            }
+
+            return status;
+        }
+
         BOOL CmdBufferMgr::submitCommandBufferToQueue(
             const UINT               queueFamilyIndex,
             const UINT               submitNum,

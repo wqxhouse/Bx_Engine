@@ -39,6 +39,10 @@ namespace VulkanEngine
                 const VkBuffer&                 dstBuffer,
                 const Buffer::BxBufferCopyInfo& copyInfo);
 
+            BOOL imageLayoutTransition(
+                const VkImage&                                     image,
+                const std::vector<Buffer::BxLayoutTransitionInfo>& layoutTransInfoList);
+
             BOOL submitCommandBufferToQueue(
                 const UINT               queueFamilyIndex,
                 const UINT               submitNum,
