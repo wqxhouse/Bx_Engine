@@ -222,32 +222,43 @@ namespace VulkanEngine
         }
 
         void CmdBuffer::cmdImageLayoutTransition(
-            const VkImage&                             image,
-            const std::vector<BxLayoutTransitionInfo>& layoutTransInfoList)
+            const VkImage&                image,
+            const BxLayoutTransitionInfo& layoutTransInfoList)
         {
-            size_t layoutTransNum = layoutTransInfoList.size();
+            size_t layoutTransNum = layoutTransInfoList.subResourceInfo.size();
 
             std::vector<VkImageMemoryBarrier> imageMemoryBarrierList(layoutTransNum);
+
+            VkImageLayout        oldLayout = layoutTransInfoList.oldLayout;
+            VkImageLayout        newLayout = layoutTransInfoList.newLayout;
+            VkAccessFlags        srcAccessMask;
+            VkAccessFlags        dstAccessMask;
+            VkPipelineStageFlags srcStage;
+            VkPipelineStageFlags dstStage;
+
+            Utility::VulkanUtility::
+                GetImageTransitionAccessMask(oldLayout, newLayout,
+                                             &srcAccessMask, &dstAccessMask, &srcStage, &dstStage);
 
             for (size_t i = 0; i < layoutTransNum; ++i)
             {
                 imageMemoryBarrierList[i].sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
                 imageMemoryBarrierList[i].image                           = image;
-                imageMemoryBarrierList[i].oldLayout                       = layoutTransInfoList[i].oldLayout;
-                imageMemoryBarrierList[i].newLayout                       = layoutTransInfoList[i].newLayout;
+                imageMemoryBarrierList[i].oldLayout                       = oldLayout;
+                imageMemoryBarrierList[i].newLayout                       = newLayout;
                 imageMemoryBarrierList[i].srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
                 imageMemoryBarrierList[i].dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
-                imageMemoryBarrierList[i].subresourceRange.aspectMask     = layoutTransInfoList[i].subResourceInfo.aspectMask;
-                imageMemoryBarrierList[i].subresourceRange.baseArrayLayer = layoutTransInfoList[i].subResourceInfo.baseArrayLayer;
-                imageMemoryBarrierList[i].subresourceRange.layerCount     = layoutTransInfoList[i].subResourceInfo.layerNum;
-                imageMemoryBarrierList[i].subresourceRange.baseMipLevel   = layoutTransInfoList[i].subResourceInfo.baseMipLevel;
-                imageMemoryBarrierList[i].subresourceRange.levelCount     = layoutTransInfoList[i].subResourceInfo.mipmapLevelNum;
-                imageMemoryBarrierList[i].srcAccessMask                   = layoutTransInfoList[i].srcAccessMask;
-                imageMemoryBarrierList[i].dstAccessMask                   = layoutTransInfoList[i].dstAccessMask;
+                imageMemoryBarrierList[i].subresourceRange.aspectMask     = layoutTransInfoList.subResourceInfo[i].aspectMask;
+                imageMemoryBarrierList[i].subresourceRange.baseArrayLayer = layoutTransInfoList.subResourceInfo[i].baseArrayLayer;
+                imageMemoryBarrierList[i].subresourceRange.layerCount     = layoutTransInfoList.subResourceInfo[i].layerNum;
+                imageMemoryBarrierList[i].subresourceRange.baseMipLevel   = layoutTransInfoList.subResourceInfo[i].baseMipLevel;
+                imageMemoryBarrierList[i].subresourceRange.levelCount     = layoutTransInfoList.subResourceInfo[i].mipmapLevelNum;
+                imageMemoryBarrierList[i].srcAccessMask                   = srcAccessMask;
+                imageMemoryBarrierList[i].dstAccessMask                   = dstAccessMask;
             }
 
             vkCmdPipelineBarrier(m_cmdBuffer,
-                                 0, 0,
+                                 srcStage, dstStage,
                                  0,
                                  0, NULL,
                                  0, NULL,

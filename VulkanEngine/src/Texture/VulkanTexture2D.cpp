@@ -24,7 +24,7 @@ namespace VulkanEngine
               m_pCmdBufferMgr(pCmdBufferMgr)
         {
             m_texImage       = { *m_pDevice, vkDestroyImage };
-            m_texImageMemory = { *m_pDevice, vkFreeMemory };
+            m_texImageMemory = { *m_pDevice, vkFreeMemory   };
         }
 
         VulkanTexture2D::~VulkanTexture2D()
@@ -120,29 +120,50 @@ namespace VulkanEngine
             
             FreeTextureData();
 
-            std::vector<Buffer::BxLayoutTransitionInfo> transitionInfo(1);
-            transitionInfo[0].oldLayout                      = VK_IMAGE_LAYOUT_UNDEFINED;
-            transitionInfo[0].newLayout                      = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            transitionInfo[0].srcAccessMask                  = 0;
-            transitionInfo[0].dstAccessMask                  = 0;
-            transitionInfo[0].subResourceInfo.aspectMask     =
-                Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
-            transitionInfo[0].subResourceInfo.baseArrayLayer = 0;
-            transitionInfo[0].subResourceInfo.layerNum       = 1;
-            transitionInfo[0].subResourceInfo.baseMipLevel   = 0;
-            transitionInfo[0].subResourceInfo.mipmapLevelNum = m_mipmap;
+            // Image layout transfer
+            Buffer::BxLayoutTransitionInfo transitionInfo    = {};
+            transitionInfo.oldLayout                         = VK_IMAGE_LAYOUT_UNDEFINED;
+            transitionInfo.newLayout                         = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            transitionInfo.subResourceInfo[0].aspectMask     = Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
+            transitionInfo.subResourceInfo[0].baseArrayLayer = 0;
+            transitionInfo.subResourceInfo[0].layerNum       = 1;
+            transitionInfo.subResourceInfo[0].baseMipLevel   = 0;
+            transitionInfo.subResourceInfo[0].mipmapLevelNum = m_mipmap;
 
             m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
 
+            // Copy the image data from buffer to image
             std::vector<Buffer::BxBufferToImageCopyInfo> bufferToImageCopyInfo(1);
             bufferToImageCopyInfo[0].bufferInfo.bufferOffset      = 0;
             bufferToImageCopyInfo[0].bufferInfo.bufferRowLength   = 0;
             bufferToImageCopyInfo[0].bufferInfo.bufferImageHeight = 0;
-            bufferToImageCopyInfo[0].subResourceInfo              = transitionInfo[0].subResourceInfo;
+            bufferToImageCopyInfo[0].subResourceInfo              = transitionInfo.subResourceInfo[0];
             bufferToImageCopyInfo[0].imageInfo.imageOffset        = { 0, 0, 0 };
             bufferToImageCopyInfo[0].imageInfo.imageExtent        = { m_textureWidth, m_textureHeight, 1};
 
             m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
+
+            // Transfer the image layout according to usage
+            switch (m_usage)
+            {
+                case BX_TEXTURE_USAGE_SAMPLED:
+                    transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                    transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                    m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+                    break;
+                case BX_TEXTURE_USAGE_RENDER_TARGET:
+                    NotImplemented();
+                    break;
+                case BX_TEXTURE_USAGE_COLOR_ATTACHMENT:
+                    NotImplemented();
+                    break;
+                case BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT:
+                    NotImplemented();
+                    break;
+                default:
+                    assert(FALSE);
+                    break;
+            }
 
             return result;
         }

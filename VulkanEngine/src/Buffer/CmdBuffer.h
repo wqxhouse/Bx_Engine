@@ -68,8 +68,8 @@ namespace VulkanEngine
                 const std::vector<BxBufferToImageCopyInfo>& copyInfo);
 
             void cmdImageLayoutTransition(
-                const VkImage&                             image,
-                const std::vector<BxLayoutTransitionInfo>& layoutTransInfoList);
+                const VkImage&                image,
+                const BxLayoutTransitionInfo& layoutTransInfoList);
 
             void cmdDrawArrays(
                 const VkPipeline& graphicsPipeline,

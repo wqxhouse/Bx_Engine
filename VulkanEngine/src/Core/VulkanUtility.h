@@ -356,6 +356,17 @@ namespace VulkanEngine
                 return aspectMask;
             }
 
+            static INLINE void GetImageTransitionAccessMask(
+                IN  const VkImageLayout   oldLayout,
+                IN  const VkImageLayout   newLayout,
+                OUT VkAccessFlags*        pSrcAccessMask,
+                OUT VkAccessFlags*        pDstAccessMask,
+                OUT VkPipelineStageFlags* pSrcStage,
+                OUT VkPipelineStageFlags* pDstStage)
+            {
+                NotImplemented();
+            }
+
             static INLINE BOOL GetBxStatus(
                 const VkResult vkResult)
             {

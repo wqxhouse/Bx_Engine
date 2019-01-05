@@ -66,11 +66,9 @@ namespace VulkanEngine
 
         struct BxLayoutTransitionInfo
         {
-            VkImageLayout          oldLayout;
-            VkImageLayout          newLayout;
-            VkAccessFlags          srcAccessMask;
-            VkAccessFlags          dstAccessMask;
-            BxImageSubresourceInfo subResourceInfo;
+            VkImageLayout                       oldLayout;
+            VkImageLayout                       newLayout;
+            std::vector<BxImageSubresourceInfo> subResourceInfo;
         };
 
         struct BxRawBufferCreateInfo

@@ -159,8 +159,8 @@ namespace VulkanEngine
         }
 
         BOOL CmdBufferMgr::imageLayoutTransition(
-            const VkImage&                                     image,
-            const std::vector<Buffer::BxLayoutTransitionInfo>& layoutTransInfoList)
+            const VkImage&                        image,
+            const Buffer::BxLayoutTransitionInfo& layoutTransInfoList)
         {
             BOOL status = BX_SUCCESS;
 
