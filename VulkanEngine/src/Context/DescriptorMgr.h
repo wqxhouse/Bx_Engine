@@ -17,13 +17,18 @@ namespace VulkanEngine
     {
         struct Descriptor
         {
-            VDeleter<VkDescriptorPool>   m_descriptorPool;
             std::vector<VkDescriptorSet> m_descriptorSets;
         };
 
-        struct DescriptorUpdateInfo
+        /*struct DescriptorUpdateInfo
         {
             
+        };*/
+
+        struct DescriptorPoolCreateInfo
+        {            
+            BX_DESCRIPTOR_TYPE descriptorType;
+            UINT               descriptorNum;
         };
 
         class DescriptorMgr
@@ -35,9 +40,8 @@ namespace VulkanEngine
             ~DescriptorMgr();
 
             BOOL createDescriptorPool(
-                const BX_DESCRIPTOR_TYPE descriptorType,
-                const UINT               descriptorNum,
-                const UINT               descriptorMaxSet);
+                const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
+                const UINT                                   descriptorMaxSet);
 
             BOOL createDescriptorSets(
                 const BX_DESCRIPTOR_TYPE              descriptorType,
@@ -64,6 +68,8 @@ namespace VulkanEngine
 
         private:
             const VkDevice* m_pDevice;
+
+            VDeleter<VkDescriptorPool> m_descriptorPool;
 
             std::vector<Descriptor> m_descriptors;
         };

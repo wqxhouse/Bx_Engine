@@ -15,7 +15,8 @@ namespace VulkanEngine
         DescriptorMgr::DescriptorMgr(const VkDevice* const pDevice)
             : m_pDevice(pDevice)
         {
-            m_descriptors.resize(2, { { *pDevice, vkDestroyDescriptorPool }, {} });
+            m_descriptorPool = { *pDevice, vkDestroyDescriptorPool };
+            m_descriptors.resize(2);
         }
 
         DescriptorMgr::~DescriptorMgr()
@@ -23,28 +24,34 @@ namespace VulkanEngine
         }
 
         BOOL DescriptorMgr::createDescriptorPool(
-            const BX_DESCRIPTOR_TYPE descriptorType,
-            const UINT               descriptorNum,
-            const UINT               descriptorMaxSet)
+            const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
+            const UINT                                   descriptorMaxSet)
         {
             BOOL result = BX_SUCCESS;
 
-            VkDescriptorPoolSize descriptorPoolSize = {};
-            descriptorPoolSize.type                 =
-                Utility::VulkanUtility::GetVkDescriptorType(descriptorType);
-            descriptorPoolSize.descriptorCount      = descriptorNum;
+            size_t descriptorPoolCreateNum = descriptorPoolCreateData.size();
+
+            std::vector<VkDescriptorPoolSize> descriptorPoolSizeList(descriptorPoolCreateNum);
+
+            for (size_t i = 0; i < descriptorPoolCreateNum; ++i)
+            {
+                descriptorPoolSizeList[i].type =
+                    Utility::VulkanUtility::GetVkDescriptorType(descriptorPoolCreateData[i].descriptorType);
+                descriptorPoolSizeList[i].descriptorCount = descriptorPoolCreateData[i].descriptorNum;
+                
+            }
 
             VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
             descriptorPoolCreateInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            descriptorPoolCreateInfo.poolSizeCount = 1;
-            descriptorPoolCreateInfo.pPoolSizes    = &descriptorPoolSize;
+            descriptorPoolCreateInfo.poolSizeCount = static_cast<UINT>(descriptorPoolSizeList.size());
+            descriptorPoolCreateInfo.pPoolSizes    = descriptorPoolSizeList.data();
             descriptorPoolCreateInfo.maxSets       = descriptorMaxSet;
 
             VkResult descriptorPoolCreateResult =
                 vkCreateDescriptorPool(*m_pDevice,
                                        &descriptorPoolCreateInfo,
                                        NULL,
-                                       m_descriptors[descriptorType].m_descriptorPool.replace());
+                                       m_descriptorPool.replace());
 
             result = Utility::VulkanUtility::GetBxStatus(descriptorPoolCreateResult);
 
@@ -73,7 +80,7 @@ namespace VulkanEngine
 
             VkDescriptorSetAllocateInfo descriptorSetAllocInfo = {};
             descriptorSetAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            descriptorSetAllocInfo.descriptorPool     = m_descriptors[descriptorType].m_descriptorPool;
+            descriptorSetAllocInfo.descriptorPool     = m_descriptorPool;
             descriptorSetAllocInfo.pSetLayouts        = descriptorSetLayoutList.data();
             descriptorSetAllocInfo.descriptorSetCount = descriptorSetNum;
 
