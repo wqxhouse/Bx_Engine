@@ -763,7 +763,7 @@ namespace VulkanEngine
 
         m_pModel = std::unique_ptr<ModelObject>(
             new ModelObject("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-                new Trans(glm::vec3(-70.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f))));
+                new Trans(Math::Vector3(-70.0f, 0.0f, 0.0f), Math::Vector3(), Math::Vector3(0.0f, 1.0f, 0.0f))));
 
         auto bindingDescription   = VulkanVertexBuffer::createDescription(0, BX_VERTEX_INPUT_RATE_VERTEX);
         auto attributeDescription = VulkanVertexBuffer::createAttributeDescriptions();
