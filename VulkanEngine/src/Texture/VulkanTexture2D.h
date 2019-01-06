@@ -14,26 +14,24 @@
 #include "../Core/VulkanPCH.h"
 #include "../Context/CmdBufferMgr.h"
 
-using namespace Texture;
-
 namespace VulkanEngine
 {
     namespace Texture
     {
-        class VulkanTexture2D : public Texture2D
+        class VulkanTexture2D : public ::Texture::Texture2D
         {
         public:
             VulkanTexture2D(
-                const VkDevice* const    pDevice,
-                Mgr::CmdBufferMgr* const pCmdBufferMgr,
-                Texture2DCreateData*     pTex2DCreateData);
+                const VkDevice* const           pDevice,
+                Mgr::CmdBufferMgr* const        pCmdBufferMgr,
+                ::Texture::Texture2DCreateData* pTex2DCreateData);
 
             // Bind the image which externally created (e.g. swapchain images)
             VulkanTexture2D(
-                const VkDevice* const    pDevice,
-                Mgr::CmdBufferMgr* const pCmdBufferMgr,
-                Texture2DCreateData*     pTex2DCreateData,
-                const VkImage            image);
+                const VkDevice* const           pDevice,
+                Mgr::CmdBufferMgr* const        pCmdBufferMgr,
+                ::Texture::Texture2DCreateData* pTex2DCreateData,
+                const VkImage                   image);
 
             ~VulkanTexture2D();
 
@@ -43,8 +41,8 @@ namespace VulkanEngine
             BOOL createTextureImageView();
 
             BOOL createSampler(
-                const TextureSamplerCreateData& samplerCreateData,
-                const BOOL                      isSamplerAnisotropySupport);
+                const ::Texture::TextureSamplerCreateData& samplerCreateData,
+                const BOOL                                 isSamplerAnisotropySupport);
 
             /*static VulkanTexture2D& CreateTexture2D(
                 const std::string&       fileName,
@@ -55,6 +53,7 @@ namespace VulkanEngine
 
             INLINE const VkImage&     GetTextureImage()     const { return m_texImage;     }
             INLINE const VkImageView& GetTextureImageView() const { return m_texImageView; }
+            INLINE const VkSampler&   GetTextureSampler()   const { return m_texSampler;   }
 
         private:
             const VkDevice* const    m_pDevice;
@@ -63,6 +62,7 @@ namespace VulkanEngine
             VDeleter<VkImage>        m_texImage;
             VDeleter<VkDeviceMemory> m_texImageMemory;
             VDeleter<VkImageView>    m_texImageView;
+            VDeleter<VkSampler>      m_texSampler;
 
             union
             {

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "../Buffer/VulkanDescriptorBuffer.h"
+#include "../Texture/VulkanTexture2D.h"
 
 namespace VulkanEngine
 {
@@ -20,15 +21,18 @@ namespace VulkanEngine
             std::vector<VkDescriptorSet> m_descriptorSets;
         };
 
-        /*struct DescriptorUpdateInfo
-        {
-            
-        };*/
-
         struct DescriptorPoolCreateInfo
         {
             BX_DESCRIPTOR_TYPE descriptorType;
             UINT               descriptorNum;
+        };
+
+        struct DescriptorUpdateInfo
+        {
+            BX_DESCRIPTOR_TYPE              descriptorType;
+            Buffer::VulkanDescriptorBuffer* pDescriptorBuffer;
+            Texture::VulkanTexture2D*       pDescriptorTexture;
+            UINT                            descriptorSetIndex;
         };
 
         class DescriptorMgr
@@ -48,10 +52,8 @@ namespace VulkanEngine
                 const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
                 const UINT                            descriptorSetNum);
 
-            BOOL updateUniformDescriptorSet(
-                const BX_DESCRIPTOR_TYPE              descriptorType,
-                const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
-                const UINT                            descriptorSetIndex);
+            BOOL updateDescriptorSet(
+                const std::vector<DescriptorUpdateInfo>& descriptorUpdateData);
 
             inline const VkDescriptorSet GetDescriptorSet(
                 const BX_DESCRIPTOR_TYPE descriptorType,
