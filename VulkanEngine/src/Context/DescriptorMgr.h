@@ -26,7 +26,7 @@ namespace VulkanEngine
         };*/
 
         struct DescriptorPoolCreateInfo
-        {            
+        {
             BX_DESCRIPTOR_TYPE descriptorType;
             UINT               descriptorNum;
         };

@@ -38,7 +38,6 @@ namespace VulkanEngine
                 descriptorPoolSizeList[i].type =
                     Utility::VulkanUtility::GetVkDescriptorType(descriptorPoolCreateData[i].descriptorType);
                 descriptorPoolSizeList[i].descriptorCount = descriptorPoolCreateData[i].descriptorNum;
-                
             }
 
             VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
