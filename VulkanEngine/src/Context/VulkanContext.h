@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Setting/Setting.h>
+#include <Object/Model/Model.h>
 
 #include "BxQueue.h"
 #include "CmdBufferMgr.h"
