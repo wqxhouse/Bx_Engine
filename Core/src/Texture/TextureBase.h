@@ -20,17 +20,33 @@
 
 namespace Texture
 {
+    struct TextureSamplerCreateData
+    {
+        TextureSamplerFilter         magFilter;
+        TextureSamplerFilter         minFilter;
+        TextureSamplerAddressingMode addressingModeU;
+        TextureSamplerAddressingMode addressingModeV;
+        TextureSamplerAddressingMode addressingModeW;
+        UINT                         anisotropyNum;
+        Math::Vector4                borderColor;
+        BOOL                         normalize;
+        TextureSamplerFilter         mipmapFilter;
+        float                        mipmapOffset;
+        float                        minLod;
+        float                        maxLod;
+    };
+
     struct TextureCreateData
     {
-        UINT          texWidth;
-        UINT          texHeight;
-        UINT          samples;
-        BOOL          mipmap;
-        TextureFormat texLoadFormat;
-        TextureFormat texStoreFormat;
-        TextureUsage  texUsage;
-        BOOL          texOptimize;
-        BOOL          texPerserve;
+        UINT               texWidth;
+        UINT               texHeight;
+        UINT               samples;
+        BOOL               mipmap;
+        TextureFormat      texLoadFormat;
+        TextureFormat      texStoreFormat;
+        TextureUsage       texUsage;
+        BOOL               texOptimize;
+        BOOL               texPerserve;
     };
 
     struct TextureDeleter

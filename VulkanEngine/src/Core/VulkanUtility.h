@@ -11,6 +11,7 @@
 
 #include "VulkanPCH.h"
 #include <Core/Utility.h>
+#include <Math/Math.h>
 
 #include "../Context/BxQueue.h"
 
@@ -364,7 +365,157 @@ namespace VulkanEngine
                 OUT VkPipelineStageFlags* pSrcStage,
                 OUT VkPipelineStageFlags* pDstStage)
             {
-                NotImplemented();
+                VkAccessFlags        srcAccessMask;
+                VkAccessFlags        dstAccessMask;
+                VkPipelineStageFlags srcStage;
+                VkPipelineStageFlags dstStage;
+
+                if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+                    newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+                {
+                    srcAccessMask = 0;
+                    dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+                    srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                    dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                }
+                else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
+                         newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+                {
+                    srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                    dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+                    srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                    dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                }
+                else
+                {
+                    NotImplemented();
+                }
+
+                *pSrcAccessMask = srcAccessMask;
+                *pDstAccessMask = dstAccessMask;
+                *pSrcStage      = srcStage;
+                *pDstStage      = dstStage;
+            }
+
+            static INLINE VkFilter GetVkFilter(
+                const TextureSamplerFilter samplerFilter)
+            {
+                VkFilter filter;
+
+                switch (samplerFilter)
+                {
+                    case BX_TEXTURE_SAMPLER_FILTER_NEAREST:
+                        filter = VK_FILTER_NEAREST;
+                        break;
+                    case BX_TEXTURE_SAMPLER_FILTER_LINEAR:
+                        filter = VK_FILTER_LINEAR;
+                        break;
+                    case BX_TEXTURE_SAMPLER_FILTER_CUBIC:
+                        filter = VK_FILTER_CUBIC_IMG;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
+
+                return filter;
+            }
+
+            static INLINE VkSamplerMipmapMode GetVkMipmapMode(
+                const TextureSamplerFilter samplerFilter)
+            {
+                VkSamplerMipmapMode mipmapMode;
+
+                switch (samplerFilter)
+                {
+                    case BX_TEXTURE_SAMPLER_FILTER_NEAREST:
+                        mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+                        break;
+                    case BX_TEXTURE_SAMPLER_FILTER_LINEAR:
+                        mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
+
+                return mipmapMode;
+            }
+
+            static INLINE VkSamplerAddressMode GetVkAddressMode(
+                const TextureSamplerAddressingMode samplerAddressingMode)
+            {
+                VkSamplerAddressMode addressMode;
+
+                switch (samplerAddressingMode)
+                {
+                    case BX_TEXTURE_SAMPLER_ADDRESSING_REPEAT:
+                        addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                        break;
+                    case BX_TEXTURE_SAMPLER_ADDRESSING_MIRROR_REPEAT:   
+                        addressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+                        break;
+                    case BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE:
+                        addressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+                        break;
+                    case BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER:
+                        addressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+                        break;
+                    default:
+                        assert(FALSE);
+                        break;
+                }
+
+                return addressMode;
+            }
+
+            static INLINE VkBorderColor GetVkBorderColor(
+                const Math::Vector4& color)
+            {
+                VkBorderColor borderColor;
+
+                if (Math::FloatEqual(color.r, 0.0f) &&
+                    Math::FloatEqual(color.g, 0.0f) &&
+                    Math::FloatEqual(color.b, 0.0f) &&
+                    Math::FloatEqual(color.a, 1.0f))
+                {
+                    borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+                }
+                else if (Math::FloatEqual(color.r, 1.0f) &&
+                         Math::FloatEqual(color.g, 1.0f) &&
+                         Math::FloatEqual(color.b, 1.0f) &&
+                         Math::FloatEqual(color.a, 1.0f))
+                {
+                    borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+                }
+                else if (Math::FloatEqual(color.r, 0.0f) &&
+                         Math::FloatEqual(color.g, 0.0f) &&
+                         Math::FloatEqual(color.b, 0.0f) &&
+                         Math::FloatEqual(color.a, 0.0f))
+                {
+                    borderColor = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK;
+                }
+                else
+                {
+                    NotSupported();
+                }
+
+                return borderColor;
+            }
+
+            static INLINE BOOL IsSamplerAnisotropySupport(
+                const VkPhysicalDevice hwDevice)
+            {
+                BOOL result = TRUE;
+
+                VkPhysicalDeviceFeatures supportedFeatures;
+                vkGetPhysicalDeviceFeatures(hwDevice, &supportedFeatures);
+
+                result = ((supportedFeatures.samplerAnisotropy == VK_TRUE) ? TRUE : FALSE);
+
+                return result;
             }
 
             static INLINE BOOL GetBxStatus(

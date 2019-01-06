@@ -258,7 +258,8 @@ namespace VulkanEngine
             }
 
             vkCmdPipelineBarrier(m_cmdBuffer,
-                                 srcStage, dstStage,
+                                 srcStage, // The stage need to wait
+                                 dstStage, // The stage which image is used
                                  0,
                                  0, NULL,
                                  0, NULL,

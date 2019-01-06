@@ -498,9 +498,9 @@ namespace VulkanEngine
                 VulkanUtility::QuerySwapchainHwProperties(m_vkActiveHwGpuDeviceList[0], m_vkSurface);
 
             if (VulkanUtility::ValidateHwDevice(m_vkActiveHwGpuDeviceList[0],
-                m_swapchainHwProperties,
-                queueIndices,
-                m_deviceExts) == TRUE)
+                                                m_swapchainHwProperties,
+                                                queueIndices,
+                                                m_deviceExts) == TRUE)
             {
                 m_deviceExtSupport = TRUE;
                 result = BX_SUCCESS;
@@ -510,6 +510,8 @@ namespace VulkanEngine
                 assert(BX_FAIL);
                 result = BX_FAIL;
             }
+
+            m_isSamplerAnisotropySupport = Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
         }
 
         return result;
@@ -616,7 +618,7 @@ namespace VulkanEngine
         swapchainCreateInfo.minImageCount    = swapchainMinImageCount;
         swapchainCreateInfo.imageExtent      = m_swapchainExtent;
         swapchainCreateInfo.preTransform     = m_swapchainHwProperties.m_surfaceCapabilities.currentTransform;
-        swapchainCreateInfo.clipped = VK_TRUE;
+        swapchainCreateInfo.clipped          = VK_TRUE;
         swapchainCreateInfo.compositeAlpha   = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
         UINT swapchainQueueIndices[2] =

@@ -23,8 +23,26 @@ namespace VulkanEngine
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr)
         {
-            m_texImage       = { *m_pDevice, vkDestroyImage };
-            m_texImageMemory = { *m_pDevice, vkFreeMemory   };
+            m_texImage       = { *m_pDevice, vkDestroyImage     };
+            m_texImageMemory = { *m_pDevice, vkFreeMemory       };
+            m_texImageView   = { *m_pDevice, vkDestroyImageView };
+
+            m_textureFlags.value = 0;
+        }
+
+        VulkanTexture2D::VulkanTexture2D(
+            const VkDevice* const    pDevice,
+            Mgr::CmdBufferMgr* const pCmdBufferMgr,
+            Texture2DCreateData*     pTex2DCreateData,
+            const VkImage            image)
+            : Texture2D(pTex2DCreateData),
+              m_pDevice(pDevice),
+              m_pCmdBufferMgr(pCmdBufferMgr)
+        {
+            m_texImage = image;
+
+            m_textureFlags.value      = 0;
+            m_textureFlags.isExternal = TRUE;
         }
 
         VulkanTexture2D::~VulkanTexture2D()
@@ -34,6 +52,8 @@ namespace VulkanEngine
         BOOL VulkanTexture2D::create(
             const VkPhysicalDevice hwDevice)
         {
+            assert(m_textureFlags.isExternal == FALSE);
+
             BOOL result = BX_SUCCESS;
 
             // The texture format must be optimized at this point
@@ -163,6 +183,70 @@ namespace VulkanEngine
                 default:
                     assert(FALSE);
                     break;
+            }
+
+            return result;
+        }
+
+        BOOL VulkanTexture2D::createTextureImageView()
+        {
+            BOOL result = BX_SUCCESS;
+
+            VkImageViewCreateInfo imageViewCreateInfo           = {};
+            imageViewCreateInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            imageViewCreateInfo.viewType                        = VK_IMAGE_VIEW_TYPE_2D;
+            imageViewCreateInfo.image                           = m_texImage;
+            imageViewCreateInfo.format                          = Utility::VulkanUtility::GetVkImageFormat(m_storeFormat);
+            imageViewCreateInfo.components.r                    = VK_COMPONENT_SWIZZLE_R;
+            imageViewCreateInfo.components.g                    = VK_COMPONENT_SWIZZLE_G;
+            imageViewCreateInfo.components.b                    = VK_COMPONENT_SWIZZLE_B;
+            imageViewCreateInfo.components.a                    = VK_COMPONENT_SWIZZLE_A;
+
+            imageViewCreateInfo.subresourceRange.aspectMask     = Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
+            imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+            imageViewCreateInfo.subresourceRange.layerCount     = 1;
+            imageViewCreateInfo.subresourceRange.baseMipLevel   = 0;
+            imageViewCreateInfo.subresourceRange.levelCount     = m_mipmap;
+
+            VkResult vkResult = vkCreateImageView(
+                *m_pDevice, &imageViewCreateInfo, NULL, m_texImageView.replace());
+            result = Utility::VulkanUtility::GetBxStatus(vkResult);
+
+            assert(result == BX_SUCCESS);
+
+            return result;
+        }
+
+        BOOL VulkanTexture2D::createSampler(
+            const TextureSamplerCreateData& samplerCreateData,
+            const BOOL                      isSamplerAnisotropySupport)
+        {
+            BOOL result = BX_SUCCESS;
+
+            VkSamplerCreateInfo samplerCreateInfo     = {};
+            samplerCreateInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+            samplerCreateInfo.magFilter               = Utility::VulkanUtility::GetVkFilter(samplerCreateData.magFilter);
+            samplerCreateInfo.minFilter               = Utility::VulkanUtility::GetVkFilter(samplerCreateData.minFilter);
+            samplerCreateInfo.addressModeU            = Utility::VulkanUtility::GetVkAddressMode(samplerCreateData.addressingModeU);
+            samplerCreateInfo.addressModeV            = Utility::VulkanUtility::GetVkAddressMode(samplerCreateData.addressingModeV);
+            samplerCreateInfo.borderColor             = Utility::VulkanUtility::GetVkBorderColor(samplerCreateData.borderColor);
+            samplerCreateInfo.unnormalizedCoordinates = ((samplerCreateData.normalize == TRUE) ? VK_FALSE : VK_TRUE);
+            samplerCreateInfo.compareEnable           = VK_FALSE;
+            samplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
+            samplerCreateInfo.mipmapMode              = Utility::VulkanUtility::GetVkMipmapMode(samplerCreateData.mipmapFilter);
+            samplerCreateInfo.mipLodBias              = samplerCreateData.mipmapOffset;
+            samplerCreateInfo.maxLod                  = samplerCreateData.maxLod;
+            samplerCreateInfo.minLod                  = samplerCreateData.minLod;
+
+            if (isSamplerAnisotropySupport == TRUE)
+            {
+                samplerCreateInfo.anisotropyEnable = VK_TRUE;
+                samplerCreateInfo.maxAnisotropy    = samplerCreateData.anisotropyNum;
+            }
+            else
+            {
+                samplerCreateInfo.anisotropyEnable = VK_FALSE;
+                samplerCreateInfo.maxAnisotropy    = 1;
             }
 
             return result;
