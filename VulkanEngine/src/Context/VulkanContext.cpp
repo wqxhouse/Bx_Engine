@@ -289,7 +289,12 @@ namespace VulkanEngine
 
             for (UINT i = 0; i < swapChainImageNum; ++i)
             {
-                m_pDescriptorMgr->updateUniformDescriptorSet(BX_UNIFORM_DESCRIPTOR, &(m_descriptorBufferList[i]), i);
+                std::vector<Mgr::DescriptorUpdateInfo> updateInfoList(1);
+                updateInfoList[0].descriptorType     = BX_UNIFORM_DESCRIPTOR;
+                updateInfoList[0].descriptorSetIndex = i;
+                updateInfoList[0].pDescriptorBuffer  = &(m_descriptorBufferList[i]);
+
+                m_pDescriptorMgr->updateDescriptorSet(updateInfoList);
             }
 
             assert(status == BX_SUCCESS);

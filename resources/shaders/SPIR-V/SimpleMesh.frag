@@ -13,5 +13,5 @@ layout (binding = 0) uniform TestUniform
 
 void main()
 {
-	outColor = m_color.color;
+	outColor = vec4(fragTexCoord, 0.0f, 1.0f);
 }
