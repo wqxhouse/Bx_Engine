@@ -130,7 +130,7 @@ namespace VulkanEngine
         std::unique_ptr<VulkanIndexBuffer>   m_pIndexBuffer;
 
         // Descriptor buffer/mgr test
-        Math::Vector4 testColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+        Math::Vector4 testColor = { 1.0f, 1.0f, 0.0f, 1.0f };
         std::unique_ptr<Mgr::DescriptorMgr> m_pDescriptorMgr;
         std::vector<VulkanUniformBuffer>    m_descriptorBufferList;
     };

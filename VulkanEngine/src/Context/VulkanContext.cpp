@@ -274,13 +274,19 @@ namespace VulkanEngine
 
             // Test UBO
             m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(new Mgr::DescriptorMgr(&m_vkDevice));
-            status = m_pDescriptorMgr->createDescriptorPool(BX_UNIFORM_DESCRIPTOR, 1, swapChainImageNum);
+
+            std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(1);
+            descriptorPoolCreateData[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
+            descriptorPoolCreateData[0].descriptorNum  = 1;
+
+            status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData, swapChainImageNum);
             assert(status == BX_SUCCESS);
 
             status = m_pDescriptorMgr->
                 createDescriptorSets(BX_UNIFORM_DESCRIPTOR,
                                      m_descriptorBufferList.data(),
                                      static_cast<UINT>(m_descriptorBufferList.size()));
+
             for (UINT i = 0; i < swapChainImageNum; ++i)
             {
                 m_pDescriptorMgr->updateUniformDescriptorSet(BX_UNIFORM_DESCRIPTOR, &(m_descriptorBufferList[i]), i);
