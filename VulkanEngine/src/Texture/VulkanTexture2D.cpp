@@ -16,9 +16,9 @@ namespace VulkanEngine
     namespace Texture
     {
         VulkanTexture2D::VulkanTexture2D(
-            const VkDevice* const    pDevice,
-            Mgr::CmdBufferMgr* const pCmdBufferMgr,
-            Texture2DCreateData*     pTex2DCreateData)
+            const VkDevice* const           pDevice,
+            Mgr::CmdBufferMgr* const        pCmdBufferMgr,
+            ::Texture::Texture2DCreateData* pTex2DCreateData)
             : Texture2D(pTex2DCreateData),
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr)
@@ -31,10 +31,10 @@ namespace VulkanEngine
         }
 
         VulkanTexture2D::VulkanTexture2D(
-            const VkDevice* const    pDevice,
-            Mgr::CmdBufferMgr* const pCmdBufferMgr,
-            Texture2DCreateData*     pTex2DCreateData,
-            const VkImage            image)
+            const VkDevice* const           pDevice,
+            Mgr::CmdBufferMgr* const        pCmdBufferMgr,
+            ::Texture::Texture2DCreateData* pTex2DCreateData,
+            const VkImage                   image)
             : Texture2D(pTex2DCreateData),
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr)
@@ -218,8 +218,8 @@ namespace VulkanEngine
         }
 
         BOOL VulkanTexture2D::createSampler(
-            const TextureSamplerCreateData& samplerCreateData,
-            const BOOL                      isSamplerAnisotropySupport)
+            const ::Texture::TextureSamplerCreateData& samplerCreateData,
+            const BOOL                                 isSamplerAnisotropySupport)
         {
             BOOL result = BX_SUCCESS;
 
@@ -248,6 +248,11 @@ namespace VulkanEngine
                 samplerCreateInfo.anisotropyEnable = VK_FALSE;
                 samplerCreateInfo.maxAnisotropy    = 1;
             }
+
+            VkResult createSamplerResult = vkCreateSampler(*m_pDevice, &samplerCreateInfo, NULL, m_texSampler.replace());
+            result = Utility::VulkanUtility::GetBxStatus(createSamplerResult);
+
+            assert(result == BX_SUCCESS);
 
             return result;
         }

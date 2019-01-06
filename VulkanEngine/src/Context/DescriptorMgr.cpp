@@ -95,29 +95,68 @@ namespace VulkanEngine
             return result;
         }
         
-        BOOL DescriptorMgr::updateUniformDescriptorSet(
-            const BX_DESCRIPTOR_TYPE              descriptorType,
-            const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
-            const UINT                            descriptorSetIndex)
+        BOOL DescriptorMgr::updateDescriptorSet(
+            const std::vector<DescriptorUpdateInfo>& descriptorUpdateData)
         {
             BOOL result = BX_SUCCESS;
             
-            VkDescriptorBufferInfo descriptorBufferInfo = {};
-            descriptorBufferInfo.buffer = pDescriptorBuffer->GetBuffer();
-            descriptorBufferInfo.offset = 0;
-            descriptorBufferInfo.range  = pDescriptorBuffer->GetBufferSize();
+            size_t descriptorUpdateNum = descriptorUpdateData.size();
 
-            VkWriteDescriptorSet writeDescriptorSet = {};
-            writeDescriptorSet.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            writeDescriptorSet.descriptorType       =
-                Utility::VulkanUtility::GetVkDescriptorType(descriptorType);
-            writeDescriptorSet.descriptorCount      = 1;
-            writeDescriptorSet.dstSet               = m_descriptors[descriptorType].m_descriptorSets[descriptorSetIndex];
-            writeDescriptorSet.dstBinding           = 0;
-            writeDescriptorSet.dstArrayElement      = 0;
-            writeDescriptorSet.pBufferInfo          = &descriptorBufferInfo;
+            std::vector<VkWriteDescriptorSet> writeDescriptorSetList(descriptorUpdateNum);
 
-            vkUpdateDescriptorSets(*m_pDevice, 1, &writeDescriptorSet, 0, NULL);
+            for (size_t i = 0; i < descriptorUpdateNum; ++i)
+            {
+                BX_DESCRIPTOR_TYPE descriptorType = descriptorUpdateData[i].descriptorType;
+
+                writeDescriptorSetList[i].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                writeDescriptorSetList[i].descriptorType  = Utility::VulkanUtility::GetVkDescriptorType(descriptorType);
+                writeDescriptorSetList[i].descriptorCount = 1;
+                writeDescriptorSetList[i].dstSet          =
+                    m_descriptors[descriptorType].m_descriptorSets[descriptorUpdateData[i].descriptorSetIndex];
+                writeDescriptorSetList[i].dstBinding      = 0;
+                writeDescriptorSetList[i].dstArrayElement = 0;
+
+                switch (descriptorType)
+                {
+                    case BX_UNIFORM_DESCRIPTOR:
+                    {
+                        VkDescriptorBufferInfo descriptorBufferInfo = {};
+                        descriptorBufferInfo.buffer = descriptorUpdateData[i].pDescriptorBuffer->GetBuffer();
+                        descriptorBufferInfo.offset = 0;
+                        descriptorBufferInfo.range  = descriptorUpdateData[i].pDescriptorBuffer->GetBufferSize();
+
+                        writeDescriptorSetList[i].pBufferInfo = &descriptorBufferInfo;
+
+                        break;
+                    }
+                    case BX_SAMPLER_DESCRIPTOR:
+                    {
+                        VkDescriptorImageInfo descriptorImageInfo = {};
+                        descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        descriptorImageInfo.imageView   =
+                            descriptorUpdateData[i].pDescriptorTexture->GetTextureImageView();
+                        descriptorImageInfo.sampler     =
+                            descriptorUpdateData[i].pDescriptorTexture->GetTextureSampler();
+
+                        writeDescriptorSetList[i].pImageInfo = &descriptorImageInfo;
+
+                        break;
+                    }
+                    case BX_STORAGE_BUFFER_DESCRIPTOR:
+                    {
+                        NotImplemented();
+                        break;
+                    }
+                    default:
+                        NotSupported();
+                        break;
+                }
+            }
+
+            vkUpdateDescriptorSets(*m_pDevice,
+                                   static_cast<UINT>(writeDescriptorSetList.size()),
+                                   writeDescriptorSetList.data(),
+                                   0, NULL);
 
             return result;
         }
