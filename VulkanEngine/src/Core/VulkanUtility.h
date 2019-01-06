@@ -149,7 +149,7 @@ namespace VulkanEngine
                     queueCmdPoolIndex = BX_QUEUE_COMPUTE;
                     break;
                 default:
-                    assert(FALSE);
+                    NotSupported();
                     break;
                 }
 
@@ -172,7 +172,7 @@ namespace VulkanEngine
                     vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
                     break;
                 default:
-                    assert(FALSE);
+                    NotSupported();
                     break;
                 }
 
@@ -193,7 +193,7 @@ namespace VulkanEngine
                     inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
                     break;
                 default:
-                    assert(FALSE);
+                    NotSupported();
                     break;
                 }
 
@@ -214,7 +214,7 @@ namespace VulkanEngine
                         indexType = VK_INDEX_TYPE_UINT32;
                         break;
                     default:
-                        assert(FALSE);
+                        NotSupported();
                         break;
                 }
 
@@ -231,11 +231,14 @@ namespace VulkanEngine
                     case BX_UNIFORM_DESCRIPTOR:
                         descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                         break;
+                    case BX_SAMPLER_DESCRIPTOR:
+                        descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                        break;
                     case BX_STORAGE_BUFFER_DESCRIPTOR:
                         descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
                         break;
                     default:
-                        assert(FALSE);
+                        NotSupported();
                         break;
                 }
 
@@ -291,7 +294,7 @@ namespace VulkanEngine
                         imageFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
                         break;
                     default:
-                        assert(FALSE);
+                        NotSupported();
                         break;
                 }
 
@@ -350,7 +353,7 @@ namespace VulkanEngine
                         aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
                         break;
                     default:
-                        assert(FALSE);
+                        NotSupported();
                         break;
                 }
 
@@ -464,7 +467,7 @@ namespace VulkanEngine
                         addressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
                         break;
                     default:
-                        assert(FALSE);
+                        NotSupported();
                         break;
                 }
 
