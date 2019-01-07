@@ -143,10 +143,10 @@ namespace VulkanEngine
                 copyCommandBuffer.endCmdBuffer();
             }
 
-            VkSubmitInfo copyCommandSubmitInfo = {};
-            copyCommandSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            VkSubmitInfo copyCommandSubmitInfo       = {};
+            copyCommandSubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
             copyCommandSubmitInfo.commandBufferCount = 1;
-            copyCommandSubmitInfo.pCommandBuffers = copyCommandBuffer.GetCmdBufferPtr();
+            copyCommandSubmitInfo.pCommandBuffers    = copyCommandBuffer.GetCmdBufferPtr();
 
             status = submitCommandBufferToQueue(
                 m_pQueueMgr->GetHwQueueIndices().graphicsFamilyIndex, 1, &copyCommandSubmitInfo, VK_NULL_HANDLE);
@@ -180,6 +180,18 @@ namespace VulkanEngine
                 imageLayoutTransitionBuffer.cmdImageLayoutTransition(image, layoutTransInfoList);
                 imageLayoutTransitionBuffer.endCmdBuffer();
             }
+
+            VkSubmitInfo copyCommandSubmitInfo       = {};
+            copyCommandSubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            copyCommandSubmitInfo.commandBufferCount = 1;
+            copyCommandSubmitInfo.pCommandBuffers    = imageLayoutTransitionBuffer.GetCmdBufferPtr();
+
+            status = submitCommandBufferToQueue(
+                m_pQueueMgr->GetHwQueueIndices().graphicsFamilyIndex, 1, &copyCommandSubmitInfo, VK_NULL_HANDLE);
+
+            assert(status == BX_SUCCESS);
+
+            freeCommandBuffer(m_cmdPool[BX_QUEUE_GRAPHICS], 1, &imageLayoutTransitionBuffer);
 
             return status;
         }

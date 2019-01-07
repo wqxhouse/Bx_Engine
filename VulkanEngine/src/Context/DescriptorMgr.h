@@ -21,6 +21,14 @@ namespace VulkanEngine
             std::vector<VkDescriptorSet> m_descriptorSets;
         };
 
+        struct DescriptorCreateInfo
+        {
+            BX_DESCRIPTOR_TYPE descriptorType;
+            BX_SHADER_TYPE     shaderType;
+            UINT               bindingPoint;
+            UINT               descriptorNum;
+        };
+
         struct DescriptorPoolCreateInfo
         {
             BX_DESCRIPTOR_TYPE descriptorType;
@@ -33,6 +41,7 @@ namespace VulkanEngine
             Buffer::VulkanDescriptorBuffer* pDescriptorBuffer;
             Texture::VulkanTexture2D*       pDescriptorTexture;
             UINT                            descriptorSetIndex;
+            UINT                            descriptorBindingIndex;
         };
 
         class DescriptorMgr
@@ -46,6 +55,9 @@ namespace VulkanEngine
             BOOL createDescriptorPool(
                 const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
                 const UINT                                   descriptorMaxSet);
+
+            BOOL createDescriptorSetLayout(
+                const std::vector<DescriptorCreateInfo>& descriptorsCreateInfo);
 
             BOOL createDescriptorSets(
                 const BX_DESCRIPTOR_TYPE              descriptorType,
@@ -71,7 +83,8 @@ namespace VulkanEngine
         private:
             const VkDevice* m_pDevice;
 
-            VDeleter<VkDescriptorPool> m_descriptorPool;
+            VDeleter<VkDescriptorPool>      m_descriptorPool;
+            VDeleter<VkDescriptorSetLayout> m_descriptorSetLayout;
 
             std::vector<Descriptor> m_descriptors;
         };

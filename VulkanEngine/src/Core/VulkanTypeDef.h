@@ -32,7 +32,7 @@ enum BX_SHADER_TYPE
     BX_FRAGMENT_SHADER = 4,
     BX_MAX_SHADER      = 5,
 
-    BX_COMPUTE_SHADER  = 0,
+    BX_COMPUTE_SHADER  = 6,
 };
 
 enum BX_QUEUE_TYPE

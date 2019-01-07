@@ -77,6 +77,39 @@ namespace VulkanEngine
                 const UINT                              filter,
                 const VkMemoryPropertyFlags&            props);
 
+            static INLINE VkShaderStageFlags GetVkShaderStageFlag(
+                const BX_SHADER_TYPE shaderType)
+            {
+                VkShaderStageFlags shaderStageFlags;
+
+                switch (shaderType)
+                {
+                    case BX_VERTEX_SHADER:
+                        shaderStageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                        break;
+                    case BX_GEOMETRY_SHADER:
+                        shaderStageFlags = VK_SHADER_STAGE_GEOMETRY_BIT;
+                        break;
+                    case BX_TCS_SHADER:
+                        shaderStageFlags = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+                        break;
+                    case BX_TES_SHADER:
+                        shaderStageFlags = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+                        break;
+                    case BX_FRAGMENT_SHADER:
+                        shaderStageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+                        break;
+                    case BX_COMPUTE_SHADER:
+                        shaderStageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
+
+                return shaderStageFlags;
+            }
+
             static INLINE VkPolygonMode GetVkPolygonMode(
                 const PolyMode polyMode)
             {
@@ -303,24 +336,24 @@ namespace VulkanEngine
 
             static INLINE VkImageUsageFlags GetVkImageUsage(TextureUsage texUsage)
             {
-                VkImageUsageFlags imageUsageFlagBits;
+                VkImageUsageFlags imageUsageFlagBits = 0;
 
-                if ((texUsage | BX_TEXTURE_USAGE_SAMPLED) != 0)
+                if ((texUsage & BX_TEXTURE_USAGE_SAMPLED) != 0)
                 {
                     imageUsageFlagBits |= VK_IMAGE_USAGE_SAMPLED_BIT;
                 }
 
-                if ((texUsage | BX_TEXTURE_USAGE_RENDER_TARGET) != 0)
+                if ((texUsage & BX_TEXTURE_USAGE_RENDER_TARGET) != 0)
                 {
                     imageUsageFlagBits |= VK_IMAGE_USAGE_STORAGE_BIT;
                 }
 
-                if ((texUsage | BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)
+                if ((texUsage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)
                 {
                     imageUsageFlagBits |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
                 }
 
-                if ((texUsage | BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) != 0)
+                if ((texUsage & BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) != 0)
                 {
                     imageUsageFlagBits |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
                 }
