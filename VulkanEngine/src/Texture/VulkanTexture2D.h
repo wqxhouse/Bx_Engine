@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include <Texture/Texture2D.h>
-
+#include "VulkanTextureBase.h"
 #include "../Core/VulkanPCH.h"
 #include "../Context/CmdBufferMgr.h"
 
@@ -18,7 +17,8 @@ namespace VulkanEngine
 {
     namespace Texture
     {
-        class VulkanTexture2D : public ::Texture::Texture2D
+        class VulkanTexture2D : public ::Texture::Texture2D,
+                                public VulkanTextureBase
         {
         public:
             VulkanTexture2D(
@@ -50,30 +50,6 @@ namespace VulkanEngine
                 const VkDevice* const    pDevice,
                 Texture2DCreateData*     pTex2DCreateData,
                 Mgr::CmdBufferMgr* const pCmdBufferMgr);*/
-
-            INLINE const VkImage&     GetTextureImage()     const { return m_texImage;     }
-            INLINE const VkImageView& GetTextureImageView() const { return m_texImageView; }
-            INLINE const VkSampler&   GetTextureSampler()   const { return m_texSampler;   }
-
-        private:
-            const VkDevice* const    m_pDevice;
-            Mgr::CmdBufferMgr* const m_pCmdBufferMgr;
-
-            VDeleter<VkImage>        m_texImage;
-            VDeleter<VkDeviceMemory> m_texImageMemory;
-            VDeleter<VkImageView>    m_texImageView;
-            VDeleter<VkSampler>      m_texSampler;
-
-            union
-            {
-                UINT value;
-
-                struct
-                {
-                    BOOL isExternal : 1;
-                    UINT reserve    : 31;
-                };
-            } m_textureFlags;
         };
     }
 }

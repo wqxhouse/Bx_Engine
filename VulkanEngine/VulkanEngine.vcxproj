@@ -47,6 +47,7 @@
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
     <ClInclude Include="src\Texture\VulkanTexture2D.h" />
+    <ClInclude Include="src\Texture\VulkanTextureBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="VulkanEngine.licenseheader" />

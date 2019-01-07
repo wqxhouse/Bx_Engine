@@ -20,14 +20,8 @@ namespace VulkanEngine
             Mgr::CmdBufferMgr* const        pCmdBufferMgr,
             ::Texture::Texture2DCreateData* pTex2DCreateData)
             : Texture2D(pTex2DCreateData),
-              m_pDevice(pDevice),
-              m_pCmdBufferMgr(pCmdBufferMgr)
+              VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
-            m_texImage       = { *m_pDevice, vkDestroyImage     };
-            m_texImageMemory = { *m_pDevice, vkFreeMemory       };
-            m_texImageView   = { *m_pDevice, vkDestroyImageView };
-
-            m_textureFlags.value = 0;
         }
 
         VulkanTexture2D::VulkanTexture2D(
@@ -36,8 +30,7 @@ namespace VulkanEngine
             ::Texture::Texture2DCreateData* pTex2DCreateData,
             const VkImage                   image)
             : Texture2D(pTex2DCreateData),
-              m_pDevice(pDevice),
-              m_pCmdBufferMgr(pCmdBufferMgr)
+              VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
             m_texImage = image;
 
