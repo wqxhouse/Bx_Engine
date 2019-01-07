@@ -133,10 +133,10 @@ namespace VulkanEngine
                     {
                         VkDescriptorImageInfo descriptorImageInfo = {};
                         descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                        /*descriptorImageInfo.imageView   =
+                        descriptorImageInfo.imageView   =
                             descriptorUpdateData[i].pDescriptorTexture->GetTextureImageView();
                         descriptorImageInfo.sampler     =
-                            descriptorUpdateData[i].pDescriptorTexture->GetTextureSampler();*/
+                            descriptorUpdateData[i].pDescriptorTexture->GetTextureSampler();
 
                         writeDescriptorSetList[i].pImageInfo = &descriptorImageInfo;
 
