@@ -29,12 +29,12 @@ namespace VulkanEngine
                 const UINT               descriptorNum,
                 const VkShaderStageFlags stageFlags) = 0;
 
-            inline const VkDescriptorSetLayout GetDescriptorSetLayout() const
+            INLINE const VkDescriptorSetLayout GetDescriptorSetLayout() const
             {
                 return m_descriptorSetLayout;
             }
 
-            inline const UINT64 GetBufferSize() const { return m_bufferSize; }
+            INLINE const UINT64 GetBufferSize() const { return m_bufferSize; }
 
         protected:
             VDeleter<VkDescriptorSetLayout> m_descriptorSetLayout;

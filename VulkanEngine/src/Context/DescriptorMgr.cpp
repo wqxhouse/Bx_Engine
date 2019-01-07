@@ -12,11 +12,13 @@ namespace VulkanEngine
 {
     namespace Mgr
     {
-        DescriptorMgr::DescriptorMgr(const VkDevice* const pDevice)
+        DescriptorMgr::DescriptorMgr(
+            const VkDevice* const pDevice)
             : m_pDevice(pDevice)
         {
-            m_descriptorPool = { *pDevice, vkDestroyDescriptorPool };
-            m_descriptors.resize(2);
+            m_descriptorPool      = { *pDevice, vkDestroyDescriptorPool      };
+            m_descriptorSetLayout = { *pDevice, vkDestroyDescriptorSetLayout };
+            m_descriptors.resize(3);
         }
 
         DescriptorMgr::~DescriptorMgr()
@@ -58,6 +60,42 @@ namespace VulkanEngine
 
             return result;
         }
+
+        BOOL DescriptorMgr::createDescriptorSetLayout(
+            const std::vector<DescriptorCreateInfo>& descriptorsCreateInfo)
+        {
+            BOOL result = BX_SUCCESS;
+
+            size_t descriptorSetLayoutNum = descriptorsCreateInfo.size();
+
+            std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayoutBindingList(descriptorSetLayoutNum);
+
+            for (size_t i = 0; i < descriptorSetLayoutNum; ++i)
+            {
+                descriptorSetLayoutBindingList[i].descriptorType     =
+                    Utility::VulkanUtility::GetVkDescriptorType(descriptorsCreateInfo[i].descriptorType);
+                descriptorSetLayoutBindingList[i].binding            = descriptorsCreateInfo[i].bindingPoint;
+                descriptorSetLayoutBindingList[i].descriptorCount    = descriptorsCreateInfo[i].descriptorNum;
+                descriptorSetLayoutBindingList[i].stageFlags         =
+                    Utility::VulkanUtility::GetVkShaderStageFlag(descriptorsCreateInfo[i].shaderType);
+                descriptorSetLayoutBindingList[i].pImmutableSamplers = NULL;
+            }
+
+            VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
+            descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+            descriptorSetLayoutCreateInfo.bindingCount = static_cast<UINT>(descriptorSetLayoutBindingList.size());
+            descriptorSetLayoutCreateInfo.pBindings    = descriptorSetLayoutBindingList.data();
+
+            VkResult descriptorSetCreateResult =
+                vkCreateDescriptorSetLayout(*m_pDevice,
+                                            &descriptorSetLayoutCreateInfo,
+                                            NULL,
+                                            m_descriptorSetLayout.replace());
+
+            result = Utility::VulkanUtility::GetBxStatus(descriptorSetCreateResult);
+
+            return result;
+        }
         
         BOOL DescriptorMgr::createDescriptorSets(
             const BX_DESCRIPTOR_TYPE              descriptorType,
@@ -75,7 +113,7 @@ namespace VulkanEngine
                 descriptorBufferIter++;
             }
 
-            m_descriptors[descriptorType].m_descriptorSets.resize(descriptorSetNum);
+            m_descriptors[0].m_descriptorSets.resize(descriptorSetNum);
 
             VkDescriptorSetAllocateInfo descriptorSetAllocInfo = {};
             descriptorSetAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -86,7 +124,7 @@ namespace VulkanEngine
             VkResult allocateDescriptorSetsResult =
                 vkAllocateDescriptorSets(*m_pDevice,
                                          &descriptorSetAllocInfo,
-                                         m_descriptors[descriptorType].m_descriptorSets.data());
+                                         m_descriptors[0].m_descriptorSets.data());
 
             result = Utility::VulkanUtility::GetBxStatus(allocateDescriptorSetsResult);
 
@@ -112,8 +150,8 @@ namespace VulkanEngine
                 writeDescriptorSetList[i].descriptorType  = Utility::VulkanUtility::GetVkDescriptorType(descriptorType);
                 writeDescriptorSetList[i].descriptorCount = 1;
                 writeDescriptorSetList[i].dstSet          =
-                    m_descriptors[descriptorType].m_descriptorSets[descriptorUpdateData[i].descriptorSetIndex];
-                writeDescriptorSetList[i].dstBinding      = 0;
+                    m_descriptors[0].m_descriptorSets[descriptorUpdateData[i].descriptorSetIndex];
+                writeDescriptorSetList[i].dstBinding      = descriptorUpdateData[i].descriptorBindingIndex;
                 writeDescriptorSetList[i].dstArrayElement = 0;
 
                 switch (descriptorType)

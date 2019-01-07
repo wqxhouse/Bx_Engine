@@ -44,6 +44,11 @@ namespace VulkanEngine
                 const ::Texture::TextureSamplerCreateData& samplerCreateData,
                 const BOOL                                 isSamplerAnisotropySupport);
 
+            BOOL createDescriptorSetLayout(
+                const UINT               bindingPoint,
+                const UINT               descriptorNum,
+                const VkShaderStageFlags stageFlags);
+
             /*static VulkanTexture2D& CreateTexture2D(
                 const std::string&       fileName,
                 const VkPhysicalDevice   hwDevice,

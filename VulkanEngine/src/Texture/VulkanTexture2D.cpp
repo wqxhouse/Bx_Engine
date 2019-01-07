@@ -137,13 +137,16 @@ namespace VulkanEngine
             Buffer::BxLayoutTransitionInfo transitionInfo    = {};
             transitionInfo.oldLayout                         = VK_IMAGE_LAYOUT_UNDEFINED;
             transitionInfo.newLayout                         = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            transitionInfo.subResourceInfo.resize(1);
             transitionInfo.subResourceInfo[0].aspectMask     = Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
             transitionInfo.subResourceInfo[0].baseArrayLayer = 0;
             transitionInfo.subResourceInfo[0].layerNum       = 1;
             transitionInfo.subResourceInfo[0].baseMipLevel   = 0;
             transitionInfo.subResourceInfo[0].mipmapLevelNum = m_mipmap;
 
-            m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+            result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+
+            assert(result == BX_SUCCESS);
 
             // Copy the image data from buffer to image
             std::vector<Buffer::BxBufferToImageCopyInfo> bufferToImageCopyInfo(1);
@@ -154,7 +157,9 @@ namespace VulkanEngine
             bufferToImageCopyInfo[0].imageInfo.imageOffset        = { 0, 0, 0 };
             bufferToImageCopyInfo[0].imageInfo.imageExtent        = { m_textureWidth, m_textureHeight, 1};
 
-            m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
+            result = m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
+
+            assert(result == BX_SUCCESS);
 
             // Transfer the image layout according to usage
             switch (m_usage)
@@ -162,7 +167,7 @@ namespace VulkanEngine
                 case BX_TEXTURE_USAGE_SAMPLED:
                     transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
                     transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+                    result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
                     break;
                 case BX_TEXTURE_USAGE_RENDER_TARGET:
                     NotImplemented();
@@ -177,6 +182,8 @@ namespace VulkanEngine
                     assert(FALSE);
                     break;
             }
+
+            assert(result == BX_SUCCESS);
 
             return result;
         }
@@ -246,6 +253,23 @@ namespace VulkanEngine
             result = Utility::VulkanUtility::GetBxStatus(createSamplerResult);
 
             assert(result == BX_SUCCESS);
+
+            return result;
+        }
+
+        BOOL VulkanTexture2D::createDescriptorSetLayout(
+            const UINT               bindingPoint,
+            const UINT               descriptorNum,
+            const VkShaderStageFlags stageFlags)
+        {
+            BOOL result = BX_SUCCESS;
+
+            VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
+            descriptorSetLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptorSetLayoutBinding.binding            = bindingPoint;
+            descriptorSetLayoutBinding.descriptorCount    = descriptorNum;
+            descriptorSetLayoutBinding.stageFlags         = stageFlags;
+            descriptorSetLayoutBinding.pImmutableSamplers = NULL;
 
             return result;
         }
