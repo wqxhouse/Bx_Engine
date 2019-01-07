@@ -27,7 +27,7 @@ namespace Texture
         TextureSamplerAddressingMode addressingModeU;
         TextureSamplerAddressingMode addressingModeV;
         TextureSamplerAddressingMode addressingModeW;
-        UINT                         anisotropyNum;
+        float                        anisotropyNum;
         Math::Vector4                borderColor;
         BOOL                         normalize;
         TextureSamplerFilter         mipmapFilter;
