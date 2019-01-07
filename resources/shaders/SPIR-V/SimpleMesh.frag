@@ -11,6 +11,8 @@ layout (binding = 0) uniform TestUniform
     vec4 color;
 } m_color;
 
+layout (binding = 1) uniform sampler TestTexture;
+
 void main()
 {
 	outColor = vec4(fragTexCoord, 0.0f, 1.0f);
