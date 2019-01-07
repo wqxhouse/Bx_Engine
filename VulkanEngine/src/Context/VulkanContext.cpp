@@ -275,9 +275,12 @@ namespace VulkanEngine
             // Test UBO
             m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(new Mgr::DescriptorMgr(&m_vkDevice));
 
-            std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(1);
+            std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(2);
             descriptorPoolCreateData[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
-            descriptorPoolCreateData[0].descriptorNum  = 1;
+            descriptorPoolCreateData[0].descriptorNum  = swapChainImageNum;
+
+            descriptorPoolCreateData[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
+            descriptorPoolCreateData[1].descriptorNum  = swapChainImageNum;
 
             status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData, swapChainImageNum);
             assert(status == BX_SUCCESS);
@@ -287,12 +290,59 @@ namespace VulkanEngine
                                      m_descriptorBufferList.data(),
                                      static_cast<UINT>(m_descriptorBufferList.size()));
 
+            // Test texture
+            if (status == BX_SUCCESS)
+            {
+                ::Texture::Texture2DCreateData createData = {};
+
+                int texChannels;
+
+                createData.textureData = ::Texture::TextureBase::ReadImageData(
+                    "../resources/textures/teaport/wall.jpg",
+                    reinterpret_cast<int*>(&createData.texWidth),
+                    reinterpret_cast<int*>(&createData.texHeight),
+                    &texChannels);
+                createData.mipmap = 1;
+                createData.samples = 1;
+                createData.texStoreFormat = BX_FORMAT_RGBA;
+                createData.texLoadFormat = BX_FORMAT_RGBA;
+                createData.texOptimize = TRUE;
+                createData.texPerserve = FALSE;
+                createData.texUsage = BX_TEXTURE_USAGE_SAMPLED;
+
+                m_pTexture = std::unique_ptr<Texture::VulkanTexture2D>(
+                    new Texture::VulkanTexture2D(&m_vkDevice, m_pCmdBufferMgr.get(), &createData));
+                m_pTexture->create(m_vkActiveHwGpuDeviceList[0]);
+                m_pTexture->createTextureImageView();
+
+                ::Texture::TextureSamplerCreateData samplerCreateData;
+                samplerCreateData.minFilter = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                samplerCreateData.magFilter = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                samplerCreateData.addressingModeU = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+                samplerCreateData.addressingModeV = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+                samplerCreateData.borderColor = Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+                samplerCreateData.normalize = TRUE;
+                samplerCreateData.anisotropyNum = 16;
+                samplerCreateData.mipmapFilter = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                samplerCreateData.mipmapOffset = 0.0f;
+                samplerCreateData.minLod = 0.0f;
+                samplerCreateData.maxLod = 0.0f;
+
+                m_pTexture->createSampler(samplerCreateData, m_isSamplerAnisotropySupport);
+            }
+
             for (UINT i = 0; i < swapChainImageNum; ++i)
             {
-                std::vector<Mgr::DescriptorUpdateInfo> updateInfoList(1);
-                updateInfoList[0].descriptorType     = BX_UNIFORM_DESCRIPTOR;
-                updateInfoList[0].descriptorSetIndex = i;
-                updateInfoList[0].pDescriptorBuffer  = &(m_descriptorBufferList[i]);
+                std::vector<Mgr::DescriptorUpdateInfo> updateInfoList(2);
+                updateInfoList[0].descriptorType         = BX_UNIFORM_DESCRIPTOR;
+                updateInfoList[0].descriptorSetIndex     = i;
+                updateInfoList[0].descriptorBindingIndex = 0;
+                updateInfoList[0].pDescriptorBuffer      = &(m_descriptorBufferList[i]);
+
+                updateInfoList[1].descriptorType         = BX_SAMPLER_DESCRIPTOR;
+                updateInfoList[1].descriptorSetIndex     = i;
+                updateInfoList[1].descriptorBindingIndex = 1;
+                updateInfoList[1].pDescriptorTexture     = m_pTexture.get();
 
                 m_pDescriptorMgr->updateDescriptorSet(updateInfoList);
             }
@@ -301,8 +351,8 @@ namespace VulkanEngine
 
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
-                    BX_DIRECT_COMMAND_BUFFER,
-                    static_cast<UINT>(m_swapchainFramebuffers.size()));
+                                      BX_DIRECT_COMMAND_BUFFER,
+                                      static_cast<UINT>(m_swapchainFramebuffers.size()));
 
             if (status == BX_FAIL)
             {
