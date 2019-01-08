@@ -59,6 +59,10 @@ namespace VulkanEngine
 
     VulkanContext::~VulkanContext()
     {
+        for (VkDescriptorSetLayout layout : m_descriptorLayoutList)
+        {
+            vkDestroyDescriptorSetLayout(m_vkDevice, layout, NULL);
+        }
     }
 
     void VulkanContext::initialize()
@@ -210,19 +214,59 @@ namespace VulkanEngine
             }
         }
 
+        /// Creating descriptors
         const UINT swapChainImageNum = static_cast<UINT>(m_swapchainImages.size());
+
+        m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(
+            new Mgr::DescriptorMgr(&m_vkDevice, swapChainImageNum));
+
         if (status == BX_SUCCESS)
         {
             m_descriptorBufferList.resize(swapChainImageNum, VulkanUniformBuffer(&m_vkDevice));
+
             std::vector<VulkanDescriptorBuffer*> descriptorBuffer(swapChainImageNum);
+            m_descriptorLayoutList.resize(swapChainImageNum);
+
             for (UINT i = 0; i < swapChainImageNum; ++i)
             {
-                status = m_descriptorBufferList[i].createDescriptorSetLayout(0, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
-                assert(status == BX_SUCCESS);
                 status = m_descriptorBufferList[i].createUniformBuffer(m_vkActiveHwGpuDeviceList[0], sizeof(testColor), &testColor);
                 assert(status == BX_SUCCESS);
+
+                std::vector<Mgr::DescriptorCreateInfo> descriptorCreateInfo(2);
+                descriptorCreateInfo[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
+                descriptorCreateInfo[0].bindingPoint = 0;
+                descriptorCreateInfo[0].descriptorNum = 1;
+                descriptorCreateInfo[0].shaderType = BX_FRAGMENT_SHADER;
+
+                descriptorCreateInfo[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
+                descriptorCreateInfo[1].bindingPoint = 1;
+                descriptorCreateInfo[1].descriptorNum = 1;
+                descriptorCreateInfo[1].shaderType = BX_FRAGMENT_SHADER;
+
+                m_descriptorLayoutList[i] =
+                    m_pDescriptorMgr->createDescriptorSetLayout(descriptorCreateInfo);
             }
+
+            std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(2);
+            descriptorPoolCreateData[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
+            descriptorPoolCreateData[0].descriptorNum = swapChainImageNum;
+
+            descriptorPoolCreateData[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
+            descriptorPoolCreateData[1].descriptorNum = swapChainImageNum;
+
+            status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData);
+            assert(status == BX_SUCCESS);
+
+            std::vector<UINT> descriptorSetIndexList(static_cast<size_t>(swapChainImageNum));
+            for (UINT i = 0; i < swapChainImageNum; ++i)
+            {
+                descriptorSetIndexList[i] = i;
+            }
+
+            status = m_pDescriptorMgr->
+                createDescriptorSets(m_descriptorLayoutList, descriptorSetIndexList);
         }
+        /// End creating descriptors
 
         if (status = BX_SUCCESS)
         {
@@ -262,6 +306,7 @@ namespace VulkanEngine
             }
         }
 
+        /// Test Code
         if (status == BX_SUCCESS)
         {
             m_pVertexBuffer = std::unique_ptr<VulkanVertexBuffer>(
@@ -272,27 +317,9 @@ namespace VulkanEngine
                 new VulkanIndexBuffer(&m_vkDevice, m_pCmdBufferMgr._Myptr(), m_pModel->GetMesh(0)));
             m_pIndexBuffer->createIndexBuffer(m_vkActiveHwGpuDeviceList[0], TRUE);
 
-            // Test UBO
-            m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(new Mgr::DescriptorMgr(&m_vkDevice));
-
-            std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(2);
-            descriptorPoolCreateData[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
-            descriptorPoolCreateData[0].descriptorNum  = swapChainImageNum;
-
-            descriptorPoolCreateData[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
-            descriptorPoolCreateData[1].descriptorNum  = swapChainImageNum;
-
-            status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData, swapChainImageNum);
-            assert(status == BX_SUCCESS);
-
-            status = m_pDescriptorMgr->
-                createDescriptorSets(BX_UNIFORM_DESCRIPTOR,
-                                     m_descriptorBufferList.data(),
-                                     static_cast<UINT>(m_descriptorBufferList.size()));
-
-            // Test texture
             if (status == BX_SUCCESS)
             {
+                // Test texture
                 ::Texture::Texture2DCreateData createData = {};
 
                 int texChannels;
@@ -349,6 +376,8 @@ namespace VulkanEngine
 
             assert(status == BX_SUCCESS);
 
+            /// Test End
+
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
                                       BX_DIRECT_COMMAND_BUFFER,
@@ -376,9 +405,9 @@ namespace VulkanEngine
                     std::vector<VkClearValue> clearColorValue = { { 0.0f, 0.0f, 0.0f, 1.0f } };
 
                     pCmdBuffer->beginRenderPass(m_renderPass,
-                        m_swapchainFramebuffers[i],
-                        renderArea,
-                        clearColorValue);
+                                                m_swapchainFramebuffers[i],
+                                                renderArea,
+                                                clearColorValue);
 
                     pCmdBuffer->cmdBindVertexBuffers({ m_pVertexBuffer->GetVertexBuffer() },
                                                      { 0 });
@@ -388,7 +417,7 @@ namespace VulkanEngine
                                                     m_pIndexBuffer->GetIndexType());
 
                     pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
-                                                      { m_pDescriptorMgr->GetDescriptorSet(BX_UNIFORM_DESCRIPTOR, static_cast<UINT>(i)) });
+                                                      { m_pDescriptorMgr->GetDescriptorSet(static_cast<UINT>(i)) });
 
                     //pCmdBuffer->cmdDrawrrays(m_graphicsPipeline, m_pVertexBuffer->GetVertexNum(), 0);
                     pCmdBuffer->cmdDrawElements(m_graphicsPipeline, m_pIndexBuffer->GetIndexNum(), 0, 0);
@@ -907,18 +936,12 @@ namespace VulkanEngine
         viewportCreateInfo.pScissors     = &scissor;
 
         // Pipeline Layout
-        UINT descriptorSetLayoutCount = static_cast<UINT>(m_descriptorBufferList.size());
-
-        std::vector<VkDescriptorSetLayout> descriptorSetLayoutList(descriptorSetLayoutCount);
-        for (UINT i = 0; i < descriptorSetLayoutCount; ++i)
-        {
-            descriptorSetLayoutList[i] = m_descriptorBufferList[i].GetDescriptorSetLayout();
-        }
+        UINT descriptorSetLayoutCount = static_cast<UINT>(m_descriptorLayoutList.size());
 
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
         pipelineLayoutCreateInfo.sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutCreateInfo.setLayoutCount = descriptorSetLayoutCount;
-        pipelineLayoutCreateInfo.pSetLayouts    = descriptorSetLayoutList.data();
+        pipelineLayoutCreateInfo.pSetLayouts    = m_descriptorLayoutList.data();
 
         VkResult vkResult = vkCreatePipelineLayout(
             m_vkDevice, &pipelineLayoutCreateInfo, NULL, m_graphicsPipelineLayout.replace());
