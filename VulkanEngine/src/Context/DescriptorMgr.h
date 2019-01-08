@@ -16,11 +16,6 @@ namespace VulkanEngine
 {
     namespace Mgr
     {
-        struct Descriptor
-        {
-            std::vector<VkDescriptorSet> m_descriptorSets;
-        };
-
         struct DescriptorCreateInfo
         {
             BX_DESCRIPTOR_TYPE descriptorType;
@@ -48,45 +43,41 @@ namespace VulkanEngine
         {
         public:
             explicit DescriptorMgr(
-                const VkDevice* const pDevice);
+                const VkDevice* const pDevice,
+                const UINT            maxDescriptorSet);
 
             ~DescriptorMgr();
 
             BOOL createDescriptorPool(
-                const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
-                const UINT                                   descriptorMaxSet);
-
-            BOOL createDescriptorSetLayout(
-                const std::vector<DescriptorCreateInfo>& descriptorsCreateInfo);
+                const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData);
 
             BOOL createDescriptorSets(
-                const BX_DESCRIPTOR_TYPE              descriptorType,
-                const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
-                const UINT                            descriptorSetNum);
+                const VkDescriptorSetLayout descriptorSetLayout,
+                const std::vector<UINT>&    descriptorSetIndexList);
+
+            BOOL createDescriptorSets(
+                const std::vector<VkDescriptorSetLayout>& descriptorSetLayoutList,
+                const std::vector<UINT>&                  descriptorSetIndexList);
 
             BOOL updateDescriptorSet(
                 const std::vector<DescriptorUpdateInfo>& descriptorUpdateData);
 
-            inline const VkDescriptorSet GetDescriptorSet(
-                const BX_DESCRIPTOR_TYPE descriptorType,
-                const UINT               descriptorIndex) const
-            {
-                return m_descriptors[descriptorType].m_descriptorSets[descriptorIndex];
-            }
+            VkDescriptorSetLayout createDescriptorSetLayout(
+                const std::vector<DescriptorCreateInfo>& descriptorsCreateInfo);
 
-            inline const std::vector<VkDescriptorSet>& GetDescriptorSetList(
-                const BX_DESCRIPTOR_TYPE descriptorType) const
+            INLINE const VkDescriptorSet GetDescriptorSet(
+                const UINT descriptorSetIndex) const
             {
-                return m_descriptors[descriptorType].m_descriptorSets;
+                return m_descriptorSetList[descriptorSetIndex];
             }
 
         private:
-            const VkDevice* m_pDevice;
+            const VkDevice*                              m_pDevice;
 
-            VDeleter<VkDescriptorPool>      m_descriptorPool;
-            VDeleter<VkDescriptorSetLayout> m_descriptorSetLayout;
+            VDeleter<VkDescriptorPool>                   m_descriptorPool;
+            std::vector<VkDescriptorSet>                 m_descriptorSetList;
 
-            std::vector<Descriptor> m_descriptors;
+            UINT                                         m_maxDescriptorSet;
         };
     }
 }
