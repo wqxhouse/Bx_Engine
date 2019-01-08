@@ -30,6 +30,7 @@ namespace VulkanEngine
                 m_texImage       = { *m_pDevice, vkDestroyImage     };
                 m_texImageMemory = { *m_pDevice, vkFreeMemory       };
                 m_texImageView   = { *m_pDevice, vkDestroyImageView };
+                m_texSampler     = { *m_pDevice, vkDestroySampler   };
 
                 m_textureFlags.value = 0;
             }
