@@ -7,6 +7,8 @@
 //
 //================================================================================================
 
+#include <vector>
+
 #pragma once
 template <typename T>
 class VDeleter
@@ -75,7 +77,22 @@ public:
 	bool operator==(V rhs)
     {
 		return object == T(rhs);
-	}
+    }
+
+    static std::vector<T> GetRawVector(
+        const std::vector<VDeleter<T>>& objList)
+    {
+        size_t size = objList.size();
+
+        std::vector<T> res(size);
+
+        for (size_t i = 0; i < size; ++i)
+        {
+            res[i] = objList[i];
+        }
+
+        return res;
+    }
 
 private:
 	T object{ VK_NULL_HANDLE };

@@ -72,12 +72,12 @@ namespace VulkanEngine
             }
 
         private:
-            const VkDevice*                              m_pDevice;
+            const VkDevice*              m_pDevice;
 
-            VDeleter<VkDescriptorPool>                   m_descriptorPool;
-            std::vector<VkDescriptorSet>                 m_descriptorSetList;
+            VDeleter<VkDescriptorPool>   m_descriptorPool;
+            std::vector<VkDescriptorSet> m_descriptorSetList;
 
-            UINT                                         m_maxDescriptorSet;
+            UINT                         m_maxDescriptorSet;
         };
     }
 }
