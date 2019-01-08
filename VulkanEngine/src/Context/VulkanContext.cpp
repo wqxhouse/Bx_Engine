@@ -59,10 +59,6 @@ namespace VulkanEngine
 
     VulkanContext::~VulkanContext()
     {
-        for (VkDescriptorSetLayout layout : m_descriptorLayoutList)
-        {
-            vkDestroyDescriptorSetLayout(m_vkDevice, layout, NULL);
-        }
     }
 
     void VulkanContext::initialize()
@@ -225,7 +221,7 @@ namespace VulkanEngine
             m_descriptorBufferList.resize(swapChainImageNum, VulkanUniformBuffer(&m_vkDevice));
 
             std::vector<VulkanDescriptorBuffer*> descriptorBuffer(swapChainImageNum);
-            m_descriptorLayoutList.resize(swapChainImageNum);
+            m_descriptorLayoutList.resize(swapChainImageNum, { m_vkDevice, vkDestroyDescriptorSetLayout });
 
             for (UINT i = 0; i < swapChainImageNum; ++i)
             {
@@ -264,7 +260,8 @@ namespace VulkanEngine
             }
 
             status = m_pDescriptorMgr->
-                createDescriptorSets(m_descriptorLayoutList, descriptorSetIndexList);
+                createDescriptorSets(VDeleter<VkDescriptorSetLayout>::GetRawVector(m_descriptorLayoutList),
+                                     descriptorSetIndexList);
         }
         /// End creating descriptors
 
@@ -343,19 +340,19 @@ namespace VulkanEngine
                 m_pTexture->createTextureImageView();
 
                 ::Texture::TextureSamplerCreateData samplerCreateData;
-                samplerCreateData.minFilter = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-                samplerCreateData.magFilter = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                samplerCreateData.minFilter       = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                samplerCreateData.magFilter       = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
                 samplerCreateData.addressingModeU = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
                 samplerCreateData.addressingModeV = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-                samplerCreateData.borderColor = Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-                samplerCreateData.normalize = TRUE;
-                samplerCreateData.anisotropyNum = 16;
-                samplerCreateData.mipmapFilter = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-                samplerCreateData.mipmapOffset = 0.0f;
-                samplerCreateData.minLod = 0.0f;
-                samplerCreateData.maxLod = 0.0f;
+                samplerCreateData.borderColor     = Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+                samplerCreateData.normalize       = TRUE;
+                samplerCreateData.anisotropyNum   = 16;
+                samplerCreateData.mipmapFilter    = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                samplerCreateData.mipmapOffset    = 0.0f;
+                samplerCreateData.minLod          = 0.0f;
+                samplerCreateData.maxLod          = 0.0f;
 
-                m_pTexture->createSampler(samplerCreateData, m_isSamplerAnisotropySupport);
+                m_pTexture->createSampler(samplerCreateData, FALSE);
             }
 
             for (UINT i = 0; i < swapChainImageNum; ++i)
@@ -417,7 +414,7 @@ namespace VulkanEngine
                                                     m_pIndexBuffer->GetIndexType());
 
                     pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
-                                                      { m_pDescriptorMgr->GetDescriptorSet(static_cast<UINT>(i)) });
+                                                      { m_pDescriptorMgr->GetDescriptorSet(0) });
 
                     //pCmdBuffer->cmdDrawrrays(m_graphicsPipeline, m_pVertexBuffer->GetVertexNum(), 0);
                     pCmdBuffer->cmdDrawElements(m_graphicsPipeline, m_pIndexBuffer->GetIndexNum(), 0, 0);
@@ -937,11 +934,13 @@ namespace VulkanEngine
 
         // Pipeline Layout
         UINT descriptorSetLayoutCount = static_cast<UINT>(m_descriptorLayoutList.size());
-
+        std::vector<VkDescriptorSetLayout> descriptorLayoutList =
+            VDeleter<VkDescriptorSetLayout>::GetRawVector(m_descriptorLayoutList);
+        
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
         pipelineLayoutCreateInfo.sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutCreateInfo.setLayoutCount = descriptorSetLayoutCount;
-        pipelineLayoutCreateInfo.pSetLayouts    = m_descriptorLayoutList.data();
+        pipelineLayoutCreateInfo.pSetLayouts    = descriptorLayoutList.data();
 
         VkResult vkResult = vkCreatePipelineLayout(
             m_vkDevice, &pipelineLayoutCreateInfo, NULL, m_graphicsPipelineLayout.replace());
