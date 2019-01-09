@@ -685,6 +685,7 @@ namespace VulkanEngine
         }
 
         VkPhysicalDeviceFeatures hwDeviceFeatures = {};
+        hwDeviceFeatures.samplerAnisotropy        = m_isSamplerAnisotropySupport;
 
         VkDeviceCreateInfo deviceCreateInfo   = {};
         deviceCreateInfo.sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
