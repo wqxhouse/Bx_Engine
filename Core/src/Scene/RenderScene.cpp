@@ -30,7 +30,7 @@ namespace Scene
           m_maxObjNum(maxObjNum),
           m_objNum(0)
     {
-        //m_typeList.push_back(typeid(Object::Camera::ProspectiveCamera));
+
     }
 
     RenderScene::RenderScene(
