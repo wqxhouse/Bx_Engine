@@ -32,25 +32,25 @@ namespace VulkanEngine
     VulkanContext::VulkanContext(
         const Setting* pSetting)
         : m_pSetting(pSetting),
-        m_pWindow(NULL),
-        m_windowName("BxEngine Vulkan"),
-        m_engineName("BxEngine"),
-        m_prevTime(0.0f),
-        m_deltaTime(0.0f),
-        m_instanceExtCount(0),
-        m_instanceExtensions(NULL),
-        m_deviceExtSupport(FALSE)
+          m_pWindow(NULL),
+          m_windowName("BxEngine Vulkan"),
+          m_engineName("BxEngine"),
+          m_prevTime(0.0f),
+          m_deltaTime(0.0f),
+          m_instanceExtCount(0),
+          m_instanceExtensions(NULL),
+          m_deviceExtSupport(FALSE)
     {
         // Set resource release callback functions
-        m_vkInstance             = { vkDestroyInstance };
-        m_vkSurface              = { m_vkInstance, vkDestroySurfaceKHR };
-        m_vkDevice               = { vkDestroyDevice };
-        m_swapchain              = { m_vkDevice, vkDestroySwapchainKHR };
+        m_vkInstance             = { vkDestroyInstance                   };
+        m_vkSurface              = { m_vkInstance, vkDestroySurfaceKHR   };
+        m_vkDevice               = { vkDestroyDevice                     };
+        m_swapchain              = { m_vkDevice, vkDestroySwapchainKHR   };
         m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
-        m_renderPass             = { m_vkDevice, vkDestroyRenderPass };
-        m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline };
-        m_renderSemaphore        = { m_vkDevice, vkDestroySemaphore };
-        m_presentSemaphore       = { m_vkDevice, vkDestroySemaphore };
+        m_renderPass             = { m_vkDevice, vkDestroyRenderPass     };
+        m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline       };
+        m_renderSemaphore        = { m_vkDevice, vkDestroySemaphore      };
+        m_presentSemaphore       = { m_vkDevice, vkDestroySemaphore      };
 
 #if _DEBUG
         m_vkDebugMsg             = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -120,10 +120,10 @@ namespace VulkanEngine
 
             GLFWmonitor* pMonitor = ((m_pSetting->fullScreen == TRUE) ? glfwGetPrimaryMonitor() : NULL);
             m_pWindow = glfwCreateWindow(m_pSetting->resolution.width,
-                m_pSetting->resolution.height,
-                m_windowName.data(),
-                pMonitor,
-                NULL);
+                                         m_pSetting->resolution.height,
+                                         m_windowName.data(),
+                                         pMonitor,
+                                         NULL);
 
             if (m_pWindow != NULL)
             {
@@ -277,9 +277,9 @@ namespace VulkanEngine
                     std::vector<VkClearValue> clearColorValue = { { 0.0f, 0.0f, 0.0f, 1.0f } };
 
                     pCmdBuffer->beginRenderPass(m_renderPass,
-                        m_swapchainFramebuffers[i],
-                        renderArea,
-                        clearColorValue);
+                                                m_swapchainFramebuffers[i],
+                                                renderArea,
+                                                clearColorValue);
 
                     pCmdBuffer->cmdDrawArrays(m_graphicsPipeline, 3, 0);
 
@@ -338,8 +338,8 @@ namespace VulkanEngine
             const VkQueue& submitQueue =
                 m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().graphicsFamilyIndex).m_queue;
 
-            VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-            VkSemaphore          waitSemaphore[] = { m_renderSemaphore };
+            VkPipelineStageFlags waitStages[]      = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+            VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
             VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
 
             VkSubmitInfo submitInfo         = {};
@@ -511,7 +511,8 @@ namespace VulkanEngine
                 result = BX_FAIL;
             }
 
-            m_isSamplerAnisotropySupport = Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
+            m_isSamplerAnisotropySupport =
+                Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
         }
 
         return result;
@@ -745,9 +746,9 @@ namespace VulkanEngine
         // Depth/Stencil
         VkPipelineColorBlendAttachmentState blendAttachmentState = {};
         blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-            VK_COLOR_COMPONENT_G_BIT |
-            VK_COLOR_COMPONENT_B_BIT |
-            VK_COLOR_COMPONENT_A_BIT;
+                                              VK_COLOR_COMPONENT_G_BIT |
+                                              VK_COLOR_COMPONENT_B_BIT |
+                                              VK_COLOR_COMPONENT_A_BIT;
         if (m_pSetting->m_graphicsSetting.blend == TRUE)
         {
             blendAttachmentState.blendEnable         = VK_TRUE;
@@ -869,11 +870,11 @@ namespace VulkanEngine
             graphicsPipelineCreateInfo.subpass             = 0;
 
             VkResult graphicsPipelineCreateResult = vkCreateGraphicsPipelines(m_vkDevice,
-                VK_NULL_HANDLE,
-                1,
-                &graphicsPipelineCreateInfo,
-                NULL,
-                m_graphicsPipeline.replace());
+                                                                              VK_NULL_HANDLE,
+                                                                              1,
+                                                                              &graphicsPipelineCreateInfo,
+                                                                              NULL,
+                                                                              m_graphicsPipeline.replace());
 
             status = ((graphicsPipelineCreateResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
