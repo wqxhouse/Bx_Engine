@@ -16,6 +16,8 @@
 #include "../Object/Light/Light.h"
 #include "../Object/Model/Model.h"
 
+#define DEFAULT_MAX_RENDER_SCENE_OBJ_NUM 256
+
 namespace Scene
 {
     class RenderScene

@@ -10,6 +10,8 @@
 #pragma once
 
 #include <Setting/Setting.h>
+#include <Memory/BxMemory.h>
+#include <Scene/RenderScene.h>
 
 #include "BxQueue.h"
 #include "CmdBufferMgr.h"
@@ -34,6 +36,7 @@ namespace VulkanEngine
 
     private:
         BOOL initWindow();
+        BOOL initRenderScene();
         BOOL initVulkan();
         BOOL draw();
 
@@ -53,6 +56,11 @@ namespace VulkanEngine
         GLFWwindow*       m_pWindow;
         const std::string m_windowName;
         const std::string m_engineName;
+
+        // Memory
+        Memory::MemoryPool          m_memPool;
+        Memory::MemoryPoolAllocator m_allocator;
+        Memory::MemoryPoolArena     m_arena;
 
         // Core vulkan components
         VDeleter<VkInstance>          m_vkInstance;
@@ -94,6 +102,9 @@ namespace VulkanEngine
         // Semaphores
         VDeleter<VkSemaphore> m_renderSemaphore;
         VDeleter<VkSemaphore> m_presentSemaphore;
+
+        // Scene
+        Scene::RenderScene m_renderScene;
 
 #if _DEBUG
         const static BOOL m_enableValidationLayer = TRUE;

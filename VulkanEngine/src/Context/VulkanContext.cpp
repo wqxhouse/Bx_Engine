@@ -35,6 +35,14 @@ namespace VulkanEngine
           m_pWindow(NULL),
           m_windowName("BxEngine Vulkan"),
           m_engineName("BxEngine"),
+          m_memPool(256 * 1024 * 1024), // 256 MB
+          m_allocator(&m_memPool,
+                      DEFAULT_MAX_RENDER_SCENE_OBJ_NUM,
+                      static_cast<UINT>(Scene::RenderScene::GetMaxObjSize()),
+                      0,
+                      Memory::Allocator::DEFAULT_ALIGNMENT_SIZE),
+          m_arena(&m_allocator),
+          m_renderScene(pSetting, DEFAULT_MAX_RENDER_SCENE_OBJ_NUM, &m_arena),
           m_prevTime(0.0f),
           m_deltaTime(0.0f),
           m_instanceExtCount(0),
@@ -66,6 +74,16 @@ namespace VulkanEngine
         BOOL status = BX_SUCCESS;
 
         status = initWindow();
+
+        assert(status == BX_SUCCESS);
+
+        if (status == BX_SUCCESS)
+        {
+            status = initRenderScene();
+        }
+
+        assert(status == BX_SUCCESS);
+
         if (status == BX_SUCCESS)
         {
             status = initVulkan();
@@ -141,6 +159,12 @@ namespace VulkanEngine
             printf("Fail to initialize GLFW!\n");
         }
 
+        return status;
+    }
+
+    BOOL VulkanContext::initRenderScene()
+    {
+        BOOL status = BX_SUCCESS;
         return status;
     }
 
@@ -353,11 +377,10 @@ namespace VulkanEngine
             submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
                 GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, renderImageIndex)->GetCmdBufferPtr();
 
-            VkResult submitResult = vkQueueSubmit(
-                submitQueue,
-                1,
-                &submitInfo,
-                VK_NULL_HANDLE);
+            VkResult submitResult = vkQueueSubmit(submitQueue,
+                                                  1,
+                                                  &submitInfo,
+                                                  VK_NULL_HANDLE);
 
             status = VulkanUtility::GetBxStatus(submitResult);
             assert(status == BX_SUCCESS);

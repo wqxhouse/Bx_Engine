@@ -29,7 +29,7 @@ namespace Utility
         {
             MousePosCallback()
                 : delta_x(0),
-                delta_y(0)
+                  delta_y(0)
             {
             }
 
