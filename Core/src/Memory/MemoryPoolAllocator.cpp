@@ -92,7 +92,7 @@ namespace Memory
         const size_t offset)
     {
         // Validate the alloc info
-        assert(((static_cast<size_t>(size) + FREELIST_POINTER_SIZE) == m_elementSize) &&
+        assert(((static_cast<size_t>(size) + FREELIST_POINTER_SIZE) <= m_elementSize) &&
                (alignment == m_alignment)                                             &&
                (offset    == m_debugFrontSize));
 
