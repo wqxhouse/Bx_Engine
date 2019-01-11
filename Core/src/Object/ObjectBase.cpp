@@ -12,8 +12,11 @@
 namespace Object
 {
     ObjectBase::ObjectBase(
-        Trans* pTrans)
-        : m_pTrans(pTrans)
+        const UINT objectId,
+        Trans*     pTrans)
+        : m_objectId(objectId),
+          m_pTrans(pTrans),
+          m_enable(TRUE)
     {
     }
 

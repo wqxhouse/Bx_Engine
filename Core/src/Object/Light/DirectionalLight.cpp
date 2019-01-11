@@ -14,8 +14,9 @@ namespace Object
     namespace Light
     {
         DirectionalLight::DirectionalLight(
+            const UINT             objectId,
             const LightCreateInfo& lightCreateInfo)
-            : LightBase(DIRECTIONAL_LIGHT, lightCreateInfo)
+            : LightBase(objectId, DIRECTIONAL_LIGHT, lightCreateInfo)
                         /*new Trans(Math::Vector3(0.0f, 0.0f, 0.0f),
                                   direction,
                                   Math::Vector3(0.0f, 1.0f, 0.0f))*/

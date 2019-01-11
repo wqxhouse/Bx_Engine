@@ -38,6 +38,7 @@ namespace Object
         {
         public:
             LightBase(
+                const UINT             objectId,
                 const LightType        lightType,
                 const LightCreateInfo& lightCreateInfo);
 
@@ -90,6 +91,7 @@ namespace Object
         {
         public:
             DirectionalLight(
+                const UINT             objectId,
                 const LightCreateInfo& lightCreateInfo);
 
             ~DirectionalLight();
@@ -118,6 +120,7 @@ namespace Object
         {
         public:
             PointLight(
+                const UINT                  objectId,
                 const PointLightCreateInfo& pointLightCreateInfo);
 
             ~PointLight();
@@ -145,6 +148,7 @@ namespace Object
         {
         public:
             SpotLight(
+                const UINT                 objectId,
                 const SpotLightCreateInfo& spotLightCreateInfo);
 
             ~SpotLight();

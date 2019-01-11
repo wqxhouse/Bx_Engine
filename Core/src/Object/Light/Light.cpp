@@ -14,9 +14,10 @@ namespace Object
     namespace Light
     {
         LightBase::LightBase(
+            const UINT             objectId,
             const LightType        lightType,
             const LightCreateInfo& lightCreateInfo)
-            : ObjectBase(lightCreateInfo.pTrans),
+            : ObjectBase(objectId, lightCreateInfo.pTrans),
               m_lightType(lightType),
               enableLight(1.0f),
               reserve(0.0f),

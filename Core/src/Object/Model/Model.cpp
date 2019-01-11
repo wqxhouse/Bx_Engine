@@ -15,10 +15,11 @@ namespace Object
     namespace Model
     {
         ModelObject::ModelObject(
+            const UINT         objectId,
             const std::string& modelFile,
             const std::string& materialFile,
             Trans*             modelTrans)
-            : ObjectBase(modelTrans)
+            : ObjectBase(objectId, modelTrans)
         {
             ObjModelLoader objLoader;
             objLoader.LoadModel(modelFile, materialFile, this);

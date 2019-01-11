@@ -15,8 +15,11 @@ namespace Object
     namespace Camera
     {
         OrthographicCamera::OrthographicCamera(
+            const UINT                          objectId,
             const OrthographicCameraCreateInfo& prosCamCreateInfo)
-            : CameraBase(ORTHOGRAPHIC_CAM, static_cast<CameraCreateInfo>(prosCamCreateInfo)),
+            : CameraBase(objectId,
+                         ORTHOGRAPHIC_CAM,
+                         static_cast<CameraCreateInfo>(prosCamCreateInfo)),
               m_viewport(prosCamCreateInfo.viewport)
         {
             m_projectionMatrix = Math::orthographicProjectionMatrix(prosCamCreateInfo.viewport,

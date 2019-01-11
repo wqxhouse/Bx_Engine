@@ -23,14 +23,13 @@ namespace Scene
 
     RenderScene::RenderScene(
         const Setting* const     pSetting,
-        const UINT               maxObjNum,
-        Memory::MemoryPoolArena* pObjArena)
+        Memory::MemoryPoolArena* pObjArena,
+        const UINT               maxObjNum)
         : m_pSetting(pSetting),
           m_pObjArena(pObjArena),
           m_maxObjNum(maxObjNum),
           m_objNum(0)
     {
-
     }
 
     RenderScene::~RenderScene()

@@ -14,8 +14,9 @@ namespace Object
     namespace Light
     {
         SpotLight::SpotLight(
+            const UINT                 objectId,
             const SpotLightCreateInfo& spotLightCreateInfo)
-            : LightBase(SPOT_LIGHT, static_cast<LightCreateInfo>(spotLightCreateInfo)),
+            : LightBase(objectId, SPOT_LIGHT, static_cast<LightCreateInfo>(spotLightCreateInfo)),
               m_position(m_pTrans->GetPos()),
               m_direction(m_pTrans->GetFront())
         {

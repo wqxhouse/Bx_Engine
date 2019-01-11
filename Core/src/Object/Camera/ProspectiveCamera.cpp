@@ -15,8 +15,10 @@ namespace Object
     namespace Camera
     {
         ProspectiveCamera::ProspectiveCamera(
+            const UINT                         objectId,
             const ProspectiveCameraCreateInfo& prosCamCreateInfo)
-            : CameraBase(CameraType::PROSPECTIVE_CAM,
+            : CameraBase(objectId,
+                         CameraType::PROSPECTIVE_CAM,
                          static_cast<CameraCreateInfo>(prosCamCreateInfo))
         {
             m_projectionMatrix = Math::prospectiveProjectionMatrix(

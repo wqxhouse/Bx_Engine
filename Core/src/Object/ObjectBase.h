@@ -17,21 +17,22 @@ namespace Object
     {
     public:
         explicit ObjectBase(
-            Trans* pTrans);
+            const UINT objectId,
+            Trans*     pTrans);
 
         ~ObjectBase();
 
         inline void ActiveObject()  { m_enable = TRUE;  }
         inline void DisableObject() { m_enable = FALSE; }
 
-        inline const UINT   GetObjectId() const { return m_objectId;        }
-        inline const Trans* GetTransPtr() const { return m_pTrans; }
+        inline const UINT   GetObjectId() const { return m_objectId; }
+        inline const Trans* GetTransPtr() const { return m_pTrans;   }
 
     protected:
         Trans* m_pTrans;
 
     private:
-        UINT   m_objectId;
-        BOOL   m_enable;
+        UINT m_objectId;
+        BOOL m_enable;
     };
 }

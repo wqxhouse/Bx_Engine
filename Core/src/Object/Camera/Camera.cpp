@@ -17,9 +17,10 @@ namespace Object
     namespace Camera
     {
         CameraBase::CameraBase(
+            const UINT              objectId,
             const CameraType        type,
             const CameraCreateInfo& camCreateInfo)
-            : ObjectBase(camCreateInfo.pTrans),
+            : ObjectBase(objectId, camCreateInfo.pTrans),
               m_cameraType(type),
               m_curFront(m_pTrans->GetFront()),
               m_curRight(m_pTrans->GetRight()),

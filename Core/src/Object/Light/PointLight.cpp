@@ -14,8 +14,11 @@ namespace Object
     namespace Light
     {
         PointLight::PointLight(
+            const UINT                  objectId,
             const PointLightCreateInfo& pointLightCreateInfo)
-            : LightBase(POINT_LIGHT, static_cast<LightCreateInfo>(pointLightCreateInfo))
+            : LightBase(objectId,
+                        POINT_LIGHT,
+                        static_cast<LightCreateInfo>(pointLightCreateInfo))
         {
             m_position = m_pTrans->GetPos();
             m_radius   = pointLightCreateInfo.radius;

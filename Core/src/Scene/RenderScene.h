@@ -25,8 +25,8 @@ namespace Scene
     public:
         RenderScene(
             const Setting* const     pSetting,
-            const UINT               maxObjNum,
-            Memory::MemoryPoolArena* pObjArena);
+            Memory::MemoryPoolArena* pObjArena,
+            const UINT               maxObjNum);
 
         ~RenderScene();
 
@@ -39,10 +39,10 @@ namespace Scene
         INLINE void AddProspectiveCamera(
             const Object::Camera::ProspectiveCameraCreateInfo& prosCamCreateInfo)
         {
-            IncrementObjNum();
-
             m_pCameraList.push_back(
-                BX_NEW(Object::Camera::ProspectiveCamera, *m_pObjArena)(prosCamCreateInfo));
+                BX_NEW(Object::Camera::ProspectiveCamera, *m_pObjArena)(m_objNum, prosCamCreateInfo));
+
+            IncrementObjNum();
         }
 
         INLINE void AddOrthographicCamera(
@@ -51,7 +51,7 @@ namespace Scene
             IncrementObjNum();
 
             m_pCameraList.push_back(
-                BX_NEW(Object::Camera::OrthographicCamera, *m_pObjArena)(orthoCamCreateInfo));
+                BX_NEW(Object::Camera::OrthographicCamera, *m_pObjArena)(m_objNum, orthoCamCreateInfo));
         }
 
         INLINE void AddDirectionalLight(
@@ -60,7 +60,7 @@ namespace Scene
             IncrementObjNum();
 
             m_pLightList.push_back(
-                BX_NEW(Object::Light::DirectionalLight, *m_pObjArena)(lightCreateInfo));
+                BX_NEW(Object::Light::DirectionalLight, *m_pObjArena)(m_objNum, lightCreateInfo));
         }
 
         INLINE void AddPointLight(
@@ -69,7 +69,7 @@ namespace Scene
             IncrementObjNum();
 
             m_pLightList.push_back(
-                BX_NEW(Object::Light::PointLight, *m_pObjArena)(pointLightCreateInfo));
+                BX_NEW(Object::Light::PointLight, *m_pObjArena)(m_objNum, pointLightCreateInfo));
         }
 
         INLINE void AddSpotLight(
@@ -78,7 +78,7 @@ namespace Scene
             IncrementObjNum();
 
             m_pLightList.push_back(
-                BX_NEW(Object::Light::SpotLight, *m_pObjArena)(spotLightCreateInfo));
+                BX_NEW(Object::Light::SpotLight, *m_pObjArena)(m_objNum, spotLightCreateInfo));
         }
 
         INLINE void AddObjModel(
@@ -87,7 +87,7 @@ namespace Scene
             Trans*             modelTrans)
         {
             m_pModelList.push_back(
-                BX_NEW(Object::Model::ModelObject, *m_pObjArena)(modelFile, materialFile, modelTrans));
+                BX_NEW(Object::Model::ModelObject, *m_pObjArena)(m_objNum, modelFile, materialFile, modelTrans));
         }
 
         INLINE Object::Camera::CameraBase* GetCamera(
@@ -117,7 +117,7 @@ namespace Scene
 
             NotImplemented();
 
-            RenderScene renderScene(pSetting, objNum, pObjArena);
+            RenderScene renderScene(pSetting, pObjArena, objNum);
 
             return renderScene;
         }

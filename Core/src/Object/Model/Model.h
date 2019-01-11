@@ -22,6 +22,7 @@ namespace Object
         {
         public:
             ModelObject(
+                const UINT         objectId,
                 const std::string& modelFile,
                 const std::string& materialFile,
                 Trans*             modelTrans);

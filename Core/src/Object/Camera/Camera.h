@@ -42,6 +42,7 @@ namespace Object
         {
         public:
             CameraBase(
+                const UINT              objectId,
                 const CameraType        type,
                 const CameraCreateInfo& camCreateInfo);
 
@@ -87,6 +88,7 @@ namespace Object
         {
         public:
             ProspectiveCamera(
+                const UINT                         objectId,
                 const ProspectiveCameraCreateInfo& prosCamCreateInfo);
 
             ~ProspectiveCamera();
@@ -101,6 +103,7 @@ namespace Object
         {
         public:
             OrthographicCamera(
+                const UINT                          objectId,
                 const OrthographicCameraCreateInfo& prosCamCreateInfo);
 
             ~OrthographicCamera();
