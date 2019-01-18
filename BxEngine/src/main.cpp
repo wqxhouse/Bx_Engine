@@ -40,12 +40,14 @@ int main()
 #elif BX_VULKAN
     std::unique_ptr<Scene::RenderScene> m_pScene =
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
+
     m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
                           &(Trans(Math::Vector3(0.0f, 0.0f, -5.0f),
                                   Math::Vector3(),
                                   Math::Vector3(0.0f, 1.0f, 0.0f))));
 
     VulkanEngine::VulkanContext m_vulkanContext(&setting, m_arena);
+    m_vulkanContext.AddScene(m_pScene.get());
     m_vulkanContext.initialize();
     m_vulkanContext.run();
 #endif
