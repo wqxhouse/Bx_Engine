@@ -6,12 +6,12 @@ layout(location = 1) in vec2 fragTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
-layout (binding = 0) uniform TestUniform
+/*layout (binding = 0) uniform TestUniform
 {
     vec4 color;
-} m_color;
+} m_color;*/
 
 void main()
 {
-	outColor = m_color.color;
+	outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); //m_color.color;
 }
