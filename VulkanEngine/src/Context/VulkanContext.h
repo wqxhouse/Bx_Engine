@@ -31,8 +31,25 @@ namespace VulkanEngine
         void initialize();
         void run();
 
-        inline const Setting* GetSetting() const { return m_pSetting; }
-        inline GLFWwindow*    GetWindow()  const { return m_pWindow;  }
+        INLINE const Setting* GetSetting() const { return m_pSetting; }
+        INLINE GLFWwindow*    GetWindow()  const { return m_pWindow;  }
+
+        INLINE Scene::RenderScene* GetRenderScene(UINT sceneIndex) const
+        {
+            assert(sceneIndex < m_renderSceneList.size());
+
+            return const_cast<Scene::RenderScene*>(&(m_renderSceneList[sceneIndex]));
+        }
+
+        INLINE void AddScene()
+        {
+            m_sceneNum++;
+
+            assert(m_sceneNum <= DEFAULT_MAX_RENDER_SCENE_NUM);
+
+            m_renderSceneList.push_back(
+                Scene::RenderScene(m_pSetting, DEFAULT_MAX_RENDER_SCENE_OBJ_NUM, &m_arena));
+        }
 
     private:
         BOOL initWindow();
@@ -104,7 +121,9 @@ namespace VulkanEngine
         VDeleter<VkSemaphore> m_presentSemaphore;
 
         // Scene
-        Scene::RenderScene m_renderScene;
+        std::vector<Scene::RenderScene> m_renderSceneList;
+        UINT                            m_activeSceneIndex;
+        UINT                            m_sceneNum;
 
 #if _DEBUG
         const static BOOL m_enableValidationLayer = TRUE;
