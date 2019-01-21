@@ -498,9 +498,9 @@ namespace VulkanEngine
                 VulkanUtility::QuerySwapchainHwProperties(m_vkActiveHwGpuDeviceList[0], m_vkSurface);
 
             if (VulkanUtility::ValidateHwDevice(m_vkActiveHwGpuDeviceList[0],
-                m_swapchainHwProperties,
-                queueIndices,
-                m_deviceExts) == TRUE)
+                                                m_swapchainHwProperties,
+                                                queueIndices,
+                                                m_deviceExts) == TRUE)
             {
                 m_deviceExtSupport = TRUE;
                 result = BX_SUCCESS;
@@ -510,6 +510,8 @@ namespace VulkanEngine
                 assert(BX_FAIL);
                 result = BX_FAIL;
             }
+
+            m_isSamplerAnisotropySupport = Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
         }
 
         return result;
@@ -547,6 +549,7 @@ namespace VulkanEngine
         }
 
         VkPhysicalDeviceFeatures hwDeviceFeatures = {};
+        hwDeviceFeatures.samplerAnisotropy        = m_isSamplerAnisotropySupport;
 
         VkDeviceCreateInfo deviceCreateInfo   = {};
         deviceCreateInfo.sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -616,7 +619,7 @@ namespace VulkanEngine
         swapchainCreateInfo.minImageCount    = swapchainMinImageCount;
         swapchainCreateInfo.imageExtent      = m_swapchainExtent;
         swapchainCreateInfo.preTransform     = m_swapchainHwProperties.m_surfaceCapabilities.currentTransform;
-        swapchainCreateInfo.clipped = VK_TRUE;
+        swapchainCreateInfo.clipped          = VK_TRUE;
         swapchainCreateInfo.compositeAlpha   = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
         UINT swapchainQueueIndices[2] =
@@ -727,7 +730,7 @@ namespace VulkanEngine
         rasterizerCreateInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
         rasterizerCreateInfo.depthClampEnable        = VK_FALSE;
         rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-        rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkSampleCount(m_pSetting->polyMode);
+        rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
         rasterizerCreateInfo.lineWidth               = 1.0f;
         rasterizerCreateInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
         rasterizerCreateInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;

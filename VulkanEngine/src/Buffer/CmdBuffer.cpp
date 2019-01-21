@@ -177,6 +177,7 @@ namespace VulkanEngine
                                     NULL);
         }
 
+        // TODO: Copy multiple buffers
         void CmdBuffer::cmdCopyBuffer(
             const VkBuffer&         srcBuffer,
             const VkBuffer&         dstBuffer,
@@ -188,6 +189,81 @@ namespace VulkanEngine
             bufferCopy.dstOffset    = copyInfo.dstOffset;
 
             vkCmdCopyBuffer(m_cmdBuffer, srcBuffer, dstBuffer, 1, &bufferCopy);
+        }
+
+        void CmdBuffer::cmdCopyBufferToImage(
+            const VkBuffer&                             srcBuffer,
+            const VkImage&                              dstImage,
+            const std::vector<BxBufferToImageCopyInfo>& copyInfo)
+        {
+            size_t copyNum = copyInfo.size();
+
+            std::vector<VkBufferImageCopy> bufferImageCopy(copyNum);
+
+            for (size_t i = 0; i < copyNum; ++i)
+            {
+                bufferImageCopy[i].bufferOffset                    = copyInfo[i].bufferInfo.bufferOffset;
+                bufferImageCopy[i].bufferRowLength                 = copyInfo[i].bufferInfo.bufferRowLength;
+                bufferImageCopy[i].bufferImageHeight               = copyInfo[i].bufferInfo.bufferImageHeight;
+                bufferImageCopy[i].imageOffset                     = copyInfo[i].imageInfo.imageOffset;
+                bufferImageCopy[i].imageExtent                     = copyInfo[i].imageInfo.imageExtent;
+                bufferImageCopy[i].imageSubresource.aspectMask     = copyInfo[i].subResourceInfo.aspectMask;
+                bufferImageCopy[i].imageSubresource.baseArrayLayer = copyInfo[i].subResourceInfo.baseArrayLayer;
+                bufferImageCopy[i].imageSubresource.layerCount     = copyInfo[i].subResourceInfo.layerNum;
+                bufferImageCopy[i].imageSubresource.mipLevel       = copyInfo[i].subResourceInfo.baseMipLevel;
+            }
+
+            vkCmdCopyBufferToImage(m_cmdBuffer,
+                                   srcBuffer,
+                                   dstImage,
+                                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                   static_cast<UINT>(copyNum),
+                                   bufferImageCopy.data());
+        }
+
+        void CmdBuffer::cmdImageLayoutTransition(
+            const VkImage&                image,
+            const BxLayoutTransitionInfo& layoutTransInfoList)
+        {
+            size_t layoutTransNum = layoutTransInfoList.subResourceInfo.size();
+
+            std::vector<VkImageMemoryBarrier> imageMemoryBarrierList(layoutTransNum);
+
+            VkImageLayout        oldLayout = layoutTransInfoList.oldLayout;
+            VkImageLayout        newLayout = layoutTransInfoList.newLayout;
+            VkAccessFlags        srcAccessMask;
+            VkAccessFlags        dstAccessMask;
+            VkPipelineStageFlags srcStage;
+            VkPipelineStageFlags dstStage;
+
+            Utility::VulkanUtility::
+                GetImageTransitionAccessMask(oldLayout, newLayout,
+                                             &srcAccessMask, &dstAccessMask, &srcStage, &dstStage);
+
+            for (size_t i = 0; i < layoutTransNum; ++i)
+            {
+                imageMemoryBarrierList[i].sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+                imageMemoryBarrierList[i].image                           = image;
+                imageMemoryBarrierList[i].oldLayout                       = oldLayout;
+                imageMemoryBarrierList[i].newLayout                       = newLayout;
+                imageMemoryBarrierList[i].srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+                imageMemoryBarrierList[i].dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+                imageMemoryBarrierList[i].subresourceRange.aspectMask     = layoutTransInfoList.subResourceInfo[i].aspectMask;
+                imageMemoryBarrierList[i].subresourceRange.baseArrayLayer = layoutTransInfoList.subResourceInfo[i].baseArrayLayer;
+                imageMemoryBarrierList[i].subresourceRange.layerCount     = layoutTransInfoList.subResourceInfo[i].layerNum;
+                imageMemoryBarrierList[i].subresourceRange.baseMipLevel   = layoutTransInfoList.subResourceInfo[i].baseMipLevel;
+                imageMemoryBarrierList[i].subresourceRange.levelCount     = layoutTransInfoList.subResourceInfo[i].mipmapLevelNum;
+                imageMemoryBarrierList[i].srcAccessMask                   = srcAccessMask;
+                imageMemoryBarrierList[i].dstAccessMask                   = dstAccessMask;
+            }
+
+            vkCmdPipelineBarrier(m_cmdBuffer,
+                                 srcStage, // The stage need to wait
+                                 dstStage, // The stage which image is used
+                                 0,
+                                 0, NULL,
+                                 0, NULL,
+                                 static_cast<UINT>(imageMemoryBarrierList.size()), imageMemoryBarrierList.data());
         }
 
         void CmdBuffer::cmdDrawArrays(

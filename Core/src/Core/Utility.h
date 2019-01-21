@@ -68,14 +68,5 @@ namespace Utility
 
         static std::string ToUppercase(
             const std::string& str);
-
-        static std::unique_ptr<image_data> ReadImageData(
-            const std::string& imageFile,
-            int* const         width,
-            int* const         height,
-            int* const         type);
-
-        static void ReleaseImageData(
-            std::unique_ptr<image_data> imageData);
     };
 }

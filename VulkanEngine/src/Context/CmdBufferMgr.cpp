@@ -119,6 +119,71 @@ namespace VulkanEngine
             return status;
         }
 
+        BOOL CmdBufferMgr::copyBufferToImage(
+            const VkBuffer&                                      srcBuffer,
+            const VkImage&                                       dstImage,
+            const std::vector< Buffer::BxBufferToImageCopyInfo>& copyInfo)
+        {
+            BOOL status = BX_SUCCESS;
+
+            Buffer::BxCmdBufferCreateInfo cmdBufferCreateInfo = {};
+            cmdBufferCreateInfo.cmdBufferType                 = BX_GRAPHICS_COMMAND_BUFFER;
+            cmdBufferCreateInfo.bufferLevel                   = BX_DIRECT_COMMAND_BUFFER;
+            cmdBufferCreateInfo.pCommandPool                  = &(m_cmdPool[BX_QUEUE_GRAPHICS]);
+
+            Buffer::CmdBuffer copyCommandBuffer =
+                Buffer::CmdBuffer::CreateCmdBuffer(m_pDevice, cmdBufferCreateInfo);
+            status = copyCommandBuffer.beginCmdBuffer(FALSE);
+
+            assert(status == BX_SUCCESS);
+
+            if (status == BX_SUCCESS)
+            {
+                copyCommandBuffer.cmdCopyBufferToImage(srcBuffer, dstImage, copyInfo);
+                copyCommandBuffer.endCmdBuffer();
+            }
+
+            VkSubmitInfo copyCommandSubmitInfo = {};
+            copyCommandSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            copyCommandSubmitInfo.commandBufferCount = 1;
+            copyCommandSubmitInfo.pCommandBuffers = copyCommandBuffer.GetCmdBufferPtr();
+
+            status = submitCommandBufferToQueue(
+                m_pQueueMgr->GetHwQueueIndices().graphicsFamilyIndex, 1, &copyCommandSubmitInfo, VK_NULL_HANDLE);
+
+            assert(status == BX_SUCCESS);
+
+            freeCommandBuffer(m_cmdPool[BX_QUEUE_GRAPHICS], 1, &copyCommandBuffer);
+
+            return status;
+        }
+
+        BOOL CmdBufferMgr::imageLayoutTransition(
+            const VkImage&                        image,
+            const Buffer::BxLayoutTransitionInfo& layoutTransInfoList)
+        {
+            BOOL status = BX_SUCCESS;
+
+            Buffer::BxCmdBufferCreateInfo cmdBufferCreateInfo = {};
+            cmdBufferCreateInfo.cmdBufferType                 = BX_GRAPHICS_COMMAND_BUFFER;
+            cmdBufferCreateInfo.bufferLevel                   = BX_DIRECT_COMMAND_BUFFER;
+            cmdBufferCreateInfo.pCommandPool                  = &(m_cmdPool[BX_QUEUE_GRAPHICS]);
+
+            Buffer::CmdBuffer imageLayoutTransitionBuffer =
+                Buffer::CmdBuffer::CreateCmdBuffer(m_pDevice, cmdBufferCreateInfo);
+            status = imageLayoutTransitionBuffer.beginCmdBuffer(FALSE);
+
+            assert(status == BX_SUCCESS);
+
+            if (status == BX_SUCCESS)
+            {
+                imageLayoutTransitionBuffer.cmdImageLayoutTransition(image, layoutTransInfoList);
+                imageLayoutTransitionBuffer.endCmdBuffer();
+            }
+
+            return status;
+        }
+
         BOOL CmdBufferMgr::submitCommandBufferToQueue(
             const UINT               queueFamilyIndex,
             const UINT               submitNum,

@@ -310,9 +310,9 @@ namespace VulkanEngine
             BOOL isSwapchainSupport = ((swapChainHwProperties.m_surfaceFormats.empty() == FALSE) &&
                 (swapChainHwProperties.m_presentModes.empty() == FALSE));
 
-            result = ((isQueueComplete == TRUE) &&
-                (isDeviceExtSupport == TRUE) &&
-                (isSwapchainSupport == TRUE));
+            result = ((isQueueComplete    == TRUE) &&
+                      (isDeviceExtSupport == TRUE) &&
+                      (isSwapchainSupport == TRUE));
 
             return result;
         }

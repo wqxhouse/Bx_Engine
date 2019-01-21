@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "../Core/TypeDef.h"
 #include "Quaternion.h"
 #include "Matrix4x4.h"
 #include "Structures.h"
@@ -25,6 +26,16 @@
 
 namespace Math
 {
+    INLINE BOOL FloatEqual(const float a, const float b)
+    {
+        return (abs(a - b) < std::numeric_limits<float>::epsilon());
+    }
+
+    INLINE BOOL DoubleEqual(const double a, const double b)
+    {
+        return (abs(a - b) < std::numeric_limits<double>::epsilon());
+    }
+
     float Radians(const float degree);
 
     float Degree(const float radiance);

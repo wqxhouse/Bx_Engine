@@ -104,6 +104,9 @@ namespace VulkanEngine
         const static bool m_enableValidationLayer = FALSE;
 #endif
 
+        // Sampler
+        BOOL m_isSamplerAnisotropySupport;
+
         // Extension
         UINT         m_instanceExtCount;
         const char** m_instanceExtensions;

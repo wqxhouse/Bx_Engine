@@ -31,9 +31,9 @@ namespace VulkanEngine
                 const BxBufferCreateInfo& bufferCreateInfo);
 
             BOOL copyBuffer(
-                const VkBuffer&          srcBuffer,
-                const VkBuffer&          dstBuffer,
-                const BxBufferCopyInfo&  copyInfo);
+                const VkBuffer&         srcBuffer,
+                const VkBuffer&         dstBuffer,
+                const BxBufferCopyInfo& copyInfo);
 
             BOOL updateBufferData(
                 const VkDeviceSize bufferSize,
