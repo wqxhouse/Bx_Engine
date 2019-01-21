@@ -303,6 +303,63 @@ namespace VulkanEngine
                 return descriptorType;
             }
 
+            static INLINE TextureFormat GetImageFormat(
+                const VkFormat vkFormat)
+            {
+                TextureFormat imageFormat;
+
+                switch (vkFormat)
+                {
+                    case VK_FORMAT_R8_UNORM:
+                        imageFormat = BX_FORMAT_R8;
+                        break;
+                    case VK_FORMAT_R8G8_UNORM:
+                        imageFormat = BX_FORMAT_RG8;
+                        break;
+                    case VK_FORMAT_R8G8B8_UNORM:
+                        imageFormat = BX_FORMAT_RGB8;
+                        break;
+                    case VK_FORMAT_R8G8B8A8_UNORM:
+                        imageFormat = BX_FORMAT_RGBA8;
+                        break;
+                    case VK_FORMAT_B8G8R8A8_UNORM:
+                        imageFormat = BX_FORMAT_BGRA8;
+                        break;
+                    case VK_FORMAT_R16G16B16A16_UNORM:
+                        imageFormat = BX_FORMAT_RGBA16;
+                        break;
+                    case VK_FORMAT_R32G32B32A32_SFLOAT:
+                        imageFormat = BX_FORMAT_RGBA32;
+                        break;
+                    case VK_FORMAT_R64G64B64A64_SFLOAT:
+                        imageFormat = BX_FORMAT_RGBA64;
+                        break;
+                    case VK_FORMAT_R8G8B8A8_SRGB:
+                        imageFormat = BX_FORMAT_SRGB;
+                        break;
+                    case VK_FORMAT_D16_UNORM:
+                        imageFormat = BX_FORMAT_DEPTH16;
+                        break;
+                    case VK_FORMAT_D16_UNORM_S8_UINT:
+                        imageFormat = BX_FORMAT_DEPTH16_STENCIL;
+                        break;
+                    case VK_FORMAT_D24_UNORM_S8_UINT:
+                        imageFormat = BX_FORMAT_DEPTH24_STENCIL;
+                        break;
+                    case VK_FORMAT_D32_SFLOAT:
+                        imageFormat = BX_FORMAT_DEPTH32;
+                        break;
+                    case VK_FORMAT_D32_SFLOAT_S8_UINT:
+                        imageFormat = BX_FORMAT_DEPTH32_STENCIL;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
+
+                return imageFormat;
+            }
+
             static INLINE VkFormat GetVkImageFormat(
                 const TextureFormat format)
             {
@@ -321,6 +378,9 @@ namespace VulkanEngine
                         break;
                     case BX_FORMAT_RGBA8:
                         imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
+                        break;
+                    case BX_FORMAT_BGRA8:
+                        imageFormat = VK_FORMAT_B8G8R8A8_UNORM;
                         break;
                     case BX_FORMAT_RGBA16:
                         imageFormat = VK_FORMAT_R16G16B16A16_UNORM;
@@ -397,6 +457,7 @@ namespace VulkanEngine
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
                     case BX_FORMAT_RGBA8:
+                    case BX_FORMAT_BGRA8:
                     case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA16:
                     case BX_FORMAT_RGBA32:

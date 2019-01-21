@@ -34,7 +34,7 @@ namespace VulkanEngine
         }
 
         BOOL VulkanRenderPass::create(
-            const VulkanRenderPassCreateData & renderPassCreateData)
+            const VulkanRenderPassCreateData& renderPassCreateData)
         {
             BOOL status = BX_SUCCESS;
 
@@ -62,7 +62,6 @@ namespace VulkanEngine
 
             const UINT framebufferSize = static_cast<UINT>(m_framebufferList.size());
             const UINT cmdBufferOffset = m_pCmdBufferMgr->GetGraphicsCmdBufferNum();
-            const UINT cmdBufferEnd    = cmdBufferOffset + cmdBufferOffset;
 
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
@@ -75,7 +74,8 @@ namespace VulkanEngine
                 assert(BX_FAIL);
             }
 
-            size_t framebufferNum = m_framebufferList.size();
+            const size_t framebufferNum = m_framebufferList.size();
+            const UINT   cmdBufferEnd   = cmdBufferOffset + static_cast<UINT>(framebufferNum);
 
             for (UINT i = cmdBufferOffset; i < cmdBufferEnd; ++i)
             {
@@ -126,7 +126,7 @@ namespace VulkanEngine
         }
 
         BOOL VulkanRenderPass::createRenderTargets(
-            const std::vector<VulkanRenderTargetsCreateData>* pRenderTargetsCreateDataList,
+            const std::vector<VulkanRenderTargetCreateData>* pRenderTargetsCreateDataList,
             const UINT                                        renderSubpassNum,
             UINT                                              renderFramebufferNum)
         {
@@ -136,19 +136,43 @@ namespace VulkanEngine
 
             std::vector<VkAttachmentDescription>            attachmentDescriptionList(renderTargetNum);
             std::vector<VkSubpassDescription>               subPassDescriptionList(renderSubpassNum);
-            std::vector<std::vector<VkAttachmentReference>> colorSubpassAttachmentRefList;
-            std::vector<VkAttachmentReference>              depthAttachmentRefList;
+            std::vector<std::vector<VkAttachmentReference>> colorSubpassAttachmentRefList(renderSubpassNum);
+            std::vector<VkAttachmentReference>              depthAttachmentRefList(renderSubpassNum);
 
             std::vector<std::vector<Texture::VulkanTextureBase*>> pFramebuffersTextureList(renderFramebufferNum);
 
             /// Create render pass
             for (size_t i = 0; i < renderTargetNum; ++i)
             {
-                const VulkanRenderTargetsCreateData& renderPassCreateData = pRenderTargetsCreateDataList->at(i);
+                const VulkanRenderTargetCreateData& renderPassCreateData = pRenderTargetsCreateDataList->at(i);
 
-                attachmentDescriptionList[i].format         =
-                    Utility::VulkanUtility::GetVkImageFormat(renderPassCreateData.pTexture->GetTextureFormat());
+                VkFormat attachmentFormat = VK_FORMAT_UNDEFINED;
 
+                for (const VulkanRenderTargetFramebufferCreateData& renderTargetFramebufferCreateData :
+                    *(renderPassCreateData.pRenderTargetFramebufferCreateData))
+                {
+                    UINT framebufferIndex            = renderTargetFramebufferCreateData.framebufferIndex;
+                    Texture::VulkanTextureBase* pTex = renderTargetFramebufferCreateData.pTexture;
+
+                    pFramebuffersTextureList[framebufferIndex].push_back(pTex);
+
+                    // Validat the texture formats, which should be the same for the same attachment
+                    if (attachmentFormat == VK_FORMAT_UNDEFINED)
+                    {
+                        attachmentFormat = Utility::VulkanUtility::GetVkImageFormat(pTex->GetTextureFormat());
+                    }
+                    else
+                    {
+                        VkFormat nextAttachmentFormat = Utility::VulkanUtility::GetVkImageFormat(pTex->GetTextureFormat());
+
+                        if (nextAttachmentFormat != attachmentFormat)
+                        {
+                            NotSupported();
+                        }
+                    }
+                }
+
+                attachmentDescriptionList[i].format         = attachmentFormat;
                 attachmentDescriptionList[i].samples        =
                     Utility::VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
                 attachmentDescriptionList[i].loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -180,8 +204,6 @@ namespace VulkanEngine
                     Utility::VulkanUtility::GetAttachmentRefVkImageLayout(renderPassCreateData.layout);
 
                 colorSubpassAttachmentRefList[renderPassCreateData.renderSubPassIndex].push_back(attachmentRef);
-
-                pFramebuffersTextureList[renderPassCreateData.framebufferIndex].push_back(renderPassCreateData.pTexture);
             }
 
             for (UINT i = 0; i < renderSubpassNum; ++i)
@@ -189,7 +211,7 @@ namespace VulkanEngine
                 subPassDescriptionList[i].pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
                 subPassDescriptionList[i].colorAttachmentCount    = static_cast<UINT>(colorSubpassAttachmentRefList.size());
                 subPassDescriptionList[i].pColorAttachments       = colorSubpassAttachmentRefList[i].data();
-                subPassDescriptionList[i].pDepthStencilAttachment = &(depthAttachmentRefList[i]);
+                //subPassDescriptionList[i].pDepthStencilAttachment = &(depthAttachmentRefList[i]);
             }
 
             VkRenderPassCreateInfo renderPassCreateInfo = {};
@@ -298,11 +320,9 @@ namespace VulkanEngine
             rasterizerCreateInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
             rasterizerCreateInfo.depthClampEnable        = VK_FALSE;
             rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-            rasterizerCreateInfo.polygonMode             =
-                Utility::VulkanUtility::GetVkPolygonMode(pProps->polyMode);
+            rasterizerCreateInfo.polygonMode             = Utility::VulkanUtility::GetVkPolygonMode(pProps->polyMode);
             rasterizerCreateInfo.lineWidth               = 1.0f;
-            rasterizerCreateInfo.cullMode                =
-                Utility::VulkanUtility::GetVkCullMode(pProps->cullMode);
+            rasterizerCreateInfo.cullMode                = Utility::VulkanUtility::GetVkCullMode(pProps->cullMode);
             rasterizerCreateInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
             rasterizerCreateInfo.depthBiasEnable         = VK_FALSE;
 
@@ -391,7 +411,7 @@ namespace VulkanEngine
                 scissor.offset   =
                 {
                     static_cast<INT>(pScissorRect->left),
-                    static_cast<INT>(pScissorRect->right)
+                    static_cast<INT>(pScissorRect->top)
                 };
 
                 renderScissors[i] = scissor;

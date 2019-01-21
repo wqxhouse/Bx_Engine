@@ -34,7 +34,7 @@ namespace Scene
 
     RenderScene::~RenderScene()
     {
-        m_pObjArena->clear();
+        m_pObjArena->release();
         m_pCameraList.clear();
         m_pLightList.clear();
         m_pModelList.clear();

@@ -125,9 +125,9 @@ enum RenderingMethod
 
 enum Antialasing
 {
-    AA_NONE = 0x00000000,
-    AA_LOW = 0x00000002,
-    AA_HIGH = 0x00000004,
+    AA_NONE  = 0x00000001,
+    AA_LOW   = 0x00000002,
+    AA_HIGH  = 0x00000004,
     AA_EXTRA = 0x00000008,
 };
 
@@ -177,6 +177,7 @@ enum TextureFormat
     BX_FORMAT_RG8,
     BX_FORMAT_RGB8,
     BX_FORMAT_RGBA8,
+    BX_FORMAT_BGRA8,
     BX_FORMAT_RGBA16,
     BX_FORMAT_RGBA32,
     BX_FORMAT_RGBA64,

@@ -63,33 +63,38 @@ namespace VulkanEngine
             std::vector<VulkanTextureResources*>*       ppTextureResouces;
         };
 
-        struct VulkanRenderTargetsCreateData
+        struct VulkanRenderTargetFramebufferCreateData
         {
-            BOOL                             isStore;
-            UINT                             renderSubPassIndex;
-            UINT                             bindingPoint;
-            UINT                             framebufferIndex;
-            BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout;
-            BOOL                             useStencil;
-            BOOL                             isStoreStencil;
-            Texture::VulkanTextureBase*      pTexture;
+            UINT                        framebufferIndex;
+            Texture::VulkanTextureBase* pTexture;
+        };
+
+        struct VulkanRenderTargetCreateData
+        {
+            BOOL                                                  isStore;
+            UINT                                                  renderSubPassIndex;
+            UINT                                                  bindingPoint;
+            BX_FRAMEBUFFER_ATTACHMENT_LAYOUT                      layout;
+            BOOL                                                  useStencil;
+            BOOL                                                  isStoreStencil;
+            std::vector<VulkanRenderTargetFramebufferCreateData>* pRenderTargetFramebufferCreateData;
         };
 
         struct VulkanRenderPassCreateData
         {
             // Properties
-            VulkanRenderProperties*                 pProps;
+            VulkanRenderProperties*                    pProps;
 
             // Shader
-            Shader::BxShaderMeta*                   pShaderMeta;
+            Shader::BxShaderMeta*                      pShaderMeta;
 
             // Input
-            VulkanRenderResources*                  pResource;
+            VulkanRenderResources*                     pResource;
 
             // Output
-            UINT                                        renderSubPassNum;
-            UINT                                        renderFramebufferNum;
-            std::vector<VulkanRenderTargetsCreateData>* pRenderTargetCreateDataList;
+            UINT                                       renderSubPassNum;
+            UINT                                       renderFramebufferNum;
+            std::vector<VulkanRenderTargetCreateData>* pRenderTargetCreateDataList;
         };
 
         class VulkanRenderPass
@@ -120,9 +125,9 @@ namespace VulkanEngine
         private:
             // Create VkRenderPass and generate framebuffers
             BOOL createRenderTargets(
-                const std::vector<VulkanRenderTargetsCreateData>* pRenderTargetsCreateDataList,
-                const UINT                                        renderSubpassNum,
-                UINT                                              renderFramebufferNum);
+                const std::vector<VulkanRenderTargetCreateData>* pRenderTargetsCreateDataList,
+                const UINT                                       renderSubpassNum,
+                UINT                                             renderFramebufferNum);
 
             BOOL createGraphicsPipeline(
                 VulkanRenderProperties* const pProps,

@@ -22,13 +22,15 @@ namespace VulkanEngine
             : m_texture2D(pTex2DCreateData),
               VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
+            m_texImage       = { *m_pDevice, vkDestroyImage };
+            m_texImageMemory = { *m_pDevice, vkFreeMemory };
         }
 
         VulkanTexture2D::VulkanTexture2D(
             const VkDevice* const           pDevice,
             Mgr::CmdBufferMgr* const        pCmdBufferMgr,
             ::Texture::Texture2DCreateData* pTex2DCreateData,
-            const VkImage                   image)
+            const VDeleter<VkImage>         image)
             : m_texture2D(pTex2DCreateData),
               VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
@@ -42,25 +44,19 @@ namespace VulkanEngine
         {
         }
 
-        BOOL VulkanTexture2D::create(
-            const VkPhysicalDevice hwDevice)
+        BOOL VulkanTexture2D::initialize()
         {
-            assert(m_textureFlags.isExternal == FALSE);
-
             BOOL result = BX_SUCCESS;
 
-            // The texture format must be optimized at this point
-            assert(IsTextureOptimize() == TRUE);
-
-            UINT texWidth    = GetTextureWidth();
-            UINT texHeight   = GetTextureHeight();
+            UINT texWidth  = GetTextureWidth();
+            UINT texHeight = GetTextureHeight();
 
             m_mipmapLevel = 1;
 
             if (IsGenMipmap() == TRUE)
             {
                 UINT texEdgeLength = std::max(texWidth, texHeight);
-                m_mipmapLevel        = 0;
+                m_mipmapLevel = 0;
 
                 while (texEdgeLength > 0)
                 {
@@ -68,6 +64,22 @@ namespace VulkanEngine
                     m_mipmapLevel++;
                 }
             }
+
+            return result;
+        }
+
+        BOOL VulkanTexture2D::create(
+            const VkPhysicalDevice hwDevice)
+        {
+            assert(m_textureFlags.isExternal == FALSE);
+
+            BOOL result = BX_SUCCESS;
+
+            UINT texWidth  = GetTextureWidth();
+            UINT texHeight = GetTextureHeight();
+
+            // The texture format must be optimized at this point
+            assert(IsTextureOptimize() == TRUE);
 
             // Create image handle
             VkImageCreateInfo imageCreateInfo = {};

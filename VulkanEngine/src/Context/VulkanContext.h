@@ -68,8 +68,7 @@ namespace VulkanEngine
         BOOL initHwDevice();
         BOOL initDevice();
         BOOL createSwapchain();
-        BOOL createGraphicsPipeline();
-        BOOL createSwapchainFramebuffer();
+        BOOL createRender();
         BOOL createSemaphores();
 
         /// Context attributes
@@ -107,20 +106,14 @@ namespace VulkanEngine
         std::multimap<UINT, VkPhysicalDevice, std::greater<UINT>> m_avaliableHwGpuDevices;
 
         // Swapchain
-        VDeleter<VkSwapchainKHR>             m_swapchain;
-        Utility::SwapChainHwProperties       m_swapchainHwProperties;
-        VkExtent2D                           m_swapchainExtent;
-        VkSurfaceFormatKHR                   m_swapchainSurfaceFormat;
-        std::vector<VkImage>	             m_swapchainImages;
-        std::vector<VDeleter<VkImageView>>   m_swapchainImagesViews;
-        std::vector<VDeleter<VkFramebuffer>> m_swapchainFramebuffers;
+        VDeleter<VkSwapchainKHR>               m_swapchain;
+        Utility::SwapChainHwProperties         m_swapchainHwProperties;
+        VkExtent2D                             m_swapchainExtent;
+        VkSurfaceFormatKHR                     m_swapchainSurfaceFormat;
+        std::vector<Texture::VulkanTexture2D*> m_pSwapchainTextures;
 
-        // Shader
-        std::unique_ptr<Shader::VulkanGraphicsShader> m_pShader;
-
-        // Pipeline
-        VDeleter<VkRenderPass>     m_renderPass;
-        VDeleter<VkPipeline>       m_graphicsPipeline;
+        // Render
+        std::unique_ptr<Render::VulkanForwardRender> m_pRender;
 
         // Semaphores
         VDeleter<VkSemaphore> m_renderSemaphore;

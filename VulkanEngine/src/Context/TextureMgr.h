@@ -29,10 +29,30 @@ namespace VulkanEngine
 
             ~TextureMgr();
 
-            Texture::VulkanTexture2D*      createTexture2D(
+            Texture::VulkanTexture2D* createTexture2D(
                 ::Texture::Texture2DCreateData* pTexture2DCreateData);
 
-            Texture::VulkanTexture3D*      createTexture3D(
+            Texture::VulkanTexture2D* createTexture2DRenderTargetFromImage(
+                const UINT              texWidth,
+                const UINT              texHeight,
+                const UINT              samples,
+                const TextureFormat     texFormat,
+                const VDeleter<VkImage> image);
+
+            Texture::VulkanTexture2D* createTexture2DRenderTarget(
+                const UINT          texWidth,
+                const UINT          texHeight,
+                const UINT          samples,
+                const TextureFormat texFormat);
+
+            Texture::VulkanTexture2D* createTexture2DSampler(
+                const std::string&  imageFile,
+                const UINT          samples,
+                const BOOL          mipmap,
+                const TextureFormat texLoadFormat,
+                const TextureFormat texStoreFormat);
+
+            Texture::VulkanTexture3D* createTexture3D(
                 ::Texture::Texture3DCreateData* pTexture3DCreateData);
 
             Texture::VulkanTextureCubemap* createTextureCubemap(

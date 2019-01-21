@@ -14,12 +14,14 @@ namespace VulkanEngine
     namespace Render
     {
         VulkanForwardRender::VulkanForwardRender(
-            const Setting*            pSetting,
-            const VkDevice*           pDevice,
-            Mgr::CmdBufferMgr*        pCmdBufferMgr,
-            Mgr::DescriptorMgr*       pDescritorMgr,
-            const Scene::RenderScene* pScene)
-            : VulkanRenderBase(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene)
+            const Setting*                                const pSetting,
+            const VkPhysicalDevice*                       const pHwDevice,
+            const VkDevice*                               const pDevice,
+            Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
+            Mgr::DescriptorMgr*                           const pDescritorMgr,
+            const Scene::RenderScene*                           pScene,
+            const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures)
+            : VulkanRenderBase(pSetting, pHwDevice, pDevice, pCmdBufferMgr, pDescritorMgr, pScene, ppBackbufferTextures)
         {
         }
 
@@ -36,7 +38,7 @@ namespace VulkanEngine
             /// Initialize default render pass for main scene
             //  Initialize graphics pipeline properties
             Render::VulkanRenderProperties props = {};
-            props.cullMode                       = CULLMODE_BACK;
+            props.cullMode                       = CULLMODE_FRONT;
             props.enableBlending                 = TRUE;
             props.polyMode                       = PolyMode::POLYMODE_FILL;
             props.sceneClearValue                = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -50,26 +52,38 @@ namespace VulkanEngine
 
             // Initialize shaders
             Shader::BxShaderMeta mainSceneShaderMeta          = {};
-            mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "SimpleMesh.vert";
-            mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag";
+            mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "SimpleMesh.vert.spv";
+            mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag.spv";
 
             // Initialize render pass
-            UINT backbufferNum = static_cast<UINT>(m_ppBackbufferTextures->size());
+            const UINT backbufferAttachmentNum = 1;
+            const UINT backbufferNum           = static_cast<const UINT>(m_ppBackbufferTextures->size());
 
-            std::vector<Render::VulkanRenderTargetsCreateData> renderTargetsCreateData(backbufferNum);
+            std::vector<Render::VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
+            std::vector<std::vector<Render::VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
 
-            for (UINT i = 0; i < backbufferNum; ++i)
+            for (UINT i = 0; i < backbufferAttachmentNum; ++i)
             {
-                Render::VulkanRenderTargetsCreateData* pRenderPassCreateData = &(renderTargetsCreateData[i]);
+                Render::VulkanRenderTargetCreateData* pRenderPassCreateData = &(renderTargetsCreateData[i]);
 
-                pRenderPassCreateData->framebufferIndex   = i;
                 pRenderPassCreateData->renderSubPassIndex = 0;
                 pRenderPassCreateData->bindingPoint       = 0;
                 pRenderPassCreateData->isStore            = TRUE;
-                pRenderPassCreateData->pTexture           = m_ppBackbufferTextures->at(i);
-                pRenderPassCreateData->layout             = BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR;
+                pRenderPassCreateData->layout             = BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT;
                 pRenderPassCreateData->useStencil         = FALSE;
                 pRenderPassCreateData->isStoreStencil     = FALSE;
+
+                std::vector<Render::VulkanRenderTargetFramebufferCreateData>*
+                    pRenderTargetsFramebufferCreateData = &(renderTargetsFramebuffersCreateData[i]);
+
+                pRenderTargetsFramebufferCreateData->resize(backbufferNum);
+                for (UINT j = 0; j < backbufferNum; ++j)
+                {
+                    pRenderTargetsFramebufferCreateData->at(j).framebufferIndex = j;
+                    pRenderTargetsFramebufferCreateData->at(j).pTexture         = m_ppBackbufferTextures->at(j);
+                }
+
+                pRenderPassCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
             }
 
             Render::VulkanRenderResources renderSources = {};
@@ -78,12 +92,12 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             Render::VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
-            mainSceneRenderPassCreateData.pProps                      = &props;
-            mainSceneRenderPassCreateData.pShaderMeta                 = &mainSceneShaderMeta;
-            mainSceneRenderPassCreateData.pResource                   = &renderSources;
-            mainSceneRenderPassCreateData.renderFramebufferNum        = backbufferNum;
-            mainSceneRenderPassCreateData.renderSubPassNum            = 1;
-            mainSceneRenderPassCreateData.pRenderTargetCreateDataList = &renderTargetsCreateData;
+            mainSceneRenderPassCreateData.pProps                             = &props;
+            mainSceneRenderPassCreateData.pShaderMeta                        = &mainSceneShaderMeta;
+            mainSceneRenderPassCreateData.pResource                          = &renderSources;
+            mainSceneRenderPassCreateData.renderFramebufferNum               = backbufferNum;
+            mainSceneRenderPassCreateData.renderSubPassNum                   = 1;
+            mainSceneRenderPassCreateData.pRenderTargetCreateDataList        = &renderTargetsCreateData;
 
             m_mainSceneRenderPass.create(mainSceneRenderPassCreateData);
 

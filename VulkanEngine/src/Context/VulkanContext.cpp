@@ -50,19 +50,16 @@ namespace VulkanEngine
         m_vkSurface        = { m_vkInstance, vkDestroySurfaceKHR   };
         m_vkDevice         = { vkDestroyDevice                     };
         m_swapchain        = { m_vkDevice, vkDestroySwapchainKHR   };
-        m_renderPass       = { m_vkDevice, vkDestroyRenderPass     };
-        m_graphicsPipeline = { m_vkDevice, vkDestroyPipeline       };
         m_renderSemaphore  = { m_vkDevice, vkDestroySemaphore      };
         m_presentSemaphore = { m_vkDevice, vkDestroySemaphore      };
 
 #if _DEBUG
-        m_vkDebugMsg             = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
+        m_vkDebugMsg       = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
 #endif
     }
 
     VulkanContext::~VulkanContext()
-    {
-    }
+    {}
 
     void VulkanContext::initialize()
     {
@@ -109,6 +106,7 @@ namespace VulkanEngine
             glfwSwapBuffers(m_pWindow);
             glfwPollEvents();
 
+            // m_pRender->update();
             status = draw();
 
             assert(status == BX_SUCCESS);
@@ -221,38 +219,6 @@ namespace VulkanEngine
 
         if (status == BX_SUCCESS)
         {
-            status = createSwapchain();
-            if (status == BX_FAIL)
-            {
-                printf("Failed to created swapchain!\n");
-                assert(BX_FAIL);
-            }
-        }
-
-        if (status = BX_SUCCESS)
-        {
-            status = createGraphicsPipeline();
-
-            if (status == BX_FAIL)
-            {
-                printf("Failed to created graphics pipeline!\n");
-                assert(BX_FAIL);
-            }
-        }
-
-        if (status = BX_SUCCESS)
-        {
-            status = createSwapchainFramebuffer();;
-
-            if (status == BX_FAIL)
-            {
-                printf("Failed to created swapchain framebuffer!\n");
-                assert(BX_FAIL);
-            }
-        }
-
-        if (status == BX_SUCCESS)
-        {
             const QueueFamilyIndices& queueFamilyIndices = m_queueMgr.GetHwQueueIndices();
             m_pCmdBufferMgr = std::unique_ptr<Mgr::CmdBufferMgr>(
                 new Mgr::CmdBufferMgr(&m_vkDevice, &m_queueMgr, queueFamilyIndices.GetIndexNum()));
@@ -269,56 +235,48 @@ namespace VulkanEngine
 
         if (status == BX_SUCCESS)
         {
-            status = m_pCmdBufferMgr->
-                addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
-                    BX_DIRECT_COMMAND_BUFFER,
-                    static_cast<UINT>(m_swapchainFramebuffers.size()));
+            m_pTextureMgr = std::unique_ptr<Mgr::TextureMgr>(
+                new Mgr::TextureMgr(&(m_vkActiveHwGpuDeviceList[0]),
+                    &m_vkDevice, m_pCmdBufferMgr.get(),
+                    DEFAULT_MAX_TEXTURE_NUM,
+                    m_isSamplerAnisotropySupport));
+        }
+
+        if (status == BX_SUCCESS)
+        {
+            status = createSwapchain();
+            if (status == BX_FAIL)
+            {
+                printf("Failed to created swapchain!\n");
+                assert(BX_FAIL);
+            }
+        }
+
+        if (status = BX_SUCCESS)
+        {
+            status = createRender();
 
             if (status == BX_FAIL)
             {
-                printf("Failed to create graphics command buffers!\n");
+                printf("Failed to created render!\n");
                 assert(BX_FAIL);
             }
+        }
 
-            for (size_t i = 0; i < m_swapchainFramebuffers.size(); ++i)
+        /*if (status = BX_SUCCESS)
+        {
+            status = createSwapchainFramebuffer();;
+
+            if (status == BX_FAIL)
             {
-                // Start recording to command buffer
-                Buffer::CmdBuffer* const pCmdBuffer = m_pCmdBufferMgr->
-                    GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, static_cast<UINT>(i));
-
-                status = pCmdBuffer->beginCmdBuffer(TRUE);
-
-                // Start render pass, write draw commands
-                if (status == BX_SUCCESS)
-                {
-                    // TODO: Remove the hard code here
-                    VkRect2D renderArea = { { 0, 0 }, m_swapchainExtent };
-                    std::vector<VkClearValue> clearColorValue = { { 0.0f, 0.0f, 0.0f, 1.0f } };
-
-                    pCmdBuffer->beginRenderPass(m_renderPass,
-                                                m_swapchainFramebuffers[i],
-                                                renderArea,
-                                                clearColorValue);
-
-                    pCmdBuffer->cmdDrawArrays(m_graphicsPipeline, 3, 0);
-
-                    pCmdBuffer->endRenderPass();
-                }
-                else
-                {
-                    printf("Failed to begin graphics command buffers!\n");
-                    assert(BX_FAIL);
-                }
-
-                // Finish recording to command buffer
-                status = pCmdBuffer->endCmdBuffer();
-
-                if (status == BX_FAIL)
-                {
-                    printf("Failed to end graphics command buffers!\n");
-                    assert(BX_FAIL);
-                }
+                printf("Failed to created swapchain framebuffer!\n");
+                assert(BX_FAIL);
             }
+        }*/
+
+        if (status == BX_SUCCESS)
+        {
+            m_pRender->draw();
         }
 
         if (status == BX_SUCCESS)
@@ -330,15 +288,6 @@ namespace VulkanEngine
                 printf("Failed to create semaphores!\n");
                 assert(BX_FAIL);
             }
-        }
-
-        if (status == BX_SUCCESS)
-        {
-            m_pTextureMgr = std::unique_ptr<Mgr::TextureMgr>(
-                new Mgr::TextureMgr(&(m_vkActiveHwGpuDeviceList[0]),
-                                    &m_vkDevice, m_pCmdBufferMgr.get(),
-                                    DEFAULT_MAX_TEXTURE_NUM,
-                                    m_isSamplerAnisotropySupport));
         }
 
         return status;
@@ -680,10 +629,31 @@ namespace VulkanEngine
             if ((vkResult == VK_SUCCESS) &&
                 (swapchainImageNum > 0))
             {
-                m_swapchainImages.resize(swapchainImageNum);
-                vkResult = vkGetSwapchainImagesKHR(m_vkDevice, m_swapchain, &swapchainImageNum, m_swapchainImages.data());
+                m_pSwapchainTextures.resize(swapchainImageNum);
+
+                std::vector<VkImage> swapchainImages(swapchainImageNum);
+                vkResult = vkGetSwapchainImagesKHR(m_vkDevice, m_swapchain, &swapchainImageNum, swapchainImages.data());
 
                 status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
+
+                assert(status == BX_SUCCESS);
+
+                // Created textures for swapchain images
+                for (UINT i = 0; i < swapchainImageNum; ++i)
+                {
+                    VDeleter<VkImage> image;
+                    *(image.replace()) = swapchainImages[i];
+
+                    Texture::VulkanTexture2D* pBackbufferTex =
+                        m_pTextureMgr->createTexture2DRenderTargetFromImage(
+                            m_swapchainExtent.width,
+                            m_swapchainExtent.height,
+                            m_pSetting->m_graphicsSetting.antialasing,
+                            Utility::VulkanUtility::GetImageFormat(m_swapchainSurfaceFormat.format),
+                            image);
+
+                    m_pSwapchainTextures[i] = pBackbufferTex;
+                }
             }
             else
             {
@@ -697,248 +667,23 @@ namespace VulkanEngine
             status = BX_FAIL;
         }
 
-        // Create Image views for the swapchain images
-        if (status == BX_SUCCESS)
-        {
-            m_swapchainImagesViews.resize(swapchainImageNum, { m_vkDevice, vkDestroyImageView });
-            m_swapchainFramebuffers.resize(swapchainImageNum, { m_vkDevice, vkDestroyFramebuffer });
-
-            for (UINT i = 0; i < swapchainImageNum; ++i)
-            {
-                VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
-                swapchainImageViewCreateInfo.sType        = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-                swapchainImageViewCreateInfo.viewType     = VK_IMAGE_VIEW_TYPE_2D;
-                swapchainImageViewCreateInfo.image        = m_swapchainImages[i];
-                swapchainImageViewCreateInfo.format       = m_swapchainSurfaceFormat.format;
-                swapchainImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
-                swapchainImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
-                swapchainImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
-                swapchainImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
-
-                swapchainImageViewCreateInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-                swapchainImageViewCreateInfo.subresourceRange.baseMipLevel   = 0;
-                swapchainImageViewCreateInfo.subresourceRange.levelCount     = 1;
-                swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-                swapchainImageViewCreateInfo.subresourceRange.layerCount     = 1;
-
-                VkResult vkResult = vkCreateImageView(
-                    m_vkDevice, &swapchainImageViewCreateInfo, NULL, m_swapchainImagesViews[i].replace());
-                if (vkResult != VK_SUCCESS)
-                {
-                    assert(BX_FAIL);
-                    status = BX_FAIL;
-                    break;
-                }
-            }
-        }
-
         return status;
     }
 
-    BOOL VulkanContext::createGraphicsPipeline()
+    BOOL VulkanContext::createRender()
     {
         BOOL status = BX_SUCCESS;
 
-        /// Setup Fixed pipeline stages
-        // VS input
-        VkPipelineVertexInputStateCreateInfo vsInputCreateInfo = {};
-        vsInputCreateInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vsInputCreateInfo.vertexBindingDescriptionCount   = 0;
-        vsInputCreateInfo.pVertexBindingDescriptions      = NULL;
-        vsInputCreateInfo.vertexAttributeDescriptionCount = 0;
-        vsInputCreateInfo.pVertexAttributeDescriptions    = NULL;
+        m_pRender = std::unique_ptr<Render::VulkanForwardRender>(
+            new Render::VulkanForwardRender(m_pSetting,
+                                            &(m_vkActiveHwGpuDeviceList[0]),
+                                            &m_vkDevice,
+                                            m_pCmdBufferMgr.get(),
+                                            NULL,
+                                            m_pRenderSceneList[m_activeSceneIndex],
+                                            &m_pSwapchainTextures));
 
-        // Input assembly state
-        VkPipelineInputAssemblyStateCreateInfo inputAsmCreateInfo = {};
-        inputAsmCreateInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAsmCreateInfo.topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-        inputAsmCreateInfo.primitiveRestartEnable = VK_FALSE;
-
-        // Rasterizer
-        VkPipelineRasterizationStateCreateInfo rasterizerCreateInfo = {};
-        rasterizerCreateInfo.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-        rasterizerCreateInfo.depthClampEnable        = VK_FALSE;
-        rasterizerCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-        rasterizerCreateInfo.polygonMode             = VulkanUtility::GetVkPolygonMode(m_pSetting->polyMode);
-        rasterizerCreateInfo.lineWidth               = 1.0f;
-        rasterizerCreateInfo.cullMode                = VK_CULL_MODE_BACK_BIT;
-        rasterizerCreateInfo.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-        rasterizerCreateInfo.depthBiasEnable         = VK_FALSE;
-
-        // Multisampling
-        VkPipelineMultisampleStateCreateInfo multiSamplingCreateInfo = {};
-        multiSamplingCreateInfo.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-        multiSamplingCreateInfo.rasterizationSamples = VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
-        multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
-
-        // Depth/Stencil
-        VkPipelineColorBlendAttachmentState blendAttachmentState = {};
-        blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-                                              VK_COLOR_COMPONENT_G_BIT |
-                                              VK_COLOR_COMPONENT_B_BIT |
-                                              VK_COLOR_COMPONENT_A_BIT;
-        if (m_pSetting->m_graphicsSetting.blend == TRUE)
-        {
-            blendAttachmentState.blendEnable         = VK_TRUE;
-            blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
-            blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-            blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-            blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
-            blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-            blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        }
-        else
-        {
-            blendAttachmentState.blendEnable = VK_FALSE;
-        }
-
-        VkPipelineColorBlendStateCreateInfo blendState = {};
-        blendState.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        blendState.attachmentCount = 1;
-        blendState.pAttachments    = &blendAttachmentState;
-        blendState.logicOpEnable   = VK_FALSE; // Enable will disable the states in pAttachments
-
-        // Viewport and scissor
-        VkViewport viewport = {};
-        viewport.x          = 0.0f;
-        viewport.y          = 0.0f;
-        viewport.width      = static_cast<float>(m_swapchainExtent.width);
-        viewport.height     = static_cast<float>(m_swapchainExtent.height);
-        viewport.minDepth   = 0.0f;
-        viewport.maxDepth   = 1.0f;
-
-        VkRect2D scissor = {};
-        scissor.extent   = m_swapchainExtent;
-        scissor.offset   = { 0, 0 };
-
-        VkPipelineViewportStateCreateInfo viewportCreateInfo = {};
-        viewportCreateInfo.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-        viewportCreateInfo.viewportCount = 1;
-        viewportCreateInfo.pViewports    = &viewport;
-        viewportCreateInfo.scissorCount  = 1;
-        viewportCreateInfo.pScissors     = &scissor;
-
-        // Pipeline Layout
-        VDeleter<VkPipelineLayout> m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
-
-        VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
-        pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-
-        VkResult vkResult = vkCreatePipelineLayout(
-            m_vkDevice, &pipelineLayoutCreateInfo, NULL, m_graphicsPipelineLayout.replace());
-
-        status = ((vkResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
-        assert(status == BX_SUCCESS);
-
-        // Render pass
-        VkAttachmentDescription colorAttachement = {};
-        colorAttachement.format         = m_swapchainSurfaceFormat.format;
-        colorAttachement.samples        = VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
-        colorAttachement.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        colorAttachement.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachement.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachement.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachement.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachement.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-        VkAttachmentReference colorAttachmentRef = {};
-        colorAttachmentRef.attachment            = 0; // Output layout index in shader,
-                                                      // e.g. layout(location = 0) out vec4 outColor
-        colorAttachmentRef.layout                = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-        VkSubpassDescription subpassDescription = {};
-        subpassDescription.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpassDescription.colorAttachmentCount = 1;
-        subpassDescription.pColorAttachments    = &colorAttachmentRef;
-
-        VkRenderPassCreateInfo renderPassCreateInfo = {};
-        renderPassCreateInfo.sType                  = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassCreateInfo.attachmentCount        = 1;
-        renderPassCreateInfo.pAttachments           = &colorAttachement;
-        renderPassCreateInfo.subpassCount           = 1;
-        renderPassCreateInfo.pSubpasses             = &subpassDescription;
-
-        VkResult createRenderpassResult =
-            vkCreateRenderPass(m_vkDevice, &renderPassCreateInfo, NULL, m_renderPass.replace());
-        status = ((createRenderpassResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
-
-        assert(status == BX_SUCCESS);
-
-        /// End fixed pipeline stages setup
-
-        /// Setup programmable pipeline stages
-        std::vector<VkPipelineShaderStageCreateInfo> shaderCreateInfo;
-        Shader::BxShaderMeta                         shaderMeta;
-        if (status == BX_SUCCESS)
-        {
-            m_pShader                                = 
-                std::unique_ptr<Shader::VulkanGraphicsShader>(
-                    new Shader::VulkanGraphicsShader(m_vkDevice));
-            shaderMeta.vertexShaderInfo.shaderFile   = "SimpleTriangle.vert.spv";
-            shaderMeta.fragmentShaderInfo.shaderFile = "SimpleTriangle.frag.spv";
-            shaderCreateInfo                         =
-                m_pShader->createPipelineShaderStages(shaderMeta);
-        }
-        /// End programmable pipeline stages setup
-
-        // Create pipeline
-        if (status == BX_SUCCESS)
-        {
-            VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {};
-            graphicsPipelineCreateInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-            graphicsPipelineCreateInfo.pVertexInputState   = &vsInputCreateInfo;
-            graphicsPipelineCreateInfo.pInputAssemblyState = &inputAsmCreateInfo;
-            graphicsPipelineCreateInfo.pRasterizationState = &rasterizerCreateInfo;
-            graphicsPipelineCreateInfo.pMultisampleState   = &multiSamplingCreateInfo;
-            graphicsPipelineCreateInfo.pColorBlendState    = &blendState;
-            graphicsPipelineCreateInfo.pDepthStencilState  = NULL;
-            graphicsPipelineCreateInfo.pViewportState      = &viewportCreateInfo;
-            graphicsPipelineCreateInfo.layout              = m_graphicsPipelineLayout;
-            graphicsPipelineCreateInfo.renderPass          = m_renderPass;
-            graphicsPipelineCreateInfo.stageCount          = static_cast<UINT>(shaderCreateInfo.size());
-            graphicsPipelineCreateInfo.pStages             = shaderCreateInfo.data();
-            graphicsPipelineCreateInfo.pDynamicState       = NULL;
-            graphicsPipelineCreateInfo.subpass             = 0;
-
-            VkResult graphicsPipelineCreateResult = vkCreateGraphicsPipelines(m_vkDevice,
-                                                                              VK_NULL_HANDLE,
-                                                                              1,
-                                                                              &graphicsPipelineCreateInfo,
-                                                                              NULL,
-                                                                              m_graphicsPipeline.replace());
-
-            status = ((graphicsPipelineCreateResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
-
-            assert(status == BX_SUCCESS);
-        }
-
-        return status;
-    }
-
-    BOOL VulkanContext::createSwapchainFramebuffer()
-    {
-        BOOL status = BX_SUCCESS;
-
-        for (size_t i = 0; i < m_swapchainImagesViews.size(); ++i)
-        {
-            VkImageView imageViews[] = { m_swapchainImagesViews[i] };
-
-            VkFramebufferCreateInfo swapchainFramebufferCreateInfo = {};
-            swapchainFramebufferCreateInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-            swapchainFramebufferCreateInfo.renderPass      = m_renderPass;
-            swapchainFramebufferCreateInfo.attachmentCount = 1;
-            swapchainFramebufferCreateInfo.pAttachments    = imageViews;
-            swapchainFramebufferCreateInfo.width           = m_swapchainExtent.width;
-            swapchainFramebufferCreateInfo.height          = m_swapchainExtent.height;
-            swapchainFramebufferCreateInfo.layers          = 1;
-
-            VkResult createSwapchainFramebufferResult = vkCreateFramebuffer(
-                m_vkDevice, &swapchainFramebufferCreateInfo, NULL, m_swapchainFramebuffers[i].replace());
-
-            status = ((createSwapchainFramebufferResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
-
-            assert(status == BX_SUCCESS);
-        }
+        status = m_pRender->initialize();
 
         return status;
     }

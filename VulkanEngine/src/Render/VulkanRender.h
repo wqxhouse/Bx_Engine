@@ -19,11 +19,13 @@ namespace VulkanEngine
         {
         public:
             VulkanRenderBase(
-                const Setting*      const pSetting,
-                const VkDevice*     const pDevice,
-                Mgr::CmdBufferMgr*  const pCmdBufferMgr,
-                Mgr::DescriptorMgr* const pDescritorMgr,
-                const Scene::RenderScene* pScene);
+                const Setting*                                const pSetting,
+                const VkPhysicalDevice*                       const pHwDevice,
+                const VkDevice*                               const pDevice,
+                Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
+                Mgr::DescriptorMgr*                           const pDescritorMgr,
+                const Scene::RenderScene*                           pScene,
+                const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
             ~VulkanRenderBase();
 
@@ -82,18 +84,19 @@ namespace VulkanEngine
         protected:
             void parseScene();
 
-            const Setting*      const m_pSetting;
-            const VkDevice*     const m_pDevice;
-            Mgr::CmdBufferMgr*  const m_pCmdBufferMgr;
-            Mgr::DescriptorMgr* const m_pDescritorMgr;
-            const Scene::RenderScene* m_pScene;
+            const Setting*          const m_pSetting;
+            const VkPhysicalDevice* const m_pHwDevice;
+            const VkDevice*         const m_pDevice;
+            Mgr::CmdBufferMgr*      const m_pCmdBufferMgr;
+            Mgr::DescriptorMgr*     const m_pDescritorMgr;
+            const Scene::RenderScene*     m_pScene;
 
             std::vector<VulkanRenderPass> m_preDrawPassList;
             VulkanRenderPass              m_mainSceneRenderPass;
             std::vector<VulkanRenderPass> m_postDrawPassList;
 
-            std::vector<Texture::VulkanTexture2D*>* m_ppBackbufferTextures;
-            std::vector<VulkanVertexInputResources> m_mainSceneVertexInputResourceList;
+            const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
+            std::vector<VulkanVertexInputResources>             m_mainSceneVertexInputResourceList;
 
         private:
         };
@@ -102,11 +105,13 @@ namespace VulkanEngine
         {
         public:
             VulkanForwardRender(
-                const Setting*            pSetting,
-                const VkDevice*           pDevice,
-                Mgr::CmdBufferMgr*        pCmdBufferMgr,
-                Mgr::DescriptorMgr*       pDescritorMgr,
-                const Scene::RenderScene* pScene);
+                const Setting*                                const pSetting,
+                const VkPhysicalDevice*                       const pHwDevice,
+                const VkDevice*                               const pDevice,
+                Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
+                Mgr::DescriptorMgr*                           const pDescritorMgr,
+                const Scene::RenderScene*                           pScene,
+                const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
             ~VulkanForwardRender();
 
@@ -124,11 +129,13 @@ namespace VulkanEngine
         {
         public:
             VulkanDeferredRender(
-                const Setting*                pSetting,
-                const VkDevice*               pDevice,
-                Mgr::CmdBufferMgr*            pCmdBufferMgr,
-                Mgr::DescriptorMgr*           pDescritorMgr,
-                const Scene::RenderScene*     pScene);
+                const Setting*                                const pSetting,
+                const VkPhysicalDevice*                       const pHwDevice,
+                const VkDevice*                               const pDevice,
+                Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
+                Mgr::DescriptorMgr*                           const pDescritorMgr,
+                const Scene::RenderScene*                           pScene,
+                const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
             ~VulkanDeferredRender();
 

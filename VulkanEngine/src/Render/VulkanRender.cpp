@@ -14,23 +14,32 @@ namespace VulkanEngine
     namespace Render
     {
         VulkanRenderBase::VulkanRenderBase(
-            const Setting*      const pSetting,
-            const VkDevice*     const pDevice,
-            Mgr::CmdBufferMgr*  const pCmdBufferMgr,
-            Mgr::DescriptorMgr* const pDescritorMgr,
-            const Scene::RenderScene* pScene)
+            const Setting*                                const pSetting,
+            const VkPhysicalDevice*                       const pHwDevice,
+            const VkDevice*                               const pDevice,
+            Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
+            Mgr::DescriptorMgr*                           const pDescritorMgr,
+            const Scene::RenderScene*                           pScene,
+            const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures)
             : m_pSetting(pSetting),
+              m_pHwDevice(pHwDevice),
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescritorMgr(pDescritorMgr),
               m_pScene(pScene),
-              m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene)
+              m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
+              m_ppBackbufferTextures(ppBackbufferTextures)
         {
             parseScene();
         }
 
         VulkanRenderBase::~VulkanRenderBase()
         {
+            for (VulkanVertexInputResources vertexInputResources : m_mainSceneVertexInputResourceList)
+            {
+                delete vertexInputResources.pIndexBuffer;
+                delete vertexInputResources.pVertexBuffer;
+            }
         }
 
         void VulkanRenderBase::parseScene()
@@ -50,9 +59,11 @@ namespace VulkanEngine
                     {
                         Buffer::VulkanVertexBuffer* pVertexBuffer = new Buffer::VulkanVertexBuffer(
                             m_pDevice, m_pCmdBufferMgr, pModel->GetMesh(j));
+                        pVertexBuffer->createVertexBuffer(*m_pHwDevice, TRUE);
 
                         Buffer::VulkanIndexBuffer* pIndexBuffer = new Buffer::VulkanIndexBuffer(
                             m_pDevice, m_pCmdBufferMgr, pModel->GetMesh(j));
+                        pIndexBuffer->createIndexBuffer(*m_pHwDevice, TRUE);
 
                         m_mainSceneVertexInputResourceList.push_back({ pVertexBuffer, pIndexBuffer });
                     }

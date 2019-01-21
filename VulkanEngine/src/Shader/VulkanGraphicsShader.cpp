@@ -135,8 +135,7 @@ namespace VulkanEngine
             VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
             shaderModuleCreateInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
             shaderModuleCreateInfo.codeSize = m_shaderSources[shaderType].source.size();
-            shaderModuleCreateInfo.pCode    = reinterpret_cast<const UINT*>(
-                m_shaderSources[shaderType].source.data());
+            shaderModuleCreateInfo.pCode    = reinterpret_cast<const UINT*>(m_shaderSources[shaderType].source.data());
 
             VkResult result = vkCreateShaderModule(
                 m_device, &shaderModuleCreateInfo, NULL, m_shaderSources[shaderType].shaderModule.replace());

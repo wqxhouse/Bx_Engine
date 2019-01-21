@@ -30,15 +30,18 @@ namespace VulkanEngine
                 : m_pDevice(pDevice),
                   m_pCmdBufferMgr(pCmdBufferMgr)
             {
-                m_texImage       = { *m_pDevice, vkDestroyImage     };
-                m_texImageMemory = { *m_pDevice, vkFreeMemory       };
                 m_texImageView   = { *m_pDevice, vkDestroyImageView };
                 m_texSampler     = { *m_pDevice, vkDestroySampler   };
 
                 m_textureFlags.value = 0;
             }
 
-            ~VulkanTextureBase() {}
+            virtual ~VulkanTextureBase()
+            {
+                clean();
+            }
+
+            virtual BOOL initialize() = 0;
 
             virtual BOOL create(
                 const VkPhysicalDevice hwDevice) = 0;
@@ -53,6 +56,8 @@ namespace VulkanEngine
                 const UINT               bindingPoint,
                 const UINT               descriptorNum,
                 const VkShaderStageFlags stageFlags) = 0;
+
+            virtual void clean() {}
 
             INLINE VkImage     GetTextureImage()     const { return m_texImage;     }
             INLINE VkImageView GetTextureImageView() const { return m_texImageView; }
@@ -113,9 +118,11 @@ namespace VulkanEngine
                 const VkDevice* const           pDevice,
                 Mgr::CmdBufferMgr* const        pCmdBufferMgr,
                 ::Texture::Texture2DCreateData* pTex2DCreateData,
-                const VkImage                   image);
+                const VDeleter<VkImage>         image);
 
             ~VulkanTexture2D();
+
+            BOOL initialize();
 
             BOOL create(
                 const VkPhysicalDevice hwDevice);
