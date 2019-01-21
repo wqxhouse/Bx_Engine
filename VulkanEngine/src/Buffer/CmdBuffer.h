@@ -17,13 +17,6 @@ namespace VulkanEngine
 {
     namespace Buffer
     {
-        struct BxCmdBufferCreateInfo
-        {
-            const VkCommandPool*    pCommandPool;
-            BX_COMMAND_BUFFER_TYPE  cmdBufferType;
-            BX_COMMAND_BUFFER_LEVLE bufferLevel;
-        };
-
         class CmdBuffer
         {
         public:
@@ -69,6 +62,15 @@ namespace VulkanEngine
                 const VkBuffer&         dstBuffer,
                 const BxBufferCopyInfo& copyInfo);
 
+            void cmdCopyBufferToImage(
+                const VkBuffer&                             srcBuffer,
+                const VkImage&                              dstImage,
+                const std::vector<BxBufferToImageCopyInfo>& copyInfo);
+
+            void cmdImageLayoutTransition(
+                const VkImage&                image,
+                const BxLayoutTransitionInfo& layoutTransInfoList);
+
             void cmdDrawArrays(
                 const VkPipeline& graphicsPipeline,
                 const UINT        vertexCount,
@@ -95,13 +97,13 @@ namespace VulkanEngine
                 const UINT        vertexOffset,
                 const UINT        instanceOffset);
 
-            inline void endRenderPass()
+            INLINE void endRenderPass()
             {
                 vkCmdEndRenderPass(m_cmdBuffer);
                 m_cmdStageFlags.render = 0;
             }
 
-            inline BOOL endCmdBuffer()
+            INLINE BOOL endCmdBuffer()
             {
                 BOOL result = BX_SUCCESS;
 
@@ -115,12 +117,12 @@ namespace VulkanEngine
                 return result;
             }
 
-            inline const VkCommandBuffer& GetCmdBuffer() const
+            INLINE const VkCommandBuffer& GetCmdBuffer() const
             {
                 return m_cmdBuffer;
             }
 
-            inline const VkCommandBuffer* GetCmdBufferPtr()
+            INLINE const VkCommandBuffer* GetCmdBufferPtr()
             {
                 return &m_cmdBuffer;
             }
@@ -135,8 +137,8 @@ namespace VulkanEngine
                 UINT value;
                 struct
                 {
-                    UINT begin : 1;  //< Command buffer begin record commands
-                    UINT render : 1;  //< Command buffer begin render pass
+                    UINT begin   : 1;  //< Command buffer begin record commands
+                    UINT render  : 1;  //< Command buffer begin render pass
                     UINT reserve : 30; //< Reserve
                 };
             } m_cmdStageFlags;

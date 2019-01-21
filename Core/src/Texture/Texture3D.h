@@ -15,10 +15,10 @@ namespace Texture
 {
     struct Texture3DCreateData : TextureCreateData
     {
-        UINT                                    texLayers;
-        TextureFormat                           texLoadFormat;
-        TextureFormat                           texStoreFormat;
-        std::vector<std::unique_ptr<image_data>> textureData;
+        UINT                                                     texLayers;
+        TextureFormat                                            texLoadFormat;
+        TextureFormat                                            texStoreFormat;
+        std::vector<std::unique_ptr<image_data, TextureDeleter>> textureData;
     };
 
     class Texture3D : public TextureBase
@@ -29,12 +29,12 @@ namespace Texture
 
         ~Texture3D();
 
-        inline void unbindTexture();
+        INLINE void unbindTexture();
 
-        inline UINT GetTextureLayer() const { return m_textureLayer; }
+        INLINE UINT GetTextureLayer() const { return m_textureLayer; }
 
     private:
-        UINT                                    m_textureLayer;
-        std::vector<std::unique_ptr<image_data>> m_texturesData;
+        UINT                                                     m_textureLayer;
+        std::vector<std::unique_ptr<image_data, TextureDeleter>> m_texturesData;
     };
 }

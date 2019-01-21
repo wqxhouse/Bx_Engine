@@ -25,6 +25,7 @@
     <ClCompile Include="src\Render\VulkanRender.cpp" />
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
+    <ClCompile Include="src\Texture\VulkanTexture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Buffer\BufferInfo.h" />
@@ -45,6 +46,8 @@
     <ClInclude Include="src\Render\VulkanRender.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
+    <ClInclude Include="src\Texture\VulkanTexture2D.h" />
+    <ClInclude Include="src\Texture\VulkanTextureBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="VulkanEngine.licenseheader" />

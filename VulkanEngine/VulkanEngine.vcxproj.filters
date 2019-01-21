@@ -19,6 +19,9 @@
     <Filter Include="src\Render">
       <UniqueIdentifier>{2de46290-84dd-409a-914e-e012f32c77a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Texture">
+      <UniqueIdentifier>{48e84edf-04e8-4f56-8e2d-bbe20ba2c055}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context\VulkanContext.cpp">
@@ -62,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="src\Render\VulkanRender.cpp">
       <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture\VulkanTexture2D.cpp">
+      <Filter>src\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +124,12 @@
     </ClInclude>
     <ClInclude Include="src\Render\VulkanRender.h">
       <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture\VulkanTexture2D.h">
+      <Filter>src\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture\VulkanTextureBase.h">
+      <Filter>src\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

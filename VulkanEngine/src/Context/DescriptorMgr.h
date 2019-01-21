@@ -10,6 +10,7 @@
 #pragma once
 
 #include "../Buffer/VulkanDescriptorBuffer.h"
+#include "../Texture/VulkanTexture2D.h"
 
 namespace VulkanEngine
 {
@@ -17,13 +18,21 @@ namespace VulkanEngine
     {
         struct Descriptor
         {
-            VDeleter<VkDescriptorPool>   m_descriptorPool;
             std::vector<VkDescriptorSet> m_descriptorSets;
+        };
+
+        struct DescriptorPoolCreateInfo
+        {
+            BX_DESCRIPTOR_TYPE descriptorType;
+            UINT               descriptorNum;
         };
 
         struct DescriptorUpdateInfo
         {
-            
+            BX_DESCRIPTOR_TYPE              descriptorType;
+            Buffer::VulkanDescriptorBuffer* pDescriptorBuffer;
+            Texture::VulkanTexture2D*       pDescriptorTexture;
+            UINT                            descriptorSetIndex;
         };
 
         class DescriptorMgr
@@ -35,19 +44,16 @@ namespace VulkanEngine
             ~DescriptorMgr();
 
             BOOL createDescriptorPool(
-                const BX_DESCRIPTOR_TYPE descriptorType,
-                const UINT               descriptorNum,
-                const UINT               descriptorMaxSet);
+                const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
+                const UINT                                   descriptorMaxSet);
 
             BOOL createDescriptorSets(
                 const BX_DESCRIPTOR_TYPE              descriptorType,
                 const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
                 const UINT                            descriptorSetNum);
 
-            BOOL updateUniformDescriptorSet(
-                const BX_DESCRIPTOR_TYPE              descriptorType,
-                const Buffer::VulkanDescriptorBuffer* pDescriptorBuffer,
-                const UINT                            descriptorSetIndex);
+            BOOL updateDescriptorSet(
+                const std::vector<DescriptorUpdateInfo>& descriptorUpdateData);
 
             inline const VkDescriptorSet GetDescriptorSet(
                 const BX_DESCRIPTOR_TYPE descriptorType,
@@ -64,6 +70,8 @@ namespace VulkanEngine
 
         private:
             const VkDevice* m_pDevice;
+
+            VDeleter<VkDescriptorPool> m_descriptorPool;
 
             std::vector<Descriptor> m_descriptors;
         };

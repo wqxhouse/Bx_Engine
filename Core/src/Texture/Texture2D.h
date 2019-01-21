@@ -15,7 +15,7 @@ namespace Texture
 {
     struct Texture2DCreateData : TextureCreateData
     {
-        std::unique_ptr<image_data> textureData;
+        std::unique_ptr<image_data, TextureDeleter> textureData;
     };
 
     class Texture2D : public TextureBase
@@ -26,12 +26,17 @@ namespace Texture
 
         ~Texture2D();
 
-        inline const void* const GetTextureData() const
+        INLINE const void* const GetTextureData() const
         {
-            return m_textureData._Myptr();
+            return m_textureData.get();
+        }
+
+        INLINE void FreeTextureData()
+        {
+            m_textureData.~unique_ptr();
         }
 
     private:
-        std::unique_ptr<image_data> m_textureData;
+        std::unique_ptr<image_data, TextureDeleter> m_textureData;
     };
 }

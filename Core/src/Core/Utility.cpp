@@ -11,13 +11,6 @@
 
 #include "Utility.h"
 
-//Image loader
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif // STB_IMAGE_IMPLEMENTATION
-
-#include "stb_image.h"
-
 namespace Utility
 {
     void UtilityBase::StringReplace(
@@ -90,24 +83,6 @@ namespace Utility
         }
 
         return result;
-    }
-
-    std::unique_ptr<image_data> UtilityBase::ReadImageData(
-        const std::string& imageFile,
-        int* const         width,
-        int* const         height,
-        int* const         type)
-    {
-        std::unique_ptr<image_data> imageData(
-            stbi_load(imageFile.data(), width, height, type, STBI_rgb_alpha));
-
-        return imageData;
-    }
-
-    void UtilityBase::ReleaseImageData(
-        std::unique_ptr<image_data> imageData)
-    {
-        stbi_image_free(imageData._Myptr());
     }
 
     /*glm::mat4 UtilityBase::ToGLMMat4(
