@@ -38,6 +38,8 @@
 #define INVALID_HANDLE 0xFFFFFFFF
 #define INVALID_INDEX  0xFFFFFFFF
 
+#define DEFAULT_MAX_RENDER_SCENE_NUM 16
+
 #define IN
 #define OUT
 

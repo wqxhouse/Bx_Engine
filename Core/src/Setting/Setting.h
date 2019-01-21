@@ -45,15 +45,15 @@ struct GraphicsSetting
 
 struct Setting
 {
+    GraphicsSetting m_graphicsSetting;
+
     Resolution resolution = { 1280, 720 };
+    float fov             = 45.0f;
 
-	float fov = 45.0f;
+    PolyMode polyMode = PolyMode::POLYMODE_FILL;
 
-	PolyMode polyMode = PolyMode::POLYMODE_FILL;
-
-    BOOL vsync = TRUE;
-
+    BOOL vsync      = TRUE;
     BOOL fullScreen = FALSE;
 
-	GraphicsSetting m_graphicsSetting;
+    UINT maxSceneNum = DEFAULT_MAX_RENDER_SCENE_NUM;
 };

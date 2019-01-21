@@ -27,13 +27,14 @@ namespace Scene
             const Setting* const     pSetting,
             const UINT               maxObjNum,
             Memory::MemoryPoolArena* pObjArena);
-        
-        RenderScene(
-            const Setting* const     pSetting,
-            Memory::MemoryPoolArena* pObjArena,
-            const std::string&       sceneFile);
 
         ~RenderScene();
+
+        // Get the maximum number of objects that can be added to the scene
+        INLINE const UINT GetSceneCapacity()
+        {
+            return m_maxObjNum;
+        }
 
         INLINE void AddProspectiveCamera(
             const Object::Camera::ProspectiveCameraCreateInfo& prosCamCreateInfo)
@@ -107,6 +108,20 @@ namespace Scene
             return m_pModelList[modelIndex];
         }
 
+        static RenderScene CreateRenderScene(
+            const Setting* const     pSetting,
+            Memory::MemoryPoolArena* pObjArena,
+            const std::string&       sceneFile)
+        {
+            UINT objNum = 0;
+
+            NotImplemented();
+
+            RenderScene renderScene(pSetting, objNum, pObjArena);
+
+            return renderScene;
+        }
+
         static INLINE size_t GetMaxObjSize()
         {
             size_t maxSize = 0;
@@ -141,6 +156,6 @@ namespace Scene
         std::vector<Object::Model::ModelObject*> m_pModelList;
 
         UINT                                     m_objNum;
-        UINT                                     m_maxObjNum;
+        const UINT                               m_maxObjNum;
     };
 }

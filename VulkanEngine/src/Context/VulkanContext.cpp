@@ -30,18 +30,13 @@ namespace VulkanEngine
     void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
 
     VulkanContext::VulkanContext(
-        const Setting* pSetting)
+        const Setting*                 pSetting,
+        const Memory::MemoryPoolArena& arena)
         : m_pSetting(pSetting),
           m_pWindow(NULL),
           m_windowName("BxEngine Vulkan"),
           m_engineName("BxEngine"),
-          m_memPool(256 * 1024 * 1024), // 256 MB
-          m_allocator(&m_memPool,
-                      DEFAULT_MAX_RENDER_SCENE_OBJ_NUM * DEFAULT_MAX_RENDER_SCENE_NUM,
-                      static_cast<UINT>(Scene::RenderScene::GetMaxObjSize()),
-                      0,
-                      Memory::Allocator::DEFAULT_ALIGNMENT_SIZE),
-          m_arena(&m_allocator),
+          m_arena(arena),
           m_sceneNum(0),
           m_activeSceneIndex(0),
           m_prevTime(0.0f),

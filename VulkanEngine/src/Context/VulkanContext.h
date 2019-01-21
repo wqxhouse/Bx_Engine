@@ -25,7 +25,10 @@ namespace VulkanEngine
     class VulkanContext
     {
     public:
-        VulkanContext(const Setting* pSetting);
+        VulkanContext(
+            const Setting*                 pSetting,
+            const Memory::MemoryPoolArena& arena);
+
         ~VulkanContext();
 
         void initialize();
@@ -36,19 +39,18 @@ namespace VulkanEngine
 
         INLINE Scene::RenderScene* GetRenderScene(UINT sceneIndex) const
         {
-            assert(sceneIndex < m_renderSceneList.size());
+            assert(sceneIndex < m_pRenderSceneList.size());
 
-            return const_cast<Scene::RenderScene*>(&(m_renderSceneList[sceneIndex]));
+            return m_pRenderSceneList[sceneIndex];
         }
 
-        INLINE void AddScene()
+        INLINE void AddScene(Scene::RenderScene* pNewScene)
         {
             m_sceneNum++;
 
-            assert(m_sceneNum <= DEFAULT_MAX_RENDER_SCENE_NUM);
+            assert(m_sceneNum <= m_pSetting->maxSceneNum);
 
-            m_renderSceneList.push_back(
-                Scene::RenderScene(m_pSetting, DEFAULT_MAX_RENDER_SCENE_OBJ_NUM, &m_arena));
+            m_pRenderSceneList.push_back(pNewScene);
         }
 
     private:
@@ -75,9 +77,7 @@ namespace VulkanEngine
         const std::string m_engineName;
 
         // Memory
-        Memory::MemoryPool          m_memPool;
-        Memory::MemoryPoolAllocator m_allocator;
-        Memory::MemoryPoolArena     m_arena;
+        Memory::MemoryPoolArena m_arena;
 
         // Core vulkan components
         VDeleter<VkInstance>          m_vkInstance;
@@ -121,9 +121,9 @@ namespace VulkanEngine
         VDeleter<VkSemaphore> m_presentSemaphore;
 
         // Scene
-        std::vector<Scene::RenderScene> m_renderSceneList;
-        UINT                            m_activeSceneIndex;
-        UINT                            m_sceneNum;
+        std::vector<Scene::RenderScene*> m_pRenderSceneList;
+        UINT                             m_activeSceneIndex;
+        UINT                             m_sceneNum;
 
 #if _DEBUG
         const static BOOL m_enableValidationLayer = TRUE;
