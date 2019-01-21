@@ -46,6 +46,11 @@ namespace VulkanEngine
                 const ::Texture::TextureSamplerCreateData& samplerCreateData,
                 const BOOL                                 isSamplerAnisotropySupport) = 0;
 
+            virtual BOOL createDescriptorSetLayout(
+                const UINT               bindingPoint,
+                const UINT               descriptorNum,
+                const VkShaderStageFlags stageFlags) = 0;
+
             INLINE VkImage     GetTextureImage()     const { return m_texImage;     }
             INLINE VkImageView GetTextureImageView() const { return m_texImageView; }
             INLINE VkSampler   GetTextureSampler()   const { return m_texSampler;   }

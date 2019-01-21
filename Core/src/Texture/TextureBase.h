@@ -9,13 +9,6 @@
 
 #pragma once
 
-////Image loader
-//#ifndef STB_IMAGE_IMPLEMENTATION
-//#define STB_IMAGE_IMPLEMENTATION
-//#endif // STB_IMAGE_IMPLEMENTATION
-
-#include <stb_image.h>
-
 #include "../Core/PCH.h"
 
 namespace Texture
@@ -53,7 +46,7 @@ namespace Texture
     {
         void operator()(void* ptr)
         {
-            stbi_image_free(ptr);
+            free(ptr);
         }
     };
 
