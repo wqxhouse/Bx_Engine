@@ -39,7 +39,7 @@ namespace VulkanEngine
                 const VkDeviceSize bufferSize,
                 const void* const  bufferData);
 
-            inline const VkBuffer GetBuffer() const
+            INLINE const VkBuffer GetBuffer() const
             {
                 return ((m_enableOptimization == TRUE) ? m_gpuBuffer : m_hostBuffer);
             }

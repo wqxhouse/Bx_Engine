@@ -31,15 +31,16 @@ namespace Texture
 
     struct TextureCreateData
     {
-        UINT               texWidth;
-        UINT               texHeight;
-        UINT               samples;
-        BOOL               mipmap;
-        TextureFormat      texLoadFormat;
-        TextureFormat      texStoreFormat;
-        TextureUsage       texUsage;
-        BOOL               texOptimize;
-        BOOL               texPerserve;
+        UINT                      texWidth;
+        UINT                      texHeight;
+        UINT                      samples;
+        BOOL                      mipmap;
+        TextureFormat             texLoadFormat;
+        TextureFormat             texStoreFormat;
+        TextureUsage              texUsage;
+        BOOL                      texOptimize;
+        BOOL                      texPerserve;
+        TextureSamplerCreateData* pSampleCreateData = NULL;
     };
 
     struct TextureDeleter
@@ -59,12 +60,19 @@ namespace Texture
 
         ~TextureBase();
 
-        INLINE TextureType GetTextureType()   const { return m_textureType;   }
+        INLINE TextureType   GetTextureType()        const { return m_textureType;   }
 
-        INLINE UINT        GetTextureWidth()  const { return m_textureWidth;  }
-        INLINE UINT        GetTextureHeight() const { return m_textureHeight; }
+        INLINE UINT          GetTextureWidth()       const { return m_textureWidth;  }
+        INLINE UINT          GetTextureHeight()      const { return m_textureHeight; }
 
-        INLINE UINT        GetSampleNumber()  const { return m_samples;       }
+        INLINE UINT          GetSampleNumber()       const { return m_samples;       }
+
+        INLINE TextureUsage  GetTextureUsage()       const { return m_usage;         }
+        INLINE TextureFormat GetTextureFormat()      const { return m_storeFormat;   }
+
+        INLINE BOOL          IsGenMipmap()           const { return m_mipmap;        }
+        INLINE BOOL          IsTextureOptimize()     const { return m_texOptimize;   }
+        INLINE BOOL          IsTextureDataPerserve() const { return m_texPerserve;   }
 
         static std::unique_ptr<image_data, TextureDeleter> ReadImageData(
                 const std::string& imageFile,

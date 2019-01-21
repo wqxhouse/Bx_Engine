@@ -38,7 +38,9 @@
 #define INVALID_HANDLE 0xFFFFFFFF
 #define INVALID_INDEX  0xFFFFFFFF
 
-#define DEFAULT_MAX_RENDER_SCENE_NUM 16
+#define DEFAULT_MAX_RENDER_SCENE_NUM 128
+#define DEFAULT_MAX_TEXTURE_NUM      16384
+#define DEFAULT_TEXTURE_CLASS_SIZE   512
 
 #define IN
 #define OUT
@@ -97,6 +99,13 @@ enum PolyMode
     POLYMODE_POINT     = 0x00000000,
     POLYMODE_WIREFRAME = 0x00000001,
     POLYMODE_FILL      = 0x00000002
+};
+
+enum CullMode
+{
+    CULLMODE_FRONT,
+    CULLMODE_BACK,
+    CULLMODE_FRONT_BACK
 };
 
 enum RenderingMethod
@@ -254,6 +263,13 @@ enum ModelFormat
 {
     OBJ,
     FBX
+};
+
+enum BX_RENDER_PASS_STAGE
+{
+    BX_RENDER_PASS_PRE_RENDER,
+    BX_RENDER_PASS_MAIN_SCENE_RENDER,
+    BX_RENDER_PASS_POST_RENDER
 };
 
 struct Resolution

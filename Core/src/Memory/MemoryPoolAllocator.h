@@ -35,7 +35,7 @@ namespace Memory
 
         BOOL free(void* freeAddr);
 
-        INLINE UINT MemoryUsage() { return (m_size - m_elementAvaliableCount * m_elementSize); }
+        INLINE UINT MemoryUsage() const { return (m_size - m_elementAvaliableCount * m_elementSize); }
 
         void clear();
 

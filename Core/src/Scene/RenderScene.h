@@ -36,6 +36,21 @@ namespace Scene
             return m_maxObjNum;
         }
 
+        INLINE const UINT GetSceneCameraNum() const
+        {
+            return static_cast<UINT>(m_pCameraList.size());
+        }
+
+        INLINE const UINT GetSceneLightNum() const
+        {
+            return static_cast<UINT>(m_pLightList.size());
+        }
+
+        INLINE const UINT GetSceneModelNum() const
+        {
+            return static_cast<UINT>(m_pModelList.size());
+        }
+
         INLINE void AddProspectiveCamera(
             const Object::Camera::ProspectiveCameraCreateInfo& prosCamCreateInfo)
         {

@@ -30,23 +30,29 @@ namespace VulkanEngine
                 const BOOL              optimize);
 
             static VkVertexInputBindingDescription createDescription(
-                const UINT                 binding,
+                const UINT                 bindingPoint,
                 const BX_VERTEX_INPUT_RATE rate);
 
-            static std::array<VkVertexInputAttributeDescription, 3>
-            createAttributeDescriptions();
+            static std::vector<VkVertexInputAttributeDescription>
+                createAttributeDescriptions(
+                    const UINT bindingPoint);
 
-            inline const VkBuffer GetVertexBuffer() const
+            static std::vector<VkVertexInputAttributeDescription>
+                createAttributeDescriptionsMultipleTexture(
+                    const UINT bindingPoint,
+                    const UINT texChannels);
+
+            INLINE const VkBuffer GetVertexBuffer() const
             {
                 return GetBuffer();
             }
 
-            inline UINT GetVertexNum() const
+            INLINE UINT GetVertexNum() const
             {
                 return static_cast<UINT>(m_pVertexBufferData->size());
             }
 
-            inline UINT GetVertexBufferSize() const
+            INLINE UINT GetVertexBufferSize() const
             {
                 return GetVertexNum() * sizeof(Object::Model::Vertex);
             }

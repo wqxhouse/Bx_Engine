@@ -9,65 +9,133 @@
 
 #pragma once
 
-#include <Scene/RenderScene.h>
-
-#include "../Shader/VulkanGraphicsShader.h"
-#include "../Buffer/VulkanUniformBuffer.h"
-#include "../Context/DescriptorMgr.h"
+#include "VulkanRenderPass.h"
 
 namespace VulkanEngine
 {
-	namespace Render
-	{
-		class VulkanRenderBase
-		{
-		public:
-			VulkanRenderBase(const Scene::RenderScene*		     pScene,
-							 const Shader::VulkanGraphicsShader* pShader);
+    namespace Render
+    {
+        class VulkanRenderBase
+        {
+        public:
+            VulkanRenderBase(
+                const Setting*      const pSetting,
+                const VkDevice*     const pDevice,
+                Mgr::CmdBufferMgr*  const pCmdBufferMgr,
+                Mgr::DescriptorMgr* const pDescritorMgr,
+                const Scene::RenderScene* pScene);
 
-			~VulkanRenderBase();
+            ~VulkanRenderBase();
+
+            virtual BOOL initialize() = 0;
+
+            virtual void update(const float delta) = 0;
+            virtual void draw() = 0;
+
+            INLINE BOOL AddRenderPass(
+                const BX_RENDER_PASS_STAGE        renderPassStage,
+                const VulkanRenderPassCreateData& renderPassCreateData)
+            {
+                switch (renderPassStage)
+                {
+                    case BX_RENDER_PASS_PRE_RENDER:
+                    {
+                        size_t prePassSize = m_preDrawPassList.size();
+
+                        m_preDrawPassList.push_back(VulkanRenderPass(m_pSetting,
+                                                                     m_pDevice,
+                                                                     m_pCmdBufferMgr,
+                                                                     m_pDescritorMgr,
+                                                                     m_pScene));
+
+                        m_preDrawPassList.at(prePassSize).create(renderPassCreateData);
+
+                        break;
+                    }
+                    case BX_RENDER_PASS_MAIN_SCENE_RENDER:
+                    {
+                        m_mainSceneRenderPass.clean();
+
+                        m_mainSceneRenderPass.create(renderPassCreateData);
+                        break;
+                    }
+                    case BX_RENDER_PASS_POST_RENDER:
+                    {
+                        size_t postPassSize = m_postDrawPassList.size();
+
+                        m_postDrawPassList.push_back(VulkanRenderPass(m_pSetting,
+                                                                      m_pDevice,
+                                                                      m_pCmdBufferMgr,
+                                                                      m_pDescritorMgr,
+                                                                      m_pScene));
+
+                        m_postDrawPassList.at(postPassSize).create(renderPassCreateData);
+
+                        break;
+                    }
+                    default:
+                        NotSupported();
+                        break;
+                }
+            }
+
+        protected:
+            void parseScene();
+
+            const Setting*      const m_pSetting;
+            const VkDevice*     const m_pDevice;
+            Mgr::CmdBufferMgr*  const m_pCmdBufferMgr;
+            Mgr::DescriptorMgr* const m_pDescritorMgr;
+            const Scene::RenderScene* m_pScene;
+
+            std::vector<VulkanRenderPass> m_preDrawPassList;
+            VulkanRenderPass              m_mainSceneRenderPass;
+            std::vector<VulkanRenderPass> m_postDrawPassList;
+
+            std::vector<Texture::VulkanTexture2D*>* m_ppBackbufferTextures;
+            std::vector<VulkanVertexInputResources> m_mainSceneVertexInputResourceList;
+
+        private:
+        };
+
+        class VulkanForwardRender : public VulkanRenderBase
+        {
+        public:
+            VulkanForwardRender(
+                const Setting*            pSetting,
+                const VkDevice*           pDevice,
+                Mgr::CmdBufferMgr*        pCmdBufferMgr,
+                Mgr::DescriptorMgr*       pDescritorMgr,
+                const Scene::RenderScene* pScene);
+
+            ~VulkanForwardRender();
 
             BOOL initialize();
 
-			virtual void update(const float delta) = 0;
-			virtual void draw() = 0;
+            void update(
+                const float delta);
 
-		protected:
-			const Scene::RenderScene*		   m_pScene;
-			const Shader::VulkanGraphicsShader m_pShader;
+            void draw();
 
-            VDeleter<VkPipelineLayout>         m_graphicsPipelineLayout;
-            VDeleter<VkRenderPass>             m_renderPass;
-            VDeleter<VkPipeline>               m_graphicsPipeline;
+        private:
+        };
 
-            std::vector<Buffer::VulkanUniformBuffer> m_uniformBufferList;
-		};
+        class VulkanDeferredRender : public VulkanRenderBase
+        {
+        public:
+            VulkanDeferredRender(
+                const Setting*                pSetting,
+                const VkDevice*               pDevice,
+                Mgr::CmdBufferMgr*            pCmdBufferMgr,
+                Mgr::DescriptorMgr*           pDescritorMgr,
+                const Scene::RenderScene*     pScene);
 
-		class VulkanForwardRender : public VulkanRenderBase
-		{
-		public:
-			VulkanForwardRender(const Scene::RenderScene*			pScene,
-								const Shader::VulkanGraphicsShader* pShader);
+            ~VulkanDeferredRender();
 
-			~VulkanForwardRender();
+            void update(const float delta);
+            void draw();
 
-			void update(const float delta);
-			void draw();
-
-		private:
-
-		};
-
-		class VulkanDeferredRender : public VulkanRenderBase
-		{
-		public:
-			VulkanDeferredRender(const Scene::RenderScene*		     pScene,
-								 const Shader::VulkanGraphicsShader* pShader);
-
-			~VulkanDeferredRender();
-
-			void update(const float delta);
-			void draw();
-		};
-	}
+        private:
+        };
+    }
 }

@@ -40,7 +40,7 @@ namespace Memory
             return static_cast<UINT>(m_pEnd - m_pStart);
         }
 
-        virtual INLINE UINT MemoryUsage() = 0;
+        virtual INLINE UINT MemoryUsage() const = 0;
 
         static const size_t DEFAULT_ALIGNMENT_SIZE = 4;
 
@@ -71,7 +71,7 @@ namespace Memory
         }
 
         // Not support linear memory allocation free
-        INLINE BOOL free(void* freeAddr) const { return BX_FAIL; }
+        INLINE BOOL free(void* freeAddr) { return BX_FAIL; }
 
         INLINE void clear() { m_pCurrent = m_pStart; }
 

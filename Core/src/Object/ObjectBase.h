@@ -22,11 +22,12 @@ namespace Object
 
         ~ObjectBase();
 
-        inline void ActiveObject()  { m_enable = TRUE;  }
-        inline void DisableObject() { m_enable = FALSE; }
+        INLINE void ActiveObject()  { m_enable = TRUE;  }
+        INLINE void DisableObject() { m_enable = FALSE; }
 
-        inline const UINT   GetObjectId() const { return m_objectId; }
-        inline const Trans* GetTransPtr() const { return m_pTrans;   }
+        INLINE const UINT   GetObjectId() const { return m_objectId; }
+        INLINE const Trans* GetTransPtr() const { return m_pTrans;   }
+        INLINE const BOOL   IsEnable()    const { return m_enable;   }
 
     protected:
         Trans* m_pTrans;

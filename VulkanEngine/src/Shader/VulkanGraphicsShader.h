@@ -41,7 +41,9 @@ namespace VulkanEngine
             const std::vector<VkPipelineShaderStageCreateInfo>& createPipelineShaderStages(
                 const BxShaderMeta& shaderMeta);
 
-            inline const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStages() const
+            void clean();
+
+            INLINE const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStages() const
             {
                 return m_shaderStages;
             }

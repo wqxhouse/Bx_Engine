@@ -10,7 +10,7 @@
 #pragma once
 
 #include "../Buffer/VulkanDescriptorBuffer.h"
-#include "../Texture/VulkanTexture2D.h"
+#include "../Texture/VulkanTexture.h"
 
 namespace VulkanEngine
 {
@@ -34,7 +34,7 @@ namespace VulkanEngine
         {
             BX_DESCRIPTOR_TYPE              descriptorType;
             Buffer::VulkanDescriptorBuffer* pDescriptorBuffer;
-            Texture::VulkanTexture2D*       pDescriptorTexture;
+            Texture::VulkanTextureBase*     pDescriptorTexture;
             UINT                            descriptorSetIndex;
             UINT                            descriptorBindingIndex;
         };

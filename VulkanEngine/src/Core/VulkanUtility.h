@@ -127,10 +127,35 @@ namespace VulkanEngine
                     vkPolyMode = VK_POLYGON_MODE_FILL;
                     break;
                 default:
+                    NotSupported();
                     break;
                 }
 
                 return vkPolyMode;
+            }
+
+            static INLINE VkCullModeFlags GetVkCullMode(
+                const CullMode cullMode)
+            {
+                VkCullModeFlags vkCullMode;
+
+                switch (cullMode)
+                {
+                case CULLMODE_FRONT:
+                    vkCullMode = VK_CULL_MODE_FRONT_BIT;
+                    break;
+                case CULLMODE_BACK:
+                    vkCullMode = VK_CULL_MODE_BACK_BIT;
+                    break;
+                case CULLMODE_FRONT_BACK:
+                    vkCullMode = VK_CULL_MODE_FRONT_AND_BACK;
+                    break;
+                default:
+                    NotSupported();
+                    break;
+                }
+
+                return vkCullMode;
             }
 
             static INLINE VkSampleCountFlagBits GetVkSampleCount(
@@ -278,7 +303,8 @@ namespace VulkanEngine
                 return descriptorType;
             }
 
-            static INLINE VkFormat GetVkImageFormat(TextureFormat format)
+            static INLINE VkFormat GetVkImageFormat(
+                const TextureFormat format)
             {
                 VkFormat imageFormat;
 
@@ -552,6 +578,52 @@ namespace VulkanEngine
                 result = ((supportedFeatures.samplerAnisotropy == VK_TRUE) ? TRUE : FALSE);
 
                 return result;
+            }
+
+            static INLINE VkImageLayout GetAttachmentVkImageLayout(
+                const BX_FRAMEBUFFER_ATTACHMENT_LAYOUT imageLayout)
+            {
+                VkImageLayout vkImageLayout;
+
+                switch (imageLayout)
+                {
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR:
+                        vkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                        break;
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
+                        vkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                        break;
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT:
+                        vkImageLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
+
+                return vkImageLayout;
+            }
+
+            static INLINE VkImageLayout GetAttachmentRefVkImageLayout(
+                const BX_FRAMEBUFFER_ATTACHMENT_LAYOUT imageLayout)
+            {
+                VkImageLayout vkImageLayout;
+
+                switch (imageLayout)
+                {
+                case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR:
+                case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT:
+                    vkImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                    break;
+                case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
+                    vkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                    break;
+                default:
+                    NotSupported();
+                    break;
+                }
+
+                return vkImageLayout;
             }
 
             static INLINE BOOL GetBxStatus(

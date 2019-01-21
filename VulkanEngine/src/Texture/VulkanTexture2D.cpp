@@ -7,7 +7,7 @@
 //
 //================================================================================================
 
-#include "VulkanTexture2D.h"
+#include "VulkanTexture.h"
 #include "../Core/VulkanUtility.h"
 #include "../Buffer/VulkanBuffer.h"
 
@@ -19,7 +19,7 @@ namespace VulkanEngine
             const VkDevice* const           pDevice,
             Mgr::CmdBufferMgr* const        pCmdBufferMgr,
             ::Texture::Texture2DCreateData* pTex2DCreateData)
-            : Texture2D(pTex2DCreateData),
+            : m_texture2D(pTex2DCreateData),
               VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
         }
@@ -29,7 +29,7 @@ namespace VulkanEngine
             Mgr::CmdBufferMgr* const        pCmdBufferMgr,
             ::Texture::Texture2DCreateData* pTex2DCreateData,
             const VkImage                   image)
-            : Texture2D(pTex2DCreateData),
+            : m_texture2D(pTex2DCreateData),
               VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
             m_texImage = image;
@@ -50,20 +50,37 @@ namespace VulkanEngine
             BOOL result = BX_SUCCESS;
 
             // The texture format must be optimized at this point
-            assert(m_texOptimize == TRUE);
+            assert(IsTextureOptimize() == TRUE);
+
+            UINT texWidth    = GetTextureWidth();
+            UINT texHeight   = GetTextureHeight();
+
+            m_mipmapLevel = 1;
+
+            if (IsGenMipmap() == TRUE)
+            {
+                UINT texEdgeLength = std::max(texWidth, texHeight);
+                m_mipmapLevel        = 0;
+
+                while (texEdgeLength > 0)
+                {
+                    texEdgeLength >>= 1;
+                    m_mipmapLevel++;
+                }
+            }
 
             // Create image handle
             VkImageCreateInfo imageCreateInfo = {};
             imageCreateInfo.sType             = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
             imageCreateInfo.imageType         = VK_IMAGE_TYPE_2D;
-            imageCreateInfo.extent.width      = m_textureWidth;
-            imageCreateInfo.extent.height     = m_textureHeight;
+            imageCreateInfo.extent.width      = texWidth;
+            imageCreateInfo.extent.height     = texHeight;
             imageCreateInfo.extent.depth      = 1;
-            imageCreateInfo.mipLevels         = m_mipmap;
+            imageCreateInfo.mipLevels         = m_mipmapLevel;
             imageCreateInfo.arrayLayers       = 1;
-            imageCreateInfo.format            = Utility::VulkanUtility::GetVkImageFormat(m_loadFormat);
+            imageCreateInfo.format            = Utility::VulkanUtility::GetVkImageFormat(GetTextureFormat());
 
-            if (m_texOptimize == TRUE)
+            if (IsTextureOptimize() == TRUE)
             {
                 imageCreateInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
                 imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -72,7 +89,7 @@ namespace VulkanEngine
             {
                 imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
 
-                if (m_texPerserve == TRUE)
+                if (IsTextureDataPerserve() == TRUE)
                 {
                     imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
                 }
@@ -83,9 +100,9 @@ namespace VulkanEngine
             }
 
             imageCreateInfo.usage       =
-                (VK_IMAGE_USAGE_TRANSFER_DST_BIT | Utility::VulkanUtility::GetVkImageUsage(m_usage));
+                (VK_IMAGE_USAGE_TRANSFER_DST_BIT | Utility::VulkanUtility::GetVkImageUsage(GetTextureUsage()));
             imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-            imageCreateInfo.samples     = Utility::VulkanUtility::GetVkSampleCount(m_samples);
+            imageCreateInfo.samples     = Utility::VulkanUtility::GetVkSampleCount(GetSampleNumber());
             imageCreateInfo.flags       = 0;
 
             VkResult createImageResult =
@@ -126,7 +143,7 @@ namespace VulkanEngine
             Buffer::BxBufferCreateInfo imageRawBufferCreateInfo = {};
             imageRawBufferCreateInfo.bufferData                 = GetTextureData();
             imageRawBufferCreateInfo.bufferOptimization         = FALSE;
-            imageRawBufferCreateInfo.bufferSize                 = m_textureWidth * m_textureHeight * 4;
+            imageRawBufferCreateInfo.bufferSize                 = texWidth * texHeight * 4;
             imageRawBufferCreateInfo.bufferUsage                = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
             vkImageRawBuffer.createBuffer(hwDevice, imageRawBufferCreateInfo);
@@ -138,11 +155,12 @@ namespace VulkanEngine
             transitionInfo.oldLayout                         = VK_IMAGE_LAYOUT_UNDEFINED;
             transitionInfo.newLayout                         = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
             transitionInfo.subResourceInfo.resize(1);
-            transitionInfo.subResourceInfo[0].aspectMask     = Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
+            transitionInfo.subResourceInfo[0].aspectMask     =
+                Utility::VulkanUtility::GetVkImageAspect(GetTextureFormat());
             transitionInfo.subResourceInfo[0].baseArrayLayer = 0;
             transitionInfo.subResourceInfo[0].layerNum       = 1;
             transitionInfo.subResourceInfo[0].baseMipLevel   = 0;
-            transitionInfo.subResourceInfo[0].mipmapLevelNum = m_mipmap;
+            transitionInfo.subResourceInfo[0].mipmapLevelNum = m_mipmapLevel;
 
             result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
 
@@ -155,14 +173,14 @@ namespace VulkanEngine
             bufferToImageCopyInfo[0].bufferInfo.bufferImageHeight = 0;
             bufferToImageCopyInfo[0].subResourceInfo              = transitionInfo.subResourceInfo[0];
             bufferToImageCopyInfo[0].imageInfo.imageOffset        = { 0, 0, 0 };
-            bufferToImageCopyInfo[0].imageInfo.imageExtent        = { m_textureWidth, m_textureHeight, 1};
+            bufferToImageCopyInfo[0].imageInfo.imageExtent        = { texWidth, texHeight, 1};
 
             result = m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
 
             assert(result == BX_SUCCESS);
 
             // Transfer the image layout according to usage
-            switch (m_usage)
+            switch (GetTextureUsage())
             {
                 case BX_TEXTURE_USAGE_SAMPLED:
                     transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
@@ -196,17 +214,19 @@ namespace VulkanEngine
             imageViewCreateInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             imageViewCreateInfo.viewType                        = VK_IMAGE_VIEW_TYPE_2D;
             imageViewCreateInfo.image                           = m_texImage;
-            imageViewCreateInfo.format                          = Utility::VulkanUtility::GetVkImageFormat(m_storeFormat);
+            imageViewCreateInfo.format                          =
+                Utility::VulkanUtility::GetVkImageFormat(GetTextureFormat());
             imageViewCreateInfo.components.r                    = VK_COMPONENT_SWIZZLE_R;
             imageViewCreateInfo.components.g                    = VK_COMPONENT_SWIZZLE_G;
             imageViewCreateInfo.components.b                    = VK_COMPONENT_SWIZZLE_B;
             imageViewCreateInfo.components.a                    = VK_COMPONENT_SWIZZLE_A;
 
-            imageViewCreateInfo.subresourceRange.aspectMask     = Utility::VulkanUtility::GetVkImageAspect(m_storeFormat);
+            imageViewCreateInfo.subresourceRange.aspectMask     =
+                Utility::VulkanUtility::GetVkImageAspect(GetTextureFormat());
             imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
             imageViewCreateInfo.subresourceRange.layerCount     = 1;
             imageViewCreateInfo.subresourceRange.baseMipLevel   = 0;
-            imageViewCreateInfo.subresourceRange.levelCount     = m_mipmap;
+            imageViewCreateInfo.subresourceRange.levelCount     = m_mipmapLevel;
 
             VkResult vkResult = vkCreateImageView(
                 *m_pDevice, &imageViewCreateInfo, NULL, m_texImageView.replace());
@@ -218,30 +238,30 @@ namespace VulkanEngine
         }
 
         BOOL VulkanTexture2D::createSampler(
-            const ::Texture::TextureSamplerCreateData& samplerCreateData,
+            const ::Texture::TextureSamplerCreateData* pSamplerCreateData,
             const BOOL                                 isSamplerAnisotropySupport)
         {
             BOOL result = BX_SUCCESS;
 
             VkSamplerCreateInfo samplerCreateInfo     = {};
             samplerCreateInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-            samplerCreateInfo.magFilter               = Utility::VulkanUtility::GetVkFilter(samplerCreateData.magFilter);
-            samplerCreateInfo.minFilter               = Utility::VulkanUtility::GetVkFilter(samplerCreateData.minFilter);
-            samplerCreateInfo.addressModeU            = Utility::VulkanUtility::GetVkAddressMode(samplerCreateData.addressingModeU);
-            samplerCreateInfo.addressModeV            = Utility::VulkanUtility::GetVkAddressMode(samplerCreateData.addressingModeV);
-            samplerCreateInfo.borderColor             = Utility::VulkanUtility::GetVkBorderColor(samplerCreateData.borderColor);
-            samplerCreateInfo.unnormalizedCoordinates = ((samplerCreateData.normalize == TRUE) ? VK_FALSE : VK_TRUE);
+            samplerCreateInfo.magFilter               = Utility::VulkanUtility::GetVkFilter(pSamplerCreateData->magFilter);
+            samplerCreateInfo.minFilter               = Utility::VulkanUtility::GetVkFilter(pSamplerCreateData->minFilter);
+            samplerCreateInfo.addressModeU            = Utility::VulkanUtility::GetVkAddressMode(pSamplerCreateData->addressingModeU);
+            samplerCreateInfo.addressModeV            = Utility::VulkanUtility::GetVkAddressMode(pSamplerCreateData->addressingModeV);
+            samplerCreateInfo.borderColor             = Utility::VulkanUtility::GetVkBorderColor(pSamplerCreateData->borderColor);
+            samplerCreateInfo.unnormalizedCoordinates = ((pSamplerCreateData->normalize == TRUE) ? VK_FALSE : VK_TRUE);
             samplerCreateInfo.compareEnable           = VK_FALSE;
             samplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
-            samplerCreateInfo.mipmapMode              = Utility::VulkanUtility::GetVkMipmapMode(samplerCreateData.mipmapFilter);
-            samplerCreateInfo.mipLodBias              = samplerCreateData.mipmapOffset;
-            samplerCreateInfo.maxLod                  = samplerCreateData.maxLod;
-            samplerCreateInfo.minLod                  = samplerCreateData.minLod;
+            samplerCreateInfo.mipmapMode              = Utility::VulkanUtility::GetVkMipmapMode(pSamplerCreateData->mipmapFilter);
+            samplerCreateInfo.mipLodBias              = pSamplerCreateData->mipmapOffset;
+            samplerCreateInfo.maxLod                  = pSamplerCreateData->maxLod;
+            samplerCreateInfo.minLod                  = pSamplerCreateData->minLod;
 
             if (isSamplerAnisotropySupport == TRUE)
             {
                 samplerCreateInfo.anisotropyEnable = VK_TRUE;
-                samplerCreateInfo.maxAnisotropy    = samplerCreateData.anisotropyNum;
+                samplerCreateInfo.maxAnisotropy    = pSamplerCreateData->anisotropyNum;
             }
             else
             {
@@ -273,25 +293,5 @@ namespace VulkanEngine
 
             return result;
         }
-
-        /*VulkanTexture2D VulkanTexture2D::CreateTexture2D(
-            const std::string&       fileName,
-            const VkPhysicalDevice   hwDevice,
-            const VkDevice* const    pDevice,
-            Texture2DCreateData*     pTex2DCreateData,
-            Mgr::CmdBufferMgr* const pCmdBufferMgr)
-        {
-            Texture2DCreateData createData = {};
-
-            int texChannels;
-
-            createData.textureData = ::Texture::TextureBase::ReadImageData(
-                          fileName,
-                          reinterpret_cast<int*>(&createData.texWidth),
-                          reinterpret_cast<int*>(&createData.texHeight),
-                          &texChannels);
-
-            return VulkanTexture2D(pDevice, pCmdBufferMgr, pTex2DCreateData);
-        }*/
     }
 }

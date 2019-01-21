@@ -46,36 +46,67 @@ namespace VulkanEngine
         }
 
         VkVertexInputBindingDescription VulkanVertexBuffer::createDescription(
-            const UINT                 binding,
+            const UINT                 bindingPoint,
             const BX_VERTEX_INPUT_RATE rate)
         {
             VkVertexInputBindingDescription bindingDescription = {};
-            bindingDescription.binding = binding;
-            bindingDescription.stride = sizeof(Vertex);
+            bindingDescription.binding   = bindingPoint;
+            bindingDescription.stride    = static_cast<UINT>(sizeof(Vertex));
             bindingDescription.inputRate = VulkanUtility::GetVkVertexInputRate(rate);
 
             return bindingDescription;
         }
 
-        std::array<VkVertexInputAttributeDescription, 3>
-            VulkanVertexBuffer::createAttributeDescriptions()
+        std::vector<VkVertexInputAttributeDescription>
+            VulkanVertexBuffer::createAttributeDescriptions(
+                const UINT bindingPoint)
         {
-            std::array<VkVertexInputAttributeDescription, 3> attributes;
+            std::vector<VkVertexInputAttributeDescription> attributes(3);
 
-            attributes[0].binding = 0;
+            attributes[0].binding  = bindingPoint;
             attributes[0].location = 0;
-            attributes[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributes[0].offset = static_cast<UINT>(offsetof(Vertex, Vertex::position));
+            attributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+            attributes[0].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::position));
 
-            attributes[1].binding = 0;
+            attributes[1].binding  = bindingPoint;
             attributes[1].location = 1;
-            attributes[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributes[1].offset = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
+            attributes[1].format   = VK_FORMAT_R32G32B32_SFLOAT;
+            attributes[1].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
 
-            attributes[2].binding = 0;
+            attributes[2].binding  = bindingPoint;
             attributes[2].location = 2;
-            attributes[2].format = VK_FORMAT_R32G32_SFLOAT;
-            attributes[2].offset = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
+            attributes[2].format   = VK_FORMAT_R32G32_SFLOAT;
+            attributes[2].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
+
+            return attributes;
+        }
+
+        std::vector<VkVertexInputAttributeDescription>
+            VulkanVertexBuffer::createAttributeDescriptionsMultipleTexture(
+                const UINT bindingPoint,
+                const UINT texChannels)
+        {
+            std::vector<VkVertexInputAttributeDescription> attributes(texChannels);
+
+            attributes[0].binding  = bindingPoint;
+            attributes[0].location = 0;
+            attributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+            attributes[0].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::position));
+
+            attributes[1].binding  = bindingPoint;
+            attributes[1].location = 1;
+            attributes[1].format   = VK_FORMAT_R32G32B32_SFLOAT;
+            attributes[1].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
+
+            for (UINT i = 0; i < texChannels; ++i)
+            {
+                UINT attributeIndex = i + 2;
+
+                attributes[attributeIndex].binding  = bindingPoint;
+                attributes[attributeIndex].location = attributeIndex;
+                attributes[attributeIndex].format   = VK_FORMAT_R32G32_SFLOAT;
+                attributes[attributeIndex].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
+            }
 
             return attributes;
         }

@@ -14,40 +14,48 @@
     <ClCompile Include="src\Buffer\CmdBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanDescriptorBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VulkanFramebuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanIndexBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\Context\DescriptorMgr.cpp" />
     <ClCompile Include="src\Context\QueueMgr.cpp" />
     <ClCompile Include="src\Context\CmdBufferMgr.cpp" />
+    <ClCompile Include="src\Context\TextureMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
+    <ClCompile Include="src\Render\VulkanForwardRender.cpp" />
     <ClCompile Include="src\Render\VulkanRender.cpp" />
+    <ClCompile Include="src\Render\VulkanRenderPass.cpp" />
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
     <ClCompile Include="src\Texture\VulkanTexture2D.cpp" />
+    <ClCompile Include="src\Texture\VulkanTexture3D.cpp" />
+    <ClCompile Include="src\Texture\VulkanTextureCubemap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Buffer\BufferInfo.h" />
     <ClInclude Include="src\Buffer\CmdBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanDescriptorBuffer.h" />
+    <ClInclude Include="src\Buffer\VulkanFramebuffer.h" />
     <ClInclude Include="src\Buffer\VulkanIndexBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanUniformBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h" />
     <ClInclude Include="src\Context\BxQueue.h" />
     <ClInclude Include="src\Context\CmdBufferMgr.h" />
     <ClInclude Include="src\Context\DescriptorMgr.h" />
+    <ClInclude Include="src\Context\TextureMgr.h" />
     <ClInclude Include="src\Context\VulkanContext.h" />
     <ClInclude Include="src\Core\VulkanTypeDef.h" />
     <ClInclude Include="src\Core\VDeleter.h" />
     <ClInclude Include="src\Core\VulkanPCH.h" />
     <ClInclude Include="src\Core\VulkanUtility.h" />
     <ClInclude Include="src\Render\VulkanRender.h" />
+    <ClInclude Include="src\Render\VulkanRenderPass.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
-    <ClInclude Include="src\Texture\VulkanTexture2D.h" />
-    <ClInclude Include="src\Texture\VulkanTextureBase.h" />
+    <ClInclude Include="src\Texture\VulkanTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="VulkanEngine.licenseheader" />

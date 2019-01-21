@@ -48,7 +48,7 @@ namespace Object
                 const UINT        materialBufferIndex,
                 const UINT        meshIndex);*/
 
-            inline void AddMesh(
+            INLINE void AddMesh(
                 Mesh*        pMesh,
                 Material*    pMaterial,
                 MaterialMap* pMaterialMap)
@@ -68,7 +68,7 @@ namespace Object
                 m_pMeshList.push_back(std::shared_ptr<Mesh>(std::move(pMesh)));
             }
 
-            inline MaterialType GetModelMaterialType() const
+            INLINE MaterialType GetModelMaterialType() const
             {
                 assert(m_pMeshList.size() > 0);
 
@@ -76,7 +76,12 @@ namespace Object
                 return m_pMeshList[0]->GetMaterial()->GetMaterialType();
             }
 
-            inline std::shared_ptr<Object::Model::Mesh> GetMesh(
+            INLINE const UINT GetMeshNum() const
+            {
+                return static_cast<UINT>(m_pMeshList.size());
+            }
+
+            INLINE std::shared_ptr<Object::Model::Mesh> GetMesh(
                 const UINT i) const 
             {
                 return m_pMeshList[i];
@@ -85,8 +90,8 @@ namespace Object
             void UseLocalMaterial();
             void UseGlobalMaterial();
 
-            inline void UseLocalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseLocalMaterial(); }
-            inline void UseGlobalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseGlobalMaterial(); }
+            INLINE void UseLocalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseLocalMaterial(); }
+            INLINE void UseGlobalMaterial(const UINT meshIndex) const { m_pMeshList[meshIndex]->UseGlobalMaterial(); }
 
         private:
             std::vector<std::shared_ptr<Mesh>> m_pMeshList;

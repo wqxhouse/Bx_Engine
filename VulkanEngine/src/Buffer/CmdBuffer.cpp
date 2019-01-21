@@ -126,7 +126,8 @@ namespace VulkanEngine
             renderPassBeginInfo.clearValueCount = static_cast<UINT>(clearColors.size());
             renderPassBeginInfo.pClearValues = clearColors.data();
 
-            VkSubpassContents subpassContents = (m_cmdBufferType == BX_DIRECT_COMMAND_BUFFER) ?
+            VkSubpassContents subpassContents =
+                (m_cmdBufferType == BX_DIRECT_COMMAND_BUFFER) ?
                 VK_SUBPASS_CONTENTS_INLINE :
                 VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS;
 

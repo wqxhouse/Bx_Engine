@@ -9,16 +9,15 @@
 
 #pragma once
 
+#include <map>
+
 #include <Setting/Setting.h>
 #include <Memory/BxMemory.h>
-#include <Scene/RenderScene.h>
 
 #include "BxQueue.h"
-#include "CmdBufferMgr.h"
-#include "../Shader/VulkanGraphicsShader.h"
+#include "TextureMgr.h"
 #include "../Buffer/VulkanVertexBuffer.h"
-
-#include <map>
+#include "../Render/VulkanRender.h"
 
 namespace VulkanEngine
 {
@@ -37,14 +36,16 @@ namespace VulkanEngine
         INLINE const Setting* GetSetting() const { return m_pSetting; }
         INLINE GLFWwindow*    GetWindow()  const { return m_pWindow;  }
 
-        INLINE Scene::RenderScene* GetRenderScene(UINT sceneIndex) const
+        INLINE Scene::RenderScene* GetRenderScene(
+            const UINT sceneIndex) const
         {
             assert(sceneIndex < m_pRenderSceneList.size());
 
             return m_pRenderSceneList[sceneIndex];
         }
 
-        INLINE void AddScene(Scene::RenderScene* pNewScene)
+        INLINE void AddScene(
+            Scene::RenderScene* pNewScene)
         {
             m_sceneNum++;
 
@@ -52,6 +53,8 @@ namespace VulkanEngine
 
             m_pRenderSceneList.push_back(pNewScene);
         }
+
+        INLINE BOOL IsSamplerAnisotropySupport() const { return m_isSamplerAnisotropySupport; }
 
     private:
         BOOL initWindow();
@@ -79,7 +82,7 @@ namespace VulkanEngine
         // Memory
         Memory::MemoryPoolArena m_arena;
 
-        // Core vulkan components
+        /// Core vulkan components
         VDeleter<VkInstance>          m_vkInstance;
         VDeleter<VkSurfaceKHR>        m_vkSurface;
         std::vector<VkPhysicalDevice> m_vkActiveHwGpuDeviceList;
@@ -89,7 +92,17 @@ namespace VulkanEngine
         float m_prevTime;
         float m_deltaTime;
 
-        // Hardware properties
+        /// Managers
+        // Queue
+        Mgr::QueueMgr m_queueMgr;
+
+        // Command buffer
+        std::unique_ptr<Mgr::CmdBufferMgr> m_pCmdBufferMgr;
+
+        // Image
+        std::unique_ptr<Mgr::TextureMgr> m_pTextureMgr;
+
+        /// Hardware properties
         // Avaliable hardware devices are listed with descending order
         std::multimap<UINT, VkPhysicalDevice, std::greater<UINT>> m_avaliableHwGpuDevices;
 
@@ -102,19 +115,12 @@ namespace VulkanEngine
         std::vector<VDeleter<VkImageView>>   m_swapchainImagesViews;
         std::vector<VDeleter<VkFramebuffer>> m_swapchainFramebuffers;
 
-        // Queue
-        Mgr::QueueMgr m_queueMgr;
-
         // Shader
         std::unique_ptr<Shader::VulkanGraphicsShader> m_pShader;
 
         // Pipeline
-        VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
         VDeleter<VkRenderPass>     m_renderPass;
         VDeleter<VkPipeline>       m_graphicsPipeline;
-
-        // Command buffer
-        std::unique_ptr<Mgr::CmdBufferMgr> m_pCmdBufferMgr;
 
         // Semaphores
         VDeleter<VkSemaphore> m_renderSemaphore;
@@ -125,6 +131,9 @@ namespace VulkanEngine
         UINT                             m_activeSceneIndex;
         UINT                             m_sceneNum;
 
+        // Sampler anisotropy support
+        BOOL m_isSamplerAnisotropySupport;
+
 #if _DEBUG
         const static BOOL m_enableValidationLayer = TRUE;
 
@@ -133,10 +142,6 @@ namespace VulkanEngine
 #else
         const static bool m_enableValidationLayer = FALSE;
 #endif
-
-        // Sampler
-        BOOL m_isSamplerAnisotropySupport;
-
         // Extension
         UINT         m_instanceExtCount;
         const char** m_instanceExtensions;

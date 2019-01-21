@@ -46,15 +46,14 @@ namespace VulkanEngine
           m_deviceExtSupport(FALSE)
     {
         // Set resource release callback functions
-        m_vkInstance             = { vkDestroyInstance                   };
-        m_vkSurface              = { m_vkInstance, vkDestroySurfaceKHR   };
-        m_vkDevice               = { vkDestroyDevice                     };
-        m_swapchain              = { m_vkDevice, vkDestroySwapchainKHR   };
-        m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
-        m_renderPass             = { m_vkDevice, vkDestroyRenderPass     };
-        m_graphicsPipeline       = { m_vkDevice, vkDestroyPipeline       };
-        m_renderSemaphore        = { m_vkDevice, vkDestroySemaphore      };
-        m_presentSemaphore       = { m_vkDevice, vkDestroySemaphore      };
+        m_vkInstance       = { vkDestroyInstance                   };
+        m_vkSurface        = { m_vkInstance, vkDestroySurfaceKHR   };
+        m_vkDevice         = { vkDestroyDevice                     };
+        m_swapchain        = { m_vkDevice, vkDestroySwapchainKHR   };
+        m_renderPass       = { m_vkDevice, vkDestroyRenderPass     };
+        m_graphicsPipeline = { m_vkDevice, vkDestroyPipeline       };
+        m_renderSemaphore  = { m_vkDevice, vkDestroySemaphore      };
+        m_presentSemaphore = { m_vkDevice, vkDestroySemaphore      };
 
 #if _DEBUG
         m_vkDebugMsg             = { m_vkInstance, VulkanUtility::DestroyDebugUtilsMessenger };
@@ -333,6 +332,15 @@ namespace VulkanEngine
             }
         }
 
+        if (status == BX_SUCCESS)
+        {
+            m_pTextureMgr = std::unique_ptr<Mgr::TextureMgr>(
+                new Mgr::TextureMgr(&(m_vkActiveHwGpuDeviceList[0]),
+                                    &m_vkDevice, m_pCmdBufferMgr.get(),
+                                    DEFAULT_MAX_TEXTURE_NUM,
+                                    m_isSamplerAnisotropySupport));
+        }
+
         return status;
     }
 
@@ -522,6 +530,10 @@ namespace VulkanEngine
                                                 m_deviceExts) == TRUE)
             {
                 m_deviceExtSupport = TRUE;
+
+                m_isSamplerAnisotropySupport =
+                    Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
+
                 result = BX_SUCCESS;
             }
             else
@@ -529,9 +541,6 @@ namespace VulkanEngine
                 assert(BX_FAIL);
                 result = BX_FAIL;
             }
-
-            m_isSamplerAnisotropySupport =
-                Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
         }
 
         return result;
@@ -810,6 +819,8 @@ namespace VulkanEngine
         viewportCreateInfo.pScissors     = &scissor;
 
         // Pipeline Layout
+        VDeleter<VkPipelineLayout> m_graphicsPipelineLayout = { m_vkDevice, vkDestroyPipelineLayout };
+
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
         pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
@@ -847,7 +858,8 @@ namespace VulkanEngine
         renderPassCreateInfo.subpassCount           = 1;
         renderPassCreateInfo.pSubpasses             = &subpassDescription;
 
-        VkResult createRenderpassResult = vkCreateRenderPass(m_vkDevice, &renderPassCreateInfo, NULL, m_renderPass.replace());
+        VkResult createRenderpassResult =
+            vkCreateRenderPass(m_vkDevice, &renderPassCreateInfo, NULL, m_renderPass.replace());
         status = ((createRenderpassResult == VK_SUCCESS) ? BX_SUCCESS : BX_FAIL);
 
         assert(status == BX_SUCCESS);

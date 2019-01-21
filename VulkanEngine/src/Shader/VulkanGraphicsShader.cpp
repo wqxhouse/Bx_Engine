@@ -113,6 +113,14 @@ namespace VulkanEngine
             return m_shaderStages;
         }
 
+        void VulkanGraphicsShader::clean()
+        {
+            m_shaderSources.clear();
+            m_shaderStages.clear();
+
+            m_shaderSources.resize(BX_MAX_SHADER);
+        }
+
         void VulkanGraphicsShader::createShaderModule(
             const std::string&   shaderFile,
             const BX_SHADER_TYPE shaderType)

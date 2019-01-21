@@ -59,7 +59,17 @@ namespace VulkanEngine
                 const UINT               bufferNum,
                 const Buffer::CmdBuffer* pCmdBuffers);
 
-            inline Buffer::CmdBuffer* GetCmdBuffer(
+            INLINE const UINT GetGraphicsCmdBufferNum() const
+            {
+                return static_cast<UINT>(m_graphicsCmdBuffers.size());
+            }
+
+            INLINE const UINT GetComputeCmdBufferNum() const
+            {
+                return static_cast<UINT>(m_computeCmdBuffers.size());
+            }
+
+            INLINE Buffer::CmdBuffer* GetCmdBuffer(
                 const BX_COMMAND_BUFFER_TYPE type,
                 const UINT                   index)
             {
