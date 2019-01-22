@@ -60,6 +60,7 @@ namespace VulkanEngine
         BOOL initWindow();
         BOOL initRenderScene();
         BOOL initVulkan();
+        BOOL update(const float delta);
         BOOL draw();
 
         // Initialization sub-tasks

@@ -101,12 +101,22 @@ namespace VulkanEngine
     {
         BOOL status = BX_SUCCESS;
 
+        float prevTime  = 0.0f;
+        float deltaTime = 0.0f;
+
         while (glfwWindowShouldClose(m_pWindow) == FALSE)
         {
+            float curTime = static_cast<float>(glfwGetTime());
+            deltaTime     = curTime - prevTime;
+            prevTime      = curTime;
+
             glfwSwapBuffers(m_pWindow);
             glfwPollEvents();
 
-            // m_pRender->update();
+            status = update(deltaTime);
+
+            assert(status == BX_SUCCESS);
+
             status = draw();
 
             assert(status == BX_SUCCESS);
@@ -288,6 +298,18 @@ namespace VulkanEngine
         return status;
     }
 
+    BOOL VulkanContext::update(
+        const float delta)
+    {
+        BOOL status = BX_SUCCESS;
+
+        status = m_pRender->update(delta);
+
+        assert(status == BX_SUCCESS);
+
+        return status;
+    }
+
     BOOL VulkanContext::draw()
     {
         BOOL status = BX_SUCCESS;
@@ -310,7 +332,11 @@ namespace VulkanEngine
             const VkQueue& submitQueue =
                 m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().graphicsFamilyIndex).m_queue;
 
-            VkPipelineStageFlags waitStages[]      = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+            VkPipelineStageFlags waitStages[]      =
+            {
+                VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT
+            };
+
             VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
             VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
 

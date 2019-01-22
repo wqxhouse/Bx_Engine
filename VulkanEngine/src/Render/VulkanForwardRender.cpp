@@ -98,8 +98,6 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             // Initialize uniform buffers for render pass
-            Math::Vector4 boxColor(0.0f, 1.0f, 0.0f, 1.0f);
-
             Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer =
                 new Buffer::VulkanUniformBuffer(m_pDevice);
 
@@ -123,7 +121,7 @@ namespace VulkanEngine
             textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
             textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
             textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-            textureSamplerCreateData.anisotropyNum                       = 16;
+            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
             textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
             textureSamplerCreateData.normalize                           = TRUE;
             textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
@@ -160,10 +158,43 @@ namespace VulkanEngine
 
             return status;
         }
-    
-        void VulkanForwardRender::update(
+
+        BOOL VulkanForwardRender::update(
             const float delta)
         {
+            BOOL status = BX_SUCCESS;
+
+            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
+            {
+                status = preRenderPass.update();
+
+                assert(status == BX_SUCCESS);
+            }
+
+            status = m_mainSceneRenderPass.update();
+
+            assert(status == BX_SUCCESS);
+
+            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
+            {
+                status = postRenderPass.update();
+
+                assert(status == BX_SUCCESS);
+            }
+
+            float symbol = -1.0f;
+
+            if (boxColor.g < 0.0f ||
+                boxColor.g > 1.0f)
+            {
+                symbol *= -1.0f;
+            }
+
+            boxColor.g += symbol * delta * 0.01f;
+
+            m_pDescriptorBufferList[0]->updateBufferData(sizeof(boxColor), &boxColor);
+
+            return status;
         }
 
         void VulkanForwardRender::draw()

@@ -116,6 +116,7 @@ namespace VulkanEngine
             BOOL create(
                 const VulkanRenderPassCreateData& renderPassCreateData);
 
+            BOOL update();
             BOOL draw();
 
             void clean();

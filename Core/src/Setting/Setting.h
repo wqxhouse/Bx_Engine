@@ -21,22 +21,23 @@ struct GraphicsSetting
 {
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
     Antialasing     antialasing     = Antialasing::AA_NONE;
+    Anisotropy      anisotropy      = Anisotropy::ANISOTROPY_FOUR;
     BOOL            blend           = FALSE;
 
     BOOL shadowCasting;
     Resolution shadowResolution     = { 128, 128 };
 
-    inline void EnableSSAO()
+    INLINE void EnableSSAO()
     {
         ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_SSAO;
     }
 
-    inline void DisableSSAO()
+    INLINE void DisableSSAO()
     {
         ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_NONE;
     }
 
-    AmbientOcclutionSetting ambientOcclutionSetting = 
+    AmbientOcclutionSetting ambientOcclutionSetting =
     {
         AmbientOcclusion::AMBIENTOCCLUSION_SSAO,
         SSAO_Quality::SSAO_HIGH

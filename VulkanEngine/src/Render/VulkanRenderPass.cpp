@@ -57,6 +57,19 @@ namespace VulkanEngine
             return status;
         }
 
+        BOOL VulkanRenderPass::update()
+        {
+            BOOL status = BX_SUCCESS;
+
+            // Not support updating textures at real-time
+
+
+
+            assert(status == BX_SUCCESS);
+
+            return status;
+        }
+
         BOOL VulkanRenderPass::draw()
         {
             BOOL status = BX_SUCCESS;
@@ -449,18 +462,19 @@ namespace VulkanEngine
             size_t descriptorTotalNum         = uniformBufferDescriptorNum + textureDescriptorNum;
 
             std::vector<VDeleter<VkDescriptorSetLayout>> descriptorLayoutList;
-
             if (descriptorTotalNum > 0)
             {
                 std::vector<Mgr::DescriptorCreateInfo> descriptorCreateInfo(descriptorTotalNum);
-                std::vector<Mgr::DescriptorUpdateInfo> descriptorUpdateInfo(descriptorTotalNum);
+
+                std::vector<Mgr::DescriptorUpdateInfo> uniformBufferDescriptorUpdateInfo(uniformBufferDescriptorNum);
+                std::vector<Mgr::DescriptorUpdateInfo> textureDescriptorUpdateInfo(textureDescriptorNum);
 
                 UINT descriptorCounter = 0;
 
                 for (UINT i = 0; i < uniformBufferDescriptorNum; ++i)
                 {
                     Mgr::DescriptorCreateInfo* pDescriptorCreateInfo            = &(descriptorCreateInfo[i]);
-                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo            = &(descriptorUpdateInfo[i]);
+                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo            = &(uniformBufferDescriptorUpdateInfo[i]);
                     Render::VulkanUniformBufferResource* pUniformbufferResource = &(pResource->pUniformBufferResourceList->at(i));
 
                     pDescriptorCreateInfo->descriptorType = BX_UNIFORM_DESCRIPTOR;
@@ -480,7 +494,7 @@ namespace VulkanEngine
                 for (UINT i = 0; i < textureDescriptorNum; ++i)
                 {
                     Mgr::DescriptorCreateInfo* pDescriptorCreateInfo = &(descriptorCreateInfo[i + descriptorCounter]);
-                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo = &(descriptorUpdateInfo[i + descriptorCounter]);
+                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo = &(textureDescriptorUpdateInfo[i]);
                     Render::VulkanTextureResource* pTexResource      = &(pResource->pTextureResouceList->at(i));
 
                     pDescriptorCreateInfo->descriptorType = BX_SAMPLER_DESCRIPTOR;
@@ -503,12 +517,12 @@ namespace VulkanEngine
                     descriptorLayoutList[i] = m_pDescriptorMgr->createDescriptorSetLayout(descriptorCreateInfo);
                 }
 
-                std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(1);
+                std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(2);
                 descriptorPoolCreateData[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
                 descriptorPoolCreateData[0].descriptorNum  = static_cast<UINT>(uniformBufferDescriptorNum);
 
-                /*descriptorPoolCreateData[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
-                descriptorPoolCreateData[1].descriptorNum  = static_cast<UINT>(textureDescriptorNum);*/
+                descriptorPoolCreateData[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
+                descriptorPoolCreateData[1].descriptorNum  = static_cast<UINT>(textureDescriptorNum);
 
                 status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData);
                 assert(status == BX_SUCCESS);
@@ -523,11 +537,12 @@ namespace VulkanEngine
                     createDescriptorSets(VDeleter<VkDescriptorSetLayout>::GetRawVector(descriptorLayoutList),
                                          descriptorSetIndexList);
 
-                assert(status == BX_SUCCESS);
+                assert(status = BX_SUCCESS);
 
-                status = m_pDescriptorMgr->updateDescriptorSet(descriptorUpdateInfo);
+                status = m_pDescriptorMgr->updateDescriptorSet(uniformBufferDescriptorUpdateInfo);
+                status = m_pDescriptorMgr->updateDescriptorSet(textureDescriptorUpdateInfo);
 
-                assert(status == BX_SUCCESS);
+                assert(status = BX_SUCCESS);
             }
 
             VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
