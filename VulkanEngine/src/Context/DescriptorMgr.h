@@ -65,6 +65,8 @@ namespace VulkanEngine
             VkDescriptorSetLayout createDescriptorSetLayout(
                 const std::vector<DescriptorCreateInfo>& descriptorsCreateInfo);
 
+            INLINE const UINT GetDescriptorSetNum() const { return static_cast<UINT>(m_descriptorSetList.size()); }
+
             INLINE const VkDescriptorSet GetDescriptorSet(
                 const UINT descriptorSetIndex) const
             {

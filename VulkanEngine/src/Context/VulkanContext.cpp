@@ -252,6 +252,12 @@ namespace VulkanEngine
             }
         }
 
+        if (status == BX_SUCCESS)
+        {
+            m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(
+                new Mgr::DescriptorMgr(&m_vkDevice, static_cast<UINT>(m_pSwapchainTextures.size())));
+        }
+
         if (status = BX_SUCCESS)
         {
             status = createRender();
@@ -262,17 +268,6 @@ namespace VulkanEngine
                 assert(BX_FAIL);
             }
         }
-
-        /*if (status = BX_SUCCESS)
-        {
-            status = createSwapchainFramebuffer();;
-
-            if (status == BX_FAIL)
-            {
-                printf("Failed to created swapchain framebuffer!\n");
-                assert(BX_FAIL);
-            }
-        }*/
 
         if (status == BX_SUCCESS)
         {
@@ -679,7 +674,8 @@ namespace VulkanEngine
                                             &(m_vkActiveHwGpuDeviceList[0]),
                                             &m_vkDevice,
                                             m_pCmdBufferMgr.get(),
-                                            NULL,
+                                            m_pDescriptorMgr.get(),
+                                            m_pTextureMgr.get(),
                                             m_pRenderSceneList[m_activeSceneIndex],
                                             &m_pSwapchainTextures));
 

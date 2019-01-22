@@ -46,11 +46,12 @@ namespace VulkanEngine
                 const TextureFormat texFormat);
 
             Texture::VulkanTexture2D* createTexture2DSampler(
-                const std::string&  imageFile,
-                const UINT          samples,
-                const BOOL          mipmap,
-                const TextureFormat texLoadFormat,
-                const TextureFormat texStoreFormat);
+                const std::string&                   imageFile,
+                const UINT                           samples,
+                const BOOL                           mipmap,
+                const TextureFormat                  texLoadFormat,
+                const TextureFormat                  texStoreFormat,
+                ::Texture::TextureSamplerCreateData& textureSamplerCreateData);
 
             Texture::VulkanTexture3D* createTexture3D(
                 ::Texture::Texture3DCreateData* pTexture3DCreateData);

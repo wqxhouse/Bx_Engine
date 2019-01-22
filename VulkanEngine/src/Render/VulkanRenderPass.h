@@ -36,31 +36,35 @@ namespace VulkanEngine
             Rectangle              renderViewportRect;
         };
 
-        struct VulkanVertexInputResources
+        struct VulkanVertexInputResource
         {
             Buffer::VulkanVertexBuffer* pVertexBuffer;
             Buffer::VulkanIndexBuffer*  pIndexBuffer;
         };
 
-        struct VulkanUniformBufferResources
+        struct VulkanUniformBufferResource
         {
             UINT                         bindingPoint;
+            UINT                         uniformbufferNum;
+            BX_SHADER_TYPE               shaderType;
             Buffer::VulkanUniformBuffer* pUniformBuffer;
         };
 
-        struct VulkanTextureResources
+        struct VulkanTextureResource
         {
             UINT                        bindingPoint;
+            UINT                        textureNum;
+            BX_SHADER_TYPE              shaderType;
             Texture::VulkanTextureBase* pTexture;
         };
 
         struct VulkanRenderResources
         {
-            UINT                                        vertexDescriptionBindingPoint;
-            UINT                                        vertexBufferTexChannelNum;
-            std::vector<VulkanVertexInputResources>*    pVertexInputResourceList;
-            std::vector<VulkanUniformBufferResources*>* ppUniformBufferResourceList;
-            std::vector<VulkanTextureResources*>*       ppTextureResouces;
+            UINT                                      vertexDescriptionBindingPoint;
+            UINT                                      vertexBufferTexChannelNum;
+            std::vector<VulkanVertexInputResource>*   pVertexInputResourceList;
+            std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
+            std::vector<VulkanTextureResource>*       pTextureResouceList;
         };
 
         struct VulkanRenderTargetFramebufferCreateData
@@ -148,7 +152,9 @@ namespace VulkanEngine
 
             std::vector<Buffer::VulkanFramebuffer> m_framebufferList;
 
-            std::vector<VulkanVertexInputResources>* m_pVertexInputResourceList;
+            std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
+
+            VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
 
             VkRect2D      m_renderViewport;
             VkClearValue* m_pClearColor;

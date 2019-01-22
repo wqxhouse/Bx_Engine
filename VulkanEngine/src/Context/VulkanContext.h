@@ -96,10 +96,13 @@ namespace VulkanEngine
         Mgr::QueueMgr m_queueMgr;
 
         // Command buffer
-        std::unique_ptr<Mgr::CmdBufferMgr> m_pCmdBufferMgr;
+        std::unique_ptr<Mgr::CmdBufferMgr>  m_pCmdBufferMgr;
 
         // Image
-        std::unique_ptr<Mgr::TextureMgr> m_pTextureMgr;
+        std::unique_ptr<Mgr::TextureMgr>    m_pTextureMgr;
+
+        // Descriptor
+        std::unique_ptr<Mgr::DescriptorMgr> m_pDescriptorMgr;
 
         /// Hardware properties
         // Avaliable hardware devices are listed with descending order

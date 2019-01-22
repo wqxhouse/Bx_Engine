@@ -19,9 +19,11 @@ namespace VulkanEngine
             const VkDevice*                               const pDevice,
             Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
             Mgr::DescriptorMgr*                           const pDescritorMgr,
+            Mgr::TextureMgr*                              const pTextureMgr,
             const Scene::RenderScene*                           pScene,
             const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures)
-            : VulkanRenderBase(pSetting, pHwDevice, pDevice, pCmdBufferMgr, pDescritorMgr, pScene, ppBackbufferTextures)
+            : VulkanRenderBase(pSetting, pHwDevice, pDevice, pCmdBufferMgr, pDescritorMgr, pTextureMgr,
+                               pScene, ppBackbufferTextures)
         {
         }
 
@@ -55,7 +57,7 @@ namespace VulkanEngine
             mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "SimpleMesh.vert.spv";
             mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag.spv";
 
-            // Initialize render pass
+            /// Initialize render pass
             const UINT backbufferAttachmentNum = 1;
             const UINT backbufferNum           = static_cast<const UINT>(m_ppBackbufferTextures->size());
 
@@ -86,11 +88,66 @@ namespace VulkanEngine
                 pRenderPassCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
             }
 
+            // Initialize render pass resources
+            std::vector<Render::VulkanUniformBufferResource*> uniformbufferResources;
+
+            // Initialize vertex input for render pass
             Render::VulkanRenderResources renderSources = {};
             renderSources.vertexBufferTexChannelNum     = 1;
             renderSources.vertexDescriptionBindingPoint = 0;
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
+            // Initialize uniform buffers for render pass
+            Math::Vector4 boxColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+            Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer =
+                new Buffer::VulkanUniformBuffer(m_pDevice);
+
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, sizeof(boxColor), &boxColor);
+
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
+
+            std::vector<VulkanUniformBufferResource> mainSceneUniformbufferResourceList(1);
+            mainSceneUniformbufferResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
+            mainSceneUniformbufferResourceList[0].bindingPoint     = 0;
+            mainSceneUniformbufferResourceList[0].uniformbufferNum = 1;
+            mainSceneUniformbufferResourceList[0].pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[0].get());
+
+            renderSources.pUniformBufferResourceList = &mainSceneUniformbufferResourceList;
+
+            // Initialize textures for render pass
+            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
+            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.anisotropyNum                       = 16;
+            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
+            textureSamplerCreateData.normalize                           = TRUE;
+            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.mipmapOffset                        = 0.0f;
+            textureSamplerCreateData.minLod                              = 0.0f;
+            textureSamplerCreateData.maxLod                              = 0.0f;
+
+            Texture::VulkanTexture2D* pTexture =
+                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
+                                                      m_pSetting->m_graphicsSetting.antialasing,
+                                                      FALSE,
+                                                      BX_FORMAT_RGBA8,
+                                                      BX_FORMAT_RGBA8,
+                                                      textureSamplerCreateData);
+
+            std::vector<VulkanTextureResource> mainSceneTextureResourceList(1);
+            mainSceneTextureResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
+            mainSceneTextureResourceList[0].bindingPoint     = 1;
+            mainSceneTextureResourceList[0].textureNum       = 1;
+            mainSceneTextureResourceList[0].pTexture         = pTexture;
+
+            renderSources.pTextureResouceList = &mainSceneTextureResourceList;
+
+            // Create render pass create data
             Render::VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
             mainSceneRenderPassCreateData.pProps                             = &props;
             mainSceneRenderPassCreateData.pShaderMeta                        = &mainSceneShaderMeta;

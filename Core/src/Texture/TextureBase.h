@@ -40,7 +40,7 @@ namespace Texture
         TextureUsage              texUsage;
         BOOL                      texOptimize;
         BOOL                      texPerserve;
-        TextureSamplerCreateData* pSampleCreateData = NULL;
+        TextureSamplerCreateData* pSamplerCreateData = NULL;
     };
 
     struct TextureDeleter

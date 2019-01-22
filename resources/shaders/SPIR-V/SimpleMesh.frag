@@ -6,12 +6,14 @@ layout(location = 1) in vec2 fragTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
-/*layout (binding = 0) uniform TestUniform
+layout (binding = 0) uniform TestUniform
 {
     vec4 color;
-} m_color;*/
+} m_color;
+
+layout (binding = 1) uniform sampler2D TestTexture;
 
 void main()
 {
-	outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); //m_color.color;
+	outColor = vec4(texture(TestTexture, fragTexCoord).xyz * m_color.color.xyz, 1.0f);
 }

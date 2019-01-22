@@ -19,6 +19,7 @@ namespace VulkanEngine
             const VkDevice*                               const pDevice,
             Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
             Mgr::DescriptorMgr*                           const pDescritorMgr,
+            Mgr::TextureMgr*                              const pTextureMgr,
             const Scene::RenderScene*                           pScene,
             const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures)
             : m_pSetting(pSetting),
@@ -26,6 +27,7 @@ namespace VulkanEngine
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescritorMgr(pDescritorMgr),
+              m_pTextureMgr(pTextureMgr),
               m_pScene(pScene),
               m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
               m_ppBackbufferTextures(ppBackbufferTextures)
@@ -35,7 +37,7 @@ namespace VulkanEngine
 
         VulkanRenderBase::~VulkanRenderBase()
         {
-            for (VulkanVertexInputResources vertexInputResources : m_mainSceneVertexInputResourceList)
+            for (VulkanVertexInputResource vertexInputResources : m_mainSceneVertexInputResourceList)
             {
                 delete vertexInputResources.pIndexBuffer;
                 delete vertexInputResources.pVertexBuffer;

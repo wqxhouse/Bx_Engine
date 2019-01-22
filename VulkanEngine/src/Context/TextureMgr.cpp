@@ -61,7 +61,7 @@ namespace VulkanEngine
             BOOL status = BX_SUCCESS;
 
             assert(pTexture2DCreateData->texUsage          == BX_TEXTURE_USAGE_SAMPLED &&
-                   pTexture2DCreateData->pSampleCreateData != NULL);
+                   pTexture2DCreateData->pSamplerCreateData != NULL);
 
             Texture::VulkanTexture2D* pNewTexture2D =
                 BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, pTexture2DCreateData);
@@ -72,7 +72,7 @@ namespace VulkanEngine
 
             if (pTexture2DCreateData->texUsage == BX_TEXTURE_USAGE_SAMPLED)
             {
-                pNewTexture2D->createSampler(pTexture2DCreateData->pSampleCreateData, m_isSamplerAnisotropySupport);
+                pNewTexture2D->createSampler(pTexture2DCreateData->pSamplerCreateData, m_isSamplerAnisotropySupport);
             }
 
             m_pTextureList.push_back(pNewTexture2D);
@@ -90,17 +90,17 @@ namespace VulkanEngine
             BOOL status = BX_SUCCESS;
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
-            texture2DCreateData.texUsage          = BX_TEXTURE_USAGE_RENDER_TARGET;
-            texture2DCreateData.texWidth          = texWidth;
-            texture2DCreateData.texHeight         = texHeight;
-            texture2DCreateData.samples           = samples;
-            texture2DCreateData.texLoadFormat     = texFormat;
-            texture2DCreateData.texStoreFormat    = texFormat;
-            texture2DCreateData.mipmap            = FALSE;
-            texture2DCreateData.texOptimize       = TRUE;
-            texture2DCreateData.texPerserve       = FALSE;
-            texture2DCreateData.textureData       = NULL;
-            texture2DCreateData.pSampleCreateData = NULL;
+            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_RENDER_TARGET;
+            texture2DCreateData.texWidth           = texWidth;
+            texture2DCreateData.texHeight          = texHeight;
+            texture2DCreateData.samples            = samples;
+            texture2DCreateData.texLoadFormat      = texFormat;
+            texture2DCreateData.texStoreFormat     = texFormat;
+            texture2DCreateData.mipmap             = FALSE;
+            texture2DCreateData.texOptimize        = TRUE;
+            texture2DCreateData.texPerserve        = FALSE;
+            texture2DCreateData.textureData        = NULL;
+            texture2DCreateData.pSamplerCreateData = NULL;
 
             Texture::VulkanTexture2D* pNewTexture2D =
                 BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData, image);
@@ -128,17 +128,17 @@ namespace VulkanEngine
             BOOL status = BX_SUCCESS;
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
-            texture2DCreateData.texUsage          = BX_TEXTURE_USAGE_RENDER_TARGET;
-            texture2DCreateData.texWidth          = texWidth;
-            texture2DCreateData.texHeight         = texHeight;
-            texture2DCreateData.samples           = samples;
-            texture2DCreateData.texLoadFormat     = texFormat;
-            texture2DCreateData.texStoreFormat    = texFormat;
-            texture2DCreateData.mipmap            = FALSE;
-            texture2DCreateData.texOptimize       = TRUE;
-            texture2DCreateData.texPerserve       = FALSE;
-            texture2DCreateData.textureData       = NULL;
-            texture2DCreateData.pSampleCreateData = NULL;
+            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_RENDER_TARGET;
+            texture2DCreateData.texWidth           = texWidth;
+            texture2DCreateData.texHeight          = texHeight;
+            texture2DCreateData.samples            = samples;
+            texture2DCreateData.texLoadFormat      = texFormat;
+            texture2DCreateData.texStoreFormat     = texFormat;
+            texture2DCreateData.mipmap             = FALSE;
+            texture2DCreateData.texOptimize        = TRUE;
+            texture2DCreateData.texPerserve        = FALSE;
+            texture2DCreateData.textureData        = NULL;
+            texture2DCreateData.pSamplerCreateData = NULL;
 
             Texture::VulkanTexture2D* pNewTexture2D =
                 BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData);
@@ -154,11 +154,12 @@ namespace VulkanEngine
         }
 
         Texture::VulkanTexture2D* TextureMgr::createTexture2DSampler(
-            const std::string&  imageFile,
-            const UINT          samples,
-            const BOOL          mipmap,
-            const TextureFormat texLoadFormat,
-            const TextureFormat texStoreFormat)
+            const std::string&                   imageFile,
+            const UINT                           samples,
+            const BOOL                           mipmap,
+            const TextureFormat                  texLoadFormat,
+            const TextureFormat                  texStoreFormat,
+            ::Texture::TextureSamplerCreateData& textureSamplerCreateData)
         {
             BOOL status = BX_SUCCESS;
 
@@ -171,16 +172,16 @@ namespace VulkanEngine
             texture2DCreateData.textureData =
                 ::Texture::Texture2D::ReadImageData(imageFile, &texWidth, &texHeight, &texChannels);
 
-            texture2DCreateData.texUsage          = BX_TEXTURE_USAGE_SAMPLED;
-            texture2DCreateData.texWidth          = static_cast<UINT>(texWidth);
-            texture2DCreateData.texHeight         = static_cast<UINT>(texHeight);
-            texture2DCreateData.samples           = samples;
-            texture2DCreateData.texLoadFormat     = texLoadFormat;
-            texture2DCreateData.texStoreFormat    = texStoreFormat;
-            texture2DCreateData.mipmap            = mipmap;
-            texture2DCreateData.texOptimize       = TRUE;
-            texture2DCreateData.texPerserve       = FALSE;
-            texture2DCreateData.pSampleCreateData = NULL;
+            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_SAMPLED;
+            texture2DCreateData.texWidth           = static_cast<UINT>(texWidth);
+            texture2DCreateData.texHeight          = static_cast<UINT>(texHeight);
+            texture2DCreateData.samples            = samples;
+            texture2DCreateData.texLoadFormat      = texLoadFormat;
+            texture2DCreateData.texStoreFormat     = texStoreFormat;
+            texture2DCreateData.mipmap             = mipmap;
+            texture2DCreateData.texOptimize        = TRUE;
+            texture2DCreateData.texPerserve        = FALSE;
+            texture2DCreateData.pSamplerCreateData = &textureSamplerCreateData;
 
             Texture::VulkanTexture2D* pNewTexture2D =
                 BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData);
@@ -197,7 +198,7 @@ namespace VulkanEngine
 
             assert(status == BX_SUCCESS);
 
-            status = pNewTexture2D->createSampler(texture2DCreateData.pSampleCreateData, m_isSamplerAnisotropySupport);
+            status = pNewTexture2D->createSampler(texture2DCreateData.pSamplerCreateData, m_isSamplerAnisotropySupport);
 
             assert(status == BX_SUCCESS);
 

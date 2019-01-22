@@ -10,6 +10,7 @@
 #pragma once
 
 #include "VulkanRenderPass.h"
+#include "../Context/TextureMgr.h"
 
 namespace VulkanEngine
 {
@@ -24,6 +25,7 @@ namespace VulkanEngine
                 const VkDevice*                               const pDevice,
                 Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
                 Mgr::DescriptorMgr*                           const pDescritorMgr,
+                Mgr::TextureMgr*                              const pTextureMgr,
                 const Scene::RenderScene*                           pScene,
                 const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
@@ -89,14 +91,17 @@ namespace VulkanEngine
             const VkDevice*         const m_pDevice;
             Mgr::CmdBufferMgr*      const m_pCmdBufferMgr;
             Mgr::DescriptorMgr*     const m_pDescritorMgr;
+            Mgr::TextureMgr*        const m_pTextureMgr;
             const Scene::RenderScene*     m_pScene;
 
             std::vector<VulkanRenderPass> m_preDrawPassList;
             VulkanRenderPass              m_mainSceneRenderPass;
             std::vector<VulkanRenderPass> m_postDrawPassList;
 
+            std::vector<VulkanVertexInputResource>                       m_mainSceneVertexInputResourceList;
+            std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
+
             const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
-            std::vector<VulkanVertexInputResources>             m_mainSceneVertexInputResourceList;
 
         private:
         };
@@ -110,6 +115,7 @@ namespace VulkanEngine
                 const VkDevice*                               const pDevice,
                 Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
                 Mgr::DescriptorMgr*                           const pDescritorMgr,
+                Mgr::TextureMgr*                              const pTextureMgr,
                 const Scene::RenderScene*                           pScene,
                 const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
@@ -134,6 +140,7 @@ namespace VulkanEngine
                 const VkDevice*                               const pDevice,
                 Mgr::CmdBufferMgr*                            const pCmdBufferMgr,
                 Mgr::DescriptorMgr*                           const pDescritorMgr,
+                Mgr::TextureMgr*                              const pTextureMgr,
                 const Scene::RenderScene*                           pScene,
                 const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
