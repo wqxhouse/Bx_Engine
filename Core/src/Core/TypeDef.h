@@ -103,6 +103,7 @@ enum PolyMode
 
 enum CullMode
 {
+    CULLMODE_NONE,
     CULLMODE_FRONT,
     CULLMODE_BACK,
     CULLMODE_FRONT_BACK

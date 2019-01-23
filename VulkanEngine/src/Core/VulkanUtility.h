@@ -117,18 +117,18 @@ namespace VulkanEngine
 
                 switch (polyMode)
                 {
-                case POLYMODE_POINT:
-                    vkPolyMode = VK_POLYGON_MODE_POINT;
-                    break;
-                case POLYMODE_WIREFRAME:
-                    vkPolyMode = VK_POLYGON_MODE_LINE;
-                    break;
-                case POLYMODE_FILL:
-                    vkPolyMode = VK_POLYGON_MODE_FILL;
-                    break;
-                default:
-                    NotSupported();
-                    break;
+                    case POLYMODE_POINT:
+                        vkPolyMode = VK_POLYGON_MODE_POINT;
+                        break;
+                    case POLYMODE_WIREFRAME:
+                        vkPolyMode = VK_POLYGON_MODE_LINE;
+                        break;
+                    case POLYMODE_FILL:
+                        vkPolyMode = VK_POLYGON_MODE_FILL;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
                 }
 
                 return vkPolyMode;
@@ -141,18 +141,21 @@ namespace VulkanEngine
 
                 switch (cullMode)
                 {
-                case CULLMODE_FRONT:
-                    vkCullMode = VK_CULL_MODE_FRONT_BIT;
-                    break;
-                case CULLMODE_BACK:
-                    vkCullMode = VK_CULL_MODE_BACK_BIT;
-                    break;
-                case CULLMODE_FRONT_BACK:
-                    vkCullMode = VK_CULL_MODE_FRONT_AND_BACK;
-                    break;
-                default:
-                    NotSupported();
-                    break;
+                    case CULLMODE_NONE:
+                        vkCullMode = VK_CULL_MODE_NONE;
+                        break;
+                    case CULLMODE_FRONT:
+                        vkCullMode = VK_CULL_MODE_FRONT_BIT;
+                        break;
+                    case CULLMODE_BACK:
+                        vkCullMode = VK_CULL_MODE_BACK_BIT;
+                        break;
+                    case CULLMODE_FRONT_BACK:
+                        vkCullMode = VK_CULL_MODE_FRONT_AND_BACK;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
                 }
 
                 return vkCullMode;
@@ -165,29 +168,29 @@ namespace VulkanEngine
 
                 switch (sampleCount)
                 {
-                case 1:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_1_BIT;
-                    break;
-                case 2:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_2_BIT;
-                    break;
-                case 4:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_4_BIT;
-                    break;
-                case 8:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_8_BIT;
-                    break;
-                case 16:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_16_BIT;
-                    break;
-                case 32:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_32_BIT;
-                    break;
-                case 64:
-                    sampleCountFlagBit = VK_SAMPLE_COUNT_64_BIT;
-                    break;
-                default:
-                    break;
+                    case 1:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_1_BIT;
+                        break;
+                    case 2:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_2_BIT;
+                        break;
+                    case 4:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_4_BIT;
+                        break;
+                    case 8:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_8_BIT;
+                        break;
+                    case 16:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_16_BIT;
+                        break;
+                    case 32:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_32_BIT;
+                        break;
+                    case 64:
+                        sampleCountFlagBit = VK_SAMPLE_COUNT_64_BIT;
+                        break;
+                    default:
+                        break;
                 }
 
                 return sampleCountFlagBit;
@@ -200,15 +203,15 @@ namespace VulkanEngine
 
                 switch (queueFlag)
                 {
-                case VK_QUEUE_GRAPHICS_BIT:
-                    queueCmdPoolIndex = BX_QUEUE_GRAPHICS;
-                    break;
-                case VK_QUEUE_COMPUTE_BIT:
-                    queueCmdPoolIndex = BX_QUEUE_COMPUTE;
-                    break;
-                default:
-                    NotSupported();
-                    break;
+                    case VK_QUEUE_GRAPHICS_BIT:
+                        queueCmdPoolIndex = BX_QUEUE_GRAPHICS;
+                        break;
+                    case VK_QUEUE_COMPUTE_BIT:
+                        queueCmdPoolIndex = BX_QUEUE_COMPUTE;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
                 }
 
                 assert(queueCmdPoolIndex != -1);
@@ -223,15 +226,15 @@ namespace VulkanEngine
 
                 switch (cmdBufferLevel)
                 {
-                case BX_DIRECT_COMMAND_BUFFER:
-                    vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-                    break;
-                case BX_INDIRECT_COMMAND_BUFFER:
-                    vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-                    break;
-                default:
-                    NotSupported();
-                    break;
+                    case BX_DIRECT_COMMAND_BUFFER:
+                        vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+                        break;
+                    case BX_INDIRECT_COMMAND_BUFFER:
+                        vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
                 }
 
                 return vkCmdBufferLevel;
@@ -244,15 +247,15 @@ namespace VulkanEngine
 
                 switch (rate)
                 {
-                case BX_VERTEX_INPUT_RATE_VERTEX:
-                    inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-                    break;
-                case BX_VERTEX_INPUT_RATE_INSTANCE:
-                    inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
-                    break;
-                default:
-                    NotSupported();
-                    break;
+                    case BX_VERTEX_INPUT_RATE_VERTEX:
+                        inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                        break;
+                    case BX_VERTEX_INPUT_RATE_INSTANCE:
+                        inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
                 }
 
                 return inputRate;
