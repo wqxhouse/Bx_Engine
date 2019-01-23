@@ -65,7 +65,7 @@ namespace Object
 
         void CameraBase::update(float deltaTime)
         {
-            if (callbackInfo.keyboardCallBack[GLFW_KEY_W] == 1)
+            /*if (callbackInfo.keyboardCallBack[GLFW_KEY_W] == 1)
             {
                 translate(m_pTrans->GetFront() * deltaTime);
             }
@@ -98,7 +98,7 @@ namespace Object
             else
             {
                 speed = originSpeed;
-            }
+            }*/
 
             m_pTrans->update();
         }

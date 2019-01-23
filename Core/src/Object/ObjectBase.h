@@ -26,7 +26,7 @@ namespace Object
         INLINE void DisableObject() { m_enable = FALSE; }
 
         INLINE const UINT   GetObjectId() const { return m_objectId; }
-        INLINE const Trans* GetTransPtr() const { return m_pTrans;   }
+        INLINE Trans*       GetTrans()    const { return m_pTrans;   }
         INLINE const BOOL   IsEnable()    const { return m_enable;   }
 
     protected:

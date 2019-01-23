@@ -16,15 +16,17 @@ namespace Object
     {
         OrthographicCamera::OrthographicCamera(
             const UINT                          objectId,
-            const OrthographicCameraCreateInfo& prosCamCreateInfo)
+            const OrthographicCameraCreateInfo& orthoCamCreateInfo)
             : CameraBase(objectId,
                          ORTHOGRAPHIC_CAM,
-                         static_cast<CameraCreateInfo>(prosCamCreateInfo)),
-              m_viewport(prosCamCreateInfo.viewport)
+                         static_cast<CameraCreateInfo>(orthoCamCreateInfo)),
+              m_viewport(orthoCamCreateInfo.viewport)
         {
-            m_projectionMatrix = Math::orthographicProjectionMatrix(prosCamCreateInfo.viewport,
-                                                                    prosCamCreateInfo.nearClip,
-                                                                    prosCamCreateInfo.farClip);
+            m_projectionMatrix = Math::orthographicProjectionMatrix(orthoCamCreateInfo.viewport,
+                                                                    orthoCamCreateInfo.nearClip,
+                                                                    orthoCamCreateInfo.farClip);
+
+            this->speed = orthoCamCreateInfo.speed;
         }
 
         OrthographicCamera::~OrthographicCamera()
