@@ -65,9 +65,10 @@ namespace VulkanEngine
             m_bufferSize = uboSize;
 
             BxBufferCreateInfo uboCreateInfo = {};
-            uboCreateInfo.bufferUsage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-            uboCreateInfo.bufferSize  = uboSize;
-            uboCreateInfo.bufferData  = uboData;
+            uboCreateInfo.bufferUsage        = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            uboCreateInfo.bufferSize         = uboSize;
+            uboCreateInfo.bufferData         = uboData;
+            uboCreateInfo.bufferOptimization = FALSE;
 
             result = createBuffer(hwDevice, uboCreateInfo);
 

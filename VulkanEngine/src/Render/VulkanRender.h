@@ -98,9 +98,8 @@ namespace VulkanEngine
             VulkanRenderPass              m_mainSceneRenderPass;
             std::vector<VulkanRenderPass> m_postDrawPassList;
 
-            std::vector<VulkanVertexInputResource>                       m_mainSceneVertexInputResourceList;
+            std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
 
-            Math::Vector4 boxColor = { 0.0f, 1.0f, 0.0f, 1.0f };
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
 
             const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;

@@ -332,11 +332,7 @@ namespace VulkanEngine
             const VkQueue& submitQueue =
                 m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().graphicsFamilyIndex).m_queue;
 
-            VkPipelineStageFlags waitStages[]      =
-            {
-                VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT
-            };
-
+            VkPipelineStageFlags waitStages[]      = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
             VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
             VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
 

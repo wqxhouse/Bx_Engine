@@ -98,16 +98,15 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             // Initialize uniform buffers for render pass
-            Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer =
-                new Buffer::VulkanUniformBuffer(m_pDevice);
+            Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
 
-            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, sizeof(boxColor), &boxColor);
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, sizeof(Math::Mat4), &Math::Mat4());
 
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
 
             std::vector<VulkanUniformBufferResource> mainSceneUniformbufferResourceList(1);
-            mainSceneUniformbufferResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
+            mainSceneUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
             mainSceneUniformbufferResourceList[0].bindingPoint     = 0;
             mainSceneUniformbufferResourceList[0].uniformbufferNum = 1;
             mainSceneUniformbufferResourceList[0].pUniformBuffer   =
@@ -182,17 +181,36 @@ namespace VulkanEngine
                 assert(status == BX_SUCCESS);
             }
 
-            float symbol = -1.0f;
+            const Scene::RenderScene* pScene = m_pScene;
 
-            if (boxColor.g < 0.0f ||
-                boxColor.g > 1.0f)
+            const UINT camNum = pScene->GetSceneCameraNum();
+            for (UINT i = 0; i < camNum; ++i)
             {
-                symbol *= -1.0f;
+                Object::Camera::CameraBase* pCam = pScene->GetCamera(i);
+
+                if (pCam->IsEnable() == TRUE)
+                {
+                    const Math::Mat4* pViewMat       = &(pCam->GetViewMatrix());
+                    const Math::Mat4* pProspectMat   = &(pCam->GetProjectionMatrix());
+
+                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
+
+                    const UINT modelNum = pScene->GetSceneModelNum();
+
+                    for (UINT j = 0; j < modelNum; ++j)
+                    {
+                        Object::Model::ModelObject* pModel = pScene->GetModel(j);
+
+                        if (pModel->IsEnable() == TRUE)
+                        {
+                            const Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
+                            status = m_pDescriptorBufferList[0]->updateBufferData(sizeof(wvpMat), &wvpMat);
+
+                            assert(status == BX_SUCCESS);
+                        }
+                    }
+                }
             }
-
-            boxColor.g += symbol * delta * 0.01f;
-
-            m_pDescriptorBufferList[0]->updateBufferData(sizeof(boxColor), &boxColor);
 
             return status;
         }

@@ -12,8 +12,8 @@
 
 void Trans::initialize()
 {
-    translationMatrix = Math::Translate(Math::Mat4(), pos);
-    scaleMatrix       = Math::Scale(Math::Mat4(), scale);
+    translationMatrix = Math::Translate(Math::Mat4::Identity(), pos);
+    scaleMatrix       = Math::Scale(Math::Mat4::Identity(), scale);
 
     transMatrix = translationMatrix * scaleMatrix;
 
