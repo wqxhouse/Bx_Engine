@@ -200,6 +200,7 @@ namespace VulkanEngine
                     for (UINT j = 0; j < modelNum; ++j)
                     {
                         Object::Model::ModelObject* pModel = pScene->GetModel(j);
+                        pModel->GetTrans()->TransPos(Math::Vector3(0.0f, -delta, 0.0f));
 
                         if (pModel->IsEnable() == TRUE)
                         {

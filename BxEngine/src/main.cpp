@@ -42,9 +42,9 @@ int main()
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
 
     m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-                          &(Trans(Math::Vector3(0.0f, 0.0f, -5.0f),
+                          &(Trans(Math::Vector3(0.0f, 0.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f, 0.0f))));
+                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
 
     Object::Camera::ProspectiveCameraCreateInfo prosCamCreateInfo = {};
     prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(2.0f, 0.0f,  5.0f),
