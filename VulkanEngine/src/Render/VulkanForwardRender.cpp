@@ -40,7 +40,7 @@ namespace VulkanEngine
             /// Initialize default render pass for main scene
             //  Initialize graphics pipeline properties
             Render::VulkanRenderProperties props = {};
-            props.cullMode                       = CULLMODE_FRONT;
+            props.cullMode                       = CULLMODE_BACK;
             props.enableBlending                 = TRUE;
             props.polyMode                       = PolyMode::POLYMODE_FILL;
             props.sceneClearValue                = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -190,8 +190,8 @@ namespace VulkanEngine
 
                 if (pCam->IsEnable() == TRUE)
                 {
-                    const Math::Mat4* pViewMat       = &(pCam->GetViewMatrix());
-                    const Math::Mat4* pProspectMat   = &(pCam->GetProjectionMatrix());
+                    const Math::Mat4* pViewMat     = &(pCam->GetViewMatrix());
+                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
 
                     const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
 
