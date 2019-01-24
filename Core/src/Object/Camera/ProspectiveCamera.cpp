@@ -21,7 +21,7 @@ namespace Object
                          CameraType::PROSPECTIVE_CAM,
                          static_cast<CameraCreateInfo>(prosCamCreateInfo))
         {
-            m_projectionMatrix = Math::prospectiveProjectionMatrix(
+            m_projectionMatrix = Math::perspectiveProjectionMatrix(
                 Math::Radians(prosCamCreateInfo.fov),
                 (1.0f / prosCamCreateInfo.aspectRatio),
                 prosCamCreateInfo.nearClip,

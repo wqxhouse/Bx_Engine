@@ -12,9 +12,36 @@
 #include "Math.h"
 #include "Structures.h"
 
-#define PROJ_DIS 1.0f
+#define BX_COORDINATE_RH
+#define BX_CLIP_SPACE_DEPTH_ZERO_TO_ONE
 
 #define PROJ_DIS 1.0f
+
+#define BX_COORDINATE_SYSTEM_LEFT_HAND  0x00000000
+#define BX_COORDINATE_SYATEM_RIGHT_HAND 0x00000001
+
+#ifdef BX_COORDINATE_LH
+#define BX_COORDINATE_SYSTEM BX_COORDINATE_SYSTEM_LEFT_HAND
+#else
+#define BX_COORDINATE_SYSTEM BX_COORDINATE_SYATEM_RIGHT_HAND
+#endif // BX_COORDINATE_SYSTEM
+
+#define BX_DEPTH_ZERO_TO_ONE         0x00000000
+#define BX_DEPTH_NAGATIVE_ONE_TO_ONE 0x00000001
+
+#ifdef BX_CLIP_SPACE_DEPTH_ZERO_TO_ONE
+#define BX_CLIP_SPACE_DEPTH BX_DEPTH_ZERO_TO_ONE
+#else
+#define BX_CLIP_SPACE_DEPTH BX_DEPTH_NAGATIVE_ONE_TO_ONE
+#endif // BX_CLIP_SPACE
+
+#ifndef PI_DIVIDE_ONE_HUNDRED_EIGHTEEN
+#define PI_DIVIDE_ONE_HUNDRED_EIGHTEEN 0.01745329251994329576923690768489f
+#endif // PI_DIVIDE_180
+
+#ifndef ONE_HUNDRED_EIGHTEEN_DIVIDE_PI
+#define ONE_HUNDRED_EIGHTEEN_DIVIDE_PI 57.29577951f
+#endif // 180_DIVIDE_PI
 
 namespace Math
 {
@@ -171,17 +198,24 @@ namespace Math
         viewMat[2][1] = viewUp[2];
         viewMat[3][1] = -viewUp.dot(eyePos);
 
+#if BX_COORDINATE_SYSTEM == BX_COORDINATE_SYATEM_RIGHT_HAND
         viewMat[0][2] = back[0];
         viewMat[1][2] = back[1];
         viewMat[2][2] = back[2];
         viewMat[3][2] = front.dot(eyePos); // -back.dot(eyePos)
 
+#else
+        viewMat[0][2] = front[0];
+        viewMat[1][2] = front[1];
+        viewMat[2][2] = front[2];
+        viewMat[3][2] = back.dot(eyePos);  // -front.dot(eyePos)
+#endif
         viewMat[3][3] = 1.0f;
 
         return viewMat;
     }
 
-    Mat4 prospectiveProjectionMatrix(
+    Mat4 perspectiveProjectionMatrix(
         const float fov,             ///< Field of view (Important: Must be in radian)
         const float invAspectRatio,  ///< Inverse aspect ratio (1 / aspectRatio = Height / Width)
         const float nearClip,        ///< Near clip
@@ -196,10 +230,24 @@ namespace Math
         float invNagClipDis = 1.0f / (nearClip - farClip);
 
         projMat[0][0] = invTangent * invAspectRatio;
+
+#if BX_COORDINATE_SYSTEM == BX_COORDINATE_SYATEM_RIGHT_HAND
+        projMat[1][1] = -invTangent;
+#else
         projMat[1][1] = invTangent;
+#endif
+
         projMat[2][2] = (nearClip + farClip) * invNagClipDis;
         projMat[2][3] = -1;
         projMat[3][2] = 2.0f * nearClip * farClip * invNagClipDis;
+
+#if BX_CLIP_SPACE_DEPTH == BX_DEPTH_ZERO_TO_ONE
+        projMat[2][2] = farClip * invNagClipDis;
+        projMat[3][2] = nearClip * farClip * invNagClipDis;
+#else
+        projMat[2][2] = (nearClip + farClip) * invNagClipDis;
+        projMat[3][2] = 2.0f * nearClip * farClip * invNagClipDis;
+#endif
 
         return projMat;
     }

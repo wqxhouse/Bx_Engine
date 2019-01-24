@@ -12,6 +12,8 @@
 #include "Matrix3x3.h"
 #include "Vector4.h"
 
+#define BX_MATRIX_MAJOR_COLUMN
+
 namespace Math
 {
     class Matrix4x4
@@ -58,15 +60,6 @@ namespace Math
                 x31, x32, x33, x34,
                 x41, x42, x43, x44);
         }
-
-        /*Matrix4x4(const glm::mat4& glmMat4)
-        {
-            setMember(
-                glmMat4[0][0], glmMat4[0][1], glmMat4[0][2], glmMat4[0][3],
-                glmMat4[1][0], glmMat4[1][1], glmMat4[1][2], glmMat4[1][3],
-                glmMat4[2][0], glmMat4[2][1], glmMat4[2][2], glmMat4[2][3],
-                glmMat4[3][0], glmMat4[3][1], glmMat4[3][2], glmMat4[3][3]);
-        }*/
 
         void setMember(float f)
         {
@@ -164,11 +157,6 @@ namespace Math
             memcpy(m, &m2, sizeof(m2));
         }
 
-        /*void operator=(const glm::mat4& m2)
-        {
-            memcpy(m, &m2, sizeof(m2));
-        }*/
-
         Vector4& operator[](int i)
         {
             return r[i];
@@ -207,7 +195,7 @@ namespace Math
                 {
                     for (int m = 0, n = 0; m < 4, n < 4; m++, n++)
                     {
-                        result.m[j][i] += m1.m[i][m] * m2.m[n][j];
+                        result.m[i][j] += m1.m[i][m] * m2.m[n][j];
                     }
                 }
             }
@@ -216,8 +204,7 @@ namespace Math
         }
 
 
-        ~Matrix4x4()
-        {}
+        ~Matrix4x4() {}
 
     private:
         union
@@ -226,11 +213,6 @@ namespace Math
             float   m[4][4];
         };
     };
-
-    inline Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2)
-    {
-        return Matrix4x4::product(m1, m2);
-    }
 
     typedef Matrix4x4 Mat4;
 }

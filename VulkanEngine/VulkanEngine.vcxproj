@@ -58,7 +58,6 @@
     <ClInclude Include="src\Texture\VulkanTexture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
     <None Include="VulkanEngine.licenseheader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
