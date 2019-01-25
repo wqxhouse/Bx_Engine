@@ -174,25 +174,25 @@ namespace VulkanEngine
         }
         
         BOOL DescriptorMgr::updateDescriptorSet(
-            const std::vector<DescriptorUpdateInfo>& descriptorUpdateData)
+            const std::vector<DescriptorUpdateInfo>& descriptorSetUpdateInfo)
         {
             BOOL result = BX_SUCCESS;
             
-            size_t descriptorUpdateNum = descriptorUpdateData.size();
+            size_t descriptorUpdateNum = descriptorSetUpdateInfo.size();
 
             std::vector<VkWriteDescriptorSet> writeDescriptorSetList(descriptorUpdateNum);
 
             for (size_t i = 0; i < descriptorUpdateNum; ++i)
             {
-                BX_DESCRIPTOR_TYPE descriptorType = descriptorUpdateData[i].descriptorType;
+                BX_DESCRIPTOR_TYPE descriptorType = descriptorSetUpdateInfo[i].descriptorType;
 
                 writeDescriptorSetList[i].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSetList[i].descriptorType  = Utility::VulkanUtility::GetVkDescriptorType(descriptorType);
                 writeDescriptorSetList[i].descriptorCount = 1;
                 writeDescriptorSetList[i].dstSet          =
-                    m_descriptorSetList[descriptorUpdateData[i].descriptorSetIndex];
+                    m_descriptorSetList[descriptorSetUpdateInfo[i].descriptorSetIndex];
                 writeDescriptorSetList[i].dstBinding      =
-                    descriptorUpdateData[i].descriptorBindingIndex;
+                    descriptorSetUpdateInfo[i].descriptorBindingIndex;
                 writeDescriptorSetList[i].dstArrayElement = 0;
 
                 switch (descriptorType)
@@ -200,9 +200,9 @@ namespace VulkanEngine
                     case BX_UNIFORM_DESCRIPTOR:
                     {
                         VkDescriptorBufferInfo descriptorBufferInfo = {};
-                        descriptorBufferInfo.buffer = descriptorUpdateData[i].pDescriptorBuffer->GetBuffer();
+                        descriptorBufferInfo.buffer = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetBuffer();
                         descriptorBufferInfo.offset = 0;
-                        descriptorBufferInfo.range  = descriptorUpdateData[i].pDescriptorBuffer->GetBufferSize();
+                        descriptorBufferInfo.range  = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetBufferSize();
 
                         writeDescriptorSetList[i].pBufferInfo = &descriptorBufferInfo;
 
@@ -213,9 +213,9 @@ namespace VulkanEngine
                         VkDescriptorImageInfo descriptorImageInfo = {};
                         descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                         descriptorImageInfo.imageView   =
-                            descriptorUpdateData[i].pDescriptorTexture->GetTextureImageView();
+                            descriptorSetUpdateInfo[i].pDescriptorTexture->GetTextureImageView();
                         descriptorImageInfo.sampler     =
-                            descriptorUpdateData[i].pDescriptorTexture->GetTextureSampler();
+                            descriptorSetUpdateInfo[i].pDescriptorTexture->GetTextureSampler();
 
                         writeDescriptorSetList[i].pImageInfo = &descriptorImageInfo;
 

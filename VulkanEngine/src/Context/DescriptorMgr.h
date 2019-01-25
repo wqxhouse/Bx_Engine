@@ -60,7 +60,7 @@ namespace VulkanEngine
                 const std::vector<UINT>&                  descriptorSetIndexList);
 
             BOOL updateDescriptorSet(
-                const std::vector<DescriptorUpdateInfo>& descriptorUpdateData);
+                const std::vector<DescriptorUpdateInfo>& descriptorSetUpdateInfo);
 
             VkDescriptorSetLayout createDescriptorSetLayout(
                 const std::vector<DescriptorCreateInfo>& descriptorsCreateInfo);
