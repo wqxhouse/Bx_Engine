@@ -181,38 +181,6 @@ namespace VulkanEngine
                 assert(status == BX_SUCCESS);
             }
 
-            const Scene::RenderScene* pScene = m_pScene;
-
-            const UINT camNum = pScene->GetSceneCameraNum();
-            for (UINT i = 0; i < camNum; ++i)
-            {
-                Object::Camera::CameraBase* pCam = pScene->GetCamera(i);
-
-                if (pCam->IsEnable() == TRUE)
-                {
-                    const Math::Mat4* pViewMat     = &(pCam->GetViewMatrix());
-                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
-
-                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
-
-                    const UINT modelNum = pScene->GetSceneModelNum();
-
-                    for (UINT j = 0; j < modelNum; ++j)
-                    {
-                        Object::Model::ModelObject* pModel = pScene->GetModel(j);
-                        pModel->GetTrans()->TransPos(Math::Vector3(0.0f, -delta, 0.0f));
-
-                        if (pModel->IsEnable() == TRUE)
-                        {
-                            const Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
-                            status = m_pDescriptorBufferList[0]->updateBufferData(sizeof(wvpMat), &wvpMat);
-
-                            assert(status == BX_SUCCESS);
-                        }
-                    }
-                }
-            }
-
             return status;
         }
 

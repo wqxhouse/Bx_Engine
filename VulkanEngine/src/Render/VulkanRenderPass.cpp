@@ -63,8 +63,6 @@ namespace VulkanEngine
 
             // Not support updating textures at real-time
 
-
-
             assert(status == BX_SUCCESS);
 
             return status;
@@ -73,6 +71,8 @@ namespace VulkanEngine
         BOOL VulkanRenderPass::draw()
         {
             BOOL status = BX_SUCCESS;
+
+            const Scene::RenderScene* pScene = m_pScene;
 
             const UINT framebufferSize = static_cast<UINT>(m_framebufferList.size());
             const UINT cmdBufferOffset = m_pCmdBufferMgr->GetGraphicsCmdBufferNum();
@@ -106,31 +106,69 @@ namespace VulkanEngine
                                                 m_renderViewport,
                                                 { *m_pClearColor });
 
-                    size_t vertexInputResourceNum = m_pVertexInputResourceList->size();
-
-                    for (size_t j = 0; j < vertexInputResourceNum; ++j)
+                    const UINT camNum = pScene->GetSceneCameraNum();
+                    for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
                     {
-                        VulkanVertexInputResource* pVertexInputResource = &(m_pVertexInputResourceList->at(j));
+                        Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
+                        
+                        const UINT vertexInputResourceNum = static_cast<UINT>(m_pVertexInputResourceList->size());
+                        UINT vertexInputResourceCounter   = 0;
 
-                        pCmdBuffer->cmdBindVertexBuffers({ pVertexInputResource->pVertexBuffer->GetVertexBuffer() },
-                                                         { 0 });
-
-                        Buffer::VulkanIndexBuffer* pIndexBuffer = pVertexInputResource->pIndexBuffer;
-
-                        pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
-                                                        { 0 },
-                                                        pIndexBuffer->GetIndexType());
-
-                        if (m_pDescriptorMgr->GetDescriptorSetNum() > 0)
+                        if (pCam->IsEnable() == TRUE)
                         {
-                            if (m_pDescriptorMgr->GetDescriptorSet(0) != VK_NULL_HANDLE)
+                            const Math::Mat4* pViewMat = &(pCam->GetViewMatrix());
+                            const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
+
+                            const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
+
+                            const UINT modelNum = pScene->GetSceneModelNum();
+
+                            for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
                             {
-                                pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
-                                                                  { m_pDescriptorMgr->GetDescriptorSet(0) });
+                                Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
+
+                                const UINT meshNum = pModel->GetMeshNum();
+
+                                // pModel->GetTrans()->TransPos(Math::Vector3(0.0f, -delta, 0.0f));
+
+                                if (pModel->IsEnable() == TRUE)
+                                {
+                                    Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
+
+                                    status = m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer->updateBufferData(
+                                        m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer->GetBufferSize(),
+                                        &wvpMat);
+
+                                    for (UINT meshIndex = 0; meshIndex < meshNum; ++meshIndex)
+                                    {
+                                        VulkanVertexInputResource* pVertexInputResource = &(m_pVertexInputResourceList->at(vertexInputResourceCounter));
+
+                                        pCmdBuffer->cmdBindVertexBuffers({ pVertexInputResource->pVertexBuffer->GetVertexBuffer() },
+                                                                         { 0 });
+
+                                        Buffer::VulkanIndexBuffer* pIndexBuffer = pVertexInputResource->pIndexBuffer;
+
+                                        pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
+                                                                        { 0 },
+                                                                        pIndexBuffer->GetIndexType());
+
+                                        if (m_pDescriptorMgr->GetDescriptorSetNum() > 0)
+                                        {
+                                            if (m_pDescriptorMgr->GetDescriptorSet(0) != VK_NULL_HANDLE)
+                                            {
+                                                pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
+                                                                                  { m_pDescriptorMgr->GetDescriptorSet(0) });
+                                            }
+                                        }
+
+                                        pCmdBuffer->cmdDrawElements(m_graphicsPipeline, pIndexBuffer->GetIndexNum(), 0, 0);
+                                        assert(status == BX_SUCCESS);
+
+                                        vertexInputResourceCounter++;
+                                    }
+                                }
                             }
                         }
-
-                        pCmdBuffer->cmdDrawElements(m_graphicsPipeline, pIndexBuffer->GetIndexNum(), 0, 0);
                     }
 
                     pCmdBuffer->endRenderPass();
@@ -466,15 +504,15 @@ namespace VulkanEngine
             {
                 std::vector<Mgr::DescriptorCreateInfo> descriptorCreateInfo(descriptorTotalNum);
 
-                std::vector<Mgr::DescriptorUpdateInfo> uniformBufferDescriptorUpdateInfo(uniformBufferDescriptorNum);
-                std::vector<Mgr::DescriptorUpdateInfo> textureDescriptorUpdateInfo(textureDescriptorNum);
+                m_uniformBufferDescriptorUpdateInfo.resize(uniformBufferDescriptorNum);
+                m_textureDescriptorUpdateInfo.resize(textureDescriptorNum);
 
                 UINT descriptorCounter = 0;
 
                 for (UINT i = 0; i < uniformBufferDescriptorNum; ++i)
                 {
                     Mgr::DescriptorCreateInfo* pDescriptorCreateInfo            = &(descriptorCreateInfo[i]);
-                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo            = &(uniformBufferDescriptorUpdateInfo[i]);
+                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo            = &(m_uniformBufferDescriptorUpdateInfo[i]);
                     Render::VulkanUniformBufferResource* pUniformbufferResource = &(pResource->pUniformBufferResourceList->at(i));
 
                     pDescriptorCreateInfo->descriptorType = BX_UNIFORM_DESCRIPTOR;
@@ -494,7 +532,7 @@ namespace VulkanEngine
                 for (UINT i = 0; i < textureDescriptorNum; ++i)
                 {
                     Mgr::DescriptorCreateInfo* pDescriptorCreateInfo = &(descriptorCreateInfo[i + descriptorCounter]);
-                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo = &(textureDescriptorUpdateInfo[i]);
+                    Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo = &(m_textureDescriptorUpdateInfo[i]);
                     Render::VulkanTextureResource* pTexResource      = &(pResource->pTextureResouceList->at(i));
 
                     pDescriptorCreateInfo->descriptorType = BX_SAMPLER_DESCRIPTOR;
@@ -539,8 +577,8 @@ namespace VulkanEngine
 
                 assert(status = BX_SUCCESS);
 
-                status = m_pDescriptorMgr->updateDescriptorSet(uniformBufferDescriptorUpdateInfo);
-                status = m_pDescriptorMgr->updateDescriptorSet(textureDescriptorUpdateInfo);
+                status = m_pDescriptorMgr->updateDescriptorSet(m_uniformBufferDescriptorUpdateInfo);
+                status = m_pDescriptorMgr->updateDescriptorSet(m_textureDescriptorUpdateInfo);
 
                 assert(status = BX_SUCCESS);
             }

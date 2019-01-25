@@ -128,6 +128,13 @@ namespace VulkanEngine
             }
 
         private:
+            struct VulkanRenderPassUniformBufferUpdateData
+            {
+                Mgr::DescriptorUpdateInfo* pUpdateInfo;
+                void*                      data;
+                BOOL                       isUpdate;
+            };
+
             // Create VkRenderPass and generate framebuffers
             BOOL createRenderTargets(
                 const std::vector<VulkanRenderTargetCreateData>* pRenderTargetsCreateDataList,
@@ -139,26 +146,29 @@ namespace VulkanEngine
                 Shader::BxShaderMeta*   const pShaderMeta,
                 VulkanRenderResources*  const pResource);
 
-            const Setting*            m_pSetting;
-            const VkDevice*           m_pDevice;
-            Mgr::CmdBufferMgr* const  m_pCmdBufferMgr;
-            Mgr::DescriptorMgr* const m_pDescriptorMgr;
+            const Setting*                          m_pSetting;
+            const VkDevice*                         m_pDevice;
+            Mgr::CmdBufferMgr* const                m_pCmdBufferMgr;
+            Mgr::DescriptorMgr* const               m_pDescriptorMgr;
 
-            VDeleter<VkRenderPass>    m_renderPass;
-            VDeleter<VkPipeline>      m_graphicsPipeline;
+            VDeleter<VkRenderPass>                  m_renderPass;
+            VDeleter<VkPipeline>                    m_graphicsPipeline;
 
-            const Scene::RenderScene* m_pScene;
+            const Scene::RenderScene*               m_pScene;
 
-            Shader::VulkanGraphicsShader m_shader;
+            Shader::VulkanGraphicsShader            m_shader;
 
-            std::vector<Buffer::VulkanFramebuffer> m_framebufferList;
+            std::vector<Buffer::VulkanFramebuffer>  m_framebufferList;
 
             std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
 
-            VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
+            std::vector<Mgr::DescriptorUpdateInfo>  m_uniformBufferDescriptorUpdateInfo;
+            std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
 
-            VkRect2D      m_renderViewport;
-            VkClearValue* m_pClearColor;
+            VDeleter<VkPipelineLayout>              m_graphicsPipelineLayout;
+
+            VkRect2D                                m_renderViewport;
+            VkClearValue*                           m_pClearColor;
         };
     }
 }
