@@ -159,6 +159,9 @@
     <ClInclude Include="src\Memory\MemoryPool.h">
       <Filter>src\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math\BitUtils.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Math\Math.cpp">

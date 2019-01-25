@@ -186,6 +186,7 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Core\PCH.h" />
     <ClInclude Include="src\Core\TypeDef.h" />
     <ClInclude Include="src\Core\Utility.h" />
+    <ClInclude Include="src\Math\BitUtils.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix2x2.h" />
     <ClInclude Include="src\Math\Matrix3x3.h" />

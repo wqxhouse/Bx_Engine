@@ -100,7 +100,7 @@ namespace VulkanEngine
             // Initialize uniform buffers for render pass
             Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
 
-            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, sizeof(Math::Mat4), &Math::Mat4());
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, 1, sizeof(Math::Mat4), &Math::Mat4());
 
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));

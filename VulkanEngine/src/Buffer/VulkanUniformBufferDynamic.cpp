@@ -1,31 +1,31 @@
 //=================================================================================================
 //
 //  Bx Engine
-//  bxs3514 (Xiangshun Bei) @ 2016 - 2018
+//  bxs3514 (Xiangshun Bei) @ 2016 - 2019
 //
 //  All code licensed under the MIT license
 //
 //================================================================================================
 
-#pragma once
-
-#include "VulkanUniformBuffer.h"
+#include "VulkanUniformBufferDynamic.h"
 
 namespace VulkanEngine
 {
     namespace Buffer
     {
-        VulkanUniformBuffer::VulkanUniformBuffer(
-            const VkDevice* const pDevice)
-            : VulkanDescriptorBuffer(pDevice, NULL)
+        VulkanUniformBufferDynamic::VulkanUniformBufferDynamic(
+            const VkDevice* const pDevice,
+            const VkDeviceSize    minUniformBufferOffsetAlignment)
+            : VulkanUniformBuffer(pDevice),
+              m_minUniformBufferOffsetAlignment(minUniformBufferOffsetAlignment)
         {
         }
 
-        VulkanUniformBuffer::~VulkanUniformBuffer()
+        VulkanUniformBufferDynamic::~VulkanUniformBufferDynamic()
         {
         }
 
-        BOOL VulkanUniformBuffer::createDescriptorSetLayout(
+        BOOL VulkanUniformBufferDynamic::createDescriptorSetLayout(
             const UINT               bindingPoint,
             const UINT               descriptorNum,
             const VkShaderStageFlags stageFlags)
@@ -33,7 +33,7 @@ namespace VulkanEngine
             BOOL result = BX_SUCCESS;
 
             VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
-            descriptorSetLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            descriptorSetLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
             descriptorSetLayoutBinding.binding            = bindingPoint;
             descriptorSetLayoutBinding.descriptorCount    = descriptorNum;
             descriptorSetLayoutBinding.stageFlags         = stageFlags;
@@ -55,7 +55,7 @@ namespace VulkanEngine
             return result;
         }
 
-        BOOL VulkanUniformBuffer::createUniformBuffer(
+        BOOL VulkanUniformBufferDynamic::createUniformBuffer(
             const VkPhysicalDevice& hwDevice,
             const VkDeviceSize      uboNum,
             const VkDeviceSize      uboSize,
@@ -63,19 +63,27 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            m_bufferSize = uboSize;
+            VkDeviceSize m_dynamicUniformBufferAlignmentSize = calDynamicUniformBufferAlignmentSize(uboSize);
 
-            BxBufferCreateInfo uboCreateInfo = {};
-            uboCreateInfo.bufferUsage        = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-            uboCreateInfo.bufferSize         = uboNum * uboSize;
-            uboCreateInfo.bufferData         = uboData;
-            uboCreateInfo.bufferOptimization = FALSE;
-
-            result = createBuffer(hwDevice, uboCreateInfo);
+            result = VulkanUniformBuffer::createUniformBuffer(hwDevice,
+                                                              uboNum,
+                                                              m_dynamicUniformBufferAlignmentSize,
+                                                              uboData);
 
             assert(result == BX_SUCCESS);
 
             return result;
+        }
+        VkDeviceSize VulkanUniformBufferDynamic::calDynamicUniformBufferAlignmentSize(
+            const VkDeviceSize uboSize)
+        {
+            VkDeviceSize alignmentSize;
+
+            assert(Math::BitUtils::IsPowOfTwo(uboSize) == TRUE);
+
+            alignmentSize = ((uboSize + m_minUniformBufferOffsetAlignment - 1) & (~(uboSize - 1)));
+
+            return alignmentSize;
         }
     }
 }
