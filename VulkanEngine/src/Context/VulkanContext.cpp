@@ -497,8 +497,10 @@ namespace VulkanEngine
             {
                 m_deviceExtSupport = TRUE;
 
-                m_isSamplerAnisotropySupport =
-                    Utility::VulkanUtility::IsSamplerAnisotropySupport(m_vkActiveHwGpuDeviceList[0]);
+                m_hwProps    = VulkanUtility::GetHwProperties(m_vkActiveHwGpuDeviceList[0]);
+                m_hwFeatures = VulkanUtility::GetHwFeatures(m_vkActiveHwGpuDeviceList[0]);
+
+                m_isSamplerAnisotropySupport = m_hwFeatures.samplerAnisotropy;
 
                 result = BX_SUCCESS;
             }

@@ -34,6 +34,12 @@ namespace VulkanEngine
 
             static std::vector<const char*> GetRequiredExts();
 
+            static VkPhysicalDeviceProperties GetHwProperties(
+                const VkPhysicalDevice& hwGpuDevice);
+
+            static VkPhysicalDeviceFeatures GetHwFeatures(
+                const VkPhysicalDevice& hwGpuDevice);
+
             static UINT GetHwDeviceScore(
                 const VkPhysicalDevice& hwGpuDevice);
 
@@ -629,19 +635,6 @@ namespace VulkanEngine
                 }
 
                 return borderColor;
-            }
-
-            static INLINE BOOL IsSamplerAnisotropySupport(
-                const VkPhysicalDevice hwDevice)
-            {
-                BOOL result = TRUE;
-
-                VkPhysicalDeviceFeatures supportedFeatures;
-                vkGetPhysicalDeviceFeatures(hwDevice, &supportedFeatures);
-
-                result = ((supportedFeatures.samplerAnisotropy == VK_TRUE) ? TRUE : FALSE);
-
-                return result;
             }
 
             static INLINE VkImageLayout GetAttachmentVkImageLayout(

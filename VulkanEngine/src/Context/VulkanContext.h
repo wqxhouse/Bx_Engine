@@ -54,7 +54,9 @@ namespace VulkanEngine
             m_pRenderSceneList.push_back(pNewScene);
         }
 
-        INLINE BOOL IsSamplerAnisotropySupport() const { return m_isSamplerAnisotropySupport; }
+        INLINE const BOOL IsSamplerAnisotropySupport()           const { return m_isSamplerAnisotropySupport; }
+        INLINE const VkPhysicalDeviceProperties& GetHwProps()    const { return m_hwProps;                    }
+        INLINE const VkPhysicalDeviceFeatures&   GetHwFeatures() const { return m_hwFeatures;                 }
 
     private:
         BOOL initWindow();
@@ -87,6 +89,10 @@ namespace VulkanEngine
         VDeleter<VkSurfaceKHR>        m_vkSurface;
         std::vector<VkPhysicalDevice> m_vkActiveHwGpuDeviceList;
         VDeleter<VkDevice>            m_vkDevice;
+
+        // Properties
+        VkPhysicalDeviceProperties m_hwProps;
+        VkPhysicalDeviceFeatures   m_hwFeatures;
 
         // Timer
         float m_prevTime;
