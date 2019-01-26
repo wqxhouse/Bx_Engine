@@ -9,7 +9,14 @@
 
 #pragma once
 
+#include <Memory/BxMemory.h>
+
 #include "VulkanUniformBuffer.h"
+
+#define MAX_DYNAMIC_UNIFORM_STRUCT_SIZE 1024
+#define MAX_DYNAMIC_UNIFORM_STRUCT_NUM  4096
+
+#define MAX_DYNAMIC_UNIFORM_SIZE ((MAX_DYNAMIC_UNIFORM_STRUCT_NUM) * (MAX_DYNAMIC_UNIFORM_STRUCT_SIZE))
 
 namespace VulkanEngine
 {

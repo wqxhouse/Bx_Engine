@@ -74,12 +74,14 @@ namespace VulkanEngine
 
             return result;
         }
+
         VkDeviceSize VulkanUniformBufferDynamic::calDynamicUniformBufferAlignmentSize(
             const VkDeviceSize uboSize)
         {
             VkDeviceSize alignmentSize;
 
-            assert(Math::BitUtils::IsPowOfTwo(uboSize) == TRUE);
+            assert(m_minUniformBufferOffsetAlignment > 0 &&
+                   Math::BitUtils::IsPowOfTwo(m_minUniformBufferOffsetAlignment) == TRUE);
 
             alignmentSize = ((uboSize + m_minUniformBufferOffsetAlignment - 1) & (~(uboSize - 1)));
 
