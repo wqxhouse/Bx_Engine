@@ -26,8 +26,8 @@ namespace VulkanEngine
         {
         public:
             VulkanUniformBufferDynamic(
-                const VkDevice* const pDevice,
-                const VkDeviceSize    minUniformBufferOffsetAlignment);
+                const VkDevice*    const pDevice,
+                const VkDeviceSize       minUniformBufferOffsetAlignment);
 
             ~VulkanUniformBufferDynamic();
 
@@ -42,11 +42,17 @@ namespace VulkanEngine
                 const VkDeviceSize      uboSize,
                 const void*             uboData);
             
+            void updateUniformBufferDataRange(
+                const void* uboData);
+
         private:
             VkDeviceSize calDynamicUniformBufferAlignmentSize(
                 const VkDeviceSize uboSize);
 
             const VkDeviceSize m_minUniformBufferOffsetAlignment;
+
+            VkDeviceSize m_uniformStructSize;
+            VkDeviceSize m_uniformStructNum;
         };
     }
 }

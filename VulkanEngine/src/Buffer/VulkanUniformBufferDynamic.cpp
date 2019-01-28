@@ -14,8 +14,8 @@ namespace VulkanEngine
     namespace Buffer
     {
         VulkanUniformBufferDynamic::VulkanUniformBufferDynamic(
-            const VkDevice* const pDevice,
-            const VkDeviceSize    minUniformBufferOffsetAlignment)
+            const VkDevice*    const pDevice,
+            const VkDeviceSize       minUniformBufferOffsetAlignment)
             : VulkanUniformBuffer(pDevice),
               m_minUniformBufferOffsetAlignment(minUniformBufferOffsetAlignment)
         {
@@ -63,11 +63,19 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            VkDeviceSize m_dynamicUniformBufferAlignmentSize = calDynamicUniformBufferAlignmentSize(uboSize);
+            m_uniformStructNum  = uboNum;
+            m_uniformStructSize = calDynamicUniformBufferAlignmentSize(uboSize);
+
+            VkDeviceSize m_dynamicUniformBufferSize = m_uniformStructSize * m_uniformStructNum;
+
+            assert(
+                (uboNum                     <= MAX_DYNAMIC_UNIFORM_STRUCT_NUM)  &&
+                (m_uniformStructSize        <= MAX_DYNAMIC_UNIFORM_STRUCT_SIZE) &&
+                (m_dynamicUniformBufferSize <= MAX_DYNAMIC_UNIFORM_SIZE));
 
             result = VulkanUniformBuffer::createUniformBuffer(hwDevice,
                                                               uboNum,
-                                                              m_dynamicUniformBufferAlignmentSize,
+                                                              m_uniformStructSize,
                                                               uboData);
 
             assert(result == BX_SUCCESS);
