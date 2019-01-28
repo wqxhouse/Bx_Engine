@@ -304,6 +304,9 @@ namespace VulkanEngine
                     case BX_STORAGE_BUFFER_DESCRIPTOR:
                         descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
                         break;
+                    case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
+                        descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+                        break;
                     default:
                         NotSupported();
                         break;

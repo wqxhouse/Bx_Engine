@@ -198,6 +198,7 @@ namespace VulkanEngine
                 switch (descriptorType)
                 {
                     case BX_UNIFORM_DESCRIPTOR:
+                    case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
                     {
                         VkDescriptorBufferInfo descriptorBufferInfo = {};
                         descriptorBufferInfo.buffer = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetBuffer();

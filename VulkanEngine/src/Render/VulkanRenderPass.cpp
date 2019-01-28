@@ -515,12 +515,12 @@ namespace VulkanEngine
                     Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo            = &(m_uniformBufferDescriptorUpdateInfo[i]);
                     Render::VulkanUniformBufferResource* pUniformbufferResource = &(pResource->pUniformBufferResourceList->at(i));
 
-                    pDescriptorCreateInfo->descriptorType = BX_UNIFORM_DESCRIPTOR;
+                    pDescriptorCreateInfo->descriptorType = BX_UNIFORM_DESCRIPTOR_DYNAMIC;
                     pDescriptorCreateInfo->bindingPoint   = pUniformbufferResource->bindingPoint;
                     pDescriptorCreateInfo->descriptorNum  = pUniformbufferResource->uniformbufferNum;
                     pDescriptorCreateInfo->shaderType     = pUniformbufferResource->shaderType;
 
-                    pDescriptorUpdateInfo->descriptorType         = BX_UNIFORM_DESCRIPTOR;
+                    pDescriptorUpdateInfo->descriptorType         = BX_UNIFORM_DESCRIPTOR_DYNAMIC;
                     pDescriptorUpdateInfo->descriptorSetIndex     = 0;
                     pDescriptorUpdateInfo->descriptorBindingIndex = pUniformbufferResource->bindingPoint;
                     pDescriptorUpdateInfo->pDescriptorBuffer      = pUniformbufferResource->pUniformBuffer;

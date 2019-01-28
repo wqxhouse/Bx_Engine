@@ -18,7 +18,7 @@
 #include "../Shader/VulkanGraphicsShader.h"
 #include "../Buffer/VulkanVertexBuffer.h"
 #include "../Buffer/VulkanIndexBuffer.h"
-#include "../Buffer/VulkanUniformBuffer.h"
+#include "../Buffer/VulkanUniformBufferDynamic.h"
 #include "../Buffer/VulkanFramebuffer.h"
 
 namespace VulkanEngine
@@ -128,12 +128,12 @@ namespace VulkanEngine
             }
 
         private:
-            struct VulkanRenderPassUniformBufferUpdateData
+            /*struct VulkanRenderPassUniformBufferUpdateData
             {
                 Mgr::DescriptorUpdateInfo* pUpdateInfo;
                 void*                      data;
                 BOOL                       isUpdate;
-            };
+            };*/
 
             // Create VkRenderPass and generate framebuffers
             BOOL createRenderTargets(
@@ -146,6 +146,7 @@ namespace VulkanEngine
                 Shader::BxShaderMeta*   const pShaderMeta,
                 VulkanRenderResources*  const pResource);
 
+            // Context
             const Setting*                          m_pSetting;
             const VkDevice*                         m_pDevice;
             Mgr::CmdBufferMgr* const                m_pCmdBufferMgr;
@@ -154,6 +155,7 @@ namespace VulkanEngine
             VDeleter<VkRenderPass>                  m_renderPass;
             VDeleter<VkPipeline>                    m_graphicsPipeline;
 
+            // Resources
             const Scene::RenderScene*               m_pScene;
 
             Shader::VulkanGraphicsShader            m_shader;

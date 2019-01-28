@@ -89,7 +89,7 @@ namespace VulkanEngine
             }
 
             // Initialize render pass resources
-            std::vector<Render::VulkanUniformBufferResource*> uniformbufferResources;
+            // std::vector<Render::VulkanUniformBufferResource*> uniformbufferResources;
 
             // Initialize vertex input for render pass
             Render::VulkanRenderResources renderSources = {};
@@ -98,7 +98,11 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             // Initialize uniform buffers for render pass
-            Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
+            const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
+
+            Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
+                new Buffer::VulkanUniformBufferDynamic(m_pDevice,
+                                                       hwProps.limits.minUniformBufferOffsetAlignment);
 
             pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, 1, sizeof(Math::Mat4), &Math::Mat4());
 
@@ -110,7 +114,7 @@ namespace VulkanEngine
             mainSceneUniformbufferResourceList[0].bindingPoint     = 0;
             mainSceneUniformbufferResourceList[0].uniformbufferNum = 1;
             mainSceneUniformbufferResourceList[0].pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[0].get());
+                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[0].get());
 
             renderSources.pUniformBufferResourceList = &mainSceneUniformbufferResourceList;
 
