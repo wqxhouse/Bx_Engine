@@ -59,7 +59,8 @@ namespace VulkanEngine
             const VkPhysicalDevice& hwDevice,
             const VkDeviceSize      uboNum,
             const VkDeviceSize      uboSize,
-            const void*             uboData)
+            const void*             uboData,
+            const BOOL              uboDynamic)
         {
             BOOL result = BX_SUCCESS;
 
@@ -79,6 +80,21 @@ namespace VulkanEngine
                                                               uboData);
 
             assert(result == BX_SUCCESS);
+
+            return result;
+        }
+
+        BOOL VulkanUniformBufferDynamic::updateUniformBufferDataRange(
+            const std::vector<VulkanBufferRangeData>& bufferRangeData)
+        {
+            BOOL result = BX_SUCCESS;
+
+            assert((IsBufferDynamic()   == TRUE) &&
+                   (IsBufferOptimized() == FALSE));
+
+            result = updateBufferDataRange(GetBufferSize(), m_uniformStructSize, bufferRangeData);
+
+            assert(result == FALSE);
 
             return result;
         }

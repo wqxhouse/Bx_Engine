@@ -17,6 +17,12 @@ namespace VulkanEngine
 {
     namespace Buffer
     {
+        struct VulkanBufferRangeData
+        {
+            UINT  offset;
+            void* data;
+        };
+
         class VulkanBufferBase
         {
         public:
@@ -41,11 +47,26 @@ namespace VulkanEngine
 
             INLINE const VkBuffer GetBuffer() const
             {
-                return ((m_enableOptimization == TRUE) ? m_gpuBuffer : m_hostBuffer);
+                return ((IsBufferOptimized() == TRUE) ? m_gpuBuffer : m_hostBuffer);
+            }
+
+            INLINE const BOOL IsBufferOptimized() const
+            {
+                return m_bufferFlags.bits.enableOptimization;
+            }
+
+            INLINE const BOOL IsBufferDynamic() const
+            {
+                return m_bufferFlags.bits.dynamicBuffer;
             }
 
         protected:
-            inline const VkDevice* const GetDevice() const { return m_pDevice; }
+            BOOL updateBufferDataRange(
+                const VkDeviceSize                        bufferSize,
+                const VkDeviceSize                        elementSize,
+                const std::vector<VulkanBufferRangeData>& offsets);
+
+            INLINE const VkDevice* const GetDevice() const { return m_pDevice; }
 
         private:
             BOOL updateHostBufferData(
@@ -65,7 +86,17 @@ namespace VulkanEngine
             VDeleter<VkBuffer>       m_gpuBuffer;
             VDeleter<VkDeviceMemory> m_gpuBufferMemory;
 
-            BOOL m_enableOptimization; // If enable staging buffer opt
+            union VulkanBufferFlags
+            {
+                UINT value;
+
+                struct
+                {
+                    BOOL enableOptimization : 1; // If enable staging buffer opt
+                    BOOL dynamicBuffer      : 1; // If the buffer can be dynamic updated
+                    UINT reserve            : 30;
+                } bits;
+            } m_bufferFlags;
         };
     }
 }

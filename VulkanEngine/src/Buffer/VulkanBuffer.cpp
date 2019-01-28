@@ -24,6 +24,8 @@ namespace VulkanEngine
 
             m_gpuBuffer        = { *m_pDevice, vkDestroyBuffer };
             m_gpuBufferMemory  = { *m_pDevice, vkFreeMemory    };
+
+            m_bufferFlags.value = 0;
         }
 
         VulkanBufferBase::~VulkanBufferBase()
@@ -36,20 +38,28 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            m_enableOptimization = bufferCreateInfo.bufferOptimization;
+            m_bufferFlags.bits.enableOptimization = bufferCreateInfo.bufferOptimization;
 
-            assert((m_pCmdBufferMgr == NULL && m_enableOptimization == FALSE) ||
+            assert((m_pCmdBufferMgr == NULL && m_bufferFlags.bits.enableOptimization == FALSE) ||
                    (m_pCmdBufferMgr != NULL));
 
-            if (m_enableOptimization == TRUE)
+            if (IsBufferOptimized() == TRUE)
             {
                 BxRawBufferCreateInfo hostBufferCreateInfo = {};
                 hostBufferCreateInfo.pBuffer               = m_hostBuffer.replace();
                 hostBufferCreateInfo.pBufferMemory         = m_hostBufferMemory.replace();
                 hostBufferCreateInfo.bufferUsage           = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
                 hostBufferCreateInfo.bufferSize            = bufferCreateInfo.bufferSize;
-                hostBufferCreateInfo.bufferProperties      = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                                                             VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+                if (IsBufferDynamic() == FALSE)
+                {
+                    hostBufferCreateInfo.bufferProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+                }
+                else
+                {
+                    hostBufferCreateInfo.bufferProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+                }
 
                 result = createRawBuffer(hwDevice, hostBufferCreateInfo);
 
@@ -97,8 +107,16 @@ namespace VulkanEngine
                 hostBufferCreateInfo.pBufferMemory         = m_hostBufferMemory.replace();
                 hostBufferCreateInfo.bufferUsage           = bufferCreateInfo.bufferUsage;
                 hostBufferCreateInfo.bufferSize            = bufferCreateInfo.bufferSize;
-                hostBufferCreateInfo.bufferProperties      = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                                                             VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+                
+                if (IsBufferDynamic() == FALSE)
+                {
+                    hostBufferCreateInfo.bufferProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+                }
+                else
+                {
+                    hostBufferCreateInfo.bufferProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+                }
 
                 result = createRawBuffer(hwDevice, hostBufferCreateInfo);
 
@@ -136,7 +154,7 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            if (m_enableOptimization == TRUE)
+            if (IsBufferOptimized() == TRUE)
             {
                 // TODO: Update data for optimized buffer
                 assert(FALSE);
@@ -147,6 +165,18 @@ namespace VulkanEngine
             }
 
             assert(result == BX_SUCCESS);
+
+            return result;
+        }
+
+        BOOL VulkanBufferBase::updateBufferDataRange(
+            const VkDeviceSize                        bufferSize,
+            const VkDeviceSize                        elementSize,
+            const std::vector<VulkanBufferRangeData>& offsets)
+        {
+            BOOL result = BX_SUCCESS;
+
+            NotImplemented();
 
             return result;
         }
@@ -203,10 +233,21 @@ namespace VulkanEngine
                 VkPhysicalDeviceMemoryProperties hwMemoryProps;
                 vkGetPhysicalDeviceMemoryProperties(hwDevice, &hwMemoryProps);
 
+                VkMemoryPropertyFlags memoryPropertyFlags;
+                if (IsBufferDynamic() == FALSE)
+                {
+                    memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+                }
+                else
+                {
+                    memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+                }
+
                 UINT memTypeIndex = Utility::VulkanUtility::FindMemoryType(
                     hwMemoryProps,
                     memRequirements.memoryTypeBits,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+                    memoryPropertyFlags);
 
                 assert(memTypeIndex != 0);
 

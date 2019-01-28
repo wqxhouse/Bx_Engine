@@ -40,10 +40,11 @@ namespace VulkanEngine
                 const VkPhysicalDevice& hwDevice,
                 const VkDeviceSize      uboNum,
                 const VkDeviceSize      uboSize,
-                const void*             uboData);
+                const void*             uboData,
+                const BOOL              uboDynamic);
             
-            void updateUniformBufferDataRange(
-                const void* uboData);
+            BOOL updateUniformBufferDataRange(
+                const std::vector<VulkanBufferRangeData>& bufferRangeData);
 
         private:
             VkDeviceSize calDynamicUniformBufferAlignmentSize(

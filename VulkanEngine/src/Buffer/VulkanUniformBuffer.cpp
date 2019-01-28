@@ -70,6 +70,7 @@ namespace VulkanEngine
             uboCreateInfo.bufferSize         = m_bufferSize;
             uboCreateInfo.bufferData         = uboData;
             uboCreateInfo.bufferOptimization = FALSE;
+            uboCreateInfo.bufferDynamic      = IsBufferDynamic();
 
             result = createBuffer(hwDevice, uboCreateInfo);
 

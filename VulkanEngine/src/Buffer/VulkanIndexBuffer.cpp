@@ -56,6 +56,7 @@ namespace VulkanEngine
                 sizeof(UINT) * static_cast<UINT16>(m_pIndexBufferData->size());
             indexBufferCreateInfo.bufferData         = m_pIndexBufferData->data();
             indexBufferCreateInfo.bufferOptimization = optimize;
+            indexBufferCreateInfo.bufferDynamic      = FALSE;
 
             result = createBuffer(hwDevice, indexBufferCreateInfo);
 

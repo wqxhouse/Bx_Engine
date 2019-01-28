@@ -157,6 +157,7 @@ namespace VulkanEngine
             imageRawBufferCreateInfo.bufferOptimization         = FALSE;
             imageRawBufferCreateInfo.bufferSize                 = texWidth * texHeight * 4;
             imageRawBufferCreateInfo.bufferUsage                = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+            imageRawBufferCreateInfo.bufferDynamic              = FALSE;
 
             vkImageRawBuffer.createBuffer(hwDevice, imageRawBufferCreateInfo);
             
