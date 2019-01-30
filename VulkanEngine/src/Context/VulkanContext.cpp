@@ -148,6 +148,8 @@ namespace VulkanEngine
 
             if (m_pWindow != NULL)
             {
+                glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
                 glfwSetKeyCallback(m_pWindow, key_callback);
                 glfwSetCursorPosCallback(m_pWindow, mouse_callback);
             }
@@ -774,10 +776,12 @@ namespace VulkanEngine
             }
             else
             {
+                callbackInfo.keyboardCallBack[key] = 1;
             }
         }
         else if (action == GLFW_RELEASE)
         {
+            callbackInfo.keyboardCallBack[key] = 0;
         }
     }
 
@@ -786,5 +790,23 @@ namespace VulkanEngine
         double      x_pos,
         double      y_pos)
     {
+        static bool   firstMouseCall = false;
+        static double prevPosX       = 0.0;
+        static double prevPosY       = 0.0;
+
+        if (!firstMouseCall)
+        {
+            firstMouseCall = true;
+            prevPosX       = x_pos;
+            prevPosY       = y_pos;
+        }
+        else
+        {
+            callbackInfo.cursorPosCallBack.delta_x = x_pos - prevPosX;
+            callbackInfo.cursorPosCallBack.delta_y = y_pos - prevPosY;
+
+            prevPosX = x_pos;
+            prevPosY = y_pos;
+        }
     }
 }

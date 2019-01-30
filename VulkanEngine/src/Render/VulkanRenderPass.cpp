@@ -57,11 +57,50 @@ namespace VulkanEngine
             return status;
         }
 
-        BOOL VulkanRenderPass::update()
+        BOOL VulkanRenderPass::update(
+            const float deltaTime)
         {
             BOOL status = BX_SUCCESS;
 
             // Not support updating textures at real-time
+
+            const Scene::RenderScene* pScene = m_pScene;
+
+            const UINT camNum = pScene->GetSceneCameraNum();
+            for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
+            {
+                Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
+
+                Buffer::VulkanDescriptorBuffer* pDescriptorBuffer =
+                    m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer;
+
+                if (pCam->IsEnable() == TRUE)
+                {
+                    pCam->update(deltaTime);
+
+                    const Math::Mat4* pViewMat     = &(pCam->GetViewMatrix());
+                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
+
+                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
+
+                    const UINT modelNum = pScene->GetSceneModelNum();
+
+                    std::vector<Math::Mat4> transfromMatList(modelNum * 4);
+
+                    for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
+                    {
+                        Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
+
+                        if (pModel->IsEnable() == TRUE)
+                        {
+                            Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
+                            transfromMatList[modelIndex * 4] = wvpMat;
+                        }
+                    }
+
+                    status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(), transfromMatList.data());
+                }
+            }
 
             assert(status == BX_SUCCESS);
 
