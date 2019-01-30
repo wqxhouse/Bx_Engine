@@ -168,24 +168,24 @@ namespace VulkanEngine
         }
 
         BOOL VulkanForwardRender::update(
-            const float delta)
+            const float deltaTime)
         {
             BOOL status = BX_SUCCESS;
 
             for (VulkanRenderPass preRenderPass : m_preDrawPassList)
             {
-                status = preRenderPass.update();
+                status = preRenderPass.update(deltaTime);
 
                 assert(status == BX_SUCCESS);
             }
 
-            status = m_mainSceneRenderPass.update();
+            status = m_mainSceneRenderPass.update(deltaTime);
 
             assert(status == BX_SUCCESS);
 
             for (VulkanRenderPass postRenderPass : m_postDrawPassList)
             {
-                status = postRenderPass.update();
+                status = postRenderPass.update(deltaTime);
 
                 assert(status == BX_SUCCESS);
             }

@@ -42,30 +42,34 @@ namespace Object
         }
 
         void CameraBase::rotate(float pitch, float yaw)
-        {            
-            CLAMP(pitch, -89.0f, 89.0f);
+        {
+            if (Math::FloatEqual(pitch, 0.0f) == FALSE ||
+                Math::FloatEqual(yaw, 0.0f)   == FALSE)
+            {
+                CLAMP(pitch, -89.0f, 89.0f);
 
-            Math::Vector3 m_front = Math::Vector3::Normalize(
-                Math::rotate(Math::Vector3(m_curFront),
-                    Math::Vector3(0.0f, 1.0f, 0.0f),
-                    Math::Radians(-yaw)));
+                Math::Vector3 m_front = Math::Vector3::Normalize(
+                    Math::rotate(Math::Vector3(m_curFront),
+                        Math::Vector3(0.0f, 1.0f, 0.0f),
+                        Math::Radians(-yaw)));
 
-            m_front = Math::rotate(
-                m_front, Math::Vector3(-m_front.z, 0.0f, m_front.x), Math::Radians(pitch));
+                m_front = Math::rotate(
+                    m_front, Math::Vector3(-m_front.z, 0.0f, m_front.x), Math::Radians(pitch));
 
-            Math::Vector3 m_right = Math::rotate(
-                Math::Vector3(m_curRight), Math::Vector3(0.0f, 1.0f, 0.0f), Math::Radians(-yaw));
+                Math::Vector3 m_right = Math::rotate(
+                    Math::Vector3(m_curRight), Math::Vector3(0.0f, 1.0f, 0.0f), Math::Radians(-yaw));
 
-            m_pTrans->SetTransBase(Math::Vector3::Normalize(m_front),
-                                   Math::Vector3::Normalize(Math::Vector3(m_right)));
+                m_pTrans->SetTransBase(Math::Vector3::Normalize(m_front),
+                    Math::Vector3::Normalize(Math::Vector3(m_right)));
 
-            m_curFront = m_pTrans->GetFront();
-            m_curRight = m_pTrans->GetRight();
+                m_curFront = m_pTrans->GetFront();
+                m_curRight = m_pTrans->GetRight();
+            }
         }
 
         void CameraBase::update(float deltaTime)
         {
-            /*if (callbackInfo.keyboardCallBack[GLFW_KEY_W] == 1)
+            if (callbackInfo.keyboardCallBack[GLFW_KEY_W] == 1)
             {
                 translate(m_pTrans->GetFront() * deltaTime);
             }
@@ -98,7 +102,7 @@ namespace Object
             else
             {
                 speed = originSpeed;
-            }*/
+            }
 
             m_pTrans->update();
         }
