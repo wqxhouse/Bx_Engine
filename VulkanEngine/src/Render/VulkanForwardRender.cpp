@@ -100,11 +100,16 @@ namespace VulkanEngine
             // Initialize uniform buffers for render pass
             const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
 
+            m_forwardRenderMainSceneUbo.resize(MAX_DYNAMIC_UNIFORM_STRUCT_NUM);
+
             Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
                 new Buffer::VulkanUniformBufferDynamic(m_pDevice,
                                                        hwProps.limits.minUniformBufferOffsetAlignment);
 
-            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, 1, sizeof(Math::Mat4), &Math::Mat4());
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
+                                                         (UINT)m_forwardRenderMainSceneUbo.size(),
+                                                         sizeof(m_forwardRenderMainSceneUbo[0]),
+                                                         m_forwardRenderMainSceneUbo.data());
 
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));

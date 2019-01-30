@@ -63,7 +63,8 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            m_bufferSize = uboNum * uboSize;
+            m_descriptorObjectSize = uboSize;
+            m_bufferSize           = uboNum * uboSize;
 
             BxBufferCreateInfo uboCreateInfo = {};
             uboCreateInfo.bufferUsage        = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;

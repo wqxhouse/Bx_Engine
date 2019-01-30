@@ -123,22 +123,35 @@ namespace VulkanEngine
 
                             const UINT modelNum = pScene->GetSceneModelNum();
 
+                            std::vector<Math::Mat4> transfromMatList(modelNum * 4);
+
                             for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
                             {
                                 Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
 
-                                const UINT meshNum = pModel->GetMeshNum();
+                                if (pModel->IsEnable() == TRUE)
+                                {
+                                    Math::Mat4 wvpMat                = vpMat * pModel->GetTrans()->GetTransMatrix();
+                                    transfromMatList[modelIndex * 4] = wvpMat;
+                                }
+                            }
+
+                            for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
+                            {
+                                Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
 
                                 // pModel->GetTrans()->TransPos(Math::Vector3(0.0f, -delta, 0.0f));
 
                                 if (pModel->IsEnable() == TRUE)
                                 {
-                                    Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
+                                    // status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(), &wvpMat);
+                                    Buffer::VulkanDescriptorBuffer* pDescriptorBuffer =
+                                        m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer;
 
-                                    status = m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer->updateBufferData(
-                                        m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer->GetBufferSize(),
-                                        &wvpMat);
+                                    const UINT dynamicUniformBufferOffset =
+                                        modelIndex * static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
 
+                                    const UINT meshNum = pModel->GetMeshNum();
                                     for (UINT meshIndex = 0; meshIndex < meshNum; ++meshIndex)
                                     {
                                         VulkanVertexInputResource* pVertexInputResource = &(m_pVertexInputResourceList->at(vertexInputResourceCounter));
@@ -156,8 +169,12 @@ namespace VulkanEngine
                                         {
                                             if (m_pDescriptorMgr->GetDescriptorSet(0) != VK_NULL_HANDLE)
                                             {
-                                                pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
-                                                                                  { m_pDescriptorMgr->GetDescriptorSet(0) });
+                                                /*pCmdBuffer->cmdBindDescriptorSets(m_graphicsPipelineLayout,
+                                                                                  { m_pDescriptorMgr->GetDescriptorSet(0) });*/
+
+                                                pCmdBuffer->cmdBindDynamicDescriptorSets(m_graphicsPipelineLayout,
+                                                                                         { m_pDescriptorMgr->GetDescriptorSet(0) },
+                                                                                         { dynamicUniformBufferOffset });
                                             }
                                         }
 
@@ -166,6 +183,9 @@ namespace VulkanEngine
 
                                         vertexInputResourceCounter++;
                                     }
+
+                                    status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(),
+                                                                                 static_cast<void*>(transfromMatList.data()));
                                 }
                             }
                         }
@@ -520,11 +540,11 @@ namespace VulkanEngine
                     pDescriptorCreateInfo->descriptorNum  = pUniformbufferResource->uniformbufferNum;
                     pDescriptorCreateInfo->shaderType     = pUniformbufferResource->shaderType;
 
-                    pDescriptorUpdateInfo->descriptorType         = BX_UNIFORM_DESCRIPTOR_DYNAMIC;
-                    pDescriptorUpdateInfo->descriptorSetIndex     = 0;
-                    pDescriptorUpdateInfo->descriptorBindingIndex = pUniformbufferResource->bindingPoint;
-                    pDescriptorUpdateInfo->pDescriptorBuffer      = pUniformbufferResource->pUniformBuffer;
-                    pDescriptorUpdateInfo->pDescriptorTexture     = NULL;
+                    pDescriptorUpdateInfo->descriptorType          = BX_UNIFORM_DESCRIPTOR_DYNAMIC;
+                    pDescriptorUpdateInfo->descriptorSetIndex      = 0;
+                    pDescriptorUpdateInfo->descriptorBindingIndex  = pUniformbufferResource->bindingPoint;
+                    pDescriptorUpdateInfo->pDescriptorBuffer       = pUniformbufferResource->pUniformBuffer;
+                    pDescriptorUpdateInfo->pDescriptorTexture      = NULL;
 
                     descriptorCounter++;
                 }

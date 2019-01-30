@@ -202,6 +202,7 @@ namespace VulkanEngine
                     {
                         VkDescriptorBufferInfo descriptorBufferInfo = {};
                         descriptorBufferInfo.buffer = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetBuffer();
+                        // TODO: Just updating partial of dynamic buffer
                         descriptorBufferInfo.offset = 0;
                         descriptorBufferInfo.range  = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetBufferSize();
 

@@ -178,6 +178,23 @@ namespace VulkanEngine
                                     NULL);
         }
 
+        void CmdBuffer::cmdBindDynamicDescriptorSets(
+            const VkPipelineLayout&             pipelineLayout,
+            const std::vector<VkDescriptorSet>& descriptorSets,
+            const std::vector<UINT>&            offsets)
+        {
+            assert(m_cmdStageFlags.begin == 1 && m_cmdStageFlags.render == 1);
+
+            vkCmdBindDescriptorSets(m_cmdBuffer,
+                                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                    pipelineLayout,
+                                    0,
+                                    static_cast<UINT>(descriptorSets.size()),
+                                    descriptorSets.data(),
+                                    static_cast<UINT>(offsets.size()),
+                                    offsets.data());
+        }
+
         // TODO: Copy multiple buffers
         void CmdBuffer::cmdCopyBuffer(
             const VkBuffer&         srcBuffer,

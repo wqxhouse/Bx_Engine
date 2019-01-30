@@ -34,12 +34,14 @@ namespace VulkanEngine
                 return m_descriptorSetLayout;
             }
 
-            INLINE const UINT64 GetBufferSize() const { return m_bufferSize; }
+            INLINE const VkDeviceSize GetBufferSize()           const { return m_bufferSize;           }
+            INLINE const VkDeviceSize GetDescriptorObjectSize() const { return m_descriptorObjectSize; }
 
         protected:
             VDeleter<VkDescriptorSetLayout> m_descriptorSetLayout;
 
-            UINT64 m_bufferSize;
+            VkDeviceSize m_bufferSize;
+            VkDeviceSize m_descriptorObjectSize;
         };
     }
 }

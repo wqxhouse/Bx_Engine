@@ -129,6 +129,12 @@ namespace VulkanEngine
             void draw();
 
         private:
+            struct ForwardRenderMainSceneUbo
+            {
+                Math::Mat4 transMat;
+            };
+            
+            std::vector<ForwardRenderMainSceneUbo> m_forwardRenderMainSceneUbo;
         };
 
         class VulkanDeferredRender : public VulkanRenderBase
