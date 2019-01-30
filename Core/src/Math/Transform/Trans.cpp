@@ -38,7 +38,7 @@ void Trans::update()
 
         if (m_transFlags.bits.viewFlag == 1)
         {
-            viewMatrix = Math::viewMatrix(pos, pos + front, up);
+            viewMatrix = Math::viewMatrix(pos, front, up);
         }
 
         // Reset all transform matrix flags

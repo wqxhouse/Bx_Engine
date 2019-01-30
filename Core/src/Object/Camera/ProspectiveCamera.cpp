@@ -37,10 +37,10 @@ namespace Object
 
         void ProspectiveCamera::update(float deltaTime)
         {
-            /*rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE,
+            rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE,
                    static_cast<float>(callbackInfo.cursorPosCallBack.delta_x)  * CAMERA_SENSATIVE);
 
-            callbackInfo.cursorPosCallBack.reset();*/
+            callbackInfo.cursorPosCallBack.reset();
             CameraBase::update(deltaTime);
         }
     }

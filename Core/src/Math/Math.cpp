@@ -170,7 +170,7 @@ namespace Math
         float sinThetaInv = 1.0f / std::sqrt(1 - cosTheta * cosTheta);
 
         Quaternion result = sin((1 - u) * theta) * sinThetaInv * q1 +
-            sin(u * theta) * sinThetaInv * q2;
+                            sin(u * theta) * sinThetaInv * q2;
 
         return result;
     }
@@ -182,11 +182,12 @@ namespace Math
     {
         Mat4 viewMat;
 
-        Vector3 right = Vector3::Normalize(Vector3::crossProduct(front, up));
-        Vector3 viewUp = Vector3::crossProduct(right, front);
-
         Vector3 nFront = Vector3::Normalize(front);
-        Vector3 back   = Vector3::Normalize(Vector3(-front.x, -front.y, -front.z));
+
+        Vector3 right  = Vector3::crossProduct(nFront, up);
+        Vector3 viewUp = Vector3::crossProduct(right, nFront);
+
+        Vector3 back   = Vector3(-nFront.x, -nFront.y, -nFront.z);
 
         viewMat[0][0] = right[0];
         viewMat[1][0] = right[1];
@@ -202,13 +203,13 @@ namespace Math
         viewMat[0][2] = back[0];
         viewMat[1][2] = back[1];
         viewMat[2][2] = back[2];
-        viewMat[3][2] = front.dot(eyePos); // -back.dot(eyePos)
+        viewMat[3][2] = nFront.dot(eyePos); // -back.dot(eyePos)
 
 #else
-        viewMat[0][2] = front[0];
-        viewMat[1][2] = front[1];
-        viewMat[2][2] = front[2];
-        viewMat[3][2] = back.dot(eyePos);  // -front.dot(eyePos)
+        viewMat[0][2] = nFront[0];
+        viewMat[1][2] = nFront[1];
+        viewMat[2][2] = nFront[2];
+        viewMat[3][2] = back.dot(eyePos);  // -nFront.dot(eyePos)
 #endif
         viewMat[3][3] = 1.0f;
 
