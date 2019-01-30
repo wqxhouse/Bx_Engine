@@ -59,27 +59,27 @@ public:
 
     void update();
 
-    inline Math::Vector3 GetPos() const
+    INLINE Math::Vector3 GetPos() const
     {
         return pos;
     }
 
-    inline Math::Vector3 GetFront() const
+    INLINE Math::Vector3 GetFront() const
     {
         return front;
     }
 
-    inline Math::Vector3 GetRight() const
+    INLINE Math::Vector3 GetRight() const
     {
         return right;
     }
 
-    inline Math::Vector3 GetUp() const
+    INLINE Math::Vector3 GetUp() const
     {
         return up;
     }
 
-	inline Math::Mat4 GetViewMat()
+	INLINE Math::Mat4 GetViewMat()
 	{
         if (m_transFlags.bits.viewFlag == 1)
         {
@@ -89,7 +89,7 @@ public:
 		return viewMatrix;
 	}
 
-    inline Math::Mat4 GetTranslateMatrix()
+    INLINE Math::Mat4 GetTranslateMatrix()
     {
         if (m_transFlags.bits.posFlag == 1)
         {
@@ -102,7 +102,7 @@ public:
         return translationMatrix;
     }
 
-    inline Math::Mat4 GetScaleMatrix()
+    INLINE Math::Mat4 GetScaleMatrix()
     {
         if (m_transFlags.bits.scaleFlag == 1)
         {
@@ -115,7 +115,7 @@ public:
 
     Math::Mat4 GetTransMatrix();
 
-    inline void TransPos(const Math::Vector3& trans)
+    INLINE void TransPos(const Math::Vector3& trans)
     {
         this->pos += trans;
 
@@ -124,7 +124,7 @@ public:
         m_transFlags.bits.viewFlag  = 1;
     }
 
-    inline void SetTrans(
+    INLINE void SetTrans(
         const Math::Vector3& pos,
         const Math::Vector3& center,
         const Math::Vector3& up)
@@ -139,7 +139,7 @@ public:
         m_transFlags.bits.viewFlag  = 1;
     }
 
-    inline void SetTransBase(
+    INLINE void SetTransBase(
         const Math::Vector3& front,
         const Math::Vector3& right)
     {
@@ -150,7 +150,7 @@ public:
         m_transFlags.bits.viewFlag = 1;
     }
 
-    inline void SetScale(const Math::Vector3& scale)
+    INLINE void SetScale(const Math::Vector3& scale)
     {
         this->scale = scale;
 
@@ -158,7 +158,7 @@ public:
         m_transFlags.bits.scaleFlag = 1;
     }
 
-    inline void SetRotation(const float pitch, const float yaw, const float roll)
+    INLINE void SetRotation(const float pitch, const float yaw, const float roll)
     {
         this->pitch = pitch;
         this->yaw   = yaw;

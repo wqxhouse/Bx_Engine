@@ -11,6 +11,8 @@
 
 #include "Utility.h"
 
+Utility::CallbackInfo callbackInfo;
+
 namespace Utility
 {
     void UtilityBase::StringReplace(
