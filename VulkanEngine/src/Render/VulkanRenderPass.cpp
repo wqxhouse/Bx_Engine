@@ -104,7 +104,7 @@ namespace VulkanEngine
                     pCmdBuffer->beginRenderPass(m_renderPass,
                                                 m_framebufferList[i].GetFramebufferHandle(),
                                                 m_renderViewport,
-                                                { *m_pClearColor });
+                                                { m_clearColor });
 
                     const UINT camNum = pScene->GetSceneCameraNum();
                     for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
@@ -359,7 +359,7 @@ namespace VulkanEngine
                  static_cast<UINT>(pRenderViewportRect->top))
             };
 
-            m_pClearColor = &(pProps->sceneClearValue);
+            m_clearColor = pProps->sceneClearValue;
 
             // Bind vertex/index buffer
             m_pVertexInputResourceList = pResource->pVertexInputResourceList;

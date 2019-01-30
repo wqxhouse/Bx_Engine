@@ -170,7 +170,7 @@ namespace VulkanEngine
             VDeleter<VkPipelineLayout>              m_graphicsPipelineLayout;
 
             VkRect2D                                m_renderViewport;
-            VkClearValue*                           m_pClearColor;
+            VkClearValue                            m_clearColor;
         };
     }
 }

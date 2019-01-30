@@ -100,7 +100,7 @@ namespace VulkanEngine
             // Initialize uniform buffers for render pass
             const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
 
-            m_forwardRenderMainSceneUbo.resize(MAX_DYNAMIC_UNIFORM_STRUCT_NUM);
+            m_forwardRenderMainSceneUbo.resize(m_pScene->GetSceneModelNum());
 
             Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
                 new Buffer::VulkanUniformBufferDynamic(m_pDevice,
