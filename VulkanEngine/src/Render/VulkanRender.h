@@ -124,7 +124,7 @@ namespace VulkanEngine
 
             BOOL initialize();
 
-            BOOL update(const float delta);
+            BOOL update(const float deltaTime);
 
             void draw();
 

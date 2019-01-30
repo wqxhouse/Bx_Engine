@@ -116,7 +116,8 @@ namespace VulkanEngine
             BOOL create(
                 const VulkanRenderPassCreateData& renderPassCreateData);
 
-            BOOL update();
+            BOOL update(const float deltaTime);
+
             BOOL draw();
 
             void clean();
