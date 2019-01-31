@@ -5,7 +5,7 @@ Render engine by bxs
 ```
 OpenGL
 
-In progress: Vulkan
+Vulkan
 ```
 # Render method implemented:
 ```
