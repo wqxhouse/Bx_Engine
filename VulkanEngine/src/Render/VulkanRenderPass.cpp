@@ -198,7 +198,7 @@ namespace VulkanEngine
                                         pCmdBuffer->cmdBindVertexBuffers({ pVertexInputResource->pVertexBuffer->GetVertexBuffer() },
                                                                          { 0 });
 
-                                        Buffer::VulkanIndexBuffer* pIndexBuffer = pVertexInputResource->pIndexBuffer;
+                                        Buffer::VulkanIndexBuffer* pIndexBuffer = pVertexInputResource->pIndexBuffer.get();
 
                                         pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
                                                                         { 0 },

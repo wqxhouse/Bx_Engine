@@ -38,8 +38,8 @@ namespace VulkanEngine
 
         struct VulkanVertexInputResource
         {
-            Buffer::VulkanVertexBuffer* pVertexBuffer;
-            Buffer::VulkanIndexBuffer*  pIndexBuffer;
+            std::unique_ptr<Buffer::VulkanVertexBuffer> pVertexBuffer;
+            std::unique_ptr<Buffer::VulkanIndexBuffer>  pIndexBuffer;
         };
 
         struct VulkanUniformBufferResource
