@@ -37,11 +37,6 @@ namespace VulkanEngine
 
         VulkanRenderBase::~VulkanRenderBase()
         {
-            for (VulkanVertexInputResource vertexInputResources : m_mainSceneVertexInputResourceList)
-            {
-                delete vertexInputResources.pIndexBuffer;
-                delete vertexInputResources.pVertexBuffer;
-            }
         }
 
         void VulkanRenderBase::parseScene()
@@ -59,15 +54,25 @@ namespace VulkanEngine
                 {
                     if (pModel->IsEnable())
                     {
-                        Buffer::VulkanVertexBuffer* pVertexBuffer = new Buffer::VulkanVertexBuffer(
-                            m_pDevice, m_pCmdBufferMgr, pModel->GetMesh(j));
+                        Buffer::VulkanVertexBuffer* pVertexBuffer =
+                            new Buffer::VulkanVertexBuffer(m_pDevice,
+                                                           m_pCmdBufferMgr,
+                                                           pModel->GetMesh(j));
+
                         pVertexBuffer->createVertexBuffer(*m_pHwDevice, TRUE);
 
-                        Buffer::VulkanIndexBuffer* pIndexBuffer = new Buffer::VulkanIndexBuffer(
-                            m_pDevice, m_pCmdBufferMgr, pModel->GetMesh(j));
+                        Buffer::VulkanIndexBuffer* pIndexBuffer =
+                            new Buffer::VulkanIndexBuffer(m_pDevice,
+                                                          m_pCmdBufferMgr,
+                                                          pModel->GetMesh(j));
+
                         pIndexBuffer->createIndexBuffer(*m_pHwDevice, TRUE);
 
-                        m_mainSceneVertexInputResourceList.push_back({ pVertexBuffer, pIndexBuffer });
+                        m_mainSceneVertexInputResourceList.push_back(
+                        {
+                            std::unique_ptr<Buffer::VulkanVertexBuffer>(pVertexBuffer),
+                            std::unique_ptr<Buffer::VulkanIndexBuffer>(pIndexBuffer)
+                        });
                     }
                 }
             }
