@@ -30,9 +30,13 @@ namespace VulkanEngine
             PolyMode               polyMode;
             CullMode               cullMode;
             BOOL                   enableBlending;
+            BOOL                   enableDepth;
+            BOOL                   enableStencil;
             std::vector<Rectangle> viewportRects;
             std::vector<Rectangle> scissorRects;
             VkClearValue           sceneClearValue;
+            VkClearValue           depthClearValue;
+            VkClearValue           stencilClearValue;
             Rectangle              renderViewportRect;
         };
 
@@ -171,7 +175,14 @@ namespace VulkanEngine
             VDeleter<VkPipelineLayout>              m_graphicsPipelineLayout;
 
             VkRect2D                                m_renderViewport;
+
             VkClearValue                            m_clearColor;
+            VkClearValue                            m_depthColor;
+            VkClearValue                            m_stencilColor;
+
+            BOOL                                    m_enableColor;
+            BOOL                                    m_enableDepth;
+            BOOL                                    m_enableStencil;
         };
     }
 }
