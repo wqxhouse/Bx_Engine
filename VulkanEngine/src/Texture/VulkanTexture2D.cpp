@@ -75,8 +75,19 @@ namespace VulkanEngine
 
             BOOL result = BX_SUCCESS;
 
-            UINT texWidth  = GetTextureWidth();
-            UINT texHeight = GetTextureHeight();
+            const UINT texWidth  = GetTextureWidth();
+            const UINT texHeight = GetTextureHeight();
+
+            const TextureUsage usage = GetTextureUsage();
+
+            // Same texture shouldn't be used as sampler and render target at the same time
+            // And it can't be color and depth/stencil render target at the same time
+            assert ((((usage & BX_TEXTURE_USAGE_SAMPLED)                  != 0)  &&
+                     ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT)         == 0)  &&
+                     ((usage & BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) == 0)) ||
+                    (((usage & BX_TEXTURE_USAGE_SAMPLED)                  == 0)  &&
+                      (usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT &
+                             BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT)   == 0));
 
             // The texture format must be optimized at this point
             assert(IsTextureOptimize() == TRUE);
@@ -149,70 +160,74 @@ namespace VulkanEngine
             // Bind image handle to memory
             vkBindImageMemory(*m_pDevice, m_texImage, m_texImageMemory, 0);            
 
-            // Create image buffer
-            Buffer::VulkanBufferBase vkImageRawBuffer(m_pDevice, m_pCmdBufferMgr);
+            Buffer::BxLayoutTransitionInfo transitionInfo = {};
+            if ((usage & BX_TEXTURE_USAGE_SAMPLED) == 1)
+            {
+                // Create image buffer
+                Buffer::VulkanBufferBase vkImageRawBuffer(m_pDevice, m_pCmdBufferMgr);
 
-            Buffer::BxBufferCreateInfo imageRawBufferCreateInfo = {};
-            imageRawBufferCreateInfo.bufferData                 = GetTextureData();
-            imageRawBufferCreateInfo.bufferOptimization         = FALSE;
-            imageRawBufferCreateInfo.bufferSize                 = texWidth * texHeight * 4;
-            imageRawBufferCreateInfo.bufferUsage                = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-            imageRawBufferCreateInfo.bufferDynamic              = FALSE;
+                Buffer::BxBufferCreateInfo imageRawBufferCreateInfo = {};
+                imageRawBufferCreateInfo.bufferData                 = GetTextureData();
+                imageRawBufferCreateInfo.bufferOptimization         = FALSE;
+                imageRawBufferCreateInfo.bufferSize                 = texWidth * texHeight * 4;
+                imageRawBufferCreateInfo.bufferUsage                = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+                imageRawBufferCreateInfo.bufferDynamic              = FALSE;
 
-            vkImageRawBuffer.createBuffer(hwDevice, imageRawBufferCreateInfo);
+                vkImageRawBuffer.createBuffer(hwDevice, imageRawBufferCreateInfo);
             
-            FreeTextureData();
+                FreeTextureData();
 
-            // Image layout transfer
-            Buffer::BxLayoutTransitionInfo transitionInfo    = {};
-            transitionInfo.oldLayout                         = VK_IMAGE_LAYOUT_UNDEFINED;
-            transitionInfo.newLayout                         = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            transitionInfo.subResourceInfo.resize(1);
-            transitionInfo.subResourceInfo[0].aspectMask     =
-                Utility::VulkanUtility::GetVkImageAspect(GetTextureFormat());
-            transitionInfo.subResourceInfo[0].baseArrayLayer = 0;
-            transitionInfo.subResourceInfo[0].layerNum       = 1;
-            transitionInfo.subResourceInfo[0].baseMipLevel   = 0;
-            transitionInfo.subResourceInfo[0].mipmapLevelNum = m_mipmapLevel;
+                // Image layout transfer
+                transitionInfo.oldLayout                         = VK_IMAGE_LAYOUT_UNDEFINED;
+                transitionInfo.newLayout                         = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                transitionInfo.subResourceInfo.resize(1);
+                transitionInfo.subResourceInfo[0].aspectMask     =
+                    Utility::VulkanUtility::GetVkImageAspect(GetTextureFormat());
+                transitionInfo.subResourceInfo[0].baseArrayLayer = 0;
+                transitionInfo.subResourceInfo[0].layerNum       = 1;
+                transitionInfo.subResourceInfo[0].baseMipLevel   = 0;
+                transitionInfo.subResourceInfo[0].mipmapLevelNum = m_mipmapLevel;
 
-            result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+                result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
 
-            assert(result == BX_SUCCESS);
+                assert(result == BX_SUCCESS);
 
-            // Copy the image data from buffer to image
-            std::vector<Buffer::BxBufferToImageCopyInfo> bufferToImageCopyInfo(1);
-            bufferToImageCopyInfo[0].bufferInfo.bufferOffset      = 0;
-            bufferToImageCopyInfo[0].bufferInfo.bufferRowLength   = 0;
-            bufferToImageCopyInfo[0].bufferInfo.bufferImageHeight = 0;
-            bufferToImageCopyInfo[0].subResourceInfo              = transitionInfo.subResourceInfo[0];
-            bufferToImageCopyInfo[0].imageInfo.imageOffset        = { 0, 0, 0 };
-            bufferToImageCopyInfo[0].imageInfo.imageExtent        = { texWidth, texHeight, 1};
+                // Copy the image data from buffer to image
+                std::vector<Buffer::BxBufferToImageCopyInfo> bufferToImageCopyInfo(1);
+                bufferToImageCopyInfo[0].bufferInfo.bufferOffset      = 0;
+                bufferToImageCopyInfo[0].bufferInfo.bufferRowLength   = 0;
+                bufferToImageCopyInfo[0].bufferInfo.bufferImageHeight = 0;
+                bufferToImageCopyInfo[0].subResourceInfo              = transitionInfo.subResourceInfo[0];
+                bufferToImageCopyInfo[0].imageInfo.imageOffset        = { 0, 0, 0 };
+                bufferToImageCopyInfo[0].imageInfo.imageExtent        = { texWidth, texHeight, 1};
 
-            result = m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
+                result = m_pCmdBufferMgr->copyBufferToImage(vkImageRawBuffer.GetBuffer(), m_texImage, bufferToImageCopyInfo);
 
-            assert(result == BX_SUCCESS);
+                assert(result == BX_SUCCESS);
+            }
 
             // Transfer the image layout according to usage
-            switch (GetTextureUsage())
+            if ((usage & BX_TEXTURE_USAGE_SAMPLED) != 0)
             {
-                case BX_TEXTURE_USAGE_SAMPLED:
-                    transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-                    transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
-                    break;
-                case BX_TEXTURE_USAGE_RENDER_TARGET:
-                    NotImplemented();
-                    break;
-                case BX_TEXTURE_USAGE_COLOR_ATTACHMENT:
-                    NotImplemented();
-                    break;
-                case BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT:
-                    NotImplemented();
-                    break;
-                default:
-                    assert(FALSE);
-                    break;
+                transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             }
+            else if ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)
+            {
+                transitionInfo.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                transitionInfo.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            }
+            else if ((usage& BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) != 0)
+            {
+                transitionInfo.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                transitionInfo.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            }
+            else
+            {
+                NotSupported();
+            }
+
+            result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
 
             assert(result == BX_SUCCESS);
 

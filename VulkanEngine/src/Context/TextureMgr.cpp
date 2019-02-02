@@ -89,8 +89,10 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
+            TextureUsage usage = BX_TEXTURE_USAGE_RENDER_TARGET | Utility::VulkanUtility::GetTextureUsage(texFormat);
+
             ::Texture::Texture2DCreateData texture2DCreateData = {};
-            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_RENDER_TARGET;
+            texture2DCreateData.texUsage           = usage;
             texture2DCreateData.texWidth           = texWidth;
             texture2DCreateData.texHeight          = texHeight;
             texture2DCreateData.samples            = samples;
@@ -127,8 +129,10 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
+            TextureUsage usage = Utility::VulkanUtility::GetTextureUsage(texFormat);
+
             ::Texture::Texture2DCreateData texture2DCreateData = {};
-            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_RENDER_TARGET;
+            texture2DCreateData.texUsage           = usage;
             texture2DCreateData.texWidth           = texWidth;
             texture2DCreateData.texHeight          = texHeight;
             texture2DCreateData.samples            = samples;
@@ -143,7 +147,14 @@ namespace VulkanEngine
             Texture::VulkanTexture2D* pNewTexture2D =
                 BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData);
 
+            status = pNewTexture2D->initialize();
+
+            assert(status == BX_SUCCESS);
+
             status = pNewTexture2D->create(*m_pHwDevice);
+
+            assert(status == BX_SUCCESS);
+
             status = pNewTexture2D->createTextureImageView();
 
             assert(status == BX_SUCCESS);

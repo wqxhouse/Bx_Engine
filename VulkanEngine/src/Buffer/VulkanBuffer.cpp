@@ -187,17 +187,20 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            void* bufferDataPtr;
-            VkResult mapMemoryResult =
-                vkMapMemory(*m_pDevice, m_hostBufferMemory, 0, bufferSize, 0, &bufferDataPtr);
-            result = Utility::VulkanUtility::GetBxStatus(mapMemoryResult);
-
-            assert(result == BX_SUCCESS);
-
-            if (result == BX_SUCCESS)
+            if (bufferData != NULL)
             {
-                memcpy(bufferDataPtr, bufferData, bufferSize);
-                vkUnmapMemory(*m_pDevice, m_hostBufferMemory);
+                void* bufferDataPtr;
+                VkResult mapMemoryResult =
+                    vkMapMemory(*m_pDevice, m_hostBufferMemory, 0, bufferSize, 0, &bufferDataPtr);
+                result = Utility::VulkanUtility::GetBxStatus(mapMemoryResult);
+
+                assert(result == BX_SUCCESS);
+
+                if (result == BX_SUCCESS)
+                {
+                    memcpy(bufferDataPtr, bufferData, bufferSize);
+                    vkUnmapMemory(*m_pDevice, m_hostBufferMemory);
+                }
             }
 
             return result;

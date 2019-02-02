@@ -12,6 +12,8 @@
 #include "VulkanRenderPass.h"
 #include "../Context/TextureMgr.h"
 
+#define BACKBUFFER_PRESENT_ATTACHMENT_INDEX 0
+
 namespace VulkanEngine
 {
     namespace Render
@@ -83,8 +85,33 @@ namespace VulkanEngine
                 }
             }
 
+            INLINE BOOL IsDepthTestEnabled()   const { return m_isDepthTestEnabled;     }
+            INLINE BOOL IsStencilTestEnabled() const { return m_isStencilTestEnabled;   }
+
+            INLINE void EnableDepthTest()            { m_isDepthTestEnabled = TRUE;     }
+            INLINE void DisableDepthTest()           { m_isDepthTestEnabled = FALSE;    }
+            INLINE void EnableStencilTest()          { m_isStencilTestEnabled = TRUE;   }
+            INLINE void DisableStencilTest()         { m_isStencilTestEnabled = FALSE;  }
+
         protected:
+            struct VulkanRenderTargetCreateDescriptor
+            {
+                BOOL                             isStore;
+                UINT                             renderSubPassIndex;
+                UINT                             bindingPoint;
+                BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout;
+                BOOL                             useStencil;
+                BOOL                             isStoreStencil;
+            };
+
             void parseScene();
+            VulkanRenderTargetCreateData genAttachmentCreateData(
+                const UINT                             renderSubPassIndex,
+                const UINT                             bindingPoint,
+                const UINT                             isStore,
+                const BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout,
+                const BOOL                             useStencil,
+                const BOOL                             isStoreStencil);
 
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
@@ -102,9 +129,12 @@ namespace VulkanEngine
 
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
 
-            const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
+            // const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
+            std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
 
         private:
+            BOOL m_isDepthTestEnabled;
+            BOOL m_isStencilTestEnabled;
         };
 
         class VulkanForwardRender : public VulkanRenderBase

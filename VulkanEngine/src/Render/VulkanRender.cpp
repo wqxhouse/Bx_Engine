@@ -30,8 +30,20 @@ namespace VulkanEngine
               m_pTextureMgr(pTextureMgr),
               m_pScene(pScene),
               m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
-              m_ppBackbufferTextures(ppBackbufferTextures)
+              m_isDepthTestEnabled(FALSE),
+              m_isStencilTestEnabled(FALSE)
         {
+            assert(ppBackbufferTextures->size() > 0);
+
+            size_t backBufferNum = ppBackbufferTextures->size();
+
+            m_backBufferRTsCreateDataList.resize(backBufferNum);
+
+            for (size_t i = 0; i < backBufferNum; ++i)
+            {
+                m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), ppBackbufferTextures->at(i) });
+            }
+
             parseScene();
         }
 
@@ -76,6 +88,25 @@ namespace VulkanEngine
                     }
                 }
             }
+        }
+
+        VulkanRenderTargetCreateData VulkanRenderBase::genAttachmentCreateData(
+            const UINT                             renderSubPassIndex,
+            const UINT                             bindingPoint,
+            const UINT                             isStore,
+            const BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout,
+            const BOOL                             useStencil,
+            const BOOL                             isStoreStencil)
+        {
+            Render::VulkanRenderTargetCreateData rtCreateData = {};
+            rtCreateData.renderSubPassIndex = renderSubPassIndex;
+            rtCreateData.bindingPoint       = bindingPoint;
+            rtCreateData.isStore            = isStore;
+            rtCreateData.layout             = layout;
+            rtCreateData.useStencil         = useStencil;
+            rtCreateData.isStoreStencil     = isStoreStencil;
+
+            return rtCreateData;
         }
     }
 }

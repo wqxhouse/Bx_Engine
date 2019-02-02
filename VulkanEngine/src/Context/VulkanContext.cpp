@@ -704,7 +704,7 @@ namespace VulkanEngine
                                             m_pTextureMgr.get(),
                                             m_pRenderSceneList[m_activeSceneIndex],
                                             &m_pSwapchainTextures));
-
+        m_pRender->EnableDepthTest();
         status = m_pRender->initialize();
 
         return status;

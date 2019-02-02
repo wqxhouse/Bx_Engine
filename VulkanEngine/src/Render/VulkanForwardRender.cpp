@@ -39,12 +39,12 @@ namespace VulkanEngine
 
             /// Initialize default render pass for main scene
             //  Initialize graphics pipeline properties
-            Render::VulkanRenderProperties props = {};
-            props.cullMode                       = CULLMODE_BACK;
-            props.enableBlending                 = TRUE;
-            props.polyMode                       = PolyMode::POLYMODE_FILL;
-            props.sceneClearValue                = { 0.0f, 0.0f, 0.0f, 1.0f };
-            props.renderViewportRect             =
+            VulkanRenderProperties props = {};
+            props.cullMode               = CULLMODE_BACK;
+            props.enableBlending         = TRUE;
+            props.polyMode               = PolyMode::POLYMODE_FILL;
+            props.sceneClearValue        = { 0.0f, 0.0f, 0.0f, 1.0f };
+            props.renderViewportRect     =
             {
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
                 static_cast<float>(m_pSetting->resolution.height), 0.0f
@@ -58,41 +58,85 @@ namespace VulkanEngine
             mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag.spv";
 
             /// Initialize render pass
-            const UINT backbufferAttachmentNum = 1;
-            const UINT backbufferNum           = static_cast<const UINT>(m_ppBackbufferTextures->size());
+            std::vector<VulkanRenderTargetCreateDescriptor> renderTargetDescriptors =
+            {
+                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }
+            };
 
-            std::vector<Render::VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
-            std::vector<std::vector<Render::VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
+            assert((IsDepthTestEnabled() == TRUE)  ||
+                   ((IsDepthTestEnabled()   == FALSE) &&
+                    (IsStencilTestEnabled() == FALSE)));
+
+            // Create depth buffer
+            if (IsDepthTestEnabled() == TRUE)
+            {
+                props.enableDepth     = TRUE;
+                props.depthClearValue = { 1.0f, 0.0f };
+
+                size_t backBufferNum = m_backBufferRTsCreateDataList.size();
+
+                for (size_t i = 0; i < backBufferNum; ++i)
+                {
+                    Texture::VulkanTexture2D* pBackbufferColorTexture =
+                        static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
+
+                    TextureFormat depthBufferFormat =
+                        ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
+
+                    Texture::VulkanTexture2D * backbufferDepthTexture =
+                        m_pTextureMgr->createTexture2DRenderTarget(
+                            pBackbufferColorTexture->GetTextureWidth(),
+                            pBackbufferColorTexture->GetTextureHeight(),
+                            static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
+                            depthBufferFormat);
+
+                    m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
+                }
+
+                renderTargetDescriptors.push_back({ TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
+            }
+
+            if (IsStencilTestEnabled() == TRUE)
+            {
+                props.enableStencil     = TRUE;
+                props.stencilClearValue = { 1.0f, 0.0f };
+            }
+
+            // Generate render pass create data
+            const UINT backbufferAttachmentNum = static_cast<UINT>(m_backBufferRTsCreateDataList[0].size());
+            const UINT backbufferNum           = static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
+
+            std::vector<VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
+            std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
 
             for (UINT i = 0; i < backbufferAttachmentNum; ++i)
             {
-                Render::VulkanRenderTargetCreateData* pRenderPassCreateData = &(renderTargetsCreateData[i]);
+                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateData[i]);
 
-                pRenderPassCreateData->renderSubPassIndex = 0;
-                pRenderPassCreateData->bindingPoint       = 0;
-                pRenderPassCreateData->isStore            = TRUE;
-                pRenderPassCreateData->layout             = BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT;
-                pRenderPassCreateData->useStencil         = FALSE;
-                pRenderPassCreateData->isStoreStencil     = FALSE;
+                pRenderTargetCreateData->renderSubPassIndex = renderTargetDescriptors[i].renderSubPassIndex;
+                pRenderTargetCreateData->bindingPoint       = renderTargetDescriptors[i].bindingPoint;
+                pRenderTargetCreateData->isStore            = renderTargetDescriptors[i].isStore;
+                pRenderTargetCreateData->layout             = renderTargetDescriptors[i].layout;
+                pRenderTargetCreateData->useStencil         = renderTargetDescriptors[i].useStencil;
+                pRenderTargetCreateData->isStoreStencil     = renderTargetDescriptors[i].isStoreStencil;
 
-                std::vector<Render::VulkanRenderTargetFramebufferCreateData>*
+                std::vector<VulkanRenderTargetFramebufferCreateData>*
                     pRenderTargetsFramebufferCreateData = &(renderTargetsFramebuffersCreateData[i]);
 
                 pRenderTargetsFramebufferCreateData->resize(backbufferNum);
                 for (UINT j = 0; j < backbufferNum; ++j)
                 {
-                    pRenderTargetsFramebufferCreateData->at(j).framebufferIndex = j;
-                    pRenderTargetsFramebufferCreateData->at(j).pTexture         = m_ppBackbufferTextures->at(j);
+                    pRenderTargetsFramebufferCreateData->at(j) = m_backBufferRTsCreateDataList[j][i];
                 }
 
-                pRenderPassCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
+                pRenderTargetCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
             }
 
             // Initialize render pass resources
-            // std::vector<Render::VulkanUniformBufferResource*> uniformbufferResources;
+            // std::vector<VulkanUniformBufferResource*> uniformbufferResources;
 
             // Initialize vertex input for render pass
-            Render::VulkanRenderResources renderSources = {};
+            VulkanRenderResources renderSources         = {};
             renderSources.vertexBufferTexChannelNum     = 1;
             renderSources.vertexDescriptionBindingPoint = 0;
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
@@ -154,7 +198,7 @@ namespace VulkanEngine
             renderSources.pTextureResouceList = &mainSceneTextureResourceList;
 
             // Create render pass create data
-            Render::VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
+            VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
             mainSceneRenderPassCreateData.pProps                             = &props;
             mainSceneRenderPassCreateData.pShaderMeta                        = &mainSceneShaderMeta;
             mainSceneRenderPassCreateData.pResource                          = &renderSources;

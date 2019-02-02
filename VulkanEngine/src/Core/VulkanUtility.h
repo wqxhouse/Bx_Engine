@@ -459,7 +459,8 @@ namespace VulkanEngine
                 return imageUsageFlagBits;
             }
 
-            static INLINE VkImageAspectFlagBits GetVkImageAspect(TextureFormat format)
+            static INLINE VkImageAspectFlagBits GetVkImageAspect(
+                const TextureFormat format)
             {
                 VkImageAspectFlagBits aspectMask;
 
@@ -492,6 +493,40 @@ namespace VulkanEngine
                 return aspectMask;
             }
 
+            static INLINE TextureUsage GetTextureUsage(
+                const TextureFormat format)
+            {
+                TextureUsage textureUsage;
+
+                switch (format)
+                {
+                    case BX_FORMAT_R8:
+                    case BX_FORMAT_RG8:
+                    case BX_FORMAT_RGB8:
+                    case BX_FORMAT_RGBA8:
+                    case BX_FORMAT_BGRA8:
+                    case BX_FORMAT_RGBA:
+                    case BX_FORMAT_RGBA16:
+                    case BX_FORMAT_RGBA32:
+                    case BX_FORMAT_RGBA64:
+                    case BX_FORMAT_SRGB:
+                        textureUsage = BX_TEXTURE_USAGE_COLOR_ATTACHMENT;
+                        break;
+                    case BX_FORMAT_DEPTH16:
+                    case BX_FORMAT_DEPTH16_STENCIL:
+                    case BX_FORMAT_DEPTH24_STENCIL:
+                    case BX_FORMAT_DEPTH32:
+                    case BX_FORMAT_DEPTH32_STENCIL:
+                        textureUsage = BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
+
+                return textureUsage;
+            }
+
             static INLINE void GetImageTransitionAccessMask(
                 IN  const VkImageLayout   oldLayout,
                 IN  const VkImageLayout   newLayout,
@@ -505,14 +540,28 @@ namespace VulkanEngine
                 VkPipelineStageFlags srcStage;
                 VkPipelineStageFlags dstStage;
 
-                if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
-                    newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+                if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED)
                 {
-                    srcAccessMask = 0;
-                    dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                    if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+                    {
+                        srcAccessMask = 0;
+                        dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-                    srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-                    dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                        srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                        dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                    }
+                    else if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+                    {
+                        srcAccessMask = 0;
+                        dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
+
+                        srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                        dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+                    }
+                    else
+                    {
+                        NotImplemented();
+                    }
                 }
                 else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
                          newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)

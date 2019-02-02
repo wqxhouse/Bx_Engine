@@ -53,6 +53,8 @@
 	((v) = (((v) < (l)) ? (l) : (v))); \
 	((v) = (((v) > (r)) ? (r) : (v))); \
 
+typedef UINT BxFlags;
+
 typedef unsigned char  image_data;
 typedef unsigned char* image_ptr;
 
@@ -202,7 +204,7 @@ enum TextureFormat
     BX_FORMAT_MAX = 0x7FFFFFFF
 };
 
-enum TextureUsage
+enum TextureUsageBits
 {
     BX_TEXTURE_USAGE_NONE                     = 0x0,
     BX_TEXTURE_USAGE_SAMPLED                  = 0x1,
@@ -211,6 +213,7 @@ enum TextureUsage
     BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT = 0x8,
     BX_TEXTURE_USAGE_MAX                      = 0x7FFFFFFF
 };
+typedef BxFlags TextureUsage;
 
 enum TextureSamplerFilter
 {

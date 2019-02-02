@@ -140,10 +140,27 @@ namespace VulkanEngine
                 assert(status == BX_SUCCESS);
                 if (status == BX_SUCCESS)
                 {
+                    std::vector<VkClearValue> clearColorValueList;
+
+                    if (m_enableColor == TRUE)
+                    {
+                        clearColorValueList.push_back(m_clearColor);
+                    }
+
+                    if (m_enableDepth == TRUE)
+                    {
+                        clearColorValueList.push_back(m_depthColor);
+                    }
+
+                    if (m_enableStencil == TRUE)
+                    {
+                        clearColorValueList.push_back(m_stencilColor);
+                    }
+
                     pCmdBuffer->beginRenderPass(m_renderPass,
                                                 m_framebufferList[i].GetFramebufferHandle(),
                                                 m_renderViewport,
-                                                { m_clearColor });
+                                                clearColorValueList);
 
                     const UINT camNum = pScene->GetSceneCameraNum();
                     for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
@@ -155,7 +172,7 @@ namespace VulkanEngine
 
                         if (pCam->IsEnable() == TRUE)
                         {
-                            const Math::Mat4* pViewMat = &(pCam->GetViewMatrix());
+                            const Math::Mat4* pViewMat     = &(pCam->GetViewMatrix());
                             const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
 
                             const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
@@ -257,6 +274,8 @@ namespace VulkanEngine
             std::vector<VkAttachmentDescription>            attachmentDescriptionList(renderTargetNum);
             std::vector<VkSubpassDescription>               subPassDescriptionList(renderSubpassNum);
             std::vector<std::vector<VkAttachmentReference>> colorSubpassAttachmentRefList(renderSubpassNum);
+
+            std::vector<BOOL>                               enableDepth(renderSubpassNum);
             std::vector<VkAttachmentReference>              depthAttachmentRefList(renderSubpassNum);
 
             std::vector<std::vector<Texture::VulkanTextureBase*>> pFramebuffersTextureList(renderFramebufferNum);
@@ -323,7 +342,20 @@ namespace VulkanEngine
                 attachmentRef.layout                =
                     Utility::VulkanUtility::GetAttachmentRefVkImageLayout(renderPassCreateData.layout);
 
-                colorSubpassAttachmentRefList[renderPassCreateData.renderSubPassIndex].push_back(attachmentRef);
+                switch (renderPassCreateData.layout)
+                {
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR:
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT:
+                        colorSubpassAttachmentRefList[renderPassCreateData.renderSubPassIndex].push_back(attachmentRef);
+                        break;
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
+                        enableDepth[renderPassCreateData.renderSubPassIndex]            = TRUE;
+                        depthAttachmentRefList[renderPassCreateData.renderSubPassIndex] = attachmentRef;
+                        break;
+                    default:
+                        NotSupported();
+                        break;
+                }
             }
 
             for (UINT i = 0; i < renderSubpassNum; ++i)
@@ -331,7 +363,11 @@ namespace VulkanEngine
                 subPassDescriptionList[i].pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
                 subPassDescriptionList[i].colorAttachmentCount    = static_cast<UINT>(colorSubpassAttachmentRefList.size());
                 subPassDescriptionList[i].pColorAttachments       = colorSubpassAttachmentRefList[i].data();
-                //subPassDescriptionList[i].pDepthStencilAttachment = &(depthAttachmentRefList[i]);
+
+                if (enableDepth[i] == TRUE)
+                {
+                    subPassDescriptionList[i].pDepthStencilAttachment = &(depthAttachmentRefList[i]);
+                }
             }
 
             VkRenderPassCreateInfo renderPassCreateInfo = {};
@@ -398,7 +434,9 @@ namespace VulkanEngine
                  static_cast<UINT>(pRenderViewportRect->top))
             };
 
-            m_clearColor = pProps->sceneClearValue;
+            // TODO: Add suppport for Depth/Stencil only render
+            m_enableColor  = TRUE;
+            m_clearColor   = pProps->sceneClearValue;
 
             // Bind vertex/index buffer
             m_pVertexInputResourceList = pResource->pVertexInputResourceList;
@@ -457,6 +495,9 @@ namespace VulkanEngine
             multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
 
             // Depth/Stencil
+            m_enableDepth   = pProps->enableDepth;
+            m_enableStencil = pProps->enableStencil;
+
             VkPipelineColorBlendAttachmentState blendAttachmentState = {};
             blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
                                                   VK_COLOR_COMPONENT_G_BIT |
@@ -483,6 +524,37 @@ namespace VulkanEngine
             blendState.attachmentCount = 1;
             blendState.pAttachments    = &blendAttachmentState;
             blendState.logicOpEnable   = VK_FALSE; // Enable will disable the states in pAttachments
+
+            VkPipelineDepthStencilStateCreateInfo* pDepthStencilState = NULL;
+            VkPipelineDepthStencilStateCreateInfo  depthStencilState = {};
+            if (pProps->enableDepth == TRUE)
+            {
+                depthStencilState.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+                depthStencilState.depthTestEnable       = VK_TRUE;
+                depthStencilState.depthWriteEnable      = VK_TRUE;
+                depthStencilState.depthCompareOp        = VK_COMPARE_OP_LESS_OR_EQUAL;
+                depthStencilState.depthBoundsTestEnable = VK_FALSE;
+                depthStencilState.minDepthBounds        = 0.0f;
+                depthStencilState.maxDepthBounds        = 1.0f;
+                depthStencilState.stencilTestEnable     = VK_FALSE;
+
+                m_depthColor = pProps->depthClearValue;
+
+                pDepthStencilState = &depthStencilState;
+            }
+
+            if (pProps->enableStencil == TRUE)
+            {
+                NotImplemented();
+
+                depthStencilState.stencilTestEnable = VK_TRUE;
+                depthStencilState.front             = {};
+                depthStencilState.back              = {};
+
+                m_stencilColor = pProps->stencilClearValue;
+
+                pDepthStencilState = &depthStencilState;
+            }
 
             // Viewport and scissor
             size_t viewportNum = pProps->viewportRects.size();
@@ -685,7 +757,7 @@ namespace VulkanEngine
                 graphicsPipelineCreateInfo.pRasterizationState = &rasterizerCreateInfo;
                 graphicsPipelineCreateInfo.pMultisampleState   = &multiSamplingCreateInfo;
                 graphicsPipelineCreateInfo.pColorBlendState    = &blendState;
-                graphicsPipelineCreateInfo.pDepthStencilState  = NULL;
+                graphicsPipelineCreateInfo.pDepthStencilState  = pDepthStencilState;
                 graphicsPipelineCreateInfo.pViewportState      = &viewportCreateInfo;
                 graphicsPipelineCreateInfo.layout              = m_graphicsPipelineLayout;
                 graphicsPipelineCreateInfo.renderPass          = m_renderPass;
