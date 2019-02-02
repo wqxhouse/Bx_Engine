@@ -39,12 +39,12 @@ namespace VulkanEngine
 
             /// Initialize default render pass for main scene
             //  Initialize graphics pipeline properties
-            Render::VulkanRenderProperties props = {};
-            props.cullMode                       = CULLMODE_BACK;
-            props.enableBlending                 = TRUE;
-            props.polyMode                       = PolyMode::POLYMODE_FILL;
-            props.sceneClearValue                = { 0.0f, 0.0f, 0.0f, 1.0f };
-            props.renderViewportRect             =
+            VulkanRenderProperties props = {};
+            props.cullMode               = CULLMODE_BACK;
+            props.enableBlending         = TRUE;
+            props.polyMode               = PolyMode::POLYMODE_FILL;
+            props.sceneClearValue        = { 0.0f, 0.0f, 0.0f, 1.0f };
+            props.renderViewportRect     =
             {
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
                 static_cast<float>(m_pSetting->resolution.height), 0.0f
@@ -58,41 +58,68 @@ namespace VulkanEngine
             mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag.spv";
 
             /// Initialize render pass
-            const UINT backbufferAttachmentNum = 1;
-            const UINT backbufferNum           = static_cast<const UINT>(m_ppBackbufferTextures->size());
 
-            std::vector<Render::VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
-            std::vector<std::vector<Render::VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
+            // Create depth buffer
+            assert((IsDepthTestEnabled() == TRUE)  ||
+                   ((IsDepthTestEnabled()   == FALSE) &&
+                    (IsStencilTestEnabled() == FALSE)));
+
+            /*if (IsDepthTestEnabled() == TRUE)
+            {
+                Texture::VulkanTexture2D* pBackbufferColorTexture = m_ppBackbufferTextures->at(0);
+
+                TextureFormat depthBufferFormat =
+                    ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
+
+                Texture::VulkanTexture2D* backbufferDepthTexture =
+                    m_pTextureMgr->createTexture2DRenderTarget(
+                        pBackbufferColorTexture->GetTextureWidth(),
+                        pBackbufferColorTexture->GetTextureHeight(),
+                        static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
+                        depthBufferFormat);
+
+                m_ppBackbufferTextures->push_back(backbufferDepthTexture);
+            }*/
+
+            // Generate render pass create data
+            const UINT backbufferAttachmentNum = 1;
+            const UINT backbufferNum           = static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
+
+            std::vector<VulkanRenderTargetCreateDescriptor>                   renderTargetDescriptors(backbufferAttachmentNum);
+
+            //renderTargetDescriptors
+
+            std::vector<VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
+            std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
 
             for (UINT i = 0; i < backbufferAttachmentNum; ++i)
             {
-                Render::VulkanRenderTargetCreateData* pRenderPassCreateData = &(renderTargetsCreateData[i]);
+                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateData[i]);
 
-                pRenderPassCreateData->renderSubPassIndex = 0;
-                pRenderPassCreateData->bindingPoint       = 0;
-                pRenderPassCreateData->isStore            = TRUE;
-                pRenderPassCreateData->layout             = BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT;
-                pRenderPassCreateData->useStencil         = FALSE;
-                pRenderPassCreateData->isStoreStencil     = FALSE;
+                pRenderTargetCreateData->renderSubPassIndex = 0;
+                pRenderTargetCreateData->bindingPoint       = 0;
+                pRenderTargetCreateData->isStore            = TRUE;
+                pRenderTargetCreateData->layout             = BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT;
+                pRenderTargetCreateData->useStencil         = FALSE;
+                pRenderTargetCreateData->isStoreStencil     = FALSE;
 
-                std::vector<Render::VulkanRenderTargetFramebufferCreateData>*
+                std::vector<VulkanRenderTargetFramebufferCreateData>*
                     pRenderTargetsFramebufferCreateData = &(renderTargetsFramebuffersCreateData[i]);
 
                 pRenderTargetsFramebufferCreateData->resize(backbufferNum);
                 for (UINT j = 0; j < backbufferNum; ++j)
                 {
-                    pRenderTargetsFramebufferCreateData->at(j).framebufferIndex = j;
-                    pRenderTargetsFramebufferCreateData->at(j).pTexture         = m_ppBackbufferTextures->at(j);
+                    pRenderTargetsFramebufferCreateData->at(j) = m_backBufferRTsCreateDataList[i][j];
                 }
 
-                pRenderPassCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
+                pRenderTargetCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
             }
 
             // Initialize render pass resources
-            // std::vector<Render::VulkanUniformBufferResource*> uniformbufferResources;
+            // std::vector<VulkanUniformBufferResource*> uniformbufferResources;
 
             // Initialize vertex input for render pass
-            Render::VulkanRenderResources renderSources = {};
+            VulkanRenderResources renderSources         = {};
             renderSources.vertexBufferTexChannelNum     = 1;
             renderSources.vertexDescriptionBindingPoint = 0;
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
@@ -154,7 +181,7 @@ namespace VulkanEngine
             renderSources.pTextureResouceList = &mainSceneTextureResourceList;
 
             // Create render pass create data
-            Render::VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
+            VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
             mainSceneRenderPassCreateData.pProps                             = &props;
             mainSceneRenderPassCreateData.pShaderMeta                        = &mainSceneShaderMeta;
             mainSceneRenderPassCreateData.pResource                          = &renderSources;
