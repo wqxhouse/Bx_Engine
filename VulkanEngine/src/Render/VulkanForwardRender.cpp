@@ -98,18 +98,15 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             // Initialize uniform buffers for render pass
-            Math::Vector4 boxColor(0.0f, 1.0f, 0.0f, 1.0f);
+            Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
 
-            Buffer::VulkanUniformBuffer* pMainSceneUniformbuffer =
-                new Buffer::VulkanUniformBuffer(m_pDevice);
-
-            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, sizeof(boxColor), &boxColor);
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice, sizeof(Math::Mat4), &Math::Mat4());
 
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
 
             std::vector<VulkanUniformBufferResource> mainSceneUniformbufferResourceList(1);
-            mainSceneUniformbufferResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
+            mainSceneUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
             mainSceneUniformbufferResourceList[0].bindingPoint     = 0;
             mainSceneUniformbufferResourceList[0].uniformbufferNum = 1;
             mainSceneUniformbufferResourceList[0].pUniformBuffer   =
@@ -123,7 +120,7 @@ namespace VulkanEngine
             textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
             textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
             textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-            textureSamplerCreateData.anisotropyNum                       = 16;
+            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
             textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
             textureSamplerCreateData.normalize                           = TRUE;
             textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
@@ -160,10 +157,62 @@ namespace VulkanEngine
 
             return status;
         }
-    
-        void VulkanForwardRender::update(
+
+        BOOL VulkanForwardRender::update(
             const float delta)
         {
+            BOOL status = BX_SUCCESS;
+
+            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
+            {
+                status = preRenderPass.update();
+
+                assert(status == BX_SUCCESS);
+            }
+
+            status = m_mainSceneRenderPass.update();
+
+            assert(status == BX_SUCCESS);
+
+            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
+            {
+                status = postRenderPass.update();
+
+                assert(status == BX_SUCCESS);
+            }
+
+            const Scene::RenderScene* pScene = m_pScene;
+
+            const UINT camNum = pScene->GetSceneCameraNum();
+            for (UINT i = 0; i < camNum; ++i)
+            {
+                Object::Camera::CameraBase* pCam = pScene->GetCamera(i);
+
+                if (pCam->IsEnable() == TRUE)
+                {
+                    const Math::Mat4* pViewMat       = &(pCam->GetViewMatrix());
+                    const Math::Mat4* pProspectMat   = &(pCam->GetProjectionMatrix());
+
+                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
+
+                    const UINT modelNum = pScene->GetSceneModelNum();
+
+                    for (UINT j = 0; j < modelNum; ++j)
+                    {
+                        Object::Model::ModelObject* pModel = pScene->GetModel(j);
+
+                        if (pModel->IsEnable() == TRUE)
+                        {
+                            const Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
+                            status = m_pDescriptorBufferList[0]->updateBufferData(sizeof(wvpMat), &wvpMat);
+
+                            assert(status == BX_SUCCESS);
+                        }
+                    }
+                }
+            }
+
+            return status;
         }
 
         void VulkanForwardRender::draw()

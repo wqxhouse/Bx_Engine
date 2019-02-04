@@ -104,7 +104,7 @@ namespace Object
         public:
             OrthographicCamera(
                 const UINT                          objectId,
-                const OrthographicCameraCreateInfo& prosCamCreateInfo);
+                const OrthographicCameraCreateInfo& orthoCamCreateInfo);
 
             ~OrthographicCamera();
 

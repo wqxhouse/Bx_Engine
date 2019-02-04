@@ -101,12 +101,22 @@ namespace VulkanEngine
     {
         BOOL status = BX_SUCCESS;
 
+        float prevTime  = 0.0f;
+        float deltaTime = 0.0f;
+
         while (glfwWindowShouldClose(m_pWindow) == FALSE)
         {
+            float curTime = static_cast<float>(glfwGetTime());
+            deltaTime     = curTime - prevTime;
+            prevTime      = curTime;
+
             glfwSwapBuffers(m_pWindow);
             glfwPollEvents();
 
-            // m_pRender->update();
+            status = update(deltaTime);
+
+            assert(status == BX_SUCCESS);
+
             status = draw();
 
             assert(status == BX_SUCCESS);
@@ -284,6 +294,18 @@ namespace VulkanEngine
                 assert(BX_FAIL);
             }
         }
+
+        return status;
+    }
+
+    BOOL VulkanContext::update(
+        const float delta)
+    {
+        BOOL status = BX_SUCCESS;
+
+        status = m_pRender->update(delta);
+
+        assert(status == BX_SUCCESS);
 
         return status;
     }

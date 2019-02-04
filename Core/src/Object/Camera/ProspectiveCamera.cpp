@@ -22,12 +22,13 @@ namespace Object
                          static_cast<CameraCreateInfo>(prosCamCreateInfo))
         {
             m_projectionMatrix = Math::prospectiveProjectionMatrix(
-                Math::Radians(fov),
+                Math::Radians(prosCamCreateInfo.fov),
                 (1.0f / prosCamCreateInfo.aspectRatio),
                 prosCamCreateInfo.nearClip,
                 prosCamCreateInfo.farClip);
 
-            this->fov = fov;
+            this->speed = prosCamCreateInfo.speed;
+            this->fov   = prosCamCreateInfo.fov;
         }
 
         ProspectiveCamera::~ProspectiveCamera()
@@ -36,10 +37,10 @@ namespace Object
 
         void ProspectiveCamera::update(float deltaTime)
         {
-            rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE,
+            /*rotate(static_cast<float>(-callbackInfo.cursorPosCallBack.delta_y) * CAMERA_SENSATIVE,
                    static_cast<float>(callbackInfo.cursorPosCallBack.delta_x)  * CAMERA_SENSATIVE);
 
-            callbackInfo.cursorPosCallBack.reset();
+            callbackInfo.cursorPosCallBack.reset();*/
             CameraBase::update(deltaTime);
         }
     }

@@ -158,5 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="VulkanEngine.licenseheader" />
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

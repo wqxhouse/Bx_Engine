@@ -46,6 +46,19 @@ int main()
                                   Math::Vector3(),
                                   Math::Vector3(0.0f, 1.0f, 0.0f))));
 
+    Object::Camera::ProspectiveCameraCreateInfo prosCamCreateInfo = {};
+    prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(0.0f, 0.0f, 0.0f),
+                                            Math::Vector3(0.0f, 0.0f, -1.0f),
+                                            Math::Vector3(0.0f, 1.0f, 0.0f)));
+    prosCamCreateInfo.speed       = 5.0f;
+    prosCamCreateInfo.aspectRatio = static_cast<float>(setting.resolution.width) /
+                                    static_cast<float>(setting.resolution.height);
+    prosCamCreateInfo.fov         = 70.0f;
+    prosCamCreateInfo.nearClip    = 0.1f;
+    prosCamCreateInfo.farClip     = 100.0f;
+
+    m_pScene->AddProspectiveCamera(prosCamCreateInfo);
+
     VulkanEngine::VulkanContext m_vulkanContext(&setting, m_arena);
     m_vulkanContext.AddScene(m_pScene.get());
     m_vulkanContext.initialize();

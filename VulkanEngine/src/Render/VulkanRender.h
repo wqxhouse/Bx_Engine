@@ -33,7 +33,7 @@ namespace VulkanEngine
 
             virtual BOOL initialize() = 0;
 
-            virtual void update(const float delta) = 0;
+            virtual BOOL update(const float delta) = 0;
             virtual void draw() = 0;
 
             INLINE BOOL AddRenderPass(
@@ -98,7 +98,8 @@ namespace VulkanEngine
             VulkanRenderPass              m_mainSceneRenderPass;
             std::vector<VulkanRenderPass> m_postDrawPassList;
 
-            std::vector<VulkanVertexInputResource>                       m_mainSceneVertexInputResourceList;
+            std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
+
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
 
             const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
@@ -123,8 +124,7 @@ namespace VulkanEngine
 
             BOOL initialize();
 
-            void update(
-                const float delta);
+            BOOL update(const float delta);
 
             void draw();
 
@@ -146,7 +146,7 @@ namespace VulkanEngine
 
             ~VulkanDeferredRender();
 
-            void update(const float delta);
+            BOOL update(const float delta);
             void draw();
 
         private:
