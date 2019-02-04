@@ -43,11 +43,11 @@ int main()
 
     m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
                           &(Trans(Math::Vector3(0.0f, 0.0f, -5.0f),
-                                  Math::Vector3(),
+                                  Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f, 0.0f))));
 
     Object::Camera::ProspectiveCameraCreateInfo prosCamCreateInfo = {};
-    prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(0.0f, 0.0f, 0.0f),
+    prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(2.0f, 0.0f,  5.0f),
                                             Math::Vector3(0.0f, 0.0f, -1.0f),
                                             Math::Vector3(0.0f, 1.0f, 0.0f)));
     prosCamCreateInfo.speed       = 5.0f;

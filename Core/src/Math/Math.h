@@ -16,14 +16,6 @@
 #include "Matrix4x4.h"
 #include "Structures.h"
 
-#ifndef PI_DIVIDE_ONE_HUNDRED_EIGHTEEN
-#define PI_DIVIDE_ONE_HUNDRED_EIGHTEEN 0.01745329251994329576923690768489f
-#endif // PI_DIVIDE_180
-
-#ifndef ONE_HUNDRED_EIGHTEEN_DIVIDE_PI
-#define ONE_HUNDRED_EIGHTEEN_DIVIDE_PI 57.29577951f
-#endif // 180_DIVIDE_PI
-
 namespace Math
 {
     INLINE BOOL FloatEqual(const float a, const float b)
@@ -74,7 +66,7 @@ namespace Math
         const Vector3& front,     ///< Front direction
         const Vector3& up);       ///< World up vector
 
-    Mat4 prospectiveProjectionMatrix(
+    Mat4 perspectiveProjectionMatrix(
         const float fov,             ///< Field of view (Important: Must be in radian)
         const float invAspectRatio,  ///< Inverse aspect ratio (1 / aspectRatio = Height / Width)
         const float nearClip,        ///< Near clip
@@ -82,8 +74,17 @@ namespace Math
 
     Mat4 orthographicProjectionMatrix(
         const Rectangle& viewport,   ///< Viewport for the orthographic camera
-        const float         nearClip,   ///< Near clip
-        const float         farClip);    ///< Far clip
+        const float      nearClip,   ///< Near clip
+        const float      farClip);    ///< Far clip
+
+    INLINE Mat4 operator*(const Mat4& m1, const Mat4& m2)
+    {
+#ifdef BX_MATRIX_MAJOR_COLUMN
+        return Mat4::product(m2, m1);
+#else
+        return Mat4::product(m1, m2);
+#endif // BX_MATRIX_MAJOR
+    }
 
 	Quaternion operator*(const float& f, const Quaternion& q);
 

@@ -95,7 +95,7 @@ public:
         {
             assert(m_transFlags.bits.viewFlag == 1);
 
-            translationMatrix = Math::Translate(Math::Mat4(), pos);
+            translationMatrix = Math::Translate(Math::Mat4::Identity(), pos);
             m_transFlags.bits.posFlag = 0;
         }
 
@@ -106,7 +106,7 @@ public:
     {
         if (m_transFlags.bits.scaleFlag == 1)
         {
-            scaleMatrix = Math::Scale(Math::Mat4(), scale);
+            scaleMatrix = Math::Scale(Math::Mat4::Identity(), scale);
             m_transFlags.bits.scaleFlag = 0;
         }
 
