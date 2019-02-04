@@ -198,13 +198,13 @@ namespace VulkanEngine
             renderSources.pTextureResouceList = &mainSceneTextureResourceList;
 
             // Create render pass create data
-            VulkanRenderPassCreateData mainSceneRenderPassCreateData = {};
-            mainSceneRenderPassCreateData.pProps                             = &props;
-            mainSceneRenderPassCreateData.pShaderMeta                        = &mainSceneShaderMeta;
-            mainSceneRenderPassCreateData.pResource                          = &renderSources;
-            mainSceneRenderPassCreateData.renderFramebufferNum               = backbufferNum;
-            mainSceneRenderPassCreateData.renderSubPassNum                   = 1;
-            mainSceneRenderPassCreateData.pRenderTargetCreateDataList        = &renderTargetsCreateData;
+            VulkanRenderPassCreateData mainSceneRenderPassCreateData  = {};
+            mainSceneRenderPassCreateData.pProps                      = &props;
+            mainSceneRenderPassCreateData.pShaderMeta                 = &mainSceneShaderMeta;
+            mainSceneRenderPassCreateData.pResource                   = &renderSources;
+            mainSceneRenderPassCreateData.renderFramebufferNum        = backbufferNum;
+            mainSceneRenderPassCreateData.renderSubPassNum            = 1;
+            mainSceneRenderPassCreateData.pRenderTargetCreateDataList = &renderTargetsCreateData;
 
             m_mainSceneRenderPass.create(mainSceneRenderPassCreateData);
 
