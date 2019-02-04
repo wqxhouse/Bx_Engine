@@ -66,7 +66,11 @@ namespace VulkanEngine
 
             const Scene::RenderScene* pScene = m_pScene;
 
-            const UINT camNum = pScene->GetSceneCameraNum();
+            const UINT camNum   = pScene->GetSceneCameraNum();
+            const UINT modelNum = pScene->GetSceneModelNum();
+
+            std::vector<Math::Mat4> transfromMatList(camNum * modelNum * 4);
+
             for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
             {
                 Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
@@ -83,10 +87,6 @@ namespace VulkanEngine
 
                     const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
 
-                    const UINT modelNum = pScene->GetSceneModelNum();
-
-                    std::vector<Math::Mat4> transfromMatList(modelNum * 4);
-
                     for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
                     {
                         Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
@@ -98,7 +98,8 @@ namespace VulkanEngine
                         }
                     }
 
-                    status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(), transfromMatList.data());
+                    status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(),
+                                                                 transfromMatList.data());
                 }
             }
 
@@ -205,7 +206,7 @@ namespace VulkanEngine
                                         m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer;
 
                                     const UINT dynamicUniformBufferOffset =
-                                        modelIndex * static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
+                                        (camIndex * modelIndex + modelIndex) * static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
 
                                     const UINT meshNum = pModel->GetMeshNum();
                                     for (UINT meshIndex = 0; meshIndex < meshNum; ++meshIndex)
