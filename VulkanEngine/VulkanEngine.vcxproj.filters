@@ -87,6 +87,9 @@
     <ClCompile Include="src\Render\VulkanRenderPass.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buffer\VulkanUniformBufferDynamic.cpp">
+      <Filter>src\Buffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Context\VulkanContext.h">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="src\Render\VulkanRenderPass.h">
       <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffer\VulkanUniformBufferDynamic.h">
+      <Filter>src\Buffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

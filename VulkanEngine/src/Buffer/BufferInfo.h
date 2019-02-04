@@ -28,6 +28,7 @@ namespace VulkanEngine
             VkDeviceSize       bufferSize;
             const void*        bufferData;
             BOOL               bufferOptimization;
+            BOOL               bufferDynamic;
         };
 
         struct BxImageSubresourceInfo

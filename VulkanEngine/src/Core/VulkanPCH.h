@@ -28,11 +28,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-//GLM
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <Math/BitUtils.h>
 
 #include "../Core/VulkanTypeDef.h"
 #define DEFAULT_VULKAN_SHADER_PATH "../Resources/shaders/SPIR-V/"

@@ -67,15 +67,31 @@ namespace VulkanEngine
             return exts;
         }
 
+        VkPhysicalDeviceProperties VulkanUtility::GetHwProperties(
+            const VkPhysicalDevice& hwGpuDevice)
+        {
+            VkPhysicalDeviceProperties deviceProps;
+            vkGetPhysicalDeviceProperties(hwGpuDevice, &deviceProps);
+
+            return deviceProps;
+        }
+
+        VkPhysicalDeviceFeatures VulkanUtility::GetHwFeatures(
+            const VkPhysicalDevice & hwGpuDevice)
+        {
+            VkPhysicalDeviceFeatures deviceFeatures;
+            vkGetPhysicalDeviceFeatures(hwGpuDevice, &deviceFeatures);
+
+            return deviceFeatures;
+        }
+
         UINT VulkanUtility::GetHwDeviceScore(
             const VkPhysicalDevice& hwGpuDevice)
         {
             UINT score = 0;
 
-            VkPhysicalDeviceProperties deviceProps;
-            VkPhysicalDeviceFeatures   deviceFeatures;
-            vkGetPhysicalDeviceProperties(hwGpuDevice, &deviceProps);
-            vkGetPhysicalDeviceFeatures(hwGpuDevice, &deviceFeatures);
+            VkPhysicalDeviceProperties deviceProps    = GetHwProperties(hwGpuDevice);
+            VkPhysicalDeviceFeatures   deviceFeatures = GetHwFeatures(hwGpuDevice);
 
             // Heriustic calculate the device score
             if (deviceProps.deviceType ==

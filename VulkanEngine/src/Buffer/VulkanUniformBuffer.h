@@ -18,20 +18,23 @@ namespace VulkanEngine
         class VulkanUniformBuffer : public VulkanDescriptorBuffer
         {
         public:
-            VulkanUniformBuffer(const VkDevice* const pDevice);
+            VulkanUniformBuffer(
+                const VkDevice* const pDevice);
+
             ~VulkanUniformBuffer();
 
-            BOOL createDescriptorSetLayout(
+            virtual BOOL createDescriptorSetLayout(
                 const UINT               bindingPoint,
                 const UINT               descriptorNum,
                 const VkShaderStageFlags stageFlags);
 
-            BOOL createUniformBuffer(
+            virtual BOOL createUniformBuffer(
                 const VkPhysicalDevice& hwDevice,
+                const VkDeviceSize      uboNum,
                 const VkDeviceSize      uboSize,
                 const void*             uboData);
 
-            inline void updateUniformBufferData(
+            INLINE void updateUniformBufferData(
                 const void* uboData)
             {
                 updateBufferData(m_bufferSize, uboData);

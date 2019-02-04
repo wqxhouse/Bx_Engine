@@ -17,6 +17,7 @@
     <ClCompile Include="src\Buffer\VulkanFramebuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanIndexBuffer.cpp" />
     <ClCompile Include="src\Buffer\VulkanUniformBuffer.cpp" />
+    <ClCompile Include="src\Buffer\VulkanUniformBufferDynamic.cpp" />
     <ClCompile Include="src\Buffer\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\Context\DescriptorMgr.cpp" />
     <ClCompile Include="src\Context\QueueMgr.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="src\Buffer\VulkanFramebuffer.h" />
     <ClInclude Include="src\Buffer\VulkanIndexBuffer.h" />
     <ClInclude Include="src\Buffer\VulkanUniformBuffer.h" />
+    <ClInclude Include="src\Buffer\VulkanUniformBufferDynamic.h" />
     <ClInclude Include="src\Buffer\VulkanVertexBuffer.h" />
     <ClInclude Include="src\Context\BxQueue.h" />
     <ClInclude Include="src\Context\CmdBufferMgr.h" />

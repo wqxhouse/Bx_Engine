@@ -208,6 +208,18 @@ namespace VulkanEngine
 
                         break;
                     }
+                    case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
+                    {
+                        // TODO: Just updating partial of dynamic buffer
+                        VkDescriptorBufferInfo descriptorBufferInfo = {};
+                        descriptorBufferInfo.buffer = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetBuffer();
+                        descriptorBufferInfo.offset = 0;
+                        descriptorBufferInfo.range  = descriptorSetUpdateInfo[i].pDescriptorBuffer->GetDescriptorObjectSize();
+
+                        writeDescriptorSetList[i].pBufferInfo = &descriptorBufferInfo;
+
+                        break;
+                    }
                     case BX_SAMPLER_DESCRIPTOR:
                     {
                         VkDescriptorImageInfo descriptorImageInfo = {};

@@ -57,6 +57,11 @@ namespace VulkanEngine
                 const VkPipelineLayout&             pipelineLayout,
                 const std::vector<VkDescriptorSet>& descriptorSets);
 
+            void cmdBindDynamicDescriptorSets(
+                const VkPipelineLayout&             pipelineLayout,
+                const std::vector<VkDescriptorSet>& descriptorSets,
+                const std::vector<UINT>&            offsets);
+
             void cmdCopyBuffer(
                 const VkBuffer&         srcBuffer,
                 const VkBuffer&         dstBuffer,

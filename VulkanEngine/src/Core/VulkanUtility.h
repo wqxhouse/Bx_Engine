@@ -34,6 +34,12 @@ namespace VulkanEngine
 
             static std::vector<const char*> GetRequiredExts();
 
+            static VkPhysicalDeviceProperties GetHwProperties(
+                const VkPhysicalDevice& hwGpuDevice);
+
+            static VkPhysicalDeviceFeatures GetHwFeatures(
+                const VkPhysicalDevice& hwGpuDevice);
+
             static UINT GetHwDeviceScore(
                 const VkPhysicalDevice& hwGpuDevice);
 
@@ -297,6 +303,9 @@ namespace VulkanEngine
                         break;
                     case BX_STORAGE_BUFFER_DESCRIPTOR:
                         descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                        break;
+                    case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
+                        descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
                         break;
                     default:
                         NotSupported();
@@ -629,19 +638,6 @@ namespace VulkanEngine
                 }
 
                 return borderColor;
-            }
-
-            static INLINE BOOL IsSamplerAnisotropySupport(
-                const VkPhysicalDevice hwDevice)
-            {
-                BOOL result = TRUE;
-
-                VkPhysicalDeviceFeatures supportedFeatures;
-                vkGetPhysicalDeviceFeatures(hwDevice, &supportedFeatures);
-
-                result = ((supportedFeatures.samplerAnisotropy == VK_TRUE) ? TRUE : FALSE);
-
-                return result;
             }
 
             static INLINE VkImageLayout GetAttachmentVkImageLayout(
