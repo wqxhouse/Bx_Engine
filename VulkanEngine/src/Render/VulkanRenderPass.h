@@ -105,6 +105,13 @@ namespace VulkanEngine
             std::vector<VulkanRenderTargetCreateData>* pRenderTargetCreateDataList;
         };
 
+        struct VulkanDescriptorUpdateData
+        {
+            UINT  descriptorIndex;
+            void* pData;
+            BOOL  isDataUpdated;
+        };
+
         class VulkanRenderPass
         {
         public:
@@ -120,7 +127,9 @@ namespace VulkanEngine
             BOOL create(
                 const VulkanRenderPassCreateData& renderPassCreateData);
 
-            BOOL update(const float deltaTime);
+            BOOL update(
+                const float                                    deltaTime,
+                const std::vector<VulkanDescriptorUpdateData>& updateDataList);
 
             BOOL draw();
 

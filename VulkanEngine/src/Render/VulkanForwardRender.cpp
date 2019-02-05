@@ -54,8 +54,8 @@ namespace VulkanEngine
 
             // Initialize shaders
             Shader::BxShaderMeta mainSceneShaderMeta          = {};
-            mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "SimpleMesh.vert.spv";
-            mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "SimpleMesh.frag.spv";
+            mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "MainSceneForward.vert.spv";
+            mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "MainSceneForward.frag.spv";
 
             /// Initialize render pass
             std::vector<VulkanRenderTargetCreateDescriptor> renderTargetDescriptors =
@@ -218,18 +218,50 @@ namespace VulkanEngine
 
             for (VulkanRenderPass preRenderPass : m_preDrawPassList)
             {
-                status = preRenderPass.update(deltaTime);
+                // status = preRenderPass.update(deltaTime);
 
                 assert(status == BX_SUCCESS);
             }
 
-            status = m_mainSceneRenderPass.update(deltaTime);
+            const Scene::RenderScene* pScene = m_pScene;
 
+            const UINT camNum   = pScene->GetSceneCameraNum();
+            const UINT modelNum = pScene->GetSceneModelNum();
+
+            for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
+            {
+                Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
+
+                if (pCam->IsEnable() == TRUE)
+                {
+                    pCam->update(deltaTime);
+
+                    const Math::Mat4* pViewMat = &(pCam->GetViewMatrix());
+                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
+
+                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
+
+                    for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
+                    {
+                        Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
+
+                        if (pModel->IsEnable() == TRUE)
+                        {
+                            m_transUniformbuffer[modelIndex].worldMat = pModel->GetTrans()->GetTransMatrix();
+                            m_transUniformbuffer[modelIndex].viewMat  = *pViewMat;
+                            m_transUniformbuffer[modelIndex].projMat  = *pProspectMat;
+                            m_transUniformbuffer[modelIndex].wvpMat   = vpMat * m_transUniformbuffer[modelIndex].worldMat;
+                        }
+                    }
+                }
+            }
+
+            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataList);
             assert(status == BX_SUCCESS);
 
             for (VulkanRenderPass postRenderPass : m_postDrawPassList)
             {
-                status = postRenderPass.update(deltaTime);
+                // status = postRenderPass.update(deltaTime);
 
                 assert(status == BX_SUCCESS);
             }
