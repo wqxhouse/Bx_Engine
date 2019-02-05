@@ -12,6 +12,15 @@
 #include "../../Math/Math.h"
 #include "../ObjectBase.h"
 
+#define MAX_DIRECTIONAL_LIGHT_NUM   16
+#define MAX_DYNAMIC_POINT_LIGHT_NUM 504
+#define MAX_DYNAMIC_SPOT_LIGHT_NUM  504
+#define MAX_STATIC_POINT_LIGHT_NUM  8192
+#define MAX_STATIC_SPOT_LIGHT_NUM   8192
+
+#define MAX_DYNAMIC_LIGHT_NUM       1024
+#define MAX_STATIC_LIGHT_NUM        16384
+
 namespace Object
 {
     namespace Light

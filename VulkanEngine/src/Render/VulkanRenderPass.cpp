@@ -58,49 +58,19 @@ namespace VulkanEngine
         }
 
         BOOL VulkanRenderPass::update(
-            const float deltaTime)
+            const float                                    deltaTime,
+            const std::vector<VulkanDescriptorUpdateData>& updateDataList)
         {
             BOOL status = BX_SUCCESS;
 
-            // Not support updating textures at real-time
-
-            const Scene::RenderScene* pScene = m_pScene;
-
-            const UINT camNum   = pScene->GetSceneCameraNum();
-            const UINT modelNum = pScene->GetSceneModelNum();
-
-            std::vector<Math::Mat4> transfromMatList(camNum * modelNum * 4);
-
-            for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
+            size_t updateSize = updateDataList.size();
+            for (size_t i = 0; i < updateSize; ++i)
             {
-                Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
-
                 Buffer::VulkanDescriptorBuffer* pDescriptorBuffer =
-                    m_uniformBufferDescriptorUpdateInfo[0].pDescriptorBuffer;
+                    m_uniformBufferDescriptorUpdateInfo[i].pDescriptorBuffer;
 
-                if (pCam->IsEnable() == TRUE)
-                {
-                    pCam->update(deltaTime);
-
-                    const Math::Mat4* pViewMat     = &(pCam->GetViewMatrix());
-                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
-
-                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
-
-                    for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
-                    {
-                        Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
-
-                        if (pModel->IsEnable() == TRUE)
-                        {
-                            Math::Mat4 wvpMat = vpMat * pModel->GetTrans()->GetTransMatrix();
-                            transfromMatList[modelIndex * 4] = wvpMat;
-                        }
-                    }
-
-                    status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(),
-                                                                 transfromMatList.data());
-                }
+                status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(),
+                                                             updateDataList[i].pData);
             }
 
             assert(status == BX_SUCCESS);

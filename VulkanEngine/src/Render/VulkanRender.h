@@ -14,6 +14,10 @@
 
 #define BACKBUFFER_PRESENT_ATTACHMENT_INDEX 0
 
+#define TRANS_UBO_WORLD_MATRIX_INDEX 0
+#define TRANS_UBO_VIEW_MATRIX_INDEX  1
+#define TRANS_UBO_PROJ_MATRIX_INDEX  2
+
 namespace VulkanEngine
 {
     namespace Render
@@ -104,6 +108,21 @@ namespace VulkanEngine
                 BOOL                             isStoreStencil;
             };
 
+            struct TransUbo
+            {
+                Math::Mat4 worldMat;
+                Math::Mat4 viewMat;
+                Math::Mat4 projMat;
+                Math::Mat4 wvpMat;
+            };
+
+            struct DynamicLightUbo
+            {
+                Object::Light::DirectionalLight m_directionalLightList[MAX_DIRECTIONAL_LIGHT_NUM];
+                Object::Light::PointLight       m_pointLightList[MAX_DYNAMIC_POINT_LIGHT_NUM];
+                Object::Light::SpotLight        m_spotLightList[MAX_DYNAMIC_SPOT_LIGHT_NUM];
+            };
+
             void parseScene();
             VulkanRenderTargetCreateData genAttachmentCreateData(
                 const UINT                             renderSubPassIndex,
@@ -131,6 +150,9 @@ namespace VulkanEngine
 
             // const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
+
+            std::vector<VulkanDescriptorUpdateData> m_descriptorUpdateDataList;
+            std::vector<TransUbo>                   m_transUniformbuffer;
 
         private:
             BOOL m_isDepthTestEnabled;

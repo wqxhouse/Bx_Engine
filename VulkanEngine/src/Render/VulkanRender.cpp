@@ -88,6 +88,15 @@ namespace VulkanEngine
                     }
                 }
             }
+
+            const UINT camNum = m_pScene->GetSceneCameraNum();
+            const UINT objNum = camNum * modelNum;
+
+            assert(objNum <= DEFAULT_MAX_RENDER_SCENE_OBJ_NUM);
+
+            m_transUniformbuffer.resize(objNum);
+
+            m_descriptorUpdateDataList.push_back({ 0, m_transUniformbuffer.data() });
         }
 
         VulkanRenderTargetCreateData VulkanRenderBase::genAttachmentCreateData(
