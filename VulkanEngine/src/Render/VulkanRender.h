@@ -1,7 +1,7 @@
 //=================================================================================================
 //
 //  Bx Engine
-//  bxs3514 (Xiangshun Bei) @ 2016 - 2018
+//  bxs3514 (Xiangshun Bei) @ 2016 - 2019
 //
 //  All code licensed under the MIT license
 //

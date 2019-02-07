@@ -160,6 +160,7 @@ namespace VulkanEngine
 
             std::vector<VulkanUniformBufferResource> mainSceneUniformbufferResourceList(1);
             mainSceneUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
+            mainSceneUniformbufferResourceList[0].setIndex         = 0;
             mainSceneUniformbufferResourceList[0].bindingPoint     = 0;
             mainSceneUniformbufferResourceList[0].uniformbufferNum = 1;
             mainSceneUniformbufferResourceList[0].pUniformBuffer   =
@@ -191,6 +192,7 @@ namespace VulkanEngine
 
             std::vector<VulkanTextureResource> mainSceneTextureResourceList(1);
             mainSceneTextureResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
+            mainSceneTextureResourceList[0].setIndex         = 0;
             mainSceneTextureResourceList[0].bindingPoint     = 1;
             mainSceneTextureResourceList[0].textureNum       = 1;
             mainSceneTextureResourceList[0].pTexture         = pTexture;
@@ -198,13 +200,17 @@ namespace VulkanEngine
             renderSources.pTextureResouceList = &mainSceneTextureResourceList;
 
             // Create render pass create data
-            VulkanRenderPassCreateData mainSceneRenderPassCreateData  = {};
-            mainSceneRenderPassCreateData.pProps                      = &props;
-            mainSceneRenderPassCreateData.pShaderMeta                 = &mainSceneShaderMeta;
-            mainSceneRenderPassCreateData.pResource                   = &renderSources;
-            mainSceneRenderPassCreateData.renderFramebufferNum        = backbufferNum;
-            mainSceneRenderPassCreateData.renderSubPassNum            = 1;
-            mainSceneRenderPassCreateData.pRenderTargetCreateDataList = &renderTargetsCreateData;
+            std::vector<VulkanGraphicsPipelineCreateData> graphicsPipelineCreateDataList(1);
+
+            graphicsPipelineCreateDataList[0].pProps      = &props;
+            graphicsPipelineCreateDataList[0].pShaderMeta = &mainSceneShaderMeta;
+            graphicsPipelineCreateDataList[0].pResource   = &renderSources;
+
+            VulkanRenderPassCreateData mainSceneRenderPassCreateData      = {};
+            mainSceneRenderPassCreateData.pGraphicsPipelineCreateDataList = &graphicsPipelineCreateDataList;
+            mainSceneRenderPassCreateData.renderFramebufferNum            = backbufferNum;
+            mainSceneRenderPassCreateData.renderSubPassNum                = 1;
+            mainSceneRenderPassCreateData.pRenderTargetCreateDataList     = &renderTargetsCreateData;
 
             m_mainSceneRenderPass.create(mainSceneRenderPassCreateData);
 
