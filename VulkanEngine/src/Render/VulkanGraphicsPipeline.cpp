@@ -14,9 +14,20 @@ namespace VulkanEngine
     namespace Render
     {
         VulkanGraphicsPipeline::VulkanGraphicsPipeline(
-            const Setting* const pSetting)
+            const Setting*      const pSetting,
+            const VkDevice*     const pDevice,
+            const VkRenderPass* const pRenderPass,
+            Mgr::CmdBufferMgr*  const pCmdBufferMgr,
+            Mgr::DescriptorMgr* const pDescritorMgr)
+            : m_pSetting(pSetting),
+              m_pDevice(pDevice),
+              m_pRenderPass(pRenderPass),
+              m_pCmdBufferMgr(pCmdBufferMgr),
+              m_pDescriptorMgr(pDescritorMgr),
+              m_shader(*pDevice)
         {
-
+            m_graphicsPipeline       = { *m_pDevice, vkDestroyPipeline       };
+            m_graphicsPipelineLayout = { *m_pDevice, vkDestroyPipelineLayout };
         }
 
         VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
@@ -24,15 +35,14 @@ namespace VulkanEngine
         }
 
         BOOL VulkanGraphicsPipeline::createGraphicsPipeline(
-            const VulkanGraphicsPipelineCreateData& renderTargetsCreateData)
+            const VulkanGraphicsPipelineCreateData& renderTargetsCreateData,
+            const size_t                            renderTargetNum)
         {
             BOOL status = BX_SUCCESS;
 
             VulkanRenderProperties* const pProps      = renderTargetsCreateData.pProps;
             Shader::BxShaderMeta*   const pShaderMeta = renderTargetsCreateData.pShaderMeta;
             VulkanRenderResources*  const pResource   = renderTargetsCreateData.pResource;
-
-            size_t renderTargetNum = m_framebufferList.size();
 
             // Initialize draw data
             const Rectangle* pRenderViewportRect = &(pProps->renderViewportRect);
@@ -52,8 +62,8 @@ namespace VulkanEngine
             };
 
             // TODO: Add suppport for Depth/Stencil only render
-            m_enableColor  = TRUE;
-            m_clearColor   = pProps->sceneClearValue;
+            m_enableColor     = pProps->enableColor;
+            m_colorClearValue = pProps->sceneClearValue;
 
             // Bind vertex/index buffer
             m_pVertexInputResourceList = pResource->pVertexInputResourceList;
@@ -116,37 +126,43 @@ namespace VulkanEngine
             m_enableStencil = pProps->enableStencil;
 
             VkPipelineColorBlendAttachmentState blendAttachmentState = {};
-            blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-                                                  VK_COLOR_COMPONENT_G_BIT |
-                                                  VK_COLOR_COMPONENT_B_BIT |
-                                                  VK_COLOR_COMPONENT_A_BIT;
-
-            if (m_pSetting->m_graphicsSetting.blend == TRUE)
-            {
-                blendAttachmentState.blendEnable         = VK_TRUE;
-                blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
-                blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-                blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-                blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
-                blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-                blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-            }
-            else
-            {
-                blendAttachmentState.blendEnable = VK_FALSE;
-            }
 
             VkPipelineColorBlendStateCreateInfo blendState = {};
-            blendState.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-            blendState.attachmentCount = 1;
-            blendState.pAttachments    = &blendAttachmentState;
-            blendState.logicOpEnable   = VK_FALSE; // Enable will disable the states in pAttachments
+            blendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+
+            if (IsColorEnabled())
+            {
+                blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+                                                      VK_COLOR_COMPONENT_G_BIT |
+                                                      VK_COLOR_COMPONENT_B_BIT |
+                                                      VK_COLOR_COMPONENT_A_BIT;
+
+                if (m_pSetting->m_graphicsSetting.blend == TRUE)
+                {
+                    blendAttachmentState.blendEnable         = VK_TRUE;
+                    blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
+                    blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                    blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                    blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
+                    blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                    blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                }
+                else
+                {
+                    blendAttachmentState.blendEnable = VK_FALSE;
+                }
+
+                blendState.attachmentCount = 1;
+                blendState.pAttachments    = &blendAttachmentState;
+                blendState.logicOpEnable   = VK_FALSE; // Enable will disable the states in pAttachments
+            }
 
             VkPipelineDepthStencilStateCreateInfo* pDepthStencilState = NULL;
             VkPipelineDepthStencilStateCreateInfo  depthStencilState = {};
-            if (pProps->enableDepth == TRUE)
+            depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+
+            if (IsDepthEnabled() == TRUE)
             {
-                depthStencilState.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
                 depthStencilState.depthTestEnable       = VK_TRUE;
                 depthStencilState.depthWriteEnable      = VK_TRUE;
                 depthStencilState.depthCompareOp        = VK_COMPARE_OP_LESS_OR_EQUAL;
@@ -155,12 +171,12 @@ namespace VulkanEngine
                 depthStencilState.maxDepthBounds        = 1.0f;
                 depthStencilState.stencilTestEnable     = VK_FALSE;
 
-                m_depthColor = pProps->depthClearValue;
+                m_depthClearValue = pProps->depthClearValue;
 
                 pDepthStencilState = &depthStencilState;
             }
 
-            if (pProps->enableStencil == TRUE)
+            if (IsStencilEnabled() == TRUE)
             {
                 NotImplemented();
 
@@ -168,7 +184,7 @@ namespace VulkanEngine
                 depthStencilState.front             = {};
                 depthStencilState.back              = {};
 
-                m_stencilColor = pProps->stencilClearValue;
+                m_stencilClearValue = pProps->stencilClearValue;
 
                 pDepthStencilState = &depthStencilState;
             }
@@ -377,7 +393,7 @@ namespace VulkanEngine
                 graphicsPipelineCreateInfo.pDepthStencilState  = pDepthStencilState;
                 graphicsPipelineCreateInfo.pViewportState      = &viewportCreateInfo;
                 graphicsPipelineCreateInfo.layout              = m_graphicsPipelineLayout;
-                graphicsPipelineCreateInfo.renderPass          = m_renderPass;
+                graphicsPipelineCreateInfo.renderPass          = *m_pRenderPass;
                 graphicsPipelineCreateInfo.stageCount          = static_cast<UINT>(shaderCreateInfo.size());
                 graphicsPipelineCreateInfo.pStages             = shaderCreateInfo.data();
                 graphicsPipelineCreateInfo.pDynamicState       = NULL;

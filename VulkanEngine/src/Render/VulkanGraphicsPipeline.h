@@ -30,15 +30,16 @@ namespace VulkanEngine
         {
             PolyMode               polyMode;
             CullMode               cullMode;
-            BOOL                   enableBlending;
-            BOOL                   enableDepth;
-            BOOL                   enableStencil;
             std::vector<Rectangle> viewportRects;
             std::vector<Rectangle> scissorRects;
-            VkClearValue           sceneClearValue;
-            VkClearValue           depthClearValue;
-            VkClearValue           stencilClearValue;
             Rectangle              renderViewportRect;
+            BOOL                   enableBlending;
+            BOOL                   enableColor;
+            VkClearValue           sceneClearValue;
+            BOOL                   enableDepth;
+            VkClearValue           depthClearValue;
+            BOOL                   enableStencil;
+            VkClearValue           stencilClearValue;
         };
 
         struct VulkanVertexInputResource
@@ -56,15 +57,6 @@ namespace VulkanEngine
             Buffer::VulkanUniformBuffer* pUniformBuffer;
         };
 
-        struct VulkanRenderResources
-        {
-            UINT                                      vertexDescriptionBindingPoint;
-            UINT                                      vertexBufferTexChannelNum;
-            std::vector<VulkanVertexInputResource>*   pVertexInputResourceList;
-            std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
-            std::vector<VulkanTextureResource>*       pTextureResouceList;
-        };
-
         struct VulkanTextureResource
         {
             UINT                        setIndex;
@@ -72,6 +64,15 @@ namespace VulkanEngine
             UINT                        textureNum;
             BX_SHADER_TYPE              shaderType;
             Texture::VulkanTextureBase* pTexture;
+        };
+
+        struct VulkanRenderResources
+        {
+            UINT                                      vertexDescriptionBindingPoint;
+            UINT                                      vertexBufferTexChannelNum;
+            std::vector<VulkanVertexInputResource>*   pVertexInputResourceList;
+            std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
+            std::vector<VulkanTextureResource>*       pTextureResouceList;
         };
 
         struct VulkanGraphicsPipelineCreateData
@@ -83,44 +84,90 @@ namespace VulkanEngine
             VulkanRenderProperties* pProps;
 
             // Shader
-            Shader::BxShaderMeta* pShaderMeta;
+            Shader::BxShaderMeta*   pShaderMeta;
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
-            VulkanRenderResources* pResource;
+            VulkanRenderResources*  pResource;
         };
 
         class VulkanGraphicsPipeline
         {
         public:
             VulkanGraphicsPipeline(
-                const Setting* const pSetting);
+                const Setting*      const pSetting,
+                const VkDevice*     const pDevice,
+                const VkRenderPass* const pRenderPass,
+                Mgr::CmdBufferMgr*  const pCmdBufferMgr,
+                Mgr::DescriptorMgr* const pDescritorMgr);
 
             ~VulkanGraphicsPipeline();
 
             BOOL createGraphicsPipeline(
-                const VulkanGraphicsPipelineCreateData& renderTargetsCreateData);
+                const VulkanGraphicsPipelineCreateData& renderTargetsCreateData,
+                const size_t                            renderTargetNum);
+
+            INLINE const VkPipeline GetGraphicsPipelineHandle() const
+            {
+                return m_graphicsPipeline;
+            }
+
+            INLINE const VkPipelineLayout GetGraphicsPipelineLayout() const
+            {
+                return m_graphicsPipelineLayout;
+            }
+
+            INLINE const std::vector<Mgr::DescriptorUpdateInfo>& GetUniformBufferDescUpdateInfo() const
+            {
+                return m_uniformBufferDescriptorUpdateInfo;
+            }
+
+            INLINE const std::vector<Mgr::DescriptorUpdateInfo>& GetTextureDescUpdateInfo() const
+            {
+                return m_textureDescriptorUpdateInfo;
+            }
+
+            INLINE const std::vector<VulkanVertexInputResource>* GetVertexInputResourceList() const
+            {
+                return m_pVertexInputResourceList;
+            }
+
+            INLINE const VkRect2D&     GetRenderViewport()    const { return m_renderViewport;  }
+
+            INLINE const VkClearValue& GetColorClearValue()   const { return m_colorClearValue; }
+            INLINE const VkClearValue& GetDepthClearValue()   const { return m_colorClearValue; }
+            INLINE const VkClearValue& GetStencilClearValue() const { return m_colorClearValue; }
+
+            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;        }
+            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;        }
+            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil;      }
 
         private:
-            const Setting*            m_pSetting;
-            const VkDevice*           m_pDevice;
+            const Setting*                          m_pSetting;
+            const VkDevice*                         m_pDevice;
+            const VkRenderPass* const               m_pRenderPass;
 
-            VDeleter<VkPipelineLayout> m_graphicsPipelineLayout;
+            VDeleter<VkPipeline>                    m_graphicsPipeline;
+            VDeleter<VkPipelineLayout>              m_graphicsPipelineLayout;
 
-            Mgr::CmdBufferMgr* const  m_pCmdBufferMgr;
-            Mgr::DescriptorMgr* const m_pDescriptorMgr;
+            Mgr::CmdBufferMgr* const                m_pCmdBufferMgr;
+            Mgr::DescriptorMgr* const               m_pDescriptorMgr;
 
-            std::vector<Mgr::DescriptorUpdateInfo> m_uniformBufferDescriptorUpdateInfo;
-            std::vector<Mgr::DescriptorUpdateInfo> m_textureDescriptorUpdateInfo;
+            Shader::VulkanGraphicsShader            m_shader;
 
-            VkRect2D       m_renderViewport;
+            std::vector<Mgr::DescriptorUpdateInfo>  m_uniformBufferDescriptorUpdateInfo;
+            std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
+
+            std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
+
+            VkRect2D                                m_renderViewport;
                           
-            VkClearValue   m_clearColor;
-            VkClearValue   m_depthColor;
-            VkClearValue   m_stencilColor;
+            VkClearValue                            m_colorClearValue;
+            VkClearValue                            m_depthClearValue;
+            VkClearValue                            m_stencilClearValue;
 
-            BOOL           m_enableColor;
-            BOOL           m_enableDepth;
-            BOOL           m_enableStencil;
+            BOOL                                    m_enableColor;
+            BOOL                                    m_enableDepth;
+            BOOL                                    m_enableStencil;
         };
     }
 }
