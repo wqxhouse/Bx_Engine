@@ -26,6 +26,7 @@
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
     <ClCompile Include="src\Render\VulkanForwardRender.cpp" />
+    <ClCompile Include="src\Render\VulkanGraphicsPipeline.cpp" />
     <ClCompile Include="src\Render\VulkanRender.cpp" />
     <ClCompile Include="src\Render\VulkanRenderPass.cpp" />
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="src\Core\VDeleter.h" />
     <ClInclude Include="src\Core\VulkanPCH.h" />
     <ClInclude Include="src\Core\VulkanUtility.h" />
+    <ClInclude Include="src\Render\VulkanGraphicsPipeline.h" />
     <ClInclude Include="src\Render\VulkanRender.h" />
     <ClInclude Include="src\Render\VulkanRenderPass.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
