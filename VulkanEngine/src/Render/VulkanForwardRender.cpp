@@ -62,6 +62,7 @@ namespace VulkanEngine
             {
                 { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }
             };
+            props.enableColor = TRUE;
 
             assert((IsDepthTestEnabled() == TRUE)  ||
                    ((IsDepthTestEnabled()   == FALSE) &&
@@ -103,22 +104,26 @@ namespace VulkanEngine
             }
 
             // Generate render pass create data
+            const UINT subpassNum = 1;
+
             const UINT backbufferAttachmentNum = static_cast<UINT>(m_backBufferRTsCreateDataList[0].size());
             const UINT backbufferNum           = static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
 
-            std::vector<VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
+            std::vector<VulkanRenderSubpassCreateData>                        renderTargetsCreateData(subpassNum);
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
 
-            for (UINT i = 0; i < backbufferAttachmentNum; ++i)
+            for (UINT i = 0; i < subpassNum; ++i)
             {
-                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateData[i]);
+                VulkanRenderSubpassCreateData* pRenderSubpassCreateData = &(renderTargetsCreateData[i]);
 
-                pRenderTargetCreateData->renderSubPassIndex = renderTargetDescriptors[i].renderSubPassIndex;
-                pRenderTargetCreateData->bindingPoint       = renderTargetDescriptors[i].bindingPoint;
-                pRenderTargetCreateData->isStore            = renderTargetDescriptors[i].isStore;
-                pRenderTargetCreateData->layout             = renderTargetDescriptors[i].layout;
-                pRenderTargetCreateData->useStencil         = renderTargetDescriptors[i].useStencil;
-                pRenderTargetCreateData->isStoreStencil     = renderTargetDescriptors[i].isStoreStencil;
+                pRenderSubpassCreateData->renderSubpassIndex   = renderTargetDescriptors[i].renderSubpassIndex;
+                pRenderSubpassCreateData->renderFramebufferNum = backbufferNum;
+                pRenderSubpassCreateData->renderTargetNum      = backbufferAttachmentNum;
+                pRenderSubpassCreateData->bindingPoint         = renderTargetDescriptors[i].bindingPoint;
+                pRenderSubpassCreateData->isStore              = renderTargetDescriptors[i].isStore;
+                pRenderSubpassCreateData->layout               = renderTargetDescriptors[i].layout;
+                pRenderSubpassCreateData->useStencil           = renderTargetDescriptors[i].useStencil;
+                pRenderSubpassCreateData->isStoreStencil       = renderTargetDescriptors[i].isStoreStencil;
 
                 std::vector<VulkanRenderTargetFramebufferCreateData>*
                     pRenderTargetsFramebufferCreateData = &(renderTargetsFramebuffersCreateData[i]);
@@ -129,7 +134,7 @@ namespace VulkanEngine
                     pRenderTargetsFramebufferCreateData->at(j) = m_backBufferRTsCreateDataList[j][i];
                 }
 
-                pRenderTargetCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
+                pRenderSubpassCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
             }
 
             // Initialize render pass resources
@@ -208,9 +213,7 @@ namespace VulkanEngine
 
             VulkanRenderPassCreateData mainSceneRenderPassCreateData      = {};
             mainSceneRenderPassCreateData.pGraphicsPipelineCreateDataList = &graphicsPipelineCreateDataList;
-            mainSceneRenderPassCreateData.renderFramebufferNum            = backbufferNum;
-            mainSceneRenderPassCreateData.renderSubPassNum                = 1;
-            mainSceneRenderPassCreateData.pRenderTargetCreateDataList     = &renderTargetsCreateData;
+            mainSceneRenderPassCreateData.pRenderSubpassCreateDataList    = &renderTargetsCreateData;
 
             m_mainSceneRenderPass.create(mainSceneRenderPassCreateData);
 

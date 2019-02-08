@@ -30,6 +30,7 @@ namespace VulkanEngine
               m_pTextureMgr(pTextureMgr),
               m_pScene(pScene),
               m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
+              m_isColorEnabled(TRUE),
               m_isDepthTestEnabled(FALSE),
               m_isStencilTestEnabled(FALSE)
         {
@@ -99,7 +100,7 @@ namespace VulkanEngine
             m_descriptorUpdateDataList.push_back({ 0, m_transUniformbuffer.data() });
         }
 
-        VulkanRenderTargetCreateData VulkanRenderBase::genAttachmentCreateData(
+        VulkanRenderSubpassCreateData VulkanRenderBase::genSubpassCreateData(
             const UINT                             renderSubPassIndex,
             const UINT                             bindingPoint,
             const UINT                             isStore,
@@ -107,8 +108,8 @@ namespace VulkanEngine
             const BOOL                             useStencil,
             const BOOL                             isStoreStencil)
         {
-            Render::VulkanRenderTargetCreateData rtCreateData = {};
-            rtCreateData.renderSubPassIndex = renderSubPassIndex;
+            Render::VulkanRenderSubpassCreateData rtCreateData = {};
+            rtCreateData.renderSubpassIndex = renderSubPassIndex;
             rtCreateData.bindingPoint       = bindingPoint;
             rtCreateData.isStore            = isStore;
             rtCreateData.layout             = layout;

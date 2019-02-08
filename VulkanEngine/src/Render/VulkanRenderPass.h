@@ -13,13 +13,6 @@
 #include <Math/Structures.h>
 
 #include "VulkanGraphicsPipeline.h"
-#include "../Context/CmdBufferMgr.h"
-#include "../Context/DescriptorMgr.h"
-#include "../Shader/VulkanGraphicsShader.h"
-#include "../Buffer/VulkanVertexBuffer.h"
-#include "../Buffer/VulkanIndexBuffer.h"
-#include "../Buffer/VulkanUniformBufferDynamic.h"
-#include "../Buffer/VulkanFramebuffer.h"
 
 namespace VulkanEngine
 {
@@ -31,14 +24,16 @@ namespace VulkanEngine
             Texture::VulkanTextureBase* pTexture;
         };
 
-        struct VulkanRenderTargetCreateData
+        struct VulkanRenderSubpassCreateData
         {
             BOOL                                                  isStore;
-            UINT                                                  renderSubPassIndex;
+            UINT                                                  renderSubpassIndex;
             UINT                                                  bindingPoint;
             BX_FRAMEBUFFER_ATTACHMENT_LAYOUT                      layout;
             BOOL                                                  useStencil;
             BOOL                                                  isStoreStencil;
+            UINT                                                  renderTargetNum;
+            UINT                                                  renderFramebufferNum;
             std::vector<VulkanRenderTargetFramebufferCreateData>* pRenderTargetFramebufferCreateData;
         };
 
@@ -48,9 +43,7 @@ namespace VulkanEngine
             std::vector<VulkanGraphicsPipelineCreateData>* pGraphicsPipelineCreateDataList;
 
             // Render Target create data
-            UINT                                           renderSubPassNum;
-            UINT                                           renderFramebufferNum;
-            std::vector<VulkanRenderTargetCreateData>*     pRenderTargetCreateDataList;
+            std::vector<VulkanRenderSubpassCreateData>*    pRenderSubpassCreateDataList;
         };
 
         struct VulkanDescriptorUpdateData
@@ -84,9 +77,10 @@ namespace VulkanEngine
             void clean();
 
             INLINE const Buffer::VulkanFramebuffer* GetFramebuffer(
+                const UINT subpassIndex,
                 const UINT framebufferIndex) const
             {
-                return &(m_framebufferList[framebufferIndex]);
+                return &(m_framebufferList[subpassIndex][framebufferIndex]);
             }
 
         private:
@@ -98,43 +92,25 @@ namespace VulkanEngine
             };*/
 
             // Create VkRenderPass and generate framebuffers
-            BOOL createRenderTargets(
-                const std::vector<VulkanRenderTargetCreateData>* pRenderTargetsCreateDataList,
-                const UINT                                       renderSubpassNum,
-                const UINT                                       renderFramebufferNum);
+            BOOL createRenderPass(
+                const std::vector<VulkanRenderSubpassCreateData>* pRenderSubpassCreateDataList);
 
             // Context
-            const Setting*                          m_pSetting;
-            const VkDevice*                         m_pDevice;
-            Mgr::CmdBufferMgr* const                m_pCmdBufferMgr;
-            Mgr::DescriptorMgr* const               m_pDescriptorMgr;
+            const Setting*            m_pSetting;
+            const VkDevice*           m_pDevice;
+            Mgr::CmdBufferMgr* const  m_pCmdBufferMgr;
+            Mgr::DescriptorMgr* const m_pDescriptorMgr;
 
-            VDeleter<VkRenderPass>                  m_renderPass;
-            //VDeleter<VkPipeline>                    m_graphicsPipeline;
+            VDeleter<VkRenderPass>    m_renderPass;
+
+            VulkanGraphicsPipeline    m_graphicsPipeline;
 
             // Resources
-            const Scene::RenderScene*               m_pScene;
+            const Scene::RenderScene* m_pScene;
 
-            //Shader::VulkanGraphicsShader            m_shader;
+            std::vector<std::vector<Buffer::VulkanFramebuffer>> m_framebufferList;
 
-            std::vector<Buffer::VulkanFramebuffer>  m_framebufferList;
-
-            /*std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;*/
-
-            std::vector<Mgr::DescriptorUpdateInfo>  m_uniformBufferDescriptorUpdateInfo;
-            //std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
-
-            //VDeleter<VkPipelineLayout>              m_graphicsPipelineLayout;
-
-            VkRect2D                                m_renderViewport;
-
-            VkClearValue                            m_clearColor;
-            VkClearValue                            m_depthColor;
-            VkClearValue                            m_stencilColor;
-
-            BOOL                                    m_enableColor;
-            BOOL                                    m_enableDepth;
-            BOOL                                    m_enableStencil;
+            std::vector<UINT> m_renderTargetNumList;
         };
     }
 }

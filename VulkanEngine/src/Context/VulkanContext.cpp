@@ -347,7 +347,7 @@ namespace VulkanEngine
             submitInfo.pSignalSemaphores    = signalSemaphore;
             submitInfo.commandBufferCount   = 1;
             submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
-                GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, renderImageIndex)->GetCmdBufferPtr();
+                GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, 0)->GetCmdBufferPtr();
 
             VkResult submitResult = vkQueueSubmit(submitQueue,
                                                   1,

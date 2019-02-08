@@ -89,9 +89,12 @@ namespace VulkanEngine
                 }
             }
 
+            INLINE BOOL IsColorEnabled()       const { return m_isColorEnabled;         }
             INLINE BOOL IsDepthTestEnabled()   const { return m_isDepthTestEnabled;     }
             INLINE BOOL IsStencilTestEnabled() const { return m_isStencilTestEnabled;   }
 
+            INLINE void EnableColorBuffer()          { m_isColorEnabled     = TRUE;     }
+            INLINE void DisableColorBuffer()         { m_isColorEnabled     = FALSE;    }
             INLINE void EnableDepthTest()            { m_isDepthTestEnabled = TRUE;     }
             INLINE void DisableDepthTest()           { m_isDepthTestEnabled = FALSE;    }
             INLINE void EnableStencilTest()          { m_isStencilTestEnabled = TRUE;   }
@@ -101,7 +104,7 @@ namespace VulkanEngine
             struct VulkanRenderTargetCreateDescriptor
             {
                 BOOL                             isStore;
-                UINT                             renderSubPassIndex;
+                UINT                             renderSubpassIndex;
                 UINT                             bindingPoint;
                 BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout;
                 BOOL                             useStencil;
@@ -124,7 +127,7 @@ namespace VulkanEngine
             };
 
             void parseScene();
-            VulkanRenderTargetCreateData genAttachmentCreateData(
+            VulkanRenderSubpassCreateData genSubpassCreateData(
                 const UINT                             renderSubPassIndex,
                 const UINT                             bindingPoint,
                 const UINT                             isStore,
@@ -155,6 +158,7 @@ namespace VulkanEngine
             std::vector<TransUbo>                   m_transUniformbuffer;
 
         private:
+            BOOL m_isColorEnabled;
             BOOL m_isDepthTestEnabled;
             BOOL m_isStencilTestEnabled;
         };
