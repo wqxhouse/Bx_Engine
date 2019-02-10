@@ -38,14 +38,14 @@ namespace VulkanEngine
         }
 
         BOOL VulkanGraphicsPipeline::createGraphicsPipeline(
-            const VulkanGraphicsPipelineCreateData& renderTargetsCreateData,
-            const size_t                            renderTargetNum)
+            VulkanGraphicsPipelineCreateData* pRenderTargetsCreateData,
+            const size_t                      renderTargetNum)
         {
             BOOL status = BX_SUCCESS;
 
-            VulkanRenderProperties* const pProps      = renderTargetsCreateData.pProps;
-            Shader::BxShaderMeta*   const pShaderMeta = renderTargetsCreateData.pShaderMeta;
-            VulkanRenderResources*  const pResource   = renderTargetsCreateData.pResource;
+            VulkanRenderProperties* const pProps      = pRenderTargetsCreateData->pProps;
+            Shader::BxShaderMeta*   const pShaderMeta = pRenderTargetsCreateData->pShaderMeta;
+            VulkanRenderResources*  const pResource   = pRenderTargetsCreateData->pResource;
 
             // Initialize draw data
             const Rectangle* pRenderViewportRect = &(pProps->renderViewportRect);

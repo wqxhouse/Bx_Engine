@@ -200,17 +200,18 @@ namespace VulkanEngine
 
             // Create render pass create data
             VulkanGraphicsPipelineCreateData graphicsPipelineCreateData = {};
-            graphicsPipelineCreateData.pProps = &props;
-            graphicsPipelineCreateData.pShaderMeta = &mainSceneShaderMeta;
-            graphicsPipelineCreateData.pResource = &renderSources;
+            graphicsPipelineCreateData.subpassIndex                     = 0;
+            graphicsPipelineCreateData.pProps                           = &props;
+            graphicsPipelineCreateData.pShaderMeta                      = &mainSceneShaderMeta;
+            graphicsPipelineCreateData.pResource                        = &renderSources;
 
-            VulkanRenderPassCreateData mainSceneRenderPassCreateData  = {};
-            mainSceneRenderPassCreateData.graphicsPipelineCreateData  = graphicsPipelineCreateData;
-            mainSceneRenderPassCreateData.renderFramebufferNum        = backbufferNum;
-            mainSceneRenderPassCreateData.renderSubPassNum            = 1;
-            mainSceneRenderPassCreateData.pRenderTargetCreateDataList = &renderTargetsCreateData;
+            std::vector<VulkanRenderSubpassCreateData> renderPassCreateData(1);
 
-            m_mainSceneRenderPass.create(mainSceneRenderPassCreateData);
+            renderPassCreateData[0].pGraphicsPipelineCreateData       = &graphicsPipelineCreateData;
+            renderPassCreateData[0].pRenderTargetCreateDataList       = &renderTargetsCreateData;
+            renderPassCreateData[0].framebufferNum                    = backbufferNum;
+
+            m_mainSceneRenderPass.create(renderPassCreateData);
 
             return status;
         }
