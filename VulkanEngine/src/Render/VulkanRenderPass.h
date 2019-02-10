@@ -35,15 +35,12 @@ namespace VulkanEngine
             std::vector<VulkanRenderTargetFramebufferCreateData>* pRenderTargetFramebufferCreateData;
         };
 
-        struct VulkanRenderPassCreateData
+        struct VulkanRenderSubpassCreateData
         {
             // GraphicsPipeline create data
-            VulkanGraphicsPipelineCreateData           graphicsPipelineCreateData;
-
-            // Output
-            UINT                                       renderSubPassNum;
-            UINT                                       renderFramebufferNum;
-            std::vector<VulkanRenderTargetCreateData>* pRenderTargetCreateDataList;
+            UINT                                           framebufferNum;
+            VulkanGraphicsPipelineCreateData*              pGraphicsPipelineCreateData;
+            std::vector<VulkanRenderTargetCreateData>*     pRenderTargetCreateDataList;
         };
 
         class VulkanRenderPass
@@ -59,7 +56,7 @@ namespace VulkanEngine
             ~VulkanRenderPass();
 
             BOOL create(
-                const VulkanRenderPassCreateData& renderPassCreateData);
+                const std::vector<VulkanRenderSubpassCreateData>& renderPassCreateData);
 
             BOOL update(
                 const float                                    deltaTime,
@@ -83,11 +80,26 @@ namespace VulkanEngine
                 BOOL                       isUpdate;
             };*/
 
-            // Create VkRenderPass and generate framebuffers
+            // Create render targets for a single subpass
             BOOL createRenderTargets(
-                const std::vector<VulkanRenderTargetCreateData>* pRenderTargetsCreateDataList,
-                const UINT                                       renderSubpassNum,
-                UINT                                             renderFramebufferNum);
+                IN  const std::vector<VulkanRenderTargetCreateData>*       pRenderTargetsCreateDataList,
+                IN  const BOOL                                             enableDepth,
+                OUT VkSubpassDescription*                                  pSubpassDescription,
+                OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
+                OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
+                OUT VkAttachmentReference*                                 pDepthSubpassAttachmentRef,
+                OUT std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTextureTable);
+
+            // Create render pass
+            BOOL createRenderPass(
+                const UINT                                  renderSubpassNum,
+                const std::vector<VkSubpassDescription>&    subpassDescriptionList,
+                const std::vector<VkAttachmentDescription>& attachmentDescriptionList);
+
+            // Generate framebuffers
+            BOOL createFramebuffers(
+                std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTexturePtrList,
+                const UINT                                             framebufferNum);
 
             // Context
             const Setting*                          m_pSetting;
@@ -103,6 +115,8 @@ namespace VulkanEngine
             const Scene::RenderScene*               m_pScene;
 
             std::vector<Buffer::VulkanFramebuffer>  m_framebufferList;
+
+            std::vector<std::vector<Buffer::VulkanFramebuffer>> m_framebufferTable;
         };
     }
 }

@@ -110,8 +110,8 @@ namespace VulkanEngine
             ~VulkanGraphicsPipeline();
 
             BOOL createGraphicsPipeline(
-                const VulkanGraphicsPipelineCreateData& renderTargetsCreateData,
-                const size_t                            renderTargetNum);
+                VulkanGraphicsPipelineCreateData* pRenderTargetsCreateData,
+                const size_t                      renderTargetNum);
 
             BOOL update(
                 const float                                    deltaTime,
