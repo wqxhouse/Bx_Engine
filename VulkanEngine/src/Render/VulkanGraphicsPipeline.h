@@ -90,6 +90,13 @@ namespace VulkanEngine
             VulkanRenderResources*  pResource;
         };
 
+        struct VulkanDescriptorUpdateData
+        {
+            UINT  descriptorIndex;
+            void* pData;
+            BOOL  isDataUpdated;
+        };
+
         class VulkanGraphicsPipeline
         {
         public:
@@ -105,6 +112,10 @@ namespace VulkanEngine
             BOOL createGraphicsPipeline(
                 const VulkanGraphicsPipelineCreateData& renderTargetsCreateData,
                 const size_t                            renderTargetNum);
+
+            BOOL update(
+                const float                                    deltaTime,
+                const std::vector<VulkanDescriptorUpdateData>& updateDataList);
 
             INLINE const VkPipeline GetGraphicsPipelineHandle() const
             {
@@ -133,9 +144,9 @@ namespace VulkanEngine
 
             INLINE const VkRect2D&     GetRenderViewport()    const { return m_renderViewport;  }
 
-            INLINE const VkClearValue& GetColorClearValue()   const { return m_colorClearValue; }
-            INLINE const VkClearValue& GetDepthClearValue()   const { return m_colorClearValue; }
-            INLINE const VkClearValue& GetStencilClearValue() const { return m_colorClearValue; }
+            INLINE const VkClearValue& GetColorClearValue()   const { return m_colorClearValue;   }
+            INLINE const VkClearValue& GetDepthClearValue()   const { return m_depthClearValue;   }
+            INLINE const VkClearValue& GetStencilClearValue() const { return m_stencilClearValue; }
 
             INLINE const BOOL IsColorEnabled()   const { return m_enableColor;        }
             INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;        }

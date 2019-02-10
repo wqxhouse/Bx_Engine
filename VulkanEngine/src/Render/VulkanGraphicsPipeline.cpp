@@ -24,7 +24,10 @@ namespace VulkanEngine
               m_pRenderPass(pRenderPass),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescriptorMgr(pDescritorMgr),
-              m_shader(*pDevice)
+              m_shader(*pDevice),
+              m_enableColor(TRUE),
+              m_enableDepth(FALSE),
+              m_enableStencil(FALSE)
         {
             m_graphicsPipeline       = { *m_pDevice, vkDestroyPipeline       };
             m_graphicsPipelineLayout = { *m_pDevice, vkDestroyPipelineLayout };
@@ -410,6 +413,27 @@ namespace VulkanEngine
 
                 assert(status == BX_SUCCESS);
             }
+
+            return status;
+        }
+
+        BOOL VulkanGraphicsPipeline::update(
+            const float                                    deltaTime,
+            const std::vector<VulkanDescriptorUpdateData>& updateDataList)
+        {
+            BOOL status = BX_SUCCESS;
+
+            size_t updateSize = updateDataList.size();
+            for (size_t i = 0; i < updateSize; ++i)
+            {
+                Buffer::VulkanDescriptorBuffer* pDescriptorBuffer =
+                    m_uniformBufferDescriptorUpdateInfo[i].pDescriptorBuffer;
+
+                status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(),
+                    updateDataList[i].pData);
+            }
+
+            assert(status == BX_SUCCESS);
 
             return status;
         }
