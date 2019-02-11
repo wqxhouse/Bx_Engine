@@ -43,8 +43,8 @@ namespace VulkanEngine
             virtual void draw() = 0;
 
             INLINE BOOL AddRenderPass(
-                const BX_RENDER_PASS_STAGE                        renderPassStage,
-                const std::vector<VulkanRenderSubpassCreateData>& renderPassCreateData)
+                const BX_RENDER_PASS_STAGE        renderPassStage,
+                const VulkanRenderpassCreateData& renderPassCreateData)
             {
                 switch (renderPassStage)
                 {

@@ -40,17 +40,13 @@ namespace VulkanEngine
             /// Initialize default render pass for main scene
             //  Initialize graphics pipeline properties
             VulkanRenderProperties props = {};
-            props.cullMode               = CULLMODE_BACK;
             props.enableBlending         = TRUE;
-            props.polyMode               = PolyMode::POLYMODE_FILL;
-            props.sceneClearValue        = { 0.0f, 0.0f, 0.0f, 1.0f };
+            props.sceneClearValue        = { { 0.0f, 0.0f, 0.0f, 1.0f } };
             props.renderViewportRect     =
             {
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
                 static_cast<float>(m_pSetting->resolution.height), 0.0f
             };
-            props.viewportRects                  = { props.renderViewportRect };
-            props.scissorRects                   = { props.renderViewportRect };
             props.enableColor                    = TRUE;
 
             // Initialize shaders
@@ -199,17 +195,26 @@ namespace VulkanEngine
             renderSources.pTextureResouceList = &mainSceneTextureResourceList;
 
             // Create render pass create data
-            VulkanGraphicsPipelineCreateData graphicsPipelineCreateData = {};
-            graphicsPipelineCreateData.subpassIndex                     = 0;
-            graphicsPipelineCreateData.pProps                           = &props;
-            graphicsPipelineCreateData.pShaderMeta                      = &mainSceneShaderMeta;
-            graphicsPipelineCreateData.pResource                        = &renderSources;
+            VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties = {};
+            subpassGraphicsPipelineProperties.cullMode                         = CULLMODE_BACK;
+            subpassGraphicsPipelineProperties.polyMode                         = PolyMode::POLYMODE_FILL;
+            subpassGraphicsPipelineProperties.viewportRects                    = { props.renderViewportRect };
+            subpassGraphicsPipelineProperties.scissorRects                     = { props.renderViewportRect };
 
-            std::vector<VulkanRenderSubpassCreateData> renderPassCreateData(1);
+            VulkanSubpassGraphicsPipelineCreateData subpassGraphicsPipelineCreateData = {};
+            subpassGraphicsPipelineCreateData.subpassIndex                            = 0;
+            subpassGraphicsPipelineCreateData.pProps                                  = &subpassGraphicsPipelineProperties;
+            subpassGraphicsPipelineCreateData.pShaderMeta                             = &mainSceneShaderMeta;
+            subpassGraphicsPipelineCreateData.pResource                               = &renderSources;
 
-            renderPassCreateData[0].pGraphicsPipelineCreateData       = &graphicsPipelineCreateData;
-            renderPassCreateData[0].pRenderTargetCreateDataList       = &renderTargetsCreateData;
-            renderPassCreateData[0].framebufferNum                    = backbufferNum;
+            std::vector<VulkanRenderSubpassCreateData> renderSubpassCreateDataList(1);
+            renderSubpassCreateDataList[0].pSubpassGraphicsPipelineCreateData = &subpassGraphicsPipelineCreateData;
+            renderSubpassCreateDataList[0].pRenderTargetCreateDataList        = &renderTargetsCreateData;
+
+            VulkanRenderpassCreateData renderPassCreateData = {};
+            renderPassCreateData.pRenderProperties          = &props;
+            renderPassCreateData.pSubpassCreateDataList     = &renderSubpassCreateDataList;
+            renderPassCreateData.framebufferNum             = backbufferNum;
 
             m_mainSceneRenderPass.create(renderPassCreateData);
 

@@ -26,20 +26,12 @@ namespace VulkanEngine
 {
     namespace Render
     {
-        struct VulkanRenderProperties
+        struct VulkanGraphicsPipelineProperties
         {
             PolyMode               polyMode;
             CullMode               cullMode;
             std::vector<Rectangle> viewportRects;
             std::vector<Rectangle> scissorRects;
-            Rectangle              renderViewportRect;
-            BOOL                   enableBlending;
-            BOOL                   enableColor;
-            VkClearValue           sceneClearValue;
-            BOOL                   enableDepth;
-            VkClearValue           depthClearValue;
-            BOOL                   enableStencil;
-            VkClearValue           stencilClearValue;
         };
 
         struct VulkanVertexInputResource
@@ -77,17 +69,36 @@ namespace VulkanEngine
 
         struct VulkanGraphicsPipelineCreateData
         {
-            // Subpass Index
-            UINT                    subpassIndex;
+            size_t                            renderTargetNum;
+
+            BOOL                              enableColor;
+            BOOL                              enableDepth;
+            BOOL                              enableStencil;
 
             // Properties
-            VulkanRenderProperties* pProps;
+            VulkanGraphicsPipelineProperties* pProps;
 
             // Shader
-            Shader::BxShaderMeta*   pShaderMeta;
+            Shader::BxShaderMeta*             pShaderMeta;
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
-            VulkanRenderResources*  pResource;
+            VulkanRenderResources*            pResource;
+
+        };
+
+        struct VulkanSubpassGraphicsPipelineCreateData
+        {
+            // Subpass Index
+            UINT                              subpassIndex;
+
+            // Properties
+            VulkanGraphicsPipelineProperties* pProps;
+
+            // Shader
+            Shader::BxShaderMeta*             pShaderMeta;
+
+            // Resources (Vertex buffer, Uniform buffer, Texture, etc)
+            VulkanRenderResources*            pResource;
         };
 
         struct VulkanDescriptorUpdateData
@@ -110,8 +121,7 @@ namespace VulkanEngine
             ~VulkanGraphicsPipeline();
 
             BOOL createGraphicsPipeline(
-                VulkanGraphicsPipelineCreateData* pRenderTargetsCreateData,
-                const size_t                      renderTargetNum);
+                VulkanGraphicsPipelineCreateData* pGraphicsPipelineCreateData);
 
             BOOL update(
                 const float                                    deltaTime,
@@ -142,16 +152,6 @@ namespace VulkanEngine
                 return m_pVertexInputResourceList;
             }
 
-            INLINE const VkRect2D&     GetRenderViewport()    const { return m_renderViewport;  }
-
-            INLINE const VkClearValue& GetColorClearValue()   const { return m_colorClearValue;   }
-            INLINE const VkClearValue& GetDepthClearValue()   const { return m_depthClearValue;   }
-            INLINE const VkClearValue& GetStencilClearValue() const { return m_stencilClearValue; }
-
-            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;        }
-            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;        }
-            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil;      }
-
         private:
             const Setting*                          m_pSetting;
             const VkDevice*                         m_pDevice;
@@ -169,16 +169,6 @@ namespace VulkanEngine
             std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
 
             std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
-
-            VkRect2D                                m_renderViewport;
-
-            VkClearValue                            m_colorClearValue;
-            VkClearValue                            m_depthClearValue;
-            VkClearValue                            m_stencilClearValue;
-
-            BOOL                                    m_enableColor;
-            BOOL                                    m_enableDepth;
-            BOOL                                    m_enableStencil;
         };
     }
 }
