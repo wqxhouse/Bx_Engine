@@ -204,6 +204,8 @@ namespace VulkanEngine
 
             ~VulkanDeferredRender();
 
+            BOOL initialize();
+
             BOOL update(const float delta);
             void draw();
 

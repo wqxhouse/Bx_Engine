@@ -47,7 +47,7 @@ namespace VulkanEngine
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
                 static_cast<float>(m_pSetting->resolution.height), 0.0f
             };
-            props.enableColor                    = TRUE;
+            props.enableColor            = TRUE;
 
             // Initialize shaders
             Shader::BxShaderMeta mainSceneShaderMeta          = {};
