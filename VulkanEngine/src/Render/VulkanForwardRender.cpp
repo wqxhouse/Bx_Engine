@@ -70,25 +70,7 @@ namespace VulkanEngine
                 props.enableDepth     = TRUE;
                 props.depthClearValue = { 1.0f, 0.0f };
 
-                size_t backBufferNum = m_backBufferRTsCreateDataList.size();
-
-                for (size_t i = 0; i < backBufferNum; ++i)
-                {
-                    Texture::VulkanTexture2D* pBackbufferColorTexture =
-                        static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
-
-                    TextureFormat depthBufferFormat =
-                        ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
-
-                    Texture::VulkanTexture2D * backbufferDepthTexture =
-                        m_pTextureMgr->createTexture2DRenderTarget(
-                            pBackbufferColorTexture->GetTextureWidth(),
-                            pBackbufferColorTexture->GetTextureHeight(),
-                            static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
-                            depthBufferFormat);
-
-                    m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
-                }
+                genBackbufferDepthBuffer();
 
                 renderTargetDescriptors.push_back({ TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
             }
@@ -141,16 +123,14 @@ namespace VulkanEngine
             // Initialize uniform buffers for render pass
             const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
 
-            m_forwardRenderMainSceneUbo.resize(m_pScene->GetSceneModelNum());
-
             Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
                 new Buffer::VulkanUniformBufferDynamic(m_pDevice,
                                                        hwProps.limits.minUniformBufferOffsetAlignment);
 
             pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
-                                                         (UINT)m_forwardRenderMainSceneUbo.size(),
-                                                         sizeof(m_forwardRenderMainSceneUbo[0]),
-                                                         m_forwardRenderMainSceneUbo.data());
+                                                         (UINT)m_transUniformbuffer.size(),
+                                                         sizeof(m_transUniformbuffer[0]),
+                                                         m_transUniformbuffer.data());
 
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));

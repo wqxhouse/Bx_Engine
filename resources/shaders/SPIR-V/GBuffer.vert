@@ -14,12 +14,12 @@ layout (binding = 0) uniform TransMat
     mat4 worldMat;
     mat4 viewMat;
     mat4 projMat;
+	mat4 wvpMat;
 } m_transMat;
 
 void main()
 {
     mat4 wvMat  = m_transMat.viewMat * m_transMat.worldMat;
-    mat4 wvpMat = m_transMat.projMat * wvMat;
 
     vec4 posViewHomogeneous = wvMat * vec4(pos, 1.0f);
     posView                 = posViewHomogeneous.xyz / posViewHomogeneous.w;
@@ -29,5 +29,5 @@ void main()
 
     fragTexCoord = texCoord;
 
-    gl_Position =  wvpMat * vec4(pos, 1.0f);
+    gl_Position = m_transMat.wvpMat * vec4(pos, 1.0f);
 }

@@ -9,6 +9,14 @@
 
 #include "VulkanRender.h"
 
+/*
+    GBuffer Structure
+    0: Position Buffer
+    1: Normal   Buffer
+    2: TexCoord Buffer
+    3: Depth    Buffer
+*/
+
 namespace VulkanEngine
 {
     namespace Render
@@ -36,6 +44,12 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
+            const UINT backbufferNum =
+                static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
+
+            const VkPhysicalDeviceProperties hwProps =
+                Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
+
             VulkanRenderProperties renderProperties = {};
             renderProperties.enableBlending         = TRUE;
             renderProperties.sceneClearValue        =
@@ -53,13 +67,13 @@ namespace VulkanEngine
             renderProperties.enableColor            = TRUE;
 
             // Render Targets Descriptors
-            std::vector<VulkanRenderTargetCreateDescriptor> deferredRenderRTs =
+            std::vector<VulkanRenderTargetCreateDescriptor> deferredRenderRTList =
             {
                 // isStore | renderSubPassIndex | bindingPoint | layout | useStencil isStoreStencil;
                 { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }, // Backbuffer
                 { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Position
-                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
-                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
+                { TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
+                { TRUE, 0, 2, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
             };
 
             assert((IsDepthTestEnabled() == TRUE)  ||
@@ -72,34 +86,19 @@ namespace VulkanEngine
                 renderProperties.enableDepth     = TRUE;
                 renderProperties.depthClearValue = { 1.0f, 0.0f };
 
-                size_t backBufferNum = m_backBufferRTsCreateDataList.size();
+                genBackbufferDepthBuffer();
 
-                for (size_t i = 0; i < backBufferNum; ++i)
-                {
-                    Texture::VulkanTexture2D* pBackbufferColorTexture =
-                        static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
-
-                    TextureFormat depthBufferFormat =
-                        ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
-
-                    Texture::VulkanTexture2D * backbufferDepthTexture =
-                        m_pTextureMgr->createTexture2DRenderTarget(
-                            pBackbufferColorTexture->GetTextureWidth(),
-                            pBackbufferColorTexture->GetTextureHeight(),
-                            static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
-                            depthBufferFormat);
-
-                    m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
-                }
-
-                deferredRenderRTs.push_back({ TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
+                deferredRenderRTList.push_back({ TRUE, 0, 3, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
             }
 
             if (IsStencilTestEnabled() == TRUE)
             {
-                renderProperties.enableStencil = TRUE;
+                renderProperties.enableStencil     = TRUE;
                 renderProperties.stencilClearValue = { 1.0f, 0.0f };
             }
+
+            // Initialize uniform buffers for render pass
+            m_transUniformbuffer.resize(m_pScene->GetSceneModelNum());
 
             /// GBuffer subpass
             {
@@ -107,6 +106,38 @@ namespace VulkanEngine
                 Shader::BxShaderMeta gBufferShaderMeta = {};
                 gBufferShaderMeta.vertexShaderInfo     = { "GBuffer.vert.spv", "main" };
                 gBufferShaderMeta.fragmentShaderInfo   = { "GBuffer.frag.spv", "main" };
+
+                // GBuffer attachments
+                size_t gbufferRTNum = deferredRenderRTList.size() - 1;
+
+                std::vector<VulkanRenderTargetCreateData> gBufferRTCreateDataList(gbufferRTNum);
+
+                for (UINT i = 0; i < gbufferRTNum; ++i)
+                {
+                    VulkanRenderTargetCreateData* pGBufferRTCreateData         = &gBufferRTCreateDataList[i];
+                    const VulkanRenderTargetCreateDescriptor& deferredRenderRT = deferredRenderRTList[i + 1];
+
+                    pGBufferRTCreateData->renderSubPassIndex = deferredRenderRT.renderSubPassIndex;
+                    pGBufferRTCreateData->bindingPoint       = deferredRenderRT.bindingPoint;
+                    pGBufferRTCreateData->isStore            = deferredRenderRT.isStore;
+                    pGBufferRTCreateData->layout             = deferredRenderRT.layout;
+                    pGBufferRTCreateData->useStencil         = deferredRenderRT.useStencil;
+                    pGBufferRTCreateData->isStoreStencil     = deferredRenderRT.isStoreStencil;
+                }
+
+                Buffer::VulkanUniformBufferDynamic* pGBufferUniformbuffer =
+                    new Buffer::VulkanUniformBufferDynamic(m_pDevice,
+                                                           hwProps.limits.minUniformBufferOffsetAlignment);
+
+                pGBufferUniformbuffer->createUniformBuffer(*m_pHwDevice,
+                                                           (UINT)m_transUniformbuffer.size(),
+                                                           sizeof(m_transUniformbuffer[0]),
+                                                           m_transUniformbuffer.data());
+
+                VulkanRenderResources renderSources         = {};
+                renderSources.vertexBufferTexChannelNum     = 1;
+                renderSources.vertexDescriptionBindingPoint = 0;
+                renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
             }
 
             // Main Render subpass

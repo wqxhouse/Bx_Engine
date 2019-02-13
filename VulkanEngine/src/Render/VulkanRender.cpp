@@ -117,5 +117,28 @@ namespace VulkanEngine
 
             return rtCreateData;
         }
+
+        void VulkanRenderBase::genBackbufferDepthBuffer()
+        {
+            size_t backBufferNum = m_backBufferRTsCreateDataList.size();
+
+            for (size_t i = 0; i < backBufferNum; ++i)
+            {
+                Texture::VulkanTexture2D* pBackbufferColorTexture =
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
+
+                TextureFormat depthBufferFormat =
+                    ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
+
+                Texture::VulkanTexture2D * backbufferDepthTexture =
+                    m_pTextureMgr->createTexture2DRenderTarget(
+                        pBackbufferColorTexture->GetTextureWidth(),
+                        pBackbufferColorTexture->GetTextureHeight(),
+                        static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
+                        depthBufferFormat);
+
+                m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
+            }
+        }
     }
 }
