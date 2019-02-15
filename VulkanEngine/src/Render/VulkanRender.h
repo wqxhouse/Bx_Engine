@@ -216,6 +216,9 @@ namespace VulkanEngine
                 const UINT                                             startIndex,
                 const UINT                                             gbufferRTNum);
 
+            VulkanRenderSubpassCreateData genMainPassCreateData(
+                const VulkanRenderProperties&             renderProps,
+                const VulkanRenderTargetCreateDescriptor& backBufferRTDesc);
         };
     }
 }

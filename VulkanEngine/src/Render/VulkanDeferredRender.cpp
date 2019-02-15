@@ -169,8 +169,8 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             // Initialize uniform buffers for render pass
-            std::vector<VulkanUniformBufferResource> gBufferniformBufferResourceList = createTransUniformBufferResource();
-            renderSources.pUniformBufferResourceList                                 = &gBufferniformBufferResourceList;
+            std::vector<VulkanUniformBufferResource> gBufferUniformBufferResourceList = createTransUniformBufferResource();
+            renderSources.pUniformBufferResourceList                                  = &gBufferUniformBufferResourceList;
 
             // Initialize textures for render pass
             std::vector<VulkanTextureResource> sceneTextureResourceList = createSceneTextures();
@@ -192,6 +192,38 @@ namespace VulkanEngine
             gBufferPassCreateData.pRenderTargetCreateDataList        = &gBufferRTCreateDataList;
 
             return gBufferPassCreateData;
+        }
+
+        VulkanRenderSubpassCreateData VulkanDeferredRender::genMainPassCreateData(
+            const VulkanRenderProperties&             renderProps,
+            const VulkanRenderTargetCreateDescriptor& backBufferRTDesc)
+        {
+            VulkanRenderSubpassCreateData mainPassCreateData = {};
+
+            // Backbuffer shader
+            Shader::BxShaderMeta mainPassShader = {};
+            mainPassShader.vertexShaderInfo     = { "MainSceneDeferred.vert.spv", "main" };
+            mainPassShader.fragmentShaderInfo   = { "MainSceneDeferred.frag.spv", "main" };
+
+            // Backbuffer attachments
+            VulkanRenderTargetCreateData backbufferRTCreateData = {};
+            backbufferRTCreateData.renderSubPassIndex           = 1;
+            backbufferRTCreateData.bindingPoint                 = 0;
+            backbufferRTCreateData.isStore                      = backBufferRTDesc.isStore;
+            backbufferRTCreateData.layout                       = backBufferRTDesc.layout;
+            backbufferRTCreateData.useStencil                   = backBufferRTDesc.useStencil;
+            backbufferRTCreateData.isStoreStencil               = backBufferRTDesc.isStoreStencil;
+
+
+            NotImplemented();
+            Buffer::VulkanVertexBuffer mainPassVertexBuffer(m_pDevice, m_pCmdBufferMgr, NULL);
+            Buffer::VulkanIndexBuffer  mainPassIndexBuffer(m_pDevice, m_pCmdBufferMgr, NULL);
+
+            std::vector<VulkanVertexInputResource> mainPassVertexInputResource(1);
+            mainPassVertexInputResource[0].pVertexBuffer = std::unique_ptr<Buffer::VulkanVertexBuffer>(&mainPassVertexBuffer);
+            mainPassVertexInputResource[0].pIndexBuffer  = std::unique_ptr<Buffer::VulkanIndexBuffer>(&mainPassIndexBuffer);
+
+            return mainPassCreateData;
         }
     }
 }
