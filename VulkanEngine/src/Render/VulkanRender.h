@@ -124,6 +124,7 @@ namespace VulkanEngine
             };
 
             void parseScene();
+
             VulkanRenderTargetCreateData genAttachmentCreateData(
                 const UINT                             renderSubPassIndex,
                 const UINT                             bindingPoint,
@@ -131,6 +132,11 @@ namespace VulkanEngine
                 const BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout,
                 const BOOL                             useStencil,
                 const BOOL                             isStoreStencil);
+
+            void genBackbufferDepthBuffer();
+
+            std::vector<VulkanUniformBufferResource> createTransUniformBufferResource();
+            std::vector<VulkanTextureResource>       createSceneTextures();
 
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
@@ -181,12 +187,6 @@ namespace VulkanEngine
             void draw();
 
         private:
-            struct ForwardRenderMainSceneUbo
-            {
-                Math::Mat4 transMat;
-            };
-            
-            std::vector<ForwardRenderMainSceneUbo> m_forwardRenderMainSceneUbo;
         };
 
         class VulkanDeferredRender : public VulkanRenderBase
@@ -204,10 +204,18 @@ namespace VulkanEngine
 
             ~VulkanDeferredRender();
 
+            BOOL initialize();
+
             BOOL update(const float delta);
             void draw();
 
         private:
+            VulkanRenderSubpassCreateData genGBufferSubpassCreateData(
+                const VulkanRenderProperties&                          renderProps,
+                const std::vector<VulkanRenderTargetCreateDescriptor>& rtList,
+                const UINT                                             startIndex,
+                const UINT                                             gbufferRTNum);
+
         };
     }
 }

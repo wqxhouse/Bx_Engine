@@ -47,7 +47,7 @@ namespace VulkanEngine
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
                 static_cast<float>(m_pSetting->resolution.height), 0.0f
             };
-            props.enableColor                    = TRUE;
+            props.enableColor            = TRUE;
 
             // Initialize shaders
             Shader::BxShaderMeta mainSceneShaderMeta          = {};
@@ -70,25 +70,7 @@ namespace VulkanEngine
                 props.enableDepth     = TRUE;
                 props.depthClearValue = { 1.0f, 0.0f };
 
-                size_t backBufferNum = m_backBufferRTsCreateDataList.size();
-
-                for (size_t i = 0; i < backBufferNum; ++i)
-                {
-                    Texture::VulkanTexture2D* pBackbufferColorTexture =
-                        static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
-
-                    TextureFormat depthBufferFormat =
-                        ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
-
-                    Texture::VulkanTexture2D * backbufferDepthTexture =
-                        m_pTextureMgr->createTexture2DRenderTarget(
-                            pBackbufferColorTexture->GetTextureWidth(),
-                            pBackbufferColorTexture->GetTextureHeight(),
-                            static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
-                            depthBufferFormat);
-
-                    m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
-                }
+                genBackbufferDepthBuffer();
 
                 renderTargetDescriptors.push_back({ TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
             }
@@ -139,60 +121,12 @@ namespace VulkanEngine
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
             // Initialize uniform buffers for render pass
-            const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
-
-            m_forwardRenderMainSceneUbo.resize(m_pScene->GetSceneModelNum());
-
-            Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
-                new Buffer::VulkanUniformBufferDynamic(m_pDevice,
-                                                       hwProps.limits.minUniformBufferOffsetAlignment);
-
-            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
-                                                         (UINT)m_forwardRenderMainSceneUbo.size(),
-                                                         sizeof(m_forwardRenderMainSceneUbo[0]),
-                                                         m_forwardRenderMainSceneUbo.data());
-
-            m_pDescriptorBufferList.push_back(
-                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
-
-            std::vector<VulkanUniformBufferResource> mainSceneUniformbufferResourceList(1);
-            mainSceneUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
-            mainSceneUniformbufferResourceList[0].bindingPoint     = 0;
-            mainSceneUniformbufferResourceList[0].uniformbufferNum = 1;
-            mainSceneUniformbufferResourceList[0].pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[0].get());
-
-            renderSources.pUniformBufferResourceList = &mainSceneUniformbufferResourceList;
+            std::vector<VulkanUniformBufferResource> uniformBufferResourceList = createTransUniformBufferResource();
+            renderSources.pUniformBufferResourceList                           = &uniformBufferResourceList;
 
             // Initialize textures for render pass
-            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
-            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
-            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
-            textureSamplerCreateData.normalize                           = TRUE;
-            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.mipmapOffset                        = 0.0f;
-            textureSamplerCreateData.minLod                              = 0.0f;
-            textureSamplerCreateData.maxLod                              = 0.0f;
-
-            Texture::VulkanTexture2D* pTexture =
-                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                                                      m_pSetting->m_graphicsSetting.antialasing,
-                                                      FALSE,
-                                                      BX_FORMAT_RGBA8,
-                                                      BX_FORMAT_RGBA8,
-                                                      textureSamplerCreateData);
-
-            std::vector<VulkanTextureResource> mainSceneTextureResourceList(1);
-            mainSceneTextureResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
-            mainSceneTextureResourceList[0].bindingPoint     = 1;
-            mainSceneTextureResourceList[0].textureNum       = 1;
-            mainSceneTextureResourceList[0].pTexture         = pTexture;
-
-            renderSources.pTextureResouceList = &mainSceneTextureResourceList;
+            std::vector<VulkanTextureResource> sceneTextureResourceList = createSceneTextures();
+            renderSources.pTextureResouceList                           = &sceneTextureResourceList;
 
             // Create render pass create data
             VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties = {};
@@ -216,7 +150,9 @@ namespace VulkanEngine
             renderPassCreateData.pSubpassCreateDataList     = &renderSubpassCreateDataList;
             renderPassCreateData.framebufferNum             = backbufferNum;
 
-            m_mainSceneRenderPass.create(renderPassCreateData);
+            status = m_mainSceneRenderPass.create(renderPassCreateData);
+
+            assert(status == BX_SUCCESS);
 
             return status;
         }
