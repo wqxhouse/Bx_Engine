@@ -23,6 +23,7 @@ namespace VulkanEngine
             VulkanVertexBuffer(
                 const VkDevice* const    pDevice,
                 Mgr::CmdBufferMgr* const pCmdBufferMgr,
+                const UINT               vertexNum,
                 const UINT               vertexBufferDataSize,
                 void*                    pVertexBufferData);
 
@@ -55,17 +56,18 @@ namespace VulkanEngine
 
             INLINE UINT GetVertexNum() const
             {
-                return m_vertexBufferSize;
+                return m_vertexBufferNum;
             }
 
             INLINE UINT GetVertexBufferSize() const
             {
-                return GetVertexNum() * sizeof(Object::Model::Vertex);
+                return m_vertexBufferSize;
             }
 
             ~VulkanVertexBuffer();
 
         private:
+            UINT  m_vertexBufferNum;
             UINT  m_vertexBufferSize;
             void* m_pVertexBufferData;
         };

@@ -19,10 +19,12 @@ namespace VulkanEngine
         VulkanVertexBuffer::VulkanVertexBuffer(
             const VkDevice* const    pDevice,
             Mgr::CmdBufferMgr* const pCmdBufferMgr,
+            const UINT               vertexNum,
             const UINT               vertexBufferDataSize,
             void*                    pVertexBufferData)
             : VulkanBufferBase(pDevice, pCmdBufferMgr)
         {
+            m_vertexBufferNum   = vertexNum;
             m_vertexBufferSize  = vertexBufferDataSize;
             m_pVertexBufferData = pVertexBufferData;
         }
@@ -33,7 +35,7 @@ namespace VulkanEngine
             const std::shared_ptr<Mesh> pMesh)
             : VulkanBufferBase(pDevice, pCmdBufferMgr)
         {
-            m_vertexBufferSize  = pMesh->m_vertexBuffer.size();
+            m_vertexBufferSize  = static_cast<UINT>(sizeof(Vertex) * pMesh->m_vertexBuffer.size());
             m_pVertexBufferData = static_cast<void*>(pMesh->m_vertexBuffer.data());
         }
 
@@ -45,7 +47,7 @@ namespace VulkanEngine
 
             BxBufferCreateInfo bufferCreateInfo = {};
             bufferCreateInfo.bufferUsage        = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-            bufferCreateInfo.bufferSize         = static_cast<VkDeviceSize>(m_vertexBufferSize);
+            bufferCreateInfo.bufferSize         = static_cast<VkDeviceSize>(GetVertexBufferSize());
             bufferCreateInfo.bufferData         = m_pVertexBufferData;
             bufferCreateInfo.bufferOptimization = optimize;
             bufferCreateInfo.bufferDynamic      = FALSE;
