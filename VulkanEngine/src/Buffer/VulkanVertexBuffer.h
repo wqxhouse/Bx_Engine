@@ -21,6 +21,12 @@ namespace VulkanEngine
         {
         public:
             VulkanVertexBuffer(
+                const VkDevice* const    pDevice,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr,
+                const UINT               vertexBufferDataSize,
+                void*                    pVertexBufferData);
+
+            VulkanVertexBuffer(
                 const VkDevice*    const                   pDevice,
                 Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
                 const std::shared_ptr<Object::Model::Mesh> pMesh);
@@ -49,7 +55,7 @@ namespace VulkanEngine
 
             INLINE UINT GetVertexNum() const
             {
-                return static_cast<UINT>(m_pVertexBufferData->size());
+                return m_vertexBufferSize;
             }
 
             INLINE UINT GetVertexBufferSize() const
@@ -60,7 +66,8 @@ namespace VulkanEngine
             ~VulkanVertexBuffer();
 
         private:
-            std::vector<Object::Model::Vertex>* m_pVertexBufferData;
+            UINT  m_vertexBufferSize;
+            void* m_pVertexBufferData;
         };
     }
 }
