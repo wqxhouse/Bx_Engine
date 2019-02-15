@@ -100,50 +100,26 @@ namespace VulkanEngine
             // Initialize uniform buffers for render pass
             m_transUniformbuffer.resize(m_pScene->GetSceneModelNum());
 
+            std::vector<VulkanRenderSubpassCreateData> deferredRenderSubpassCreateDataList(2);
             /// GBuffer subpass
             {
-                //  GBuffer shaders
-                Shader::BxShaderMeta gBufferShaderMeta = {};
-                gBufferShaderMeta.vertexShaderInfo     = { "GBuffer.vert.spv", "main" };
-                gBufferShaderMeta.fragmentShaderInfo   = { "GBuffer.frag.spv", "main" };
-
-                // GBuffer attachments
-                size_t gbufferRTNum = deferredRenderRTList.size() - 1;
-
-                std::vector<VulkanRenderTargetCreateData> gBufferRTCreateDataList(gbufferRTNum);
-
-                for (UINT i = 0; i < gbufferRTNum; ++i)
-                {
-                    VulkanRenderTargetCreateData* pGBufferRTCreateData         = &gBufferRTCreateDataList[i];
-                    const VulkanRenderTargetCreateDescriptor& deferredRenderRT = deferredRenderRTList[i + 1];
-
-                    pGBufferRTCreateData->renderSubPassIndex = deferredRenderRT.renderSubPassIndex;
-                    pGBufferRTCreateData->bindingPoint       = deferredRenderRT.bindingPoint;
-                    pGBufferRTCreateData->isStore            = deferredRenderRT.isStore;
-                    pGBufferRTCreateData->layout             = deferredRenderRT.layout;
-                    pGBufferRTCreateData->useStencil         = deferredRenderRT.useStencil;
-                    pGBufferRTCreateData->isStoreStencil     = deferredRenderRT.isStoreStencil;
-                }
-
-                Buffer::VulkanUniformBufferDynamic* pGBufferUniformbuffer =
-                    new Buffer::VulkanUniformBufferDynamic(m_pDevice,
-                                                           hwProps.limits.minUniformBufferOffsetAlignment);
-
-                pGBufferUniformbuffer->createUniformBuffer(*m_pHwDevice,
-                                                           (UINT)m_transUniformbuffer.size(),
-                                                           sizeof(m_transUniformbuffer[0]),
-                                                           m_transUniformbuffer.data());
-
-                VulkanRenderResources renderSources         = {};
-                renderSources.vertexBufferTexChannelNum     = 1;
-                renderSources.vertexDescriptionBindingPoint = 0;
-                renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
+                deferredRenderSubpassCreateDataList.push_back(
+                    genGBufferSubpassCreateData(renderProperties, deferredRenderRTList, 1, 4));
             }
 
             // Main Render subpass
             {
 
             }
+
+            VulkanRenderpassCreateData renderPassCreateData = {};
+            renderPassCreateData.pRenderProperties          = &renderProperties;
+            renderPassCreateData.pSubpassCreateDataList     = &deferredRenderSubpassCreateDataList;
+            renderPassCreateData.framebufferNum             = backbufferNum;
+
+            status = m_mainSceneRenderPass.create(renderPassCreateData);
+
+            assert(status == BX_SUCCESS);
 
             return status;
         }
@@ -156,6 +132,66 @@ namespace VulkanEngine
 
         void VulkanDeferredRender::draw()
         {
+        }
+
+        VulkanRenderSubpassCreateData VulkanDeferredRender::genGBufferSubpassCreateData(
+            const VulkanRenderProperties&                          renderProps,
+            const std::vector<VulkanRenderTargetCreateDescriptor>& rtList,
+            const UINT                                             startIndex,
+            const UINT                                             gbufferRTNum)
+        {
+            VulkanRenderSubpassCreateData gBufferPassCreateData = {};
+
+            //  GBuffer shaders
+            Shader::BxShaderMeta gBufferShaderMeta = {};
+            gBufferShaderMeta.vertexShaderInfo     = { "GBuffer.vert.spv", "main" };
+            gBufferShaderMeta.fragmentShaderInfo   = { "GBuffer.frag.spv", "main" };
+
+            // GBuffer attachments
+            std::vector<VulkanRenderTargetCreateData> gBufferRTCreateDataList(gbufferRTNum);
+
+            for (UINT gBufferIndex = 0, rtIndex = startIndex; gBufferIndex < gbufferRTNum; ++gBufferIndex, ++rtIndex)
+            {
+                VulkanRenderTargetCreateData* pGBufferRTCreateData         = &gBufferRTCreateDataList[gBufferIndex];
+                const VulkanRenderTargetCreateDescriptor& deferredRenderRT = rtList[rtIndex];
+
+                pGBufferRTCreateData->renderSubPassIndex = deferredRenderRT.renderSubPassIndex;
+                pGBufferRTCreateData->bindingPoint       = deferredRenderRT.bindingPoint;
+                pGBufferRTCreateData->isStore            = deferredRenderRT.isStore;
+                pGBufferRTCreateData->layout             = deferredRenderRT.layout;
+                pGBufferRTCreateData->useStencil         = deferredRenderRT.useStencil;
+                pGBufferRTCreateData->isStoreStencil     = deferredRenderRT.isStoreStencil;
+            }
+
+            VulkanRenderResources renderSources         = {};
+            renderSources.vertexBufferTexChannelNum     = 1;
+            renderSources.vertexDescriptionBindingPoint = 0;
+            renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
+
+            // Initialize uniform buffers for render pass
+            std::vector<VulkanUniformBufferResource> gBufferniformBufferResourceList = createTransUniformBufferResource();
+            renderSources.pUniformBufferResourceList                                 = &gBufferniformBufferResourceList;
+
+            // Initialize textures for render pass
+            std::vector<VulkanTextureResource> sceneTextureResourceList = createSceneTextures();
+            renderSources.pTextureResouceList                           = &sceneTextureResourceList;
+
+            VulkanGraphicsPipelineProperties gBufferGraphicsPipelineProperties = {};
+            gBufferGraphicsPipelineProperties.cullMode                         = CULLMODE_BACK;
+            gBufferGraphicsPipelineProperties.polyMode                         = PolyMode::POLYMODE_FILL;
+            gBufferGraphicsPipelineProperties.viewportRects                    = { renderProps.renderViewportRect };
+            gBufferGraphicsPipelineProperties.scissorRects                     = { renderProps.renderViewportRect };
+
+            VulkanSubpassGraphicsPipelineCreateData gBufferGraphicsPipelineCreateData = {};
+            gBufferGraphicsPipelineCreateData.subpassIndex                            = 0;
+            gBufferGraphicsPipelineCreateData.pProps                                  = &gBufferGraphicsPipelineProperties;
+            gBufferGraphicsPipelineCreateData.pShaderMeta                             = &gBufferShaderMeta;
+            gBufferGraphicsPipelineCreateData.pResource                               = &renderSources;
+
+            gBufferPassCreateData.pSubpassGraphicsPipelineCreateData = &gBufferGraphicsPipelineCreateData;
+            gBufferPassCreateData.pRenderTargetCreateDataList        = &gBufferRTCreateDataList;
+
+            return gBufferPassCreateData;
         }
     }
 }

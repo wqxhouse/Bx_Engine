@@ -135,6 +135,9 @@ namespace VulkanEngine
 
             void genBackbufferDepthBuffer();
 
+            std::vector<VulkanUniformBufferResource> createTransUniformBufferResource();
+            std::vector<VulkanTextureResource>       createSceneTextures();
+
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
             const VkDevice*         const m_pDevice;
@@ -207,6 +210,12 @@ namespace VulkanEngine
             void draw();
 
         private:
+            VulkanRenderSubpassCreateData genGBufferSubpassCreateData(
+                const VulkanRenderProperties&                          renderProps,
+                const std::vector<VulkanRenderTargetCreateDescriptor>& rtList,
+                const UINT                                             startIndex,
+                const UINT                                             gbufferRTNum);
+
         };
     }
 }

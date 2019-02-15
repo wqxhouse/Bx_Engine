@@ -94,7 +94,7 @@ namespace VulkanEngine
                 VulkanSubpassGraphicsPipelineCreateData*
                     pSubpassGraphicsPipelineCreateData = subpassCreateData.pSubpassGraphicsPipelineCreateData;
 
-                const UINT subpassIndex            = pSubpassGraphicsPipelineCreateData->subpassIndex;
+                const UINT subpassIndex                = pSubpassGraphicsPipelineCreateData->subpassIndex;
 
                 status = createRenderTargets(subpassCreateData.pRenderTargetCreateDataList,
                                              &(subPassDescriptionList[subpassIndex]),

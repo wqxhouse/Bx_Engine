@@ -140,5 +140,64 @@ namespace VulkanEngine
                 m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
             }
         }
+
+        std::vector<VulkanUniformBufferResource> VulkanRenderBase::createTransUniformBufferResource()
+        {
+            const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
+
+            Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
+                new Buffer::VulkanUniformBufferDynamic(m_pDevice,
+                                                       hwProps.limits.minUniformBufferOffsetAlignment);
+
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
+                                                         (UINT)m_transUniformbuffer.size(),
+                                                         sizeof(m_transUniformbuffer[0]),
+                                                         m_transUniformbuffer.data());
+
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
+
+            std::vector<VulkanUniformBufferResource> transUniformbufferResourceList(1);
+            transUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
+            transUniformbufferResourceList[0].bindingPoint     = 0;
+            transUniformbufferResourceList[0].uniformbufferNum = 1;
+            transUniformbufferResourceList[0].pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[0].get());
+
+            return transUniformbufferResourceList;
+        }
+
+        std::vector<VulkanTextureResource> VulkanRenderBase::createSceneTextures()
+        {
+            std::vector<VulkanTextureResource> sceneTextureResourceList(1);
+
+            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
+            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
+            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
+            textureSamplerCreateData.normalize                           = TRUE;
+            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.mipmapOffset                        = 0.0f;
+            textureSamplerCreateData.minLod                              = 0.0f;
+            textureSamplerCreateData.maxLod                              = 0.0f;
+
+            Texture::VulkanTexture2D* pTexture =
+                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
+                                                      m_pSetting->m_graphicsSetting.antialasing,
+                                                      FALSE,
+                                                      BX_FORMAT_RGBA8,
+                                                      BX_FORMAT_RGBA8,
+                                                      textureSamplerCreateData);
+
+            sceneTextureResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
+            sceneTextureResourceList[0].bindingPoint     = 1;
+            sceneTextureResourceList[0].textureNum       = 1;
+            sceneTextureResourceList[0].pTexture         = pTexture;
+
+            return sceneTextureResourceList;
+        }
     }
 }
