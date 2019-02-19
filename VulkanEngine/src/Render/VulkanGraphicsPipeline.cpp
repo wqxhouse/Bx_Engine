@@ -43,6 +43,8 @@ namespace VulkanEngine
             Shader::BxShaderMeta*   const pShaderMeta      = pGraphicsPipelineCreateData->pShaderMeta;
             VulkanRenderResources*  const pResource        = pGraphicsPipelineCreateData->pResource;
 
+            m_isScenePipeline                              = pGraphicsPipelineCreateData->isScenePipeline;
+
             // Bind vertex/index buffer
             m_pVertexInputResourceList = pResource->pVertexInputResourceList;
 

@@ -140,6 +140,7 @@ namespace VulkanEngine
                 graphicsPipelineCreateData.pProps                           = pSubpassGraphicsPipelineCreateData->pProps;
                 graphicsPipelineCreateData.pShaderMeta                      = pSubpassGraphicsPipelineCreateData->pShaderMeta;
                 graphicsPipelineCreateData.pResource                        = pSubpassGraphicsPipelineCreateData->pResource;
+                graphicsPipelineCreateData.isScenePipeline                  = pSubpassGraphicsPipelineCreateData->isScenePipeline;
 
                 status = m_graphicsPipelineList[subpassIndex].createGraphicsPipeline(&graphicsPipelineCreateData);
 
