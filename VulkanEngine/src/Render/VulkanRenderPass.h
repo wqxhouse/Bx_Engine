@@ -50,16 +50,19 @@ namespace VulkanEngine
         struct VulkanRenderSubpassCreateData
         {
             // GraphicsPipeline create data
-            VulkanSubpassGraphicsPipelineCreateData*   pSubpassGraphicsPipelineCreateData;
-            std::vector<VulkanRenderTargetCreateData>* pRenderTargetCreateDataList;
+            VulkanSubpassGraphicsPipelineCreateData*    pSubpassGraphicsPipelineCreateData;
+            std::vector<VulkanRenderTargetCreateData*>* pSubpassRenderTargetCreateDataRefList;
         };
 
         struct VulkanRenderpassCreateData
         {
-            VulkanRenderProperties* pRenderProperties;
-            UINT                    framebufferNum;
+            VulkanRenderProperties*                     pRenderProperties;
+            UINT                                        framebufferNum;
+
+            std::vector<VulkanRenderTargetCreateData>*  pRenderTargetCreateDataList;
 
             std::vector<VulkanRenderSubpassCreateData>* pSubpassCreateDataList;
+            std::vector<VkSubpassDependency>*           pSubpassDependencyList;
         };
 
         class VulkanRenderPass
@@ -78,8 +81,8 @@ namespace VulkanEngine
                 const VulkanRenderpassCreateData& renderPassCreateData);
 
             BOOL update(
-                const float                                    deltaTime,
-                const std::vector<VulkanDescriptorUpdateData>& updateDataList);
+                const float                                                 deltaTime,
+                const std::vector<std::vector<VulkanDescriptorUpdateData>>& updateDataTable);
 
             BOOL draw();
 
@@ -107,7 +110,7 @@ namespace VulkanEngine
 
             // Create render targets for a single subpass
             BOOL createRenderTargets(
-                IN  const std::vector<VulkanRenderTargetCreateData>*       pRenderTargetsCreateDataList,
+                IN  const std::vector<VulkanRenderTargetCreateData*>*      pRenderTargetsCreateDataRefList,
                 OUT VkSubpassDescription*                                  pSubpassDescription,
                 OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
                 OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
@@ -118,7 +121,8 @@ namespace VulkanEngine
             BOOL createRenderPass(
                 const UINT                                  renderSubpassNum,
                 const std::vector<VkSubpassDescription>&    subpassDescriptionList,
-                const std::vector<VkAttachmentDescription>& attachmentDescriptionList);
+                const std::vector<VkAttachmentDescription>& attachmentDescriptionList,
+                const std::vector<VkSubpassDependency>*     pSubpassDependencyList);
 
             // Generate framebuffers
             BOOL createFramebuffers(

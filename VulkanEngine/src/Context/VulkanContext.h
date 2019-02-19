@@ -123,7 +123,7 @@ namespace VulkanEngine
         std::vector<Texture::VulkanTexture2D*> m_pSwapchainTextures;
 
         // Render
-        std::unique_ptr<Render::VulkanForwardRender> m_pRender;
+        std::unique_ptr<Render::VulkanRenderBase> m_pRender;
 
         // Semaphores
         VDeleter<VkSemaphore> m_renderSemaphore;

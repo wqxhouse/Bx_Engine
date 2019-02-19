@@ -695,7 +695,7 @@ namespace VulkanEngine
     {
         BOOL status = BX_SUCCESS;
 
-        m_pRender = std::unique_ptr<Render::VulkanForwardRender>(
+        /*m_pRender = std::unique_ptr<Render::VulkanForwardRender>(
             new Render::VulkanForwardRender(m_pSetting,
                                             &(m_vkActiveHwGpuDeviceList[0]),
                                             &m_vkDevice,
@@ -703,7 +703,18 @@ namespace VulkanEngine
                                             m_pDescriptorMgr.get(),
                                             m_pTextureMgr.get(),
                                             m_pRenderSceneList[m_activeSceneIndex],
-                                            &m_pSwapchainTextures));
+                                            &m_pSwapchainTextures));*/
+
+        m_pRender = std::unique_ptr<Render::VulkanDeferredRender>(
+            new Render::VulkanDeferredRender(m_pSetting,
+                                             &(m_vkActiveHwGpuDeviceList[0]),
+                                             &m_vkDevice,
+                                             m_pCmdBufferMgr.get(),
+                                             m_pDescriptorMgr.get(),
+                                             m_pTextureMgr.get(),
+                                             m_pRenderSceneList[m_activeSceneIndex],
+                                             &m_pSwapchainTextures));
+
         m_pRender->EnableDepthTest();
         status = m_pRender->initialize();
 

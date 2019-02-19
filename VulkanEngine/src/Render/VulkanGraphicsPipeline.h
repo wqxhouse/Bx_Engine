@@ -99,6 +99,9 @@ namespace VulkanEngine
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
             VulkanRenderResources*            pResource;
+
+            // Is the pipeline used for rendering scene
+            BOOL                              isScenePipeline;
         };
 
         struct VulkanDescriptorUpdateData
@@ -152,6 +155,11 @@ namespace VulkanEngine
                 return m_pVertexInputResourceList;
             }
 
+            INLINE const BOOL IsScenePipeline() const
+            {
+                return m_isScenePipeline;
+            }
+
         private:
             const Setting*                          m_pSetting;
             const VkDevice*                         m_pDevice;
@@ -169,6 +177,8 @@ namespace VulkanEngine
             std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
 
             std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
+
+            BOOL                                    m_isScenePipeline;
         };
     }
 }

@@ -331,6 +331,9 @@ namespace VulkanEngine
                     case VK_FORMAT_R8G8B8_UNORM:
                         imageFormat = BX_FORMAT_RGB8;
                         break;
+                    case VK_FORMAT_B8G8R8_UNORM:
+                        imageFormat = BX_FORMAT_BGR8;
+                        break;
                     case VK_FORMAT_R8G8B8A8_UNORM:
                         imageFormat = BX_FORMAT_RGBA8;
                         break;
@@ -387,6 +390,9 @@ namespace VulkanEngine
                         break;
                     case BX_FORMAT_RGB8:
                         imageFormat = VK_FORMAT_R8G8B8_UNORM;
+                        break;
+                    case BX_FORMAT_BGR8:
+                        imageFormat = VK_FORMAT_B8G8R8_UNORM;
                         break;
                     case BX_FORMAT_RGBA8:
                         imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
@@ -469,6 +475,7 @@ namespace VulkanEngine
                     case BX_FORMAT_R8:
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
+                    case BX_FORMAT_BGR8:
                     case BX_FORMAT_RGBA8:
                     case BX_FORMAT_BGRA8:
                     case BX_FORMAT_RGBA:
@@ -503,6 +510,7 @@ namespace VulkanEngine
                     case BX_FORMAT_R8:
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
+                    case BX_FORMAT_BGR8:
                     case BX_FORMAT_RGBA8:
                     case BX_FORMAT_BGRA8:
                     case BX_FORMAT_RGBA:
@@ -549,6 +557,14 @@ namespace VulkanEngine
 
                         srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                         dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                    }
+                    else if (newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+                    {
+                        srcAccessMask = 0;
+                        dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+                        srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                        dstStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
                     }
                     else if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
                     {

@@ -85,12 +85,12 @@ namespace VulkanEngine
             const UINT backbufferAttachmentNum = static_cast<UINT>(m_backBufferRTsCreateDataList[0].size());
             const UINT backbufferNum           = static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
 
-            std::vector<VulkanRenderTargetCreateData>                         renderTargetsCreateData(backbufferAttachmentNum);
+            std::vector<VulkanRenderTargetCreateData>                         renderTargetsCreateDataList(backbufferAttachmentNum);
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
 
             for (UINT i = 0; i < backbufferAttachmentNum; ++i)
             {
-                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateData[i]);
+                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateDataList[i]);
 
                 pRenderTargetCreateData->renderSubPassIndex = renderTargetDescriptors[i].renderSubPassIndex;
                 pRenderTargetCreateData->bindingPoint       = renderTargetDescriptors[i].bindingPoint;
@@ -140,15 +140,23 @@ namespace VulkanEngine
             subpassGraphicsPipelineCreateData.pProps                                  = &subpassGraphicsPipelineProperties;
             subpassGraphicsPipelineCreateData.pShaderMeta                             = &mainSceneShaderMeta;
             subpassGraphicsPipelineCreateData.pResource                               = &renderSources;
+            subpassGraphicsPipelineCreateData.isScenePipeline                         = TRUE;
+
+            std::vector<VulkanRenderTargetCreateData*> renderTargetCreateDataRefList(backbufferAttachmentNum);
+            for (UINT attachmentIndex = 0; attachmentIndex < backbufferAttachmentNum; ++attachmentIndex)
+            {
+                renderTargetCreateDataRefList[attachmentIndex] = &renderTargetsCreateDataList[attachmentIndex];
+            }
 
             std::vector<VulkanRenderSubpassCreateData> renderSubpassCreateDataList(1);
-            renderSubpassCreateDataList[0].pSubpassGraphicsPipelineCreateData = &subpassGraphicsPipelineCreateData;
-            renderSubpassCreateDataList[0].pRenderTargetCreateDataList        = &renderTargetsCreateData;
+            renderSubpassCreateDataList[0].pSubpassGraphicsPipelineCreateData    = &subpassGraphicsPipelineCreateData;
+            renderSubpassCreateDataList[0].pSubpassRenderTargetCreateDataRefList = &renderTargetCreateDataRefList;
 
-            VulkanRenderpassCreateData renderPassCreateData = {};
-            renderPassCreateData.pRenderProperties          = &props;
-            renderPassCreateData.pSubpassCreateDataList     = &renderSubpassCreateDataList;
-            renderPassCreateData.framebufferNum             = backbufferNum;
+            VulkanRenderpassCreateData renderPassCreateData  = {};
+            renderPassCreateData.pRenderProperties           = &props;
+            renderPassCreateData.pSubpassCreateDataList      = &renderSubpassCreateDataList;
+            renderPassCreateData.framebufferNum              = backbufferNum;
+            renderPassCreateData.pRenderTargetCreateDataList = &renderTargetsCreateDataList;
 
             status = m_mainSceneRenderPass.create(renderPassCreateData);
 
@@ -202,7 +210,7 @@ namespace VulkanEngine
                 }
             }
 
-            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataList);
+            status = m_mainSceneRenderPass.update(deltaTime, { m_descriptorUpdateDataList });
             assert(status == BX_SUCCESS);
 
             for (VulkanRenderPass postRenderPass : m_postDrawPassList)
