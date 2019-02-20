@@ -26,12 +26,18 @@ namespace VulkanEngine
 {
     namespace Render
     {
+        struct VulkanGraphicsPipelineRenderTargetProperties
+        {
+            BOOL enableBlend;
+        };
+
         struct VulkanGraphicsPipelineProperties
         {
-            PolyMode               polyMode;
-            CullMode               cullMode;
-            std::vector<Rectangle> viewportRects;
-            std::vector<Rectangle> scissorRects;
+            PolyMode                                                   polyMode;
+            CullMode                                                   cullMode;
+            std::vector<Rectangle>                                     viewportRects;
+            std::vector<Rectangle>                                     scissorRects;
+            std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pRenderTargetsProps;
         };
 
         struct VulkanVertexInputResource
@@ -40,21 +46,22 @@ namespace VulkanEngine
             std::unique_ptr<Buffer::VulkanIndexBuffer>  pIndexBuffer;
         };
 
-        struct VulkanUniformBufferResource
+        struct VulkanDescriptorResource
         {
-            UINT                         setIndex;
-            UINT                         bindingPoint;
+            UINT           setIndex;
+            UINT           bindingPoint;
+            BX_SHADER_TYPE shaderType;
+        };
+
+        struct VulkanUniformBufferResource : public VulkanDescriptorResource
+        {
             UINT                         uniformbufferNum;
-            BX_SHADER_TYPE               shaderType;
             Buffer::VulkanUniformBuffer* pUniformBuffer;
         };
 
-        struct VulkanTextureResource
+        struct VulkanTextureResource : public VulkanDescriptorResource
         {
-            UINT                        setIndex;
-            UINT                        bindingPoint;
             UINT                        textureNum;
-            BX_SHADER_TYPE              shaderType;
             Texture::VulkanTextureBase* pTexture;
         };
 
@@ -65,11 +72,12 @@ namespace VulkanEngine
             std::vector<VulkanVertexInputResource>*   pVertexInputResourceList;
             std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
             std::vector<VulkanTextureResource>*       pTextureResouceList;
+            std::vector<VulkanDescriptorResource>*    pInputAttachmentList;
         };
 
         struct VulkanGraphicsPipelineCreateData
         {
-            size_t                            renderTargetNum;
+            UINT                              subpassIndex;
 
             BOOL                              enableColor;
             BOOL                              enableDepth;
@@ -177,6 +185,7 @@ namespace VulkanEngine
 
             std::vector<Mgr::DescriptorUpdateInfo>  m_uniformBufferDescriptorUpdateInfo;
             std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
+            std::vector<Mgr::DescriptorUpdateInfo>  m_inputAttachmentUpdateInfo;
 
             std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
 

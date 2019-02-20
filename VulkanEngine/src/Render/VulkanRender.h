@@ -136,7 +136,12 @@ namespace VulkanEngine
             void genBackbufferDepthBuffer();
 
             std::vector<VulkanUniformBufferResource> createTransUniformBufferResource();
-            std::vector<VulkanTextureResource>       createSceneTextures();
+
+            VulkanTextureResource createSceneTextures(
+                const UINT                setIndex,
+                const UINT                bindingPoint,
+                const UINT                textureNum,
+                Texture::VulkanTexture2D* pTexture);
 
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
@@ -216,21 +221,25 @@ namespace VulkanEngine
                 OUT std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>>* pRTFrameBuffersCreateDataList);
 
             VulkanRenderSubpassCreateData genGBufferSubpassCreateData(
-                IN  const VulkanRenderProperties&                                      renderProps,
-                IN  std::vector<VulkanRenderTargetCreateData*>*                        pRTCreateDataRefList,
-                OUT Shader::BxShaderMeta*                                              pGBufferShaderMeta,
-                OUT std::vector<VulkanUniformBufferResource>*                          pGBufferUniformBufferResourceList,
-                OUT VulkanRenderResources*                                             pGBufferResources,
-                OUT VulkanGraphicsPipelineProperties*                                  pGBufferGraphicsPipelineProperties,
-                OUT VulkanSubpassGraphicsPipelineCreateData*                           pGBufferGraphicsPipelineCreateData);
+                IN  const VulkanRenderProperties&                              renderProps,
+                IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
+                OUT Shader::BxShaderMeta*                                      pGBufferShaderMeta,
+                OUT std::vector<VulkanUniformBufferResource>*                  pGBufferUniformBufferResourceList,
+                OUT VulkanRenderResources*                                     pGBufferResources,
+                OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pGBufferGraphicsPipelineRTProperties,
+                OUT VulkanGraphicsPipelineProperties*                          pGBufferGraphicsPipelineProperties,
+                OUT VulkanSubpassGraphicsPipelineCreateData*                   pGBufferGraphicsPipelineCreateData);
 
             VulkanRenderSubpassCreateData genShadingPassCreateData(
-                IN const VulkanRenderProperties&                                       renderProps,
-                IN  std::vector<VulkanRenderTargetCreateData*>*                        pRTCreateDataRefList,
-                OUT Shader::BxShaderMeta*                                              pShadingPassShader,
-                OUT VulkanRenderResources*                                             pShadingPassResources,
-                OUT VulkanGraphicsPipelineProperties*                                  pShadingPassGraphicsPipelineProps,
-                OUT VulkanSubpassGraphicsPipelineCreateData*                           pShadingPassGraphicsPipelineCreateData);
+                IN const VulkanRenderProperties&                               renderProps,
+                IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
+                OUT Shader::BxShaderMeta*                                      pShadingPassShader,
+                OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
+                OUT std::vector<VulkanDescriptorResource>*                     pInputAttachmentResourceList,
+                OUT VulkanRenderResources*                                     pShadingPassResources,
+                OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pShadingPassGraphicsPipelineRTProperties,
+                OUT VulkanGraphicsPipelineProperties*                          pShadingPassGraphicsPipelineProps,
+                OUT VulkanSubpassGraphicsPipelineCreateData*                   pShadingPassGraphicsPipelineCreateData);
 
             std::vector<VulkanVertexInputResource> m_shadingPassVertexInput;
 

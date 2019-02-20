@@ -125,15 +125,40 @@ namespace VulkanEngine
             renderSources.pUniformBufferResourceList                           = &uniformBufferResourceList;
 
             // Initialize textures for render pass
-            std::vector<VulkanTextureResource> sceneTextureResourceList = createSceneTextures();
+            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
+            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
+            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
+            textureSamplerCreateData.normalize                           = TRUE;
+            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.mipmapOffset                        = 0.0f;
+            textureSamplerCreateData.minLod                              = 0.0f;
+            textureSamplerCreateData.maxLod                              = 0.0f;
+
+            Texture::VulkanTexture2D* pTexture =
+                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
+                    m_pSetting->m_graphicsSetting.antialasing,
+                    FALSE,
+                    BX_FORMAT_RGBA8,
+                    BX_FORMAT_RGBA8,
+                    textureSamplerCreateData);
+
+            std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 1, 1, pTexture) };
             renderSources.pTextureResouceList                           = &sceneTextureResourceList;
 
             // Create render pass create data
+            std::vector<VulkanGraphicsPipelineRenderTargetProperties> renderTargetsProps(1);
+            renderTargetsProps[0].enableBlend = m_pSetting->m_graphicsSetting.blend;
+
             VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties = {};
             subpassGraphicsPipelineProperties.cullMode                         = CULLMODE_BACK;
             subpassGraphicsPipelineProperties.polyMode                         = PolyMode::POLYMODE_FILL;
             subpassGraphicsPipelineProperties.viewportRects                    = { props.renderViewportRect };
             subpassGraphicsPipelineProperties.scissorRects                     = { props.renderViewportRect };
+            subpassGraphicsPipelineProperties.pRenderTargetsProps              = &renderTargetsProps;
 
             VulkanSubpassGraphicsPipelineCreateData subpassGraphicsPipelineCreateData = {};
             subpassGraphicsPipelineCreateData.subpassIndex                            = 0;

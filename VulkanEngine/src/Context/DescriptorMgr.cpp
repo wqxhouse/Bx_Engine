@@ -233,6 +233,10 @@ namespace VulkanEngine
 
                         break;
                     }
+                    case BX_INPUT_ATTACHMENT_DESCRIPTOR:
+                    {
+                        break;
+                    }
                     case BX_STORAGE_BUFFER_DESCRIPTOR:
                     {
                         NotImplemented();

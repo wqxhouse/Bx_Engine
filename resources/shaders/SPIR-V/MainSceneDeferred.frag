@@ -5,13 +5,15 @@ layout (input_attachment_index = 0, binding = 0) uniform subpassInput posWorldTe
 layout (input_attachment_index = 1, binding = 1) uniform subpassInput normalWorldTexture;
 layout (input_attachment_index = 2, binding = 2) uniform subpassInput texCoordTexture;
 
-layout (location = 0) out vec4 outColor;
+layout (binding = 3) uniform sampler2D TestTexture;
 
-layout (binding = 1) uniform sampler2D TestTexture;
+layout (location = 0) out vec4 outColor;
 
 void main()
 {
-    vec2 texCoord = subpassLoad(texCoordTexture).xy;
+	vec3 posWorld 	 = subpassLoad(posWorldTexture).xyz;
+	vec3 normalWorld = subpassLoad(normalWorldTexture).xyz;
+    vec2 texCoord 	 = subpassLoad(texCoordTexture).xy;
     
     outColor = vec4(texture(TestTexture, texCoord).xyz, 1.0f);
 }

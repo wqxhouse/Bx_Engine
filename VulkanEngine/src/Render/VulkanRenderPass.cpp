@@ -133,7 +133,7 @@ namespace VulkanEngine
                 const UINT subpassIndex = pSubpassGraphicsPipelineCreateData->subpassIndex;
 
                 VulkanGraphicsPipelineCreateData graphicsPipelineCreateData = {};
-                graphicsPipelineCreateData.renderTargetNum                  = renderPassCreateData.framebufferNum;
+                graphicsPipelineCreateData.subpassIndex                     = subpassIndex;
                 graphicsPipelineCreateData.enableColor                      = IsColorEnabled();
                 graphicsPipelineCreateData.enableDepth                      = IsDepthEnabled();
                 graphicsPipelineCreateData.enableStencil                    = IsStencilEnabled();

@@ -101,35 +101,46 @@ namespace VulkanEngine
                 Utility::VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
             multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
 
-            VkPipelineColorBlendAttachmentState blendAttachmentState = {};
+            // Blending states
+            const std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pRenderTargetsProps =
+                pProps->pRenderTargetsProps;
+
+            const UINT renderTargetNum = static_cast<UINT>(pProps->pRenderTargetsProps->size());
+
+            std::vector<VkPipelineColorBlendAttachmentState> blendAttachmentStateList(renderTargetNum);
 
             VkPipelineColorBlendStateCreateInfo blendState = {};
             blendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 
             if (pGraphicsPipelineCreateData->enableColor == TRUE)
             {
-                blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-                                                      VK_COLOR_COMPONENT_G_BIT |
-                                                      VK_COLOR_COMPONENT_B_BIT |
-                                                      VK_COLOR_COMPONENT_A_BIT;
-
-                if (m_pSetting->m_graphicsSetting.blend == TRUE)
+                for (UINT RTIndex = 0; RTIndex < renderTargetNum; ++RTIndex)
                 {
-                    blendAttachmentState.blendEnable         = VK_TRUE;
-                    blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
-                    blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-                    blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-                    blendAttachmentState.alphaBlendOp        = VK_BLEND_OP_ADD;
-                    blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-                    blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-                }
-                else
-                {
-                    blendAttachmentState.blendEnable = VK_FALSE;
+                    VkPipelineColorBlendAttachmentState* pBlendAttachmentState = &(blendAttachmentStateList[RTIndex]);
+
+                    pBlendAttachmentState->colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+                                                            VK_COLOR_COMPONENT_G_BIT |
+                                                            VK_COLOR_COMPONENT_B_BIT |
+                                                            VK_COLOR_COMPONENT_A_BIT;
+
+                    if (pRenderTargetsProps->at(RTIndex).enableBlend == TRUE)
+                    {
+                        pBlendAttachmentState->blendEnable         = VK_TRUE;
+                        pBlendAttachmentState->alphaBlendOp        = VK_BLEND_OP_ADD;
+                        pBlendAttachmentState->srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                        pBlendAttachmentState->dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                        pBlendAttachmentState->alphaBlendOp        = VK_BLEND_OP_ADD;
+                        pBlendAttachmentState->srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                        pBlendAttachmentState->dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                    }
+                    else
+                    {
+                        pBlendAttachmentState->blendEnable = VK_FALSE;
+                    }
                 }
 
-                blendState.attachmentCount = 1;
-                blendState.pAttachments    = &blendAttachmentState;
+                blendState.attachmentCount = renderTargetNum;
+                blendState.pAttachments    = blendAttachmentStateList.data();
                 blendState.logicOpEnable   = VK_FALSE; // Enable will disable the states in pAttachments
             }
 
@@ -227,13 +238,18 @@ namespace VulkanEngine
             /// Pipeline Layout
 
             // Create descriptors
-            size_t uniformBufferDescriptorNum = ((pResource->pUniformBufferResourceList != NULL) ?
+            size_t uniformBufferDescriptorNum   = ((pResource->pUniformBufferResourceList != NULL) ?
                                                   pResource->pUniformBufferResourceList->size() : 0);
 
-            size_t textureDescriptorNum       = ((pResource->pTextureResouceList != NULL) ?
+            size_t textureDescriptorNum         = ((pResource->pTextureResouceList != NULL) ?
                                                   pResource->pTextureResouceList->size() : 0);
 
-            size_t descriptorTotalNum         = uniformBufferDescriptorNum + textureDescriptorNum;
+            size_t inputAttachmentDescriptorNum = ((pResource->pInputAttachmentList != NULL) ?
+                                                    pResource->pInputAttachmentList->size() : 0);
+
+            size_t descriptorTotalNum           = uniformBufferDescriptorNum +
+                                                  textureDescriptorNum       +
+                                                  inputAttachmentDescriptorNum;
 
             std::vector<VDeleter<VkDescriptorSetLayout>> descriptorLayoutList;
             if (descriptorTotalNum > 0)
@@ -261,9 +277,9 @@ namespace VulkanEngine
                     pDescriptorUpdateInfo->descriptorBindingIndex = pUniformbufferResource->bindingPoint;
                     pDescriptorUpdateInfo->pDescriptorBuffer      = pUniformbufferResource->pUniformBuffer;
                     pDescriptorUpdateInfo->pDescriptorTexture     = NULL;
-
-                    descriptorCounter++;
                 }
+
+                descriptorCounter += uniformBufferDescriptorNum;
 
                 for (UINT i = 0; i < textureDescriptorNum; ++i)
                 {
@@ -281,30 +297,62 @@ namespace VulkanEngine
                     pDescriptorUpdateInfo->descriptorBindingIndex = pTexResource->bindingPoint;
                     pDescriptorUpdateInfo->pDescriptorBuffer      = NULL;
                     pDescriptorUpdateInfo->pDescriptorTexture     = pTexResource->pTexture;
-
-                    descriptorCounter++;
                 }
 
-                descriptorLayoutList.resize(pGraphicsPipelineCreateData->renderTargetNum,
+                descriptorCounter += textureDescriptorNum;
+
+                for (UINT inputAttachmentIndex = 0;
+                     inputAttachmentIndex < inputAttachmentDescriptorNum;
+                     ++inputAttachmentIndex)
+                {
+                    Mgr::DescriptorCreateInfo* pInputAttachmentDescriptorCreateInfo =
+                        &(descriptorCreateInfo[inputAttachmentIndex + descriptorCounter]);
+                    Render::VulkanDescriptorResource* pInputAttachmentDescriptorResource =
+                        &(pResource->pInputAttachmentList->at(inputAttachmentIndex));
+
+                    pInputAttachmentDescriptorCreateInfo->descriptorType = BX_INPUT_ATTACHMENT_DESCRIPTOR;
+                    pInputAttachmentDescriptorCreateInfo->bindingPoint   = pInputAttachmentDescriptorResource->bindingPoint;
+                    pInputAttachmentDescriptorCreateInfo->descriptorNum  = 1;
+                    pInputAttachmentDescriptorCreateInfo->shaderType     = pInputAttachmentDescriptorResource->shaderType;
+                }
+
+                descriptorCounter += inputAttachmentDescriptorNum;
+
+                assert(descriptorCounter == descriptorTotalNum);
+
+                descriptorLayoutList.resize(renderTargetNum,
                                             { *m_pDevice, vkDestroyDescriptorSetLayout });
 
-                for (size_t i = 0; i < pGraphicsPipelineCreateData->renderTargetNum; ++i)
+                for (UINT i = 0; i < renderTargetNum; ++i)
                 {
                     descriptorLayoutList[i] = m_pDescriptorMgr->createDescriptorSetLayout(descriptorCreateInfo);
                 }
 
-                std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateData(2);
-                descriptorPoolCreateData[0].descriptorType = BX_UNIFORM_DESCRIPTOR;
-                descriptorPoolCreateData[0].descriptorNum  = static_cast<UINT>(uniformBufferDescriptorNum);
+                std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateDataList;
 
-                descriptorPoolCreateData[1].descriptorType = BX_SAMPLER_DESCRIPTOR;
-                descriptorPoolCreateData[1].descriptorNum  = static_cast<UINT>(textureDescriptorNum);
+                Mgr::DescriptorPoolCreateInfo uniformDescriptorPoolCreateInfo = {};
+                if (uniformBufferDescriptorNum > 0)
+                {
+                    uniformDescriptorPoolCreateInfo.descriptorType = BX_UNIFORM_DESCRIPTOR;
+                    uniformDescriptorPoolCreateInfo.descriptorNum  = static_cast<UINT>(uniformBufferDescriptorNum);
 
-                status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData);
+                    descriptorPoolCreateDataList.push_back(uniformDescriptorPoolCreateInfo);
+                }
+
+                Mgr::DescriptorPoolCreateInfo samplerDescriptorPoolCreateInfo = {};
+                if (textureDescriptorNum > 0)
+                {
+                    samplerDescriptorPoolCreateInfo.descriptorType = BX_SAMPLER_DESCRIPTOR;
+                    samplerDescriptorPoolCreateInfo.descriptorNum  = static_cast<UINT>(textureDescriptorNum);
+
+                    descriptorPoolCreateDataList.push_back(samplerDescriptorPoolCreateInfo);
+                }
+
+                status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateDataList);
                 assert(status == BX_SUCCESS);
 
-                std::vector<UINT> descriptorSetIndexList(pGraphicsPipelineCreateData->renderTargetNum);
-                for (size_t i = 0; i < pGraphicsPipelineCreateData->renderTargetNum; ++i)
+                std::vector<UINT> descriptorSetIndexList(renderTargetNum);
+                for (UINT i = 0; i < renderTargetNum; ++i)
                 {
                     descriptorSetIndexList[i] = static_cast<UINT>(i);
                 }
@@ -315,8 +363,15 @@ namespace VulkanEngine
 
                 assert(status = BX_SUCCESS);
 
-                status = m_pDescriptorMgr->updateDescriptorSet(m_uniformBufferDescriptorUpdateInfo);
-                status = m_pDescriptorMgr->updateDescriptorSet(m_textureDescriptorUpdateInfo);
+                if (m_uniformBufferDescriptorUpdateInfo.size() > 0)
+                {
+                    status = m_pDescriptorMgr->updateDescriptorSet(m_uniformBufferDescriptorUpdateInfo);
+                }
+
+                if (m_textureDescriptorUpdateInfo.size() > 0)
+                {
+                    status = m_pDescriptorMgr->updateDescriptorSet(m_textureDescriptorUpdateInfo);
+                }
 
                 assert(status = BX_SUCCESS);
             }
@@ -331,7 +386,7 @@ namespace VulkanEngine
                 descriptorLayoutRawList =
                     VDeleter<VkDescriptorSetLayout>::GetRawVector(descriptorLayoutList);
 
-                pipelineLayoutCreateInfo.setLayoutCount = static_cast<UINT>(pGraphicsPipelineCreateData->renderTargetNum);
+                pipelineLayoutCreateInfo.setLayoutCount = renderTargetNum;
                 pipelineLayoutCreateInfo.pSetLayouts    = descriptorLayoutRawList.data();
             }
 
@@ -371,7 +426,7 @@ namespace VulkanEngine
                 graphicsPipelineCreateInfo.stageCount          = static_cast<UINT>(shaderCreateInfo.size());
                 graphicsPipelineCreateInfo.pStages             = shaderCreateInfo.data();
                 graphicsPipelineCreateInfo.pDynamicState       = NULL;
-                graphicsPipelineCreateInfo.subpass             = 0;
+                graphicsPipelineCreateInfo.subpass             = pGraphicsPipelineCreateData->subpassIndex;
 
                 VkResult graphicsPipelineCreateResult = vkCreateGraphicsPipelines(*m_pDevice,
                                                                                   VK_NULL_HANDLE,

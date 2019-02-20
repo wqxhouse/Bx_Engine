@@ -167,37 +167,21 @@ namespace VulkanEngine
             return transUniformbufferResourceList;
         }
 
-        std::vector<VulkanTextureResource> VulkanRenderBase::createSceneTextures()
+        VulkanTextureResource VulkanRenderBase::createSceneTextures(
+            const UINT                setIndex,
+            const UINT                bindingPoint,
+            const UINT                textureNum,
+            Texture::VulkanTexture2D* pTexture)
         {
-            std::vector<VulkanTextureResource> sceneTextureResourceList(1);
+            VulkanTextureResource textureResource = {};
 
-            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
-            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
-            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
-            textureSamplerCreateData.normalize                           = TRUE;
-            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.mipmapOffset                        = 0.0f;
-            textureSamplerCreateData.minLod                              = 0.0f;
-            textureSamplerCreateData.maxLod                              = 0.0f;
+            textureResource.setIndex     = setIndex;
+            textureResource.bindingPoint = bindingPoint;
+            textureResource.textureNum   = textureNum;
+            textureResource.pTexture     = pTexture;
+            textureResource.shaderType   = BX_FRAGMENT_SHADER;
 
-            Texture::VulkanTexture2D* pTexture =
-                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                                                      m_pSetting->m_graphicsSetting.antialasing,
-                                                      FALSE,
-                                                      BX_FORMAT_RGBA8,
-                                                      BX_FORMAT_RGBA8,
-                                                      textureSamplerCreateData);
-
-            sceneTextureResourceList[0].shaderType       = BX_FRAGMENT_SHADER;
-            sceneTextureResourceList[0].bindingPoint     = 1;
-            sceneTextureResourceList[0].textureNum       = 1;
-            sceneTextureResourceList[0].pTexture         = pTexture;
-
-            return sceneTextureResourceList;
+            return textureResource;
         }
     }
 }

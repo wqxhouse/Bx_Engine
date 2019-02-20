@@ -307,6 +307,9 @@ namespace VulkanEngine
                     case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
                         descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
                         break;
+                    case BX_INPUT_ATTACHMENT_DESCRIPTOR:
+                        descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+                        break;
                     default:
                         NotSupported();
                         break;

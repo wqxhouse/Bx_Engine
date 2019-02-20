@@ -138,11 +138,14 @@ namespace VulkanEngine
                 &(deferredRenderRTList[4])
             };
 
+            std::vector<VulkanGraphicsPipelineRenderTargetProperties> gBufferGraphicsPipelineRTProps(GBUFFER_NUM - 1);
+
             deferredRenderSubpassCreateDataList[0] = genGBufferSubpassCreateData(renderProperties,
                                                                                  &gBufferRTCreateDataRefList,
                                                                                  &gBufferShaderMeta,
                                                                                  &transUniformBufferResource,
                                                                                  &gBufferResources,
+                                                                                 &gBufferGraphicsPipelineRTProps,
                                                                                  &gBufferGraphicsPipelineProperties,
                                                                                  &gBufferGraphicsPipelineCreateData);
 
@@ -153,10 +156,18 @@ namespace VulkanEngine
                 &(deferredRenderRTList[4])
             };
 
+            std::vector<VulkanTextureResource>    textureResourceList;
+            std::vector<VulkanDescriptorResource> inputAttachmentResourceList;
+
+            std::vector<VulkanGraphicsPipelineRenderTargetProperties> shadingPassGraphicsPipelineRTProps(1);
+
             deferredRenderSubpassCreateDataList[1] = genShadingPassCreateData(renderProperties,
                                                                               &shadingPassRTCreateDataRefList,
                                                                               &shadingPassShader,
+                                                                              &textureResourceList,
+                                                                              &inputAttachmentResourceList,
                                                                               &shadingPassResources,
+                                                                              &shadingPassGraphicsPipelineRTProps,
                                                                               &shadingPassGraphicsPipelineProps,
                                                                               &shadingPassGraphicsPipelineCreateData);
 
@@ -331,13 +342,14 @@ namespace VulkanEngine
         }
 
         VulkanRenderSubpassCreateData VulkanDeferredRender::genGBufferSubpassCreateData(
-            IN  const VulkanRenderProperties&                                      renderProps,
-            IN  std::vector<VulkanRenderTargetCreateData*>*                        pRTCreateDataRefList,
-            OUT Shader::BxShaderMeta*                                              pGBufferShaderMeta,
-            OUT std::vector<VulkanUniformBufferResource>*                          pGBufferUniformBufferResourceList,
-            OUT VulkanRenderResources*                                             pGBufferResources,
-            OUT VulkanGraphicsPipelineProperties*                                  pGBufferGraphicsPipelineProperties,
-            OUT VulkanSubpassGraphicsPipelineCreateData*                           pGBufferGraphicsPipelineCreateData)
+            IN  const VulkanRenderProperties&                              renderProps,
+            IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
+            OUT Shader::BxShaderMeta*                                      pGBufferShaderMeta,
+            OUT std::vector<VulkanUniformBufferResource>*                  pGBufferUniformBufferResourceList,
+            OUT VulkanRenderResources*                                     pGBufferResources,
+            OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pGBufferGraphicsPipelineRTProperties,
+            OUT VulkanGraphicsPipelineProperties*                          pGBufferGraphicsPipelineProperties,
+            OUT VulkanSubpassGraphicsPipelineCreateData*                   pGBufferGraphicsPipelineCreateData)
         {
             VulkanRenderSubpassCreateData gBufferPassCreateData = {};
 
@@ -356,10 +368,19 @@ namespace VulkanEngine
             pGBufferResources->pTextureResouceList = NULL;
 
             /// Create gbuffer graphics pipeline
-            pGBufferGraphicsPipelineProperties->cullMode      = CULLMODE_BACK;
-            pGBufferGraphicsPipelineProperties->polyMode      = POLYMODE_FILL;
-            pGBufferGraphicsPipelineProperties->viewportRects = { renderProps.renderViewportRect };
-            pGBufferGraphicsPipelineProperties->scissorRects  = { renderProps.renderViewportRect };
+            const UINT gBufferColorRenderTargetNum =
+                static_cast<const UINT>(pGBufferGraphicsPipelineRTProperties->size());
+
+            for (UINT colorRTIndex = 0; colorRTIndex < gBufferColorRenderTargetNum; ++colorRTIndex)
+            {
+                pGBufferGraphicsPipelineRTProperties->at(colorRTIndex).enableBlend = m_pSetting->m_graphicsSetting.blend;
+            }
+
+            pGBufferGraphicsPipelineProperties->cullMode            = CULLMODE_BACK;
+            pGBufferGraphicsPipelineProperties->polyMode            = POLYMODE_FILL;
+            pGBufferGraphicsPipelineProperties->viewportRects       = { renderProps.renderViewportRect };
+            pGBufferGraphicsPipelineProperties->scissorRects        = { renderProps.renderViewportRect };
+            pGBufferGraphicsPipelineProperties->pRenderTargetsProps = pGBufferGraphicsPipelineRTProperties;
 
             pGBufferGraphicsPipelineCreateData->subpassIndex    = 0;
             pGBufferGraphicsPipelineCreateData->pProps          = pGBufferGraphicsPipelineProperties;
@@ -375,12 +396,15 @@ namespace VulkanEngine
         }
 
         VulkanRenderSubpassCreateData VulkanDeferredRender::genShadingPassCreateData(
-            IN const VulkanRenderProperties&                                       renderProps,
-            IN  std::vector<VulkanRenderTargetCreateData*>*                        pRTCreateDataRefList,
-            OUT Shader::BxShaderMeta*                                              pShadingPassShader,
-            OUT VulkanRenderResources*                                             pShadingPassResources,
-            OUT VulkanGraphicsPipelineProperties*                                  pShadingPassGraphicsPipelineProps,
-            OUT VulkanSubpassGraphicsPipelineCreateData*                           pShadingPassGraphicsPipelineCreateData)
+            IN const VulkanRenderProperties&                               renderProps,
+            IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
+            OUT Shader::BxShaderMeta*                                      pShadingPassShader,
+            OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
+            OUT std::vector<VulkanDescriptorResource>*                     pInputAttachmentResourceList,
+            OUT VulkanRenderResources*                                     pShadingPassResources,
+            OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pShadingPassGraphicsPipelineRTProperties,
+            OUT VulkanGraphicsPipelineProperties*                          pShadingPassGraphicsPipelineProps,
+            OUT VulkanSubpassGraphicsPipelineCreateData*                   pShadingPassGraphicsPipelineCreateData)
         {
             VulkanRenderSubpassCreateData shadingPassCreateData = {};
 
@@ -409,14 +433,65 @@ namespace VulkanEngine
             pShadingPassResources->pUniformBufferResourceList    = NULL;
 
             // Initialize textures for shading pass
-            std::vector<VulkanTextureResource> sceneTextureResourceList = createSceneTextures();
-            pShadingPassResources->pTextureResouceList                  = &sceneTextureResourceList;
+            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
+            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
+            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
+            textureSamplerCreateData.normalize                           = TRUE;
+            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.mipmapOffset                        = 0.0f;
+            textureSamplerCreateData.minLod                              = 0.0f;
+            textureSamplerCreateData.maxLod                              = 0.0f;
+
+            Texture::VulkanTexture2D* pTexture =
+                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
+                    m_pSetting->m_graphicsSetting.antialasing,
+                    FALSE,
+                    BX_FORMAT_RGBA8,
+                    BX_FORMAT_RGBA8,
+                    textureSamplerCreateData);
+
+            pTextureResourceList->push_back(createSceneTextures(0, 3, 1, pTexture));
+
+            pShadingPassResources->pTextureResouceList = pTextureResourceList;
+
+            // Create input attachment resources
+            pInputAttachmentResourceList->resize(GBUFFER_NUM - 1);
+
+            VulkanDescriptorResource* pPosTextureInputAttachment       = &(pInputAttachmentResourceList->at(GBUFFER_POS_BUFFER_INDEX));
+            pPosTextureInputAttachment->bindingPoint                   = 0;
+            pPosTextureInputAttachment->setIndex                       = 0;
+            pPosTextureInputAttachment->shaderType                     = BX_FRAGMENT_SHADER;
+
+            VulkanDescriptorResource* pNormalTextureInputAttachment    = &(pInputAttachmentResourceList->at(GBUFFER_NORMAL_BUFFER_INDEX));
+            pNormalTextureInputAttachment->bindingPoint                = 1;
+            pNormalTextureInputAttachment->setIndex                    = 0;
+            pNormalTextureInputAttachment->shaderType                  = BX_FRAGMENT_SHADER;
+
+            VulkanDescriptorResource* pTexCoord0TextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_TEXCOORD0_BUFFER_INDEX));
+            pTexCoord0TextureInputAttachment->bindingPoint             = 2;
+            pTexCoord0TextureInputAttachment->setIndex                 = 0;
+            pTexCoord0TextureInputAttachment->shaderType               = BX_FRAGMENT_SHADER;
+
+            pShadingPassResources->pInputAttachmentList = pInputAttachmentResourceList;
 
             /// Create shading pass graphics pipeline
-            pShadingPassGraphicsPipelineProps->cullMode      = CULLMODE_BACK;
-            pShadingPassGraphicsPipelineProps->polyMode      = POLYMODE_FILL;
-            pShadingPassGraphicsPipelineProps->viewportRects = { renderProps.renderViewportRect };
-            pShadingPassGraphicsPipelineProps->scissorRects  = { renderProps.renderViewportRect };
+            const UINT shadingPassColorRenderTargetNum =
+                static_cast<const UINT>(pShadingPassGraphicsPipelineRTProperties->size());
+
+            for (UINT colorRTIndex = 0; colorRTIndex < shadingPassColorRenderTargetNum; ++colorRTIndex)
+            {
+                pShadingPassGraphicsPipelineRTProperties->at(colorRTIndex).enableBlend = m_pSetting->m_graphicsSetting.blend;
+            }
+
+            pShadingPassGraphicsPipelineProps->cullMode            = CULLMODE_BACK;
+            pShadingPassGraphicsPipelineProps->polyMode            = POLYMODE_FILL;
+            pShadingPassGraphicsPipelineProps->viewportRects       = { renderProps.renderViewportRect };
+            pShadingPassGraphicsPipelineProps->scissorRects        = { renderProps.renderViewportRect };
+            pShadingPassGraphicsPipelineProps->pRenderTargetsProps = pShadingPassGraphicsPipelineRTProperties;
 
             pShadingPassGraphicsPipelineCreateData->subpassIndex    = 1;
             pShadingPassGraphicsPipelineCreateData->pProps          = pShadingPassGraphicsPipelineProps;
