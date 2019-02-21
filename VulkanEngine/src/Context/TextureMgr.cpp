@@ -85,11 +85,14 @@ namespace VulkanEngine
             const UINT              texHeight,
             const UINT              samples,
             const TextureFormat     texFormat,
+            BX_VULKAN_TEXTURE_USAGE vulkanUsage,
             const VDeleter<VkImage> image)
         {
             BOOL status = BX_SUCCESS;
 
-            TextureUsage usage = BX_TEXTURE_USAGE_RENDER_TARGET | Utility::VulkanUtility::GetTextureUsage(texFormat);
+            TextureUsage usage = BX_TEXTURE_USAGE_RENDER_TARGET |
+                                 vulkanUsage                    |
+                                 Utility::VulkanUtility::GetTextureUsage(texFormat);
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
             texture2DCreateData.texUsage           = usage;
@@ -122,14 +125,16 @@ namespace VulkanEngine
         }
 
         Texture::VulkanTexture2D* TextureMgr::createTexture2DRenderTarget(
-            const UINT          texWidth,
-            const UINT          texHeight,
-            const UINT          samples,
-            const TextureFormat texFormat)
+            const UINT              texWidth,
+            const UINT              texHeight,
+            const UINT              samples,
+            const TextureFormat     texFormat,
+            BX_VULKAN_TEXTURE_USAGE vulkanUsage)
         {
             BOOL status = BX_SUCCESS;
 
-            TextureUsage usage = Utility::VulkanUtility::GetTextureUsage(texFormat);
+            TextureUsage usage = vulkanUsage                    |
+                                 Utility::VulkanUtility::GetTextureUsage(texFormat);
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
             texture2DCreateData.texUsage           = usage;

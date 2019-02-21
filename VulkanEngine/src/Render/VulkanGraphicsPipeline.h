@@ -46,33 +46,39 @@ namespace VulkanEngine
             std::unique_ptr<Buffer::VulkanIndexBuffer>  pIndexBuffer;
         };
 
-        struct VulkanDescriptorResource
+        struct VulkanDescriptorInfo
         {
             UINT           setIndex;
             UINT           bindingPoint;
             BX_SHADER_TYPE shaderType;
         };
 
-        struct VulkanUniformBufferResource : public VulkanDescriptorResource
+        struct VulkanUniformBufferResource : public VulkanDescriptorInfo
         {
             UINT                         uniformbufferNum;
             Buffer::VulkanUniformBuffer* pUniformBuffer;
         };
 
-        struct VulkanTextureResource : public VulkanDescriptorResource
+        struct VulkanTextureResource : public VulkanDescriptorInfo
         {
             UINT                        textureNum;
             Texture::VulkanTextureBase* pTexture;
         };
 
-        struct VulkanRenderResources
+        struct VulkanDescriptorResources
         {
-            UINT                                      vertexDescriptionBindingPoint;
-            UINT                                      vertexBufferTexChannelNum;
-            std::vector<VulkanVertexInputResource>*   pVertexInputResourceList;
+            UINT                                      descriptorSetIndex;
             std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
             std::vector<VulkanTextureResource>*       pTextureResouceList;
-            std::vector<VulkanDescriptorResource>*    pInputAttachmentList;
+            std::vector<VulkanTextureResource>*       pInputAttachmentList;
+        };
+
+        struct VulkanRenderResources
+        {
+            UINT                                    vertexDescriptionBindingPoint;
+            UINT                                    vertexBufferTexChannelNum;
+            std::vector<VulkanVertexInputResource>* pVertexInputResourceList;
+            std::vector<VulkanDescriptorResources>* pDescriptorResourceList;
         };
 
         struct VulkanGraphicsPipelineCreateData

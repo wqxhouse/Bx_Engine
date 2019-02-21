@@ -135,7 +135,8 @@ namespace VulkanEngine
                         pBackbufferColorTexture->GetTextureWidth(),
                         pBackbufferColorTexture->GetTextureHeight(),
                         static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
-                        depthBufferFormat);
+                        depthBufferFormat,
+                        BX_TEXTURE_USAGE_VULKAN_NONE);
 
                 m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
             }

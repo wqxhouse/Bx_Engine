@@ -120,9 +120,14 @@ namespace VulkanEngine
             renderSources.vertexDescriptionBindingPoint = 0;
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
+            std::vector<VulkanDescriptorResources> descriptorResourceList;
+
+            VulkanDescriptorResources descriptorResources = {};
+            descriptorResources.descriptorSetIndex        = 0;
+
             // Initialize uniform buffers for render pass
             std::vector<VulkanUniformBufferResource> uniformBufferResourceList = createTransUniformBufferResource();
-            renderSources.pUniformBufferResourceList                           = &uniformBufferResourceList;
+            descriptorResources.pUniformBufferResourceList                     = &uniformBufferResourceList;
 
             // Initialize textures for render pass
             ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
@@ -147,7 +152,12 @@ namespace VulkanEngine
                     textureSamplerCreateData);
 
             std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 1, 1, pTexture) };
-            renderSources.pTextureResouceList                           = &sceneTextureResourceList;
+            descriptorResources.pTextureResouceList                     = &sceneTextureResourceList;
+
+            // Added descriptor resources to the resource list
+            descriptorResourceList.push_back(descriptorResources);
+
+            renderSources.pDescriptorResourceList = &descriptorResourceList;
 
             // Create render pass create data
             std::vector<VulkanGraphicsPipelineRenderTargetProperties> renderTargetsProps(1);

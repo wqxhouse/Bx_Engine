@@ -142,9 +142,9 @@ namespace VulkanEngine
             vkGetPhysicalDeviceMemoryProperties(hwDevice, &hwMemoryProps);
 
             VkMemoryAllocateInfo imageMemAllocInfo = {};
-            imageMemAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-            imageMemAllocInfo.allocationSize = imageMemoryRequirement.size;
-            imageMemAllocInfo.memoryTypeIndex =
+            imageMemAllocInfo.sType                = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+            imageMemAllocInfo.allocationSize       = imageMemoryRequirement.size;
+            imageMemAllocInfo.memoryTypeIndex      =
                 Utility::VulkanUtility::FindMemoryType(
                     hwMemoryProps,
                     imageMemoryRequirement.memoryTypeBits,

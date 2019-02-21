@@ -671,6 +671,7 @@ namespace VulkanEngine
                             m_swapchainExtent.height,
                             m_pSetting->m_graphicsSetting.antialasing,
                             Utility::VulkanUtility::GetImageFormat(m_swapchainSurfaceFormat.format),
+                            BX_TEXTURE_USAGE_VULKAN_NONE,
                             image);
 
                     m_pSwapchainTextures[i] = pBackbufferTex;

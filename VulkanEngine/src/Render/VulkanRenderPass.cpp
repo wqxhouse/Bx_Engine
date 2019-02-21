@@ -123,11 +123,90 @@ namespace VulkanEngine
             status = createFramebuffers(&(framebuffersTextureTable),
                                         renderPassCreateData.framebufferNum);
 
+            // TODO: Support the multipass in a single descriptor pool
+            // Create descriptor pool
+            std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateDataList;
+
+            std::vector<VulkanDescriptorResources*> pDescriptorResourcesRefList(renderSubpassNum);
+
+            size_t uniformBufferDescriptorNum   = 0;
+            size_t textureDescriptorNum         = 0;
+            size_t inputAttachmentDescriptorNum = 0;
+
+            // Iterate all subpasses (no necessary follow the subpass index order)
+            for (UINT subpassIter = 0; subpassIter < renderSubpassNum; ++subpassIter)
+            {
+                const VulkanRenderSubpassCreateData& subpassCreateData =
+                    pRenderSubpassCreateDataList->at(subpassIter);
+
+                const VulkanSubpassGraphicsPipelineCreateData* pSubpassGraphicsPipelineCreateData =
+                        subpassCreateData.pSubpassGraphicsPipelineCreateData;
+
+                const std::vector<VulkanDescriptorResources>* pSubpassDescriptorResourcesList =
+                    pSubpassGraphicsPipelineCreateData->pResource->pDescriptorResourceList;
+
+                const size_t descriptorSetNum = pSubpassDescriptorResourcesList->size();
+
+                for (size_t descriptorResourceIndex = 0;
+                    descriptorResourceIndex < descriptorSetNum;
+                    ++descriptorResourceIndex)
+                {
+                    const VulkanDescriptorResources* descriptorResources =
+                        &(pSubpassDescriptorResourcesList->at(descriptorResourceIndex));
+
+                    if (descriptorResources->pUniformBufferResourceList != NULL)
+                    {
+                        uniformBufferDescriptorNum += descriptorResources->pUniformBufferResourceList->size();
+                    }
+
+                    if (descriptorResources->pTextureResouceList != NULL)
+                    {
+                        textureDescriptorNum += descriptorResources->pTextureResouceList->size();
+                    }
+
+                    if (descriptorResources->pInputAttachmentList != NULL)
+                    {
+                        inputAttachmentDescriptorNum += descriptorResources->pInputAttachmentList->size();
+                    }
+                }
+            }
+
+            Mgr::DescriptorPoolCreateInfo uniformDescriptorPoolCreateInfo = {};
+            if (uniformBufferDescriptorNum > 0)
+            {
+                uniformDescriptorPoolCreateInfo.descriptorType = BX_UNIFORM_DESCRIPTOR;
+                uniformDescriptorPoolCreateInfo.descriptorNum = static_cast<UINT>(uniformBufferDescriptorNum);
+
+                descriptorPoolCreateDataList.push_back(uniformDescriptorPoolCreateInfo);
+            }
+
+            Mgr::DescriptorPoolCreateInfo samplerDescriptorPoolCreateInfo = {};
+            if (textureDescriptorNum > 0)
+            {
+                samplerDescriptorPoolCreateInfo.descriptorType = BX_SAMPLER_DESCRIPTOR;
+                samplerDescriptorPoolCreateInfo.descriptorNum = static_cast<UINT>(textureDescriptorNum);
+
+                descriptorPoolCreateDataList.push_back(samplerDescriptorPoolCreateInfo);
+            }
+
+            Mgr::DescriptorPoolCreateInfo inputAttachmentDescriptorPoolCreateInfo = {};
+            if (inputAttachmentDescriptorNum > 0)
+            {
+                inputAttachmentDescriptorPoolCreateInfo.descriptorType = BX_INPUT_ATTACHMENT_DESCRIPTOR;
+                inputAttachmentDescriptorPoolCreateInfo.descriptorNum = static_cast<UINT>(inputAttachmentDescriptorNum);
+
+                descriptorPoolCreateDataList.push_back(inputAttachmentDescriptorPoolCreateInfo);
+            }
+
+            status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateDataList);
+            assert(status == BX_SUCCESS);
+
+            // Create graphics pipelines for each subpass
             for (UINT i = 0; i < renderSubpassNum; ++i)
             {
                 const VulkanRenderSubpassCreateData& subpassCreateData = pRenderSubpassCreateDataList->at(i);
 
-                VulkanSubpassGraphicsPipelineCreateData*
+                const VulkanSubpassGraphicsPipelineCreateData*
                     pSubpassGraphicsPipelineCreateData = subpassCreateData.pSubpassGraphicsPipelineCreateData;
 
                 const UINT subpassIndex = pSubpassGraphicsPipelineCreateData->subpassIndex;
@@ -220,6 +299,11 @@ namespace VulkanEngine
                         
                         const UINT vertexInputResourceNum = static_cast<UINT>(pVertexInputResourceList->size());
 
+                        if (graphicsPipelineIndex > 0)
+                        {
+                            pCmdBuffer->cmdNextSubpass();
+                        }
+
                         if (graphicsPipeline.IsScenePipeline() == TRUE)
                         {
                             UINT vertexInputResourceCounter = 0;
@@ -245,7 +329,8 @@ namespace VulkanEngine
                                             {
                                                 pDescriptorBuffer = uniformBufferDescUpdateInfoList[0].pDescriptorBuffer;
                                                 dynamicUniformBufferOffset =
-                                                    (camIndex * modelIndex + modelIndex) * static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
+                                                    (camIndex * modelIndex + modelIndex) *
+                                                    static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
                                             }
 
                                             const UINT meshNum = pModel->GetMeshNum();
@@ -264,14 +349,15 @@ namespace VulkanEngine
                                                                                 { 0 },
                                                                                 pIndexBuffer->GetIndexType());
 
-                                                if (uniformBufferDescUpdateInfoList.size() > 0 &&
+                                                if (uniformBufferDescUpdateInfoList.size()  > 0 &&
                                                     m_pDescriptorMgr->GetDescriptorSetNum() > 0)
                                                 {
-                                                    if (m_pDescriptorMgr->GetDescriptorSet(0) != VK_NULL_HANDLE)
+                                                    if (m_pDescriptorMgr->GetDescriptorSet(graphicsPipelineIndex) != VK_NULL_HANDLE)
                                                     {
-                                                        pCmdBuffer->cmdBindDynamicDescriptorSets(graphicsPipeline.GetGraphicsPipelineLayout(),
-                                                                                                 { m_pDescriptorMgr->GetDescriptorSet(0) },
-                                                                                                 { dynamicUniformBufferOffset });
+                                                        pCmdBuffer->cmdBindDynamicDescriptorSets(
+                                                            graphicsPipeline.GetGraphicsPipelineLayout(),
+                                                            { m_pDescriptorMgr->GetDescriptorSet(graphicsPipelineIndex) },
+                                                            { dynamicUniformBufferOffset });
                                                     }
                                                 }
 

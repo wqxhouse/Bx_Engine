@@ -465,6 +465,11 @@ namespace VulkanEngine
                     imageUsageFlagBits |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
                 }
 
+                if ((texUsage& BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT) != 0)
+                {
+                    imageUsageFlagBits |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+                }
+
                 return imageUsageFlagBits;
             }
 

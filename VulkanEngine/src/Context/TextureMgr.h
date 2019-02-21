@@ -37,13 +37,15 @@ namespace VulkanEngine
                 const UINT              texHeight,
                 const UINT              samples,
                 const TextureFormat     texFormat,
+                BX_VULKAN_TEXTURE_USAGE vulkanUsage,
                 const VDeleter<VkImage> image);
 
             Texture::VulkanTexture2D* createTexture2DRenderTarget(
-                const UINT          texWidth,
-                const UINT          texHeight,
-                const UINT          samples,
-                const TextureFormat texFormat);
+                const UINT              texWidth,
+                const UINT              texHeight,
+                const UINT              samples,
+                const TextureFormat     texFormat,
+                BX_VULKAN_TEXTURE_USAGE vulkanUsage);
 
             Texture::VulkanTexture2D* createTexture2DSampler(
                 const std::string&                   imageFile,

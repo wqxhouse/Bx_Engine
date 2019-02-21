@@ -166,8 +166,8 @@ namespace VulkanEngine
             // Updating set and set layout info
             for (size_t i = 0; i < descriptorSetNum; ++i)
             {
-                UINT descriptorSetIndex                       = descriptorSetIndexList[i];
-                m_descriptorSetList[descriptorSetIndex]       = descriptorSets[i];
+                UINT descriptorSetIndex                 = descriptorSetIndexList[i];
+                m_descriptorSetList[descriptorSetIndex] = descriptorSets[i];
             }
 
             return result;
@@ -235,6 +235,13 @@ namespace VulkanEngine
                     }
                     case BX_INPUT_ATTACHMENT_DESCRIPTOR:
                     {
+                        VkDescriptorImageInfo descriptorImageInfo = {};
+                        descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        descriptorImageInfo.imageView   =
+                            descriptorSetUpdateInfo[i].pDescriptorTexture->GetTextureImageView();
+
+                        writeDescriptorSetList[i].pImageInfo = &descriptorImageInfo;
+
                         break;
                     }
                     case BX_STORAGE_BUFFER_DESCRIPTOR:

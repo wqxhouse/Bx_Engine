@@ -102,6 +102,11 @@ namespace VulkanEngine
                 const UINT        vertexOffset,
                 const UINT        instanceOffset);
 
+            INLINE void cmdNextSubpass()
+            {
+                vkCmdNextSubpass(m_cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
+            }
+
             INLINE void endRenderPass()
             {
                 vkCmdEndRenderPass(m_cmdBuffer);
