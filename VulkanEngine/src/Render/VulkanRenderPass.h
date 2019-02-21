@@ -115,6 +115,7 @@ namespace VulkanEngine
                 OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
                 OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
                 OUT VkAttachmentReference*                                 pDepthSubpassAttachmentRef,
+                OUT std::vector<VkAttachmentReference>*                    pInputSubpassAttachmentRef,
                 OUT std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTextureTable);
 
             // Create render pass

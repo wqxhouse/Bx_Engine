@@ -75,10 +75,10 @@ namespace VulkanEngine
             std::vector<VulkanRenderTargetCreateDescriptor> deferredRenderRTDescList =
             {
                 // isStore | renderSubPassIndex | bindingPoint | layout | useStencil isStoreStencil;
-                { TRUE, 1, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }, // Backbuffer
-                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Position
-                { TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
-                { TRUE, 0, 2, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
+                { TRUE, 1, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT,          FALSE, FALSE }, // Backbuffer
+                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT, FALSE, FALSE }, // Position
+                { TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT, FALSE, FALSE }, // Normal
+                { TRUE, 0, 2, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT, FALSE, FALSE }  // TexCoord
             };
 
             // Create textures

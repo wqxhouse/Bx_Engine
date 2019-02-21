@@ -207,7 +207,8 @@ namespace VulkanEngine
             }
 
             // Transfer the image layout according to usage
-            if ((usage & BX_TEXTURE_USAGE_SAMPLED) != 0)
+            if (((usage & BX_TEXTURE_USAGE_SAMPLED)                 != 0) ||
+                ((usage & BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT) != 0))
             {
                 transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
                 transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

@@ -729,6 +729,9 @@ namespace VulkanEngine
                     case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT:
                         vkImageLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
                         break;
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT:
+                        vkImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        break;
                     default:
                         NotSupported();
                         break;
@@ -750,6 +753,9 @@ namespace VulkanEngine
                     break;
                 case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
                     vkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                    break;
+                case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT:
+                    vkImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                     break;
                 default:
                     NotSupported();

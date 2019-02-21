@@ -46,6 +46,7 @@ namespace VulkanEngine
 
             std::vector<std::vector<VkAttachmentReference>> colorSubpassAttachmentRefList(renderSubpassNum);
             std::vector<VkAttachmentReference>              depthSubpassAttachmentRefList(renderSubpassNum);
+            std::vector<std::vector<VkAttachmentReference>> inputSubpassAttachmentRefList(renderSubpassNum);
 
             std::vector<std::vector<Texture::VulkanTextureBase*>> framebuffersTextureTable(renderPassCreateData.framebufferNum);
 
@@ -69,7 +70,7 @@ namespace VulkanEngine
             };
 
             m_enableColor = pRenderProps->enableColor;
-            if (IsColorEnabled())
+            if (IsColorEnabled() == TRUE)
             {
                 const std::vector<VkClearValue>& colorClearValueList = pRenderProps->sceneClearValue;
                 m_clearValueList.insert(m_clearValueList.end(), colorClearValueList.begin(), colorClearValueList.end());
@@ -101,6 +102,7 @@ namespace VulkanEngine
                                              &attachmentDescriptionList,
                                              &(colorSubpassAttachmentRefList[subpassIndex]),
                                              &(depthSubpassAttachmentRefList[subpassIndex]),
+                                             &(inputSubpassAttachmentRefList[subpassIndex]),
                                              &(framebuffersTextureTable));
 
                 assert(status == BX_SUCCESS);
@@ -280,8 +282,6 @@ namespace VulkanEngine
                 assert(status == BX_SUCCESS);
                 if (status == BX_SUCCESS)
                 {
-                    std::vector<VkClearValue> clearColorValueList;
-
                     pCmdBuffer->beginRenderPass(m_renderPass,
                                                 m_framebufferList[i].GetFramebufferHandle(),
                                                 m_renderViewport,
@@ -290,7 +290,9 @@ namespace VulkanEngine
                     const size_t graphicsPipelineNum = m_graphicsPipelineList.size();
                     for (size_t graphicsPipelineIndex = 0; graphicsPipelineIndex < graphicsPipelineNum; ++graphicsPipelineIndex)
                     {
-                        const VulkanGraphicsPipeline& graphicsPipeline = m_graphicsPipelineList[graphicsPipelineIndex];
+                        const UINT subpassIndex = static_cast<UINT>(graphicsPipelineIndex);
+
+                        const VulkanGraphicsPipeline& graphicsPipeline = m_graphicsPipelineList[subpassIndex];
                         const std::vector<VulkanVertexInputResource>* pVertexInputResourceList =
                             graphicsPipeline.GetVertexInputResourceList();
 
@@ -299,7 +301,7 @@ namespace VulkanEngine
                         
                         const UINT vertexInputResourceNum = static_cast<UINT>(pVertexInputResourceList->size());
 
-                        if (graphicsPipelineIndex > 0)
+                        if (subpassIndex > 0)
                         {
                             pCmdBuffer->cmdNextSubpass();
                         }
@@ -352,11 +354,11 @@ namespace VulkanEngine
                                                 if (uniformBufferDescUpdateInfoList.size()  > 0 &&
                                                     m_pDescriptorMgr->GetDescriptorSetNum() > 0)
                                                 {
-                                                    if (m_pDescriptorMgr->GetDescriptorSet(graphicsPipelineIndex) != VK_NULL_HANDLE)
+                                                    if (m_pDescriptorMgr->GetDescriptorSet(subpassIndex) != VK_NULL_HANDLE)
                                                     {
                                                         pCmdBuffer->cmdBindDynamicDescriptorSets(
                                                             graphicsPipeline.GetGraphicsPipelineLayout(),
-                                                            { m_pDescriptorMgr->GetDescriptorSet(graphicsPipelineIndex) },
+                                                            { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) },
                                                             { dynamicUniformBufferOffset });
                                                     }
                                                 }
@@ -392,6 +394,9 @@ namespace VulkanEngine
                                                                 { 0 },
                                                                 pIndexBuffer->GetIndexType());
 
+                                pCmdBuffer->cmdBindDescriptorSets(graphicsPipeline.GetGraphicsPipelineLayout(),
+                                                                  { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) });
+
                                 pCmdBuffer->cmdDrawElements(graphicsPipeline.GetGraphicsPipelineHandle(),
                                                             pIndexBuffer->GetIndexNum(),
                                                             0,
@@ -422,6 +427,7 @@ namespace VulkanEngine
             OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
             OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
             OUT VkAttachmentReference*                                 pDepthSubpassAttachmentRef,
+            OUT std::vector<VkAttachmentReference>*                    pInputSubpassAttachmentRef,
             OUT std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTextureTable)
         {
             BOOL status = BX_SUCCESS;
@@ -502,6 +508,9 @@ namespace VulkanEngine
                     case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
                         *pDepthSubpassAttachmentRef = attachmentRef;
                         break;
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT:
+                        pInputSubpassAttachmentRef->push_back(attachmentRef);
+                        break;
                     default:
                         NotSupported();
                         break;
@@ -516,6 +525,12 @@ namespace VulkanEngine
                 pDepthSubpassAttachmentRef != NULL)
             {
                 pSubpassDescription->pDepthStencilAttachment = pDepthSubpassAttachmentRef;
+            }
+
+            if (pInputSubpassAttachmentRef != NULL)
+            {
+                pSubpassDescription->inputAttachmentCount = static_cast<UINT>(pInputSubpassAttachmentRef->size());
+                pSubpassDescription->pInputAttachments    = pInputSubpassAttachmentRef->data();
             }
 
             return status;
