@@ -111,6 +111,7 @@ namespace VulkanEngine
             // Create render targets for a single subpass
             BOOL createRenderTargets(
                 IN  const std::vector<VulkanRenderTargetCreateData*>*      pRenderTargetsCreateDataRefList,
+                IN  const std::vector<const VulkanDescriptorInfo*>*        pSubpassinputAttachmentDescriptorInfoPtrList,
                 OUT VkSubpassDescription*                                  pSubpassDescription,
                 OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
                 OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,

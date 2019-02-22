@@ -75,16 +75,16 @@ namespace VulkanEngine
             std::vector<VulkanRenderTargetCreateDescriptor> deferredRenderRTDescList =
             {
                 // isStore | renderSubPassIndex | bindingPoint | layout | useStencil isStoreStencil;
-                { TRUE, 1, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT,          FALSE, FALSE }, // Backbuffer
-                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT, FALSE, FALSE }, // Position
-                { TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT, FALSE, FALSE }, // Normal
-                { TRUE, 0, 2, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT, FALSE, FALSE }  // TexCoord
+                { TRUE, 1, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }, // Backbuffer
+                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Position
+                { TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
+                { TRUE, 0, 2, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
             };
 
             // Create textures
             createGBufferTextures();
 
-            assert((IsDepthTestEnabled() == TRUE)  ||
+            assert((IsDepthTestEnabled()    == TRUE)  ||
                    ((IsDepthTestEnabled()   == FALSE) &&
                     (IsStencilTestEnabled() == FALSE)));
 
@@ -155,8 +155,7 @@ namespace VulkanEngine
             // Shading pass
             std::vector<VulkanRenderTargetCreateData*> shadingPassRTCreateDataRefList =
             {
-                &(deferredRenderRTList[0]),
-                &(deferredRenderRTList[4])
+                &(deferredRenderRTList[0])
             };
 
             std::vector<VulkanTextureResource> shadingPassTextureResourceList;

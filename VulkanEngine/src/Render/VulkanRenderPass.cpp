@@ -44,6 +44,7 @@ namespace VulkanEngine
 
             std::vector<VkAttachmentDescription>            attachmentDescriptionList;
 
+            // TODO: Set color/depth/stencil properties for every subpasses (not necessary to be the same)
             std::vector<std::vector<VkAttachmentReference>> colorSubpassAttachmentRefList(renderSubpassNum);
             std::vector<VkAttachmentReference>              depthSubpassAttachmentRefList(renderSubpassNum);
             std::vector<std::vector<VkAttachmentReference>> inputSubpassAttachmentRefList(renderSubpassNum);
@@ -88,6 +89,65 @@ namespace VulkanEngine
                 m_clearValueList.push_back(pRenderProps->stencilClearValue);
             }
 
+            size_t uniformBufferDescriptorNum   = 0;
+            size_t textureDescriptorNum         = 0;
+            size_t inputAttachmentDescriptorNum = 0;
+
+            std::vector<std::vector<const VulkanDescriptorInfo*>> inputAttachmentDescriptorInfoPtrTable(renderSubpassNum);
+
+            // Iterate all subpasses (no necessary follow the subpass index order)
+            for (UINT subpassIter = 0; subpassIter < renderSubpassNum; ++subpassIter)
+            {
+                const VulkanRenderSubpassCreateData& subpassCreateData =
+                    pRenderSubpassCreateDataList->at(subpassIter);
+
+                const UINT subpassIndex = subpassCreateData.pSubpassGraphicsPipelineCreateData->subpassIndex;
+
+                const VulkanSubpassGraphicsPipelineCreateData* pSubpassGraphicsPipelineCreateData =
+                        subpassCreateData.pSubpassGraphicsPipelineCreateData;
+
+                const std::vector<VulkanDescriptorResources>* pSubpassDescriptorResourcesList =
+                    pSubpassGraphicsPipelineCreateData->pResource->pDescriptorResourceList;
+
+                const size_t descriptorSetNum = pSubpassDescriptorResourcesList->size();
+
+                for (size_t descriptorResourceIndex = 0;
+                     descriptorResourceIndex < descriptorSetNum;
+                     ++descriptorResourceIndex)
+                {
+                    const VulkanDescriptorResources* descriptorResources =
+                        &(pSubpassDescriptorResourcesList->at(descriptorResourceIndex));
+
+                    if (descriptorResources->pUniformBufferResourceList != NULL)
+                    {
+                        uniformBufferDescriptorNum += descriptorResources->pUniformBufferResourceList->size();
+                    }
+
+                    if (descriptorResources->pTextureResouceList != NULL)
+                    {
+                        textureDescriptorNum += descriptorResources->pTextureResouceList->size();
+                    }
+
+                    if (descriptorResources->pInputAttachmentList != NULL)
+                    {
+                        const std::vector<VulkanTextureResource>* pInputAttachmentResourceList =
+                            descriptorResources->pInputAttachmentList;
+
+                        inputAttachmentDescriptorNum += pInputAttachmentResourceList->size();
+
+                        const size_t inputAttachmentResourceNum = pInputAttachmentResourceList->size();
+
+                        for (size_t inputAttchementResourceIndex = 0;
+                             inputAttchementResourceIndex < inputAttachmentResourceNum;
+                             ++inputAttchementResourceIndex)
+                        {
+                            inputAttachmentDescriptorInfoPtrTable[subpassIndex].push_back(
+                                &(pInputAttachmentResourceList->at(inputAttchementResourceIndex)));
+                        }
+                    }
+                }
+            }
+
             for (UINT i = 0; i < renderSubpassNum; ++i)
             {
                 const VulkanRenderSubpassCreateData& subpassCreateData = pRenderSubpassCreateDataList->at(i);
@@ -97,7 +157,11 @@ namespace VulkanEngine
 
                 const UINT subpassIndex                = pSubpassGraphicsPipelineCreateData->subpassIndex;
 
+                const std::vector<const VulkanDescriptorInfo*>* pSubpassinputAttachmentDescriptorInfoPtrList =
+                    &(inputAttachmentDescriptorInfoPtrTable[subpassIndex]);
+
                 status = createRenderTargets(subpassCreateData.pSubpassRenderTargetCreateDataRefList,
+                                             pSubpassinputAttachmentDescriptorInfoPtrList,
                                              &(subPassDescriptionList[subpassIndex]),
                                              &attachmentDescriptionList,
                                              &(colorSubpassAttachmentRefList[subpassIndex]),
@@ -128,50 +192,6 @@ namespace VulkanEngine
             // TODO: Support the multipass in a single descriptor pool
             // Create descriptor pool
             std::vector<Mgr::DescriptorPoolCreateInfo> descriptorPoolCreateDataList;
-
-            std::vector<VulkanDescriptorResources*> pDescriptorResourcesRefList(renderSubpassNum);
-
-            size_t uniformBufferDescriptorNum   = 0;
-            size_t textureDescriptorNum         = 0;
-            size_t inputAttachmentDescriptorNum = 0;
-
-            // Iterate all subpasses (no necessary follow the subpass index order)
-            for (UINT subpassIter = 0; subpassIter < renderSubpassNum; ++subpassIter)
-            {
-                const VulkanRenderSubpassCreateData& subpassCreateData =
-                    pRenderSubpassCreateDataList->at(subpassIter);
-
-                const VulkanSubpassGraphicsPipelineCreateData* pSubpassGraphicsPipelineCreateData =
-                        subpassCreateData.pSubpassGraphicsPipelineCreateData;
-
-                const std::vector<VulkanDescriptorResources>* pSubpassDescriptorResourcesList =
-                    pSubpassGraphicsPipelineCreateData->pResource->pDescriptorResourceList;
-
-                const size_t descriptorSetNum = pSubpassDescriptorResourcesList->size();
-
-                for (size_t descriptorResourceIndex = 0;
-                    descriptorResourceIndex < descriptorSetNum;
-                    ++descriptorResourceIndex)
-                {
-                    const VulkanDescriptorResources* descriptorResources =
-                        &(pSubpassDescriptorResourcesList->at(descriptorResourceIndex));
-
-                    if (descriptorResources->pUniformBufferResourceList != NULL)
-                    {
-                        uniformBufferDescriptorNum += descriptorResources->pUniformBufferResourceList->size();
-                    }
-
-                    if (descriptorResources->pTextureResouceList != NULL)
-                    {
-                        textureDescriptorNum += descriptorResources->pTextureResouceList->size();
-                    }
-
-                    if (descriptorResources->pInputAttachmentList != NULL)
-                    {
-                        inputAttachmentDescriptorNum += descriptorResources->pInputAttachmentList->size();
-                    }
-                }
-            }
 
             Mgr::DescriptorPoolCreateInfo uniformDescriptorPoolCreateInfo = {};
             if (uniformBufferDescriptorNum > 0)
@@ -423,6 +443,7 @@ namespace VulkanEngine
 
         BOOL VulkanRenderPass::createRenderTargets(
             IN  const std::vector<VulkanRenderTargetCreateData*>*      pRenderTargetsCreateDataRefList,
+            IN  const std::vector<const VulkanDescriptorInfo*>*        pSubpassinputAttachmentDescriptorInfoPtrList,
             OUT VkSubpassDescription*                                  pSubpassDescription,
             OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
             OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
@@ -508,9 +529,6 @@ namespace VulkanEngine
                     case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
                         *pDepthSubpassAttachmentRef = attachmentRef;
                         break;
-                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT:
-                        pInputSubpassAttachmentRef->push_back(attachmentRef);
-                        break;
                     default:
                         NotSupported();
                         break;
@@ -521,13 +539,23 @@ namespace VulkanEngine
             pSubpassDescription->colorAttachmentCount = static_cast<UINT>(pColorSubpassAttachmentRefList->size());
             pSubpassDescription->pColorAttachments    = pColorSubpassAttachmentRefList->data();
 
-            if (IsDepthEnabled()           == TRUE &&
-                pDepthSubpassAttachmentRef != NULL)
+            if (IsDepthEnabled()                   == TRUE &&
+                pDepthSubpassAttachmentRef->layout != VK_IMAGE_LAYOUT_UNDEFINED)
             {
                 pSubpassDescription->pDepthStencilAttachment = pDepthSubpassAttachmentRef;
             }
 
-            if (pInputSubpassAttachmentRef != NULL)
+            const size_t subpassAttchmentDescriptorInfoSize = pSubpassinputAttachmentDescriptorInfoPtrList->size();
+            for (size_t subpassAttachmentDescriptorInfoIndex = 0;
+                 subpassAttachmentDescriptorInfoIndex < subpassAttchmentDescriptorInfoSize;
+                 ++subpassAttachmentDescriptorInfoIndex)
+            {
+                pInputSubpassAttachmentRef->
+                    push_back({ pSubpassinputAttachmentDescriptorInfoPtrList->at(subpassAttachmentDescriptorInfoIndex)->bindingPoint,
+                                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL });
+            }
+
+            if (subpassAttchmentDescriptorInfoSize > 0)
             {
                 pSubpassDescription->inputAttachmentCount = static_cast<UINT>(pInputSubpassAttachmentRef->size());
                 pSubpassDescription->pInputAttachments    = pInputSubpassAttachmentRef->data();
