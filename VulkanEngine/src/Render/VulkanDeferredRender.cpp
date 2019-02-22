@@ -304,12 +304,12 @@ namespace VulkanEngine
                                                            TextureFormat::BX_FORMAT_BGRA8,
                                                            BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
 
-            size_t backbufferNum = m_backBufferRTsCreateDataList.size();
-            for (size_t i = 0; i < backbufferNum; ++i)
+            UINT backbufferNum = static_cast<UINT>(m_backBufferRTsCreateDataList.size());
+            for (UINT backbufferIndex = 0; backbufferIndex < backbufferNum; ++backbufferIndex)
             {
-                m_backBufferRTsCreateDataList[i].push_back({ GBUFFER_POS_BUFFER_INDEX, pPosTexture });
-                m_backBufferRTsCreateDataList[i].push_back({ GBUFFER_NORMAL_BUFFER_INDEX, pNormalTexture });
-                m_backBufferRTsCreateDataList[i].push_back({ GBUFFER_TEXCOORD0_BUFFER_INDEX, pTexCoord0Texture });
+                m_backBufferRTsCreateDataList[backbufferIndex].push_back({ backbufferIndex, pPosTexture });
+                m_backBufferRTsCreateDataList[backbufferIndex].push_back({ backbufferIndex, pNormalTexture });
+                m_backBufferRTsCreateDataList[backbufferIndex].push_back({ backbufferIndex, pTexCoord0Texture });
 
             }
         }
