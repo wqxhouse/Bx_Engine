@@ -88,24 +88,26 @@ namespace VulkanEngine
             std::vector<VulkanRenderTargetCreateData>                         renderTargetsCreateDataList(backbufferAttachmentNum);
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> renderTargetsFramebuffersCreateData(backbufferAttachmentNum);
 
-            for (UINT i = 0; i < backbufferAttachmentNum; ++i)
+            for (UINT attachmentIndex = 0; attachmentIndex < backbufferAttachmentNum; ++attachmentIndex)
             {
-                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateDataList[i]);
+                VulkanRenderTargetCreateData* pRenderTargetCreateData = &(renderTargetsCreateDataList[attachmentIndex]);
 
-                pRenderTargetCreateData->renderSubPassIndex = renderTargetDescriptors[i].renderSubPassIndex;
-                pRenderTargetCreateData->bindingPoint       = renderTargetDescriptors[i].bindingPoint;
-                pRenderTargetCreateData->isStore            = renderTargetDescriptors[i].isStore;
-                pRenderTargetCreateData->layout             = renderTargetDescriptors[i].layout;
-                pRenderTargetCreateData->useStencil         = renderTargetDescriptors[i].useStencil;
-                pRenderTargetCreateData->isStoreStencil     = renderTargetDescriptors[i].isStoreStencil;
+                pRenderTargetCreateData->renderSubPassIndex = renderTargetDescriptors[attachmentIndex].renderSubPassIndex;
+                pRenderTargetCreateData->bindingPoint       = renderTargetDescriptors[attachmentIndex].bindingPoint;
+                pRenderTargetCreateData->attachmentIndex    = attachmentIndex;
+                pRenderTargetCreateData->isStore            = renderTargetDescriptors[attachmentIndex].isStore;
+                pRenderTargetCreateData->layout             = renderTargetDescriptors[attachmentIndex].layout;
+                pRenderTargetCreateData->useStencil         = renderTargetDescriptors[attachmentIndex].useStencil;
+                pRenderTargetCreateData->isStoreStencil     = renderTargetDescriptors[attachmentIndex].isStoreStencil;
 
                 std::vector<VulkanRenderTargetFramebufferCreateData>*
-                    pRenderTargetsFramebufferCreateData = &(renderTargetsFramebuffersCreateData[i]);
+                    pRenderTargetsFramebufferCreateData = &(renderTargetsFramebuffersCreateData[attachmentIndex]);
 
                 pRenderTargetsFramebufferCreateData->resize(backbufferNum);
-                for (UINT j = 0; j < backbufferNum; ++j)
+                for (UINT framebufferIndex = 0; framebufferIndex < backbufferNum; ++framebufferIndex)
                 {
-                    pRenderTargetsFramebufferCreateData->at(j) = m_backBufferRTsCreateDataList[j][i];
+                    pRenderTargetsFramebufferCreateData->at(framebufferIndex) =
+                        m_backBufferRTsCreateDataList[framebufferIndex][attachmentIndex];
                 }
 
                 pRenderTargetCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;

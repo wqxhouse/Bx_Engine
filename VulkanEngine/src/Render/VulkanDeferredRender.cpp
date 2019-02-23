@@ -332,6 +332,7 @@ namespace VulkanEngine
 
                 pRTCreateData->renderSubPassIndex           = pRTDesc->renderSubPassIndex;
                 pRTCreateData->bindingPoint                 = pRTDesc->bindingPoint;
+                pRTCreateData->attachmentIndex              = RTIndex;
                 pRTCreateData->isStore                      = pRTDesc->isStore;
                 pRTCreateData->layout                       = pRTDesc->layout;
                 pRTCreateData->useStencil                   = pRTDesc->useStencil;

@@ -89,6 +89,8 @@ namespace VulkanEngine
                 m_clearValueList.push_back(pRenderProps->stencilClearValue);
             }
 
+            size_t renderTargetNum = 0;
+
             size_t uniformBufferDescriptorNum   = 0;
             size_t textureDescriptorNum         = 0;
             size_t inputAttachmentDescriptorNum = 0;
@@ -146,11 +148,17 @@ namespace VulkanEngine
                         }
                     }
                 }
+
+                // Pre calculate the total render target number to prepare for the next iteration
+                renderTargetNum += subpassCreateData.pSubpassRenderTargetCreateDataRefList->size();
             }
 
-            for (UINT i = 0; i < renderSubpassNum; ++i)
+            // Alloc memory for all attachment descriptions
+            attachmentDescriptionList.resize(renderTargetNum);
+
+            for (UINT subpassIter = 0; subpassIter < renderSubpassNum; ++subpassIter)
             {
-                const VulkanRenderSubpassCreateData& subpassCreateData = pRenderSubpassCreateDataList->at(i);
+                const VulkanRenderSubpassCreateData& subpassCreateData = pRenderSubpassCreateDataList->at(subpassIter);
 
                 VulkanSubpassGraphicsPipelineCreateData*
                     pSubpassGraphicsPipelineCreateData = subpassCreateData.pSubpassGraphicsPipelineCreateData;
@@ -512,7 +520,7 @@ namespace VulkanEngine
                 attachmentDescription.finalLayout    =
                     Utility::VulkanUtility::GetAttachmentVkImageLayout(pRenderPassCreateData->layout);
 
-                pAttachmentDescriptionList->push_back(attachmentDescription);
+                pAttachmentDescriptionList->at(pRenderPassCreateData->attachmentIndex) = attachmentDescription;
 
                 VkAttachmentReference attachmentRef = {};
                 attachmentRef.attachment            = pRenderPassCreateData->bindingPoint;// Output layout index in shader,
