@@ -89,6 +89,8 @@ namespace VulkanEngine
                 m_clearValueList.push_back(pRenderProps->stencilClearValue);
             }
 
+            size_t renderTargetNum = 0;
+
             size_t uniformBufferDescriptorNum   = 0;
             size_t textureDescriptorNum         = 0;
             size_t inputAttachmentDescriptorNum = 0;
@@ -146,11 +148,23 @@ namespace VulkanEngine
                         }
                     }
                 }
+
+                // Pre calculate the total render target number to prepare for the next iteration
+                renderTargetNum += subpassCreateData.pSubpassRenderTargetCreateDataRefList->size();
             }
 
-            for (UINT i = 0; i < renderSubpassNum; ++i)
+            // Alloc memory for all attachment descriptions
+            attachmentDescriptionList.resize(renderTargetNum);
+
+            // Alloc memory for all render target texture pointers
+            for (UINT framebufferIndex = 0; framebufferIndex < renderPassCreateData.framebufferNum; ++framebufferIndex)
             {
-                const VulkanRenderSubpassCreateData& subpassCreateData = pRenderSubpassCreateDataList->at(i);
+                framebuffersTextureTable[framebufferIndex].resize(renderTargetNum);
+            }
+
+            for (UINT subpassIter = 0; subpassIter < renderSubpassNum; ++subpassIter)
+            {
+                const VulkanRenderSubpassCreateData& subpassCreateData = pRenderSubpassCreateDataList->at(subpassIter);
 
                 VulkanSubpassGraphicsPipelineCreateData*
                     pSubpassGraphicsPipelineCreateData = subpassCreateData.pSubpassGraphicsPipelineCreateData;
@@ -468,7 +482,7 @@ namespace VulkanEngine
                     UINT framebufferIndex            = renderTargetFramebufferCreateData.framebufferIndex;
                     Texture::VulkanTextureBase* pTex = renderTargetFramebufferCreateData.pTexture;
 
-                    pFramebuffersTextureTable->at(framebufferIndex).push_back(pTex);
+                    pFramebuffersTextureTable->at(framebufferIndex).at(pRenderPassCreateData->attachmentIndex) = pTex;
 
                     // Validat the texture formats, which should be the same for the same attachment
                     if (attachmentFormat == VK_FORMAT_UNDEFINED)
@@ -512,11 +526,10 @@ namespace VulkanEngine
                 attachmentDescription.finalLayout    =
                     Utility::VulkanUtility::GetAttachmentVkImageLayout(pRenderPassCreateData->layout);
 
-                pAttachmentDescriptionList->push_back(attachmentDescription);
+                pAttachmentDescriptionList->at(pRenderPassCreateData->attachmentIndex) = attachmentDescription;
 
                 VkAttachmentReference attachmentRef = {};
-                attachmentRef.attachment            = pRenderPassCreateData->bindingPoint;// Output layout index in shader,
-                                                                                          // e.g. layout(location = 0) out vec4 outColor
+                attachmentRef.attachment            = pRenderPassCreateData->attachmentIndex;
                 attachmentRef.layout                =
                     Utility::VulkanUtility::GetAttachmentRefVkImageLayout(pRenderPassCreateData->layout);
 
@@ -551,7 +564,7 @@ namespace VulkanEngine
                  ++subpassAttachmentDescriptorInfoIndex)
             {
                 pInputSubpassAttachmentRef->
-                    push_back({ pSubpassinputAttachmentDescriptorInfoPtrList->at(subpassAttachmentDescriptorInfoIndex)->bindingPoint,
+                    push_back({ pSubpassinputAttachmentDescriptorInfoPtrList->at(subpassAttachmentDescriptorInfoIndex)->attachmentIndex,
                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL });
             }
 

@@ -50,6 +50,7 @@ namespace VulkanEngine
         {
             UINT           setIndex;
             UINT           bindingPoint;
+            UINT           attachmentIndex;
             BX_SHADER_TYPE shaderType;
         };
 

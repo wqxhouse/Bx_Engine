@@ -332,6 +332,7 @@ namespace VulkanEngine
 
                 pRTCreateData->renderSubPassIndex           = pRTDesc->renderSubPassIndex;
                 pRTCreateData->bindingPoint                 = pRTDesc->bindingPoint;
+                pRTCreateData->attachmentIndex              = RTIndex;
                 pRTCreateData->isStore                      = pRTDesc->isStore;
                 pRTCreateData->layout                       = pRTDesc->layout;
                 pRTCreateData->useStencil                   = pRTDesc->useStencil;
@@ -493,6 +494,7 @@ namespace VulkanEngine
 
             VulkanTextureResource* pPosTextureInputAttachment       = &(pInputAttachmentResourceList->at(GBUFFER_POS_BUFFER_INDEX));
             pPosTextureInputAttachment->bindingPoint                = 0;
+            pPosTextureInputAttachment->attachmentIndex             = 1;
             pPosTextureInputAttachment->setIndex                    = shadingPassIndex;
             pPosTextureInputAttachment->shaderType                  = BX_FRAGMENT_SHADER;
             pPosTextureInputAttachment->textureNum                  = 1;
@@ -500,6 +502,7 @@ namespace VulkanEngine
 
             VulkanTextureResource* pNormalTextureInputAttachment    = &(pInputAttachmentResourceList->at(GBUFFER_NORMAL_BUFFER_INDEX));
             pNormalTextureInputAttachment->bindingPoint             = 1;
+            pNormalTextureInputAttachment->attachmentIndex          = 2;
             pNormalTextureInputAttachment->setIndex                 = shadingPassIndex;
             pNormalTextureInputAttachment->shaderType               = BX_FRAGMENT_SHADER;
             pNormalTextureInputAttachment->textureNum               = 1;
@@ -507,6 +510,7 @@ namespace VulkanEngine
 
             VulkanTextureResource* pTexCoord0TextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_TEXCOORD0_BUFFER_INDEX));
             pTexCoord0TextureInputAttachment->bindingPoint          = 2;
+            pTexCoord0TextureInputAttachment->attachmentIndex       = 3;
             pTexCoord0TextureInputAttachment->setIndex              = shadingPassIndex;
             pTexCoord0TextureInputAttachment->shaderType            = BX_FRAGMENT_SHADER;
             pTexCoord0TextureInputAttachment->textureNum            = 1;
