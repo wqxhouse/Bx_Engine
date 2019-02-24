@@ -35,7 +35,7 @@ namespace VulkanEngine
                 const Scene::RenderScene*                           pScene,
                 const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
-            ~VulkanRenderBase();
+            virtual ~VulkanRenderBase();
 
             virtual BOOL initialize() = 0;
 

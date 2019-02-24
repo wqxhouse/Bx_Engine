@@ -302,21 +302,21 @@ namespace VulkanEngine
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            m_pSetting->m_graphicsSetting.antialasing,
-                                                           TextureFormat::BX_FORMAT_BGRA8,
+                                                           BX_FORMAT_RGBA32_FLOAT,
                                                            BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
 
             Texture::VulkanTexture2D* pNormalTexture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            m_pSetting->m_graphicsSetting.antialasing,
-                                                           TextureFormat::BX_FORMAT_BGRA8,
+                                                           BX_FORMAT_RGBA32_FLOAT,
                                                            BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
 
             Texture::VulkanTexture2D* pTexCoord0Texture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            m_pSetting->m_graphicsSetting.antialasing,
-                                                           TextureFormat::BX_FORMAT_BGRA8,
+                                                           BX_FORMAT_RG32_FLOAT,
                                                            BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
 
             UINT backbufferNum = static_cast<UINT>(m_backBufferRTsCreateDataList.size());

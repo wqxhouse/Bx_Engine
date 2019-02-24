@@ -343,14 +343,44 @@ namespace VulkanEngine
                     case VK_FORMAT_B8G8R8A8_UNORM:
                         imageFormat = BX_FORMAT_BGRA8;
                         break;
+                    case VK_FORMAT_R16_SFLOAT:
+                        imageFormat = BX_FORMAT_R16_FLOAT;
+                        break;
+                    case VK_FORMAT_R16G16_SFLOAT:
+                        imageFormat = BX_FORMAT_RG16_FLOAT;
+                        break;
+                    case VK_FORMAT_R16G16B16_SFLOAT:
+                        imageFormat = BX_FORMAT_RGB16_FLOAT;
+                        break;
+                    case VK_FORMAT_R16G16B16A16_SFLOAT:
+                        imageFormat = BX_FORMAT_RGBA16_FLOAT;
+                        break;
                     case VK_FORMAT_R16G16B16A16_UNORM:
                         imageFormat = BX_FORMAT_RGBA16;
                         break;
+                    case VK_FORMAT_R32_SFLOAT:
+                        imageFormat = BX_FORMAT_R32_FLOAT;
+                        break;
+                    case VK_FORMAT_R32G32_SFLOAT:
+                        imageFormat = BX_FORMAT_RG32_FLOAT;
+                        break;
+                    case VK_FORMAT_R32G32B32_SFLOAT:
+                        imageFormat = BX_FORMAT_RGB32_FLOAT;
+                        break;
                     case VK_FORMAT_R32G32B32A32_SFLOAT:
-                        imageFormat = BX_FORMAT_RGBA32;
+                        imageFormat = BX_FORMAT_RGBA32_FLOAT;
+                        break;
+                    case VK_FORMAT_R64_SFLOAT:
+                        imageFormat = BX_FORMAT_R64_FLOAT;
+                        break;
+                    case VK_FORMAT_R64G64_SFLOAT:
+                        imageFormat = BX_FORMAT_RG64_FLOAT;
+                        break;
+                    case VK_FORMAT_R64G64B64_SFLOAT:
+                        imageFormat = BX_FORMAT_RGB64_FLOAT;
                         break;
                     case VK_FORMAT_R64G64B64A64_SFLOAT:
-                        imageFormat = BX_FORMAT_RGBA64;
+                        imageFormat = BX_FORMAT_RGBA64_FLOAT;
                         break;
                     case VK_FORMAT_R8G8B8A8_SRGB:
                         imageFormat = BX_FORMAT_SRGB;
@@ -397,23 +427,48 @@ namespace VulkanEngine
                     case BX_FORMAT_BGR8:
                         imageFormat = VK_FORMAT_B8G8R8_UNORM;
                         break;
+                    case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA8:
                         imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
                         break;
                     case BX_FORMAT_BGRA8:
                         imageFormat = VK_FORMAT_B8G8R8A8_UNORM;
                         break;
+                    case BX_FORMAT_R16_FLOAT:
+                        imageFormat = VK_FORMAT_R16_SFLOAT;
+                        break;
+                    case BX_FORMAT_RG16_FLOAT:
+                        imageFormat = VK_FORMAT_R16G16_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGB16_FLOAT:
+                        imageFormat = VK_FORMAT_R16G16B16_SFLOAT;
+                        break;
                     case BX_FORMAT_RGBA16:
                         imageFormat = VK_FORMAT_R16G16B16A16_UNORM;
                         break;
-                    case BX_FORMAT_RGBA32:
+                    case BX_FORMAT_R32_FLOAT:
+                        imageFormat = VK_FORMAT_R32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RG32_FLOAT:
+                        imageFormat = VK_FORMAT_R32G32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGB32_FLOAT:
+                        imageFormat = VK_FORMAT_R32G32B32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGBA32_FLOAT:
                         imageFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
                         break;
-                    case BX_FORMAT_RGBA64:
-                        imageFormat = VK_FORMAT_R64G64B64A64_SFLOAT;
+                    case BX_FORMAT_R64_FLOAT:
+                        imageFormat = VK_FORMAT_R64_SFLOAT;
                         break;
-                    case BX_FORMAT_RGBA:
-                        imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
+                    case BX_FORMAT_RG64_FLOAT:
+                        imageFormat = VK_FORMAT_R64G64_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGB64_FLOAT:
+                        imageFormat = VK_FORMAT_R64G64B64_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGBA64_FLOAT:
+                        imageFormat = VK_FORMAT_R64G64B64A64_SFLOAT;
                         break;
                     case BX_FORMAT_SRGB:
                         imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
@@ -484,12 +539,21 @@ namespace VulkanEngine
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
                     case BX_FORMAT_BGR8:
+                    case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA8:
                     case BX_FORMAT_BGRA8:
-                    case BX_FORMAT_RGBA:
+                    case BX_FORMAT_R16_FLOAT:
+                    case BX_FORMAT_RG16_FLOAT:
+                    case BX_FORMAT_RGB16_FLOAT:
                     case BX_FORMAT_RGBA16:
-                    case BX_FORMAT_RGBA32:
-                    case BX_FORMAT_RGBA64:
+                    case BX_FORMAT_R32_FLOAT:
+                    case BX_FORMAT_RG32_FLOAT:
+                    case BX_FORMAT_RGB32_FLOAT:
+                    case BX_FORMAT_RGBA32_FLOAT:
+                    case BX_FORMAT_R64_FLOAT:
+                    case BX_FORMAT_RG64_FLOAT:
+                    case BX_FORMAT_RGB64_FLOAT:
+                    case BX_FORMAT_RGBA64_FLOAT:
                     case BX_FORMAT_SRGB:
                         aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
                         break;
@@ -519,12 +583,21 @@ namespace VulkanEngine
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
                     case BX_FORMAT_BGR8:
+                    case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA8:
                     case BX_FORMAT_BGRA8:
-                    case BX_FORMAT_RGBA:
+                    case BX_FORMAT_R16_FLOAT:
+                    case BX_FORMAT_RG16_FLOAT:
+                    case BX_FORMAT_RGB16_FLOAT:
                     case BX_FORMAT_RGBA16:
-                    case BX_FORMAT_RGBA32:
-                    case BX_FORMAT_RGBA64:
+                    case BX_FORMAT_R32_FLOAT:
+                    case BX_FORMAT_RG32_FLOAT:
+                    case BX_FORMAT_RGB32_FLOAT:
+                    case BX_FORMAT_RGBA32_FLOAT:
+                    case BX_FORMAT_R64_FLOAT:
+                    case BX_FORMAT_RG64_FLOAT:
+                    case BX_FORMAT_RGB64_FLOAT:
+                    case BX_FORMAT_RGBA64_FLOAT:
                     case BX_FORMAT_SRGB:
                         textureUsage = BX_TEXTURE_USAGE_COLOR_ATTACHMENT;
                         break;

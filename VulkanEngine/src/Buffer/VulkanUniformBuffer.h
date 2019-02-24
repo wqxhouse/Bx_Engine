@@ -21,7 +21,7 @@ namespace VulkanEngine
             VulkanUniformBuffer(
                 const VkDevice* const pDevice);
 
-            ~VulkanUniformBuffer();
+            virtual ~VulkanUniformBuffer();
 
             virtual BOOL createDescriptorSetLayout(
                 const UINT               bindingPoint,
