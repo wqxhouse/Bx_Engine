@@ -55,7 +55,7 @@ namespace Structure
             m_length = 0;
         }
 
-        ~LinkedListBase()
+        virtual ~LinkedListBase()
         {
             m_pHead = NULL;
             m_pTail = NULL;
