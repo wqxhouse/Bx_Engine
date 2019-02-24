@@ -20,13 +20,14 @@ namespace VulkanEngine
             const VkDevice* const    pDevice,
             Mgr::CmdBufferMgr* const pCmdBufferMgr,
             const UINT               vertexNum,
-            const UINT               vertexBufferDataSize,
+            const UINT               vertexSize,
             void*                    pVertexBufferData)
-            : VulkanBufferBase(pDevice, pCmdBufferMgr)
+            : VulkanBufferBase(pDevice, pCmdBufferMgr),
+              m_vertexBufferNum(vertexNum),
+              m_vertexSize(vertexSize),
+              m_pVertexBufferData(pVertexBufferData)
         {
-            m_vertexBufferNum   = vertexNum;
-            m_vertexBufferSize  = vertexBufferDataSize;
-            m_pVertexBufferData = pVertexBufferData;
+            m_vertexBufferSize = vertexNum * vertexSize;
         }
 
         VulkanVertexBuffer::VulkanVertexBuffer(
@@ -45,6 +46,7 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
+            // Create vertex buffer
             BxBufferCreateInfo bufferCreateInfo = {};
             bufferCreateInfo.bufferUsage        = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
             bufferCreateInfo.bufferSize         = static_cast<VkDeviceSize>(GetVertexBufferSize());
@@ -59,70 +61,115 @@ namespace VulkanEngine
             return result;
         }
 
-        VkVertexInputBindingDescription VulkanVertexBuffer::createDescription(
+        std::vector<VertexInputAttributeCreateData>
+        VulkanVertexBuffer::GenPosQuadAttributeListCreateData(
+            const UINT bindingPoint)
+        {
+            std::vector<VertexInputAttributeCreateData> attributesCreateData(1);
+
+            attributesCreateData[0].bindingPoint = bindingPoint;
+            attributesCreateData[0].location     = 0;
+            attributesCreateData[0].format       = VK_FORMAT_R32G32_SFLOAT;
+            attributesCreateData[0].offset       = 0;
+
+            return attributesCreateData;
+        }
+
+        std::vector<VertexInputAttributeCreateData>
+        VulkanVertexBuffer::GenSingleTextureChannelMeshAttributeListCreateData(
+            const UINT bindingPoint)
+        {
+            std::vector<VertexInputAttributeCreateData> attributesCreateData(3);
+
+            attributesCreateData[0].bindingPoint = bindingPoint;
+            attributesCreateData[0].location     = 0;
+            attributesCreateData[0].format       = VK_FORMAT_R32G32B32_SFLOAT;
+            attributesCreateData[0].offset       = static_cast<UINT>(offsetof(Vertex, Vertex::position));
+
+            attributesCreateData[1].bindingPoint = bindingPoint;
+            attributesCreateData[1].location     = 1;
+            attributesCreateData[1].format       = VK_FORMAT_R32G32B32_SFLOAT;
+            attributesCreateData[1].offset       = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
+
+            attributesCreateData[2].bindingPoint = bindingPoint;
+            attributesCreateData[2].location     = 2;
+            attributesCreateData[2].format       = VK_FORMAT_R32G32_SFLOAT;
+            attributesCreateData[2].offset       = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
+
+            return attributesCreateData;
+        }
+
+        std::vector<VertexInputAttributeCreateData>
+        VulkanVertexBuffer::GenMultipleTextureChannelMeshAttributeListCreatData(
+            const UINT bindingPoint,
+            const UINT texChannelNum)
+        {
+            std::vector<VertexInputAttributeCreateData> attributesCreateData(texChannelNum + 2);
+
+            attributesCreateData[0].bindingPoint = bindingPoint;
+            attributesCreateData[0].location     = 0;
+            attributesCreateData[0].format       = VK_FORMAT_R32G32B32_SFLOAT;
+            attributesCreateData[0].offset       = static_cast<UINT>(offsetof(Vertex, Vertex::position));
+
+            attributesCreateData[1].bindingPoint = bindingPoint;
+            attributesCreateData[1].location     = 1;
+            attributesCreateData[1].format       = VK_FORMAT_R32G32B32_SFLOAT;
+            attributesCreateData[1].offset       = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
+
+            for (UINT texChannelIndex = 0; texChannelIndex < texChannelNum; ++texChannelIndex)
+            {
+                UINT attributeIndex = texChannelIndex + 2;
+
+                attributesCreateData[attributeIndex].bindingPoint = bindingPoint;
+                attributesCreateData[attributeIndex].location     = attributeIndex;
+                attributesCreateData[attributeIndex].format       = VK_FORMAT_R32G32_SFLOAT;
+
+                // TODO: Need to create multi-texture coordinate channel vertex struct
+                NotImplemented();
+                attributesCreateData[attributeIndex].offset       = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
+            }
+
+            return attributesCreateData;
+        }
+
+        VkVertexInputBindingDescription VulkanVertexBuffer::CreateDescription(
             const UINT                 bindingPoint,
+            const UINT                 vertexSize,
             const BX_VERTEX_INPUT_RATE rate)
         {
             VkVertexInputBindingDescription bindingDescription = {};
             bindingDescription.binding   = bindingPoint;
-            bindingDescription.stride    = static_cast<UINT>(sizeof(Vertex));
+            bindingDescription.stride    = vertexSize;
             bindingDescription.inputRate = VulkanUtility::GetVkVertexInputRate(rate);
 
             return bindingDescription;
         }
 
         std::vector<VkVertexInputAttributeDescription>
-            VulkanVertexBuffer::createAttributeDescriptions(
-                const UINT bindingPoint)
+        VulkanVertexBuffer::CreateAttributeDescriptions(
+                const std::vector<VertexInputAttributeCreateData>& vertexAttributeCreateDataList)
         {
-            std::vector<VkVertexInputAttributeDescription> attributes(3);
+            size_t vertexAttributeCreateDataSize = vertexAttributeCreateDataList.size();
 
-            attributes[0].binding  = bindingPoint;
-            attributes[0].location = 0;
-            attributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
-            attributes[0].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::position));
+            std::vector<VkVertexInputAttributeDescription>
+            vertexInputAttributeDescriptionList(vertexAttributeCreateDataSize);
 
-            attributes[1].binding  = bindingPoint;
-            attributes[1].location = 1;
-            attributes[1].format   = VK_FORMAT_R32G32B32_SFLOAT;
-            attributes[1].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
-
-            attributes[2].binding  = bindingPoint;
-            attributes[2].location = 2;
-            attributes[2].format   = VK_FORMAT_R32G32_SFLOAT;
-            attributes[2].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
-
-            return attributes;
-        }
-
-        std::vector<VkVertexInputAttributeDescription>
-            VulkanVertexBuffer::createAttributeDescriptionsMultipleTexture(
-                const UINT bindingPoint,
-                const UINT texChannels)
-        {
-            std::vector<VkVertexInputAttributeDescription> attributes(texChannels);
-
-            attributes[0].binding  = bindingPoint;
-            attributes[0].location = 0;
-            attributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
-            attributes[0].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::position));
-
-            attributes[1].binding  = bindingPoint;
-            attributes[1].location = 1;
-            attributes[1].format   = VK_FORMAT_R32G32B32_SFLOAT;
-            attributes[1].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::normal));
-
-            for (UINT i = 0; i < texChannels; ++i)
+            for (size_t vertexInputAttributeDescriptionIndex = 0;
+                 vertexInputAttributeDescriptionIndex < vertexAttributeCreateDataSize;
+                 ++vertexInputAttributeDescriptionIndex)
             {
-                UINT attributeIndex = i + 2;
+                const VertexInputAttributeCreateData& vertexAttributeCreateData =
+                    vertexAttributeCreateDataList[vertexInputAttributeDescriptionIndex];
 
-                attributes[attributeIndex].binding  = bindingPoint;
-                attributes[attributeIndex].location = attributeIndex;
-                attributes[attributeIndex].format   = VK_FORMAT_R32G32_SFLOAT;
-                attributes[attributeIndex].offset   = static_cast<UINT>(offsetof(Vertex, Vertex::texCoords));
+                const UINT location = vertexAttributeCreateData.location;
+
+                vertexInputAttributeDescriptionList[location].binding  = vertexAttributeCreateData.bindingPoint;
+                vertexInputAttributeDescriptionList[location].location = location;
+                vertexInputAttributeDescriptionList[location].format   = vertexAttributeCreateData.format;
+                vertexInputAttributeDescriptionList[location].offset   = vertexAttributeCreateData.offset;
             }
 
-            return attributes;
+            return vertexInputAttributeDescriptionList;
         }
 
         VulkanVertexBuffer::~VulkanVertexBuffer()

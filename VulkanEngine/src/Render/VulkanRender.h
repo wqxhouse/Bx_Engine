@@ -228,6 +228,8 @@ namespace VulkanEngine
                 OUT std::vector<VulkanDescriptorResources>*                    pGBufferDescriptorResourcesList,
                 OUT VulkanRenderResources*                                     pGBufferResources,
                 OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pGBufferGraphicsPipelineRTProperties,
+                OUT VkVertexInputBindingDescription*                           pGBufferVertexInputBindingDescription,
+                OUT std::vector<VkVertexInputAttributeDescription>*            pGBufferVertexInputAttributeDescription,
                 OUT VulkanGraphicsPipelineProperties*                          pGBufferGraphicsPipelineProperties,
                 OUT VulkanSubpassGraphicsPipelineCreateData*                   pGBufferGraphicsPipelineCreateData);
 
@@ -240,6 +242,8 @@ namespace VulkanEngine
                 OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,
                 OUT VulkanRenderResources*                                     pShadingPassResources,
                 OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pShadingPassGraphicsPipelineRTProperties,
+                OUT VkVertexInputBindingDescription*                           pShadingPassVertexInputBindingDescription,
+                OUT std::vector<VkVertexInputAttributeDescription>*            pShadingPassVertexInputAttributeDescription,
                 OUT VulkanGraphicsPipelineProperties*                          pShadingPassGraphicsPipelineProps,
                 OUT VulkanSubpassGraphicsPipelineCreateData*                   pShadingPassGraphicsPipelineCreateData);
 
@@ -247,10 +251,10 @@ namespace VulkanEngine
 
             float m_shadingPassQuad[8] =
             {
-                0.0f, 0.0f,
-                1.0f, 0.0f,
-                0.0f, 1.0f,
-                1.0f, 1.0f
+                 1.0f, -1.0f,
+                -1.0f, -1.0f,
+                 1.0f,  1.0f,
+                -1.0f,  1.0f
             };
 
             std::vector<UINT> m_shadingPassQuadIndices =

@@ -7,6 +7,8 @@
 //
 //================================================================================================
 
+#include <Object/Model/Mesh/Mesh.h>
+
 #include "VulkanRender.h"
 
 namespace VulkanEngine
@@ -118,7 +120,6 @@ namespace VulkanEngine
 
             // Initialize vertex input for render pass
             VulkanRenderResources renderSources         = {};
-            renderSources.vertexBufferTexChannelNum     = 1;
             renderSources.vertexDescriptionBindingPoint = 0;
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
@@ -165,12 +166,19 @@ namespace VulkanEngine
             std::vector<VulkanGraphicsPipelineRenderTargetProperties> renderTargetsProps(1);
             renderTargetsProps[0].enableBlend = m_pSetting->m_graphicsSetting.blend;
 
-            VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties = {};
-            subpassGraphicsPipelineProperties.cullMode                         = CULLMODE_BACK;
-            subpassGraphicsPipelineProperties.polyMode                         = PolyMode::POLYMODE_FILL;
-            subpassGraphicsPipelineProperties.viewportRects                    = { props.renderViewportRect };
-            subpassGraphicsPipelineProperties.scissorRects                     = { props.renderViewportRect };
-            subpassGraphicsPipelineProperties.pRenderTargetsProps              = &renderTargetsProps;
+            VkVertexInputBindingDescription vertexInputBindingDescription =
+                Buffer::VulkanVertexBuffer::CreateDescription(0, sizeof(Object::Model::Vertex), BX_VERTEX_INPUT_RATE_VERTEX);
+
+            std::vector<VkVertexInputAttributeDescription> vertexAttributeDescription =
+                Buffer::VulkanVertexBuffer::CreateAttributeDescriptions(
+                    Buffer::VulkanVertexBuffer::GenSingleTextureChannelMeshAttributeListCreateData(0));
+
+            VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties     = {};
+            subpassGraphicsPipelineProperties.cullMode                             = CULLMODE_BACK;
+            subpassGraphicsPipelineProperties.polyMode                             = PolyMode::POLYMODE_FILL;
+            subpassGraphicsPipelineProperties.viewportRects                        = { props.renderViewportRect };
+            subpassGraphicsPipelineProperties.scissorRects                         = { props.renderViewportRect };
+            subpassGraphicsPipelineProperties.pRenderTargetsProps                  = &renderTargetsProps;
 
             VulkanSubpassGraphicsPipelineCreateData subpassGraphicsPipelineCreateData = {};
             subpassGraphicsPipelineCreateData.subpassIndex                            = 0;
@@ -178,6 +186,8 @@ namespace VulkanEngine
             subpassGraphicsPipelineCreateData.pShaderMeta                             = &mainSceneShaderMeta;
             subpassGraphicsPipelineCreateData.pResource                               = &renderSources;
             subpassGraphicsPipelineCreateData.isScenePipeline                         = TRUE;
+            subpassGraphicsPipelineCreateData.pVertexInputBindingDescription          = &vertexInputBindingDescription;
+            subpassGraphicsPipelineCreateData.pVertexInputAttributeDescriptionList    = &vertexAttributeDescription;
 
             std::vector<VulkanRenderTargetCreateData*> renderTargetCreateDataRefList(backbufferAttachmentNum);
             for (UINT attachmentIndex = 0; attachmentIndex < backbufferAttachmentNum; ++attachmentIndex)

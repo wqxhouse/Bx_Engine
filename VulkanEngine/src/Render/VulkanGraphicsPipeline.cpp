@@ -50,32 +50,14 @@ namespace VulkanEngine
 
             /// Setup Fixed pipeline stages
             // VS input
-            VkVertexInputBindingDescription bindingDescription =
-                Buffer::VulkanVertexBuffer::createDescription(pResource->vertexDescriptionBindingPoint,
-                                                              BX_VERTEX_INPUT_RATE_VERTEX);
-
-            std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
-
-            if (pResource->vertexBufferTexChannelNum <= 1)
-            {
-                vertexInputAttributeDescriptions =
-                    Buffer::VulkanVertexBuffer::
-                        createAttributeDescriptions(pResource->vertexDescriptionBindingPoint);
-            }
-            else
-            {
-                vertexInputAttributeDescriptions =
-                    Buffer::VulkanVertexBuffer::
-                        createAttributeDescriptionsMultipleTexture(pResource->vertexDescriptionBindingPoint,
-                                                                   pResource->vertexBufferTexChannelNum);
-            }
-
             VkPipelineVertexInputStateCreateInfo vsInputCreateInfo = {};
             vsInputCreateInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
             vsInputCreateInfo.vertexBindingDescriptionCount   = 1;
-            vsInputCreateInfo.pVertexBindingDescriptions      = &bindingDescription;
-            vsInputCreateInfo.vertexAttributeDescriptionCount = static_cast<UINT>(vertexInputAttributeDescriptions.size());
-            vsInputCreateInfo.pVertexAttributeDescriptions    = vertexInputAttributeDescriptions.data();
+            vsInputCreateInfo.pVertexBindingDescriptions      = pGraphicsPipelineCreateData->pVertexInputBindingDescription;
+            vsInputCreateInfo.vertexAttributeDescriptionCount =
+                static_cast<UINT>(pGraphicsPipelineCreateData->pVertexInputAttributeDescriptionList->size());
+            vsInputCreateInfo.pVertexAttributeDescriptions    =
+                pGraphicsPipelineCreateData->pVertexInputAttributeDescriptionList->data();
 
             // Input assembly state
             VkPipelineInputAssemblyStateCreateInfo inputAsmCreateInfo = {};

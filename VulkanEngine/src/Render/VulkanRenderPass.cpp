@@ -247,15 +247,18 @@ namespace VulkanEngine
 
                 const UINT subpassIndex = pSubpassGraphicsPipelineCreateData->subpassIndex;
 
-                VulkanGraphicsPipelineCreateData graphicsPipelineCreateData = {};
-                graphicsPipelineCreateData.subpassIndex                     = subpassIndex;
-                graphicsPipelineCreateData.enableColor                      = IsColorEnabled();
-                graphicsPipelineCreateData.enableDepth                      = IsDepthEnabled();
-                graphicsPipelineCreateData.enableStencil                    = IsStencilEnabled();
-                graphicsPipelineCreateData.pProps                           = pSubpassGraphicsPipelineCreateData->pProps;
-                graphicsPipelineCreateData.pShaderMeta                      = pSubpassGraphicsPipelineCreateData->pShaderMeta;
-                graphicsPipelineCreateData.pResource                        = pSubpassGraphicsPipelineCreateData->pResource;
-                graphicsPipelineCreateData.isScenePipeline                  = pSubpassGraphicsPipelineCreateData->isScenePipeline;
+                VulkanGraphicsPipelineCreateData graphicsPipelineCreateData     = {};
+                graphicsPipelineCreateData.subpassIndex                         = subpassIndex;
+                graphicsPipelineCreateData.enableColor                          = IsColorEnabled();
+                graphicsPipelineCreateData.enableDepth                          = IsDepthEnabled();
+                graphicsPipelineCreateData.enableStencil                        = IsStencilEnabled();
+                graphicsPipelineCreateData.pProps                               = pSubpassGraphicsPipelineCreateData->pProps;
+                graphicsPipelineCreateData.pShaderMeta                          = pSubpassGraphicsPipelineCreateData->pShaderMeta;
+                graphicsPipelineCreateData.pResource                            = pSubpassGraphicsPipelineCreateData->pResource;
+                graphicsPipelineCreateData.isScenePipeline                      = pSubpassGraphicsPipelineCreateData->isScenePipeline;
+                graphicsPipelineCreateData.pVertexInputBindingDescription       = pSubpassGraphicsPipelineCreateData->pVertexInputBindingDescription;
+                graphicsPipelineCreateData.pVertexInputAttributeDescriptionList =
+                    pSubpassGraphicsPipelineCreateData->pVertexInputAttributeDescriptionList;
 
                 status = m_graphicsPipelineList[subpassIndex].createGraphicsPipeline(&graphicsPipelineCreateData);
 

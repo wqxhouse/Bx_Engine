@@ -77,48 +77,55 @@ namespace VulkanEngine
         struct VulkanRenderResources
         {
             UINT                                    vertexDescriptionBindingPoint;
-            UINT                                    vertexBufferTexChannelNum;
             std::vector<VulkanVertexInputResource>* pVertexInputResourceList;
             std::vector<VulkanDescriptorResources>* pDescriptorResourceList;
         };
 
         struct VulkanGraphicsPipelineCreateData
         {
-            UINT                              subpassIndex;
+            UINT                                            subpassIndex;
 
-            BOOL                              enableColor;
-            BOOL                              enableDepth;
-            BOOL                              enableStencil;
+            BOOL                                            enableColor;
+            BOOL                                            enableDepth;
+            BOOL                                            enableStencil;
 
             // Properties
-            VulkanGraphicsPipelineProperties* pProps;
+            VulkanGraphicsPipelineProperties*               pProps;
 
             // Shader
-            Shader::BxShaderMeta*             pShaderMeta;
+            Shader::BxShaderMeta*                           pShaderMeta;
+
+            // Input layouts
+            VkVertexInputBindingDescription*                pVertexInputBindingDescription;
+            std::vector<VkVertexInputAttributeDescription>* pVertexInputAttributeDescriptionList;
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
-            VulkanRenderResources*            pResource;
+            VulkanRenderResources*                          pResource;
 
             // Is the pipeline used for rendering scene
-            BOOL                              isScenePipeline;
+            BOOL                                            isScenePipeline;
         };
 
         struct VulkanSubpassGraphicsPipelineCreateData
         {
             // Subpass Index
-            UINT                              subpassIndex;
+            UINT                                            subpassIndex;
 
             // Properties
-            VulkanGraphicsPipelineProperties* pProps;
+            VulkanGraphicsPipelineProperties*               pProps;
 
             // Shader
-            Shader::BxShaderMeta*             pShaderMeta;
+            Shader::BxShaderMeta*                           pShaderMeta;
+
+            // Input layouts
+            VkVertexInputBindingDescription*                pVertexInputBindingDescription;
+            std::vector<VkVertexInputAttributeDescription>* pVertexInputAttributeDescriptionList;
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
-            VulkanRenderResources*            pResource;
+            VulkanRenderResources*                          pResource;
 
             // Is the pipeline used for rendering scene
-            BOOL                              isScenePipeline;
+            BOOL                                            isScenePipeline;
         };
 
         struct VulkanDescriptorUpdateData
