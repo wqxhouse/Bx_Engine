@@ -25,6 +25,7 @@
     <ClCompile Include="src\Context\TextureMgr.cpp" />
     <ClCompile Include="src\Context\VulkanContext.cpp" />
     <ClCompile Include="src\Core\VulkanUtility.cpp" />
+    <ClCompile Include="src\Render\VulkanDeferredRender.cpp" />
     <ClCompile Include="src\Render\VulkanForwardRender.cpp" />
     <ClCompile Include="src\Render\VulkanGraphicsPipeline.cpp" />
     <ClCompile Include="src\Render\VulkanRender.cpp" />

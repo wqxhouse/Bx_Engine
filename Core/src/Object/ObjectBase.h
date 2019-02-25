@@ -20,7 +20,7 @@ namespace Object
             const UINT objectId,
             Trans*     pTrans);
 
-        ~ObjectBase();
+        virtual ~ObjectBase();
 
         INLINE void ActiveObject()  { m_enable = TRUE;  }
         INLINE void DisableObject() { m_enable = FALSE; }

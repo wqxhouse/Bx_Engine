@@ -41,6 +41,7 @@ namespace VulkanEngine
             BOOL                                                  isStore;
             UINT                                                  renderSubPassIndex;
             UINT                                                  bindingPoint;
+            UINT                                                  attachmentIndex;
             BX_FRAMEBUFFER_ATTACHMENT_LAYOUT                      layout;
             BOOL                                                  useStencil;
             BOOL                                                  isStoreStencil;
@@ -50,16 +51,19 @@ namespace VulkanEngine
         struct VulkanRenderSubpassCreateData
         {
             // GraphicsPipeline create data
-            VulkanSubpassGraphicsPipelineCreateData*   pSubpassGraphicsPipelineCreateData;
-            std::vector<VulkanRenderTargetCreateData>* pRenderTargetCreateDataList;
+            VulkanSubpassGraphicsPipelineCreateData*    pSubpassGraphicsPipelineCreateData;
+            std::vector<VulkanRenderTargetCreateData*>* pSubpassRenderTargetCreateDataRefList;
         };
 
         struct VulkanRenderpassCreateData
         {
-            VulkanRenderProperties* pRenderProperties;
-            UINT                    framebufferNum;
+            VulkanRenderProperties*                     pRenderProperties;
+            UINT                                        framebufferNum;
+
+            std::vector<VulkanRenderTargetCreateData>*  pRenderTargetCreateDataList;
 
             std::vector<VulkanRenderSubpassCreateData>* pSubpassCreateDataList;
+            std::vector<VkSubpassDependency>*           pSubpassDependencyList;
         };
 
         class VulkanRenderPass
@@ -78,8 +82,8 @@ namespace VulkanEngine
                 const VulkanRenderpassCreateData& renderPassCreateData);
 
             BOOL update(
-                const float                                    deltaTime,
-                const std::vector<VulkanDescriptorUpdateData>& updateDataList);
+                const float                                                 deltaTime,
+                const std::vector<std::vector<VulkanDescriptorUpdateData>>& updateDataTable);
 
             BOOL draw();
 
@@ -107,18 +111,21 @@ namespace VulkanEngine
 
             // Create render targets for a single subpass
             BOOL createRenderTargets(
-                IN  const std::vector<VulkanRenderTargetCreateData>*       pRenderTargetsCreateDataList,
+                IN  const std::vector<VulkanRenderTargetCreateData*>*      pRenderTargetsCreateDataRefList,
+                IN  const std::vector<const VulkanDescriptorInfo*>*        pSubpassinputAttachmentDescriptorInfoPtrList,
                 OUT VkSubpassDescription*                                  pSubpassDescription,
                 OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
                 OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
                 OUT VkAttachmentReference*                                 pDepthSubpassAttachmentRef,
+                OUT std::vector<VkAttachmentReference>*                    pInputSubpassAttachmentRef,
                 OUT std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTextureTable);
 
             // Create render pass
             BOOL createRenderPass(
                 const UINT                                  renderSubpassNum,
                 const std::vector<VkSubpassDescription>&    subpassDescriptionList,
-                const std::vector<VkAttachmentDescription>& attachmentDescriptionList);
+                const std::vector<VkAttachmentDescription>& attachmentDescriptionList,
+                const std::vector<VkSubpassDependency>*     pSubpassDependencyList);
 
             // Generate framebuffers
             BOOL createFramebuffers(

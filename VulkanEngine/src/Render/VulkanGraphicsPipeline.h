@@ -26,12 +26,18 @@ namespace VulkanEngine
 {
     namespace Render
     {
+        struct VulkanGraphicsPipelineRenderTargetProperties
+        {
+            BOOL enableBlend;
+        };
+
         struct VulkanGraphicsPipelineProperties
         {
-            PolyMode               polyMode;
-            CullMode               cullMode;
-            std::vector<Rectangle> viewportRects;
-            std::vector<Rectangle> scissorRects;
+            PolyMode                                                   polyMode;
+            CullMode                                                   cullMode;
+            std::vector<Rectangle>                                     viewportRects;
+            std::vector<Rectangle>                                     scissorRects;
+            std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pRenderTargetsProps;
         };
 
         struct VulkanVertexInputResource
@@ -40,65 +46,86 @@ namespace VulkanEngine
             std::unique_ptr<Buffer::VulkanIndexBuffer>  pIndexBuffer;
         };
 
-        struct VulkanUniformBufferResource
+        struct VulkanDescriptorInfo
         {
-            UINT                         setIndex;
-            UINT                         bindingPoint;
+            UINT           setIndex;
+            UINT           bindingPoint;
+            UINT           attachmentIndex;
+            BX_SHADER_TYPE shaderType;
+        };
+
+        struct VulkanUniformBufferResource : public VulkanDescriptorInfo
+        {
             UINT                         uniformbufferNum;
-            BX_SHADER_TYPE               shaderType;
             Buffer::VulkanUniformBuffer* pUniformBuffer;
         };
 
-        struct VulkanTextureResource
+        struct VulkanTextureResource : public VulkanDescriptorInfo
         {
-            UINT                        setIndex;
-            UINT                        bindingPoint;
             UINT                        textureNum;
-            BX_SHADER_TYPE              shaderType;
             Texture::VulkanTextureBase* pTexture;
+        };
+
+        struct VulkanDescriptorResources
+        {
+            UINT                                      descriptorSetIndex;
+            std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
+            std::vector<VulkanTextureResource>*       pTextureResouceList;
+            std::vector<VulkanTextureResource>*       pInputAttachmentList;
         };
 
         struct VulkanRenderResources
         {
-            UINT                                      vertexDescriptionBindingPoint;
-            UINT                                      vertexBufferTexChannelNum;
-            std::vector<VulkanVertexInputResource>*   pVertexInputResourceList;
-            std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
-            std::vector<VulkanTextureResource>*       pTextureResouceList;
+            UINT                                    vertexDescriptionBindingPoint;
+            std::vector<VulkanVertexInputResource>* pVertexInputResourceList;
+            std::vector<VulkanDescriptorResources>* pDescriptorResourceList;
         };
 
         struct VulkanGraphicsPipelineCreateData
         {
-            size_t                            renderTargetNum;
+            UINT                                            subpassIndex;
 
-            BOOL                              enableColor;
-            BOOL                              enableDepth;
-            BOOL                              enableStencil;
+            BOOL                                            enableColor;
+            BOOL                                            enableDepth;
+            BOOL                                            enableStencil;
 
             // Properties
-            VulkanGraphicsPipelineProperties* pProps;
+            VulkanGraphicsPipelineProperties*               pProps;
 
             // Shader
-            Shader::BxShaderMeta*             pShaderMeta;
+            Shader::BxShaderMeta*                           pShaderMeta;
+
+            // Input layouts
+            VkVertexInputBindingDescription*                pVertexInputBindingDescription;
+            std::vector<VkVertexInputAttributeDescription>* pVertexInputAttributeDescriptionList;
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
-            VulkanRenderResources*            pResource;
+            VulkanRenderResources*                          pResource;
 
+            // Is the pipeline used for rendering scene
+            BOOL                                            isScenePipeline;
         };
 
         struct VulkanSubpassGraphicsPipelineCreateData
         {
             // Subpass Index
-            UINT                              subpassIndex;
+            UINT                                            subpassIndex;
 
             // Properties
-            VulkanGraphicsPipelineProperties* pProps;
+            VulkanGraphicsPipelineProperties*               pProps;
 
             // Shader
-            Shader::BxShaderMeta*             pShaderMeta;
+            Shader::BxShaderMeta*                           pShaderMeta;
+
+            // Input layouts
+            VkVertexInputBindingDescription*                pVertexInputBindingDescription;
+            std::vector<VkVertexInputAttributeDescription>* pVertexInputAttributeDescriptionList;
 
             // Resources (Vertex buffer, Uniform buffer, Texture, etc)
-            VulkanRenderResources*            pResource;
+            VulkanRenderResources*                          pResource;
+
+            // Is the pipeline used for rendering scene
+            BOOL                                            isScenePipeline;
         };
 
         struct VulkanDescriptorUpdateData
@@ -152,6 +179,11 @@ namespace VulkanEngine
                 return m_pVertexInputResourceList;
             }
 
+            INLINE const BOOL IsScenePipeline() const
+            {
+                return m_isScenePipeline;
+            }
+
         private:
             const Setting*                          m_pSetting;
             const VkDevice*                         m_pDevice;
@@ -167,8 +199,11 @@ namespace VulkanEngine
 
             std::vector<Mgr::DescriptorUpdateInfo>  m_uniformBufferDescriptorUpdateInfo;
             std::vector<Mgr::DescriptorUpdateInfo>  m_textureDescriptorUpdateInfo;
+            std::vector<Mgr::DescriptorUpdateInfo>  m_inputAttachmentUpdateInfo;
 
             std::vector<VulkanVertexInputResource>* m_pVertexInputResourceList;
+
+            BOOL                                    m_isScenePipeline;
         };
     }
 }

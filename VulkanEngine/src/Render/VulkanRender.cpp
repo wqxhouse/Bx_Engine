@@ -117,5 +117,72 @@ namespace VulkanEngine
 
             return rtCreateData;
         }
+
+        void VulkanRenderBase::genBackbufferDepthBuffer()
+        {
+            size_t backBufferNum = m_backBufferRTsCreateDataList.size();
+
+            for (size_t i = 0; i < backBufferNum; ++i)
+            {
+                Texture::VulkanTexture2D* pBackbufferColorTexture =
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
+
+                TextureFormat depthBufferFormat =
+                    ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
+
+                Texture::VulkanTexture2D * backbufferDepthTexture =
+                    m_pTextureMgr->createTexture2DRenderTarget(
+                        pBackbufferColorTexture->GetTextureWidth(),
+                        pBackbufferColorTexture->GetTextureHeight(),
+                        static_cast<UINT>(m_pSetting->m_graphicsSetting.antialasing),
+                        depthBufferFormat,
+                        BX_TEXTURE_USAGE_VULKAN_NONE);
+
+                m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
+            }
+        }
+
+        std::vector<VulkanUniformBufferResource> VulkanRenderBase::createTransUniformBufferResource()
+        {
+            const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
+
+            Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
+                new Buffer::VulkanUniformBufferDynamic(m_pDevice,
+                                                       hwProps.limits.minUniformBufferOffsetAlignment);
+
+            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
+                                                         (UINT)m_transUniformbuffer.size(),
+                                                         sizeof(m_transUniformbuffer[0]),
+                                                         m_transUniformbuffer.data());
+
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
+
+            std::vector<VulkanUniformBufferResource> transUniformbufferResourceList(1);
+            transUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
+            transUniformbufferResourceList[0].bindingPoint     = 0;
+            transUniformbufferResourceList[0].uniformbufferNum = 1;
+            transUniformbufferResourceList[0].pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[0].get());
+
+            return transUniformbufferResourceList;
+        }
+
+        VulkanTextureResource VulkanRenderBase::createSceneTextures(
+            const UINT                setIndex,
+            const UINT                bindingPoint,
+            const UINT                textureNum,
+            Texture::VulkanTexture2D* pTexture)
+        {
+            VulkanTextureResource textureResource = {};
+
+            textureResource.setIndex     = setIndex;
+            textureResource.bindingPoint = bindingPoint;
+            textureResource.textureNum   = textureNum;
+            textureResource.pTexture     = pTexture;
+            textureResource.shaderType   = BX_FRAGMENT_SHADER;
+
+            return textureResource;
+        }
     }
 }

@@ -21,6 +21,11 @@ namespace VulkanEngine
         {
         public:
             VulkanIndexBuffer(
+                const VkDevice* const    pDevice,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr,
+                std::vector<UINT>* const pIndexBufferData);
+
+            VulkanIndexBuffer(
                 const VkDevice* const                      pDevice,
                 Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
                 const std::shared_ptr<Object::Model::Mesh> pMesh);
@@ -31,14 +36,16 @@ namespace VulkanEngine
                 const VkPhysicalDevice& hwDevice,
                 const BOOL              optimize);
 
-            inline BX_INDEX_TYPE GetIndexType() const { return m_indexType; }
+            INLINE BX_INDEX_TYPE GetIndexType() const { return m_indexType; }
 
-            inline UINT          GetIndexNum()  const
+            INLINE UINT          GetIndexNum()  const
             {
                 return static_cast<UINT>(m_pIndexBufferData->size());
             }
 
         private:
+            void determineIndexType();
+
             BX_INDEX_TYPE      m_indexType;
 
             std::vector<UINT>* m_pIndexBufferData;

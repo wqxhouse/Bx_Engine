@@ -22,7 +22,7 @@ namespace VulkanEngine
                 const VkDevice*    const pDevice,
                 Mgr::CmdBufferMgr* const pCmdBufferMgr);
 
-            ~VulkanDescriptorBuffer();
+            virtual ~VulkanDescriptorBuffer();
 
             virtual BOOL createDescriptorSetLayout(
                 const UINT               bindingPoint,

@@ -35,7 +35,7 @@ namespace VulkanEngine
                 const Scene::RenderScene*                           pScene,
                 const std::vector<Texture::VulkanTexture2D*>* const ppBackbufferTextures);
 
-            ~VulkanRenderBase();
+            virtual ~VulkanRenderBase();
 
             virtual BOOL initialize() = 0;
 
@@ -124,6 +124,7 @@ namespace VulkanEngine
             };
 
             void parseScene();
+
             VulkanRenderTargetCreateData genAttachmentCreateData(
                 const UINT                             renderSubPassIndex,
                 const UINT                             bindingPoint,
@@ -131,6 +132,16 @@ namespace VulkanEngine
                 const BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout,
                 const BOOL                             useStencil,
                 const BOOL                             isStoreStencil);
+
+            void genBackbufferDepthBuffer();
+
+            std::vector<VulkanUniformBufferResource> createTransUniformBufferResource();
+
+            VulkanTextureResource createSceneTextures(
+                const UINT                setIndex,
+                const UINT                bindingPoint,
+                const UINT                textureNum,
+                Texture::VulkanTexture2D* pTexture);
 
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
@@ -148,7 +159,6 @@ namespace VulkanEngine
 
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
 
-            // const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
 
             std::vector<VulkanDescriptorUpdateData> m_descriptorUpdateDataList;
@@ -181,12 +191,6 @@ namespace VulkanEngine
             void draw();
 
         private:
-            struct ForwardRenderMainSceneUbo
-            {
-                Math::Mat4 transMat;
-            };
-            
-            std::vector<ForwardRenderMainSceneUbo> m_forwardRenderMainSceneUbo;
         };
 
         class VulkanDeferredRender : public VulkanRenderBase
@@ -204,10 +208,60 @@ namespace VulkanEngine
 
             ~VulkanDeferredRender();
 
+            BOOL initialize();
+
             BOOL update(const float delta);
             void draw();
 
         private:
+            void createGBufferTextures();
+
+            std::vector<VulkanRenderTargetCreateData> genRenderTargetsCreateData(
+                IN  const std::vector<VulkanRenderTargetCreateDescriptor>&             RTDescList,
+                OUT std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>>* pRTFrameBuffersCreateDataList);
+
+            VulkanRenderSubpassCreateData genGBufferSubpassCreateData(
+                IN  const VulkanRenderProperties&                              renderProps,
+                IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
+                OUT Shader::BxShaderMeta*                                      pGBufferShaderMeta,
+                OUT std::vector<VulkanUniformBufferResource>*                  pGBufferUniformBufferResourceList,
+                OUT std::vector<VulkanDescriptorResources>*                    pGBufferDescriptorResourcesList,
+                OUT VulkanRenderResources*                                     pGBufferResources,
+                OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pGBufferGraphicsPipelineRTProperties,
+                OUT VkVertexInputBindingDescription*                           pGBufferVertexInputBindingDescription,
+                OUT std::vector<VkVertexInputAttributeDescription>*            pGBufferVertexInputAttributeDescription,
+                OUT VulkanGraphicsPipelineProperties*                          pGBufferGraphicsPipelineProperties,
+                OUT VulkanSubpassGraphicsPipelineCreateData*                   pGBufferGraphicsPipelineCreateData);
+
+            VulkanRenderSubpassCreateData genShadingPassCreateData(
+                IN const VulkanRenderProperties&                               renderProps,
+                IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
+                OUT Shader::BxShaderMeta*                                      pShadingPassShader,
+                OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
+                OUT std::vector<VulkanTextureResource>*                        pInputAttachmentResourceList,
+                OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,
+                OUT VulkanRenderResources*                                     pShadingPassResources,
+                OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pShadingPassGraphicsPipelineRTProperties,
+                OUT VkVertexInputBindingDescription*                           pShadingPassVertexInputBindingDescription,
+                OUT std::vector<VkVertexInputAttributeDescription>*            pShadingPassVertexInputAttributeDescription,
+                OUT VulkanGraphicsPipelineProperties*                          pShadingPassGraphicsPipelineProps,
+                OUT VulkanSubpassGraphicsPipelineCreateData*                   pShadingPassGraphicsPipelineCreateData);
+
+            std::vector<VulkanVertexInputResource> m_shadingPassVertexInput;
+
+            float m_shadingPassQuad[8] =
+            {
+                 1.0f, -1.0f,
+                -1.0f, -1.0f,
+                 1.0f,  1.0f,
+                -1.0f,  1.0f
+            };
+
+            std::vector<UINT> m_shadingPassQuadIndices =
+            {
+                0, 1, 2,
+                2, 1, 3
+            };
         };
     }
 }

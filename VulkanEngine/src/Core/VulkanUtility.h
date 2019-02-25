@@ -307,6 +307,9 @@ namespace VulkanEngine
                     case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
                         descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
                         break;
+                    case BX_INPUT_ATTACHMENT_DESCRIPTOR:
+                        descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+                        break;
                     default:
                         NotSupported();
                         break;
@@ -331,20 +334,53 @@ namespace VulkanEngine
                     case VK_FORMAT_R8G8B8_UNORM:
                         imageFormat = BX_FORMAT_RGB8;
                         break;
+                    case VK_FORMAT_B8G8R8_UNORM:
+                        imageFormat = BX_FORMAT_BGR8;
+                        break;
                     case VK_FORMAT_R8G8B8A8_UNORM:
                         imageFormat = BX_FORMAT_RGBA8;
                         break;
                     case VK_FORMAT_B8G8R8A8_UNORM:
                         imageFormat = BX_FORMAT_BGRA8;
                         break;
+                    case VK_FORMAT_R16_SFLOAT:
+                        imageFormat = BX_FORMAT_R16_FLOAT;
+                        break;
+                    case VK_FORMAT_R16G16_SFLOAT:
+                        imageFormat = BX_FORMAT_RG16_FLOAT;
+                        break;
+                    case VK_FORMAT_R16G16B16_SFLOAT:
+                        imageFormat = BX_FORMAT_RGB16_FLOAT;
+                        break;
+                    case VK_FORMAT_R16G16B16A16_SFLOAT:
+                        imageFormat = BX_FORMAT_RGBA16_FLOAT;
+                        break;
                     case VK_FORMAT_R16G16B16A16_UNORM:
                         imageFormat = BX_FORMAT_RGBA16;
                         break;
+                    case VK_FORMAT_R32_SFLOAT:
+                        imageFormat = BX_FORMAT_R32_FLOAT;
+                        break;
+                    case VK_FORMAT_R32G32_SFLOAT:
+                        imageFormat = BX_FORMAT_RG32_FLOAT;
+                        break;
+                    case VK_FORMAT_R32G32B32_SFLOAT:
+                        imageFormat = BX_FORMAT_RGB32_FLOAT;
+                        break;
                     case VK_FORMAT_R32G32B32A32_SFLOAT:
-                        imageFormat = BX_FORMAT_RGBA32;
+                        imageFormat = BX_FORMAT_RGBA32_FLOAT;
+                        break;
+                    case VK_FORMAT_R64_SFLOAT:
+                        imageFormat = BX_FORMAT_R64_FLOAT;
+                        break;
+                    case VK_FORMAT_R64G64_SFLOAT:
+                        imageFormat = BX_FORMAT_RG64_FLOAT;
+                        break;
+                    case VK_FORMAT_R64G64B64_SFLOAT:
+                        imageFormat = BX_FORMAT_RGB64_FLOAT;
                         break;
                     case VK_FORMAT_R64G64B64A64_SFLOAT:
-                        imageFormat = BX_FORMAT_RGBA64;
+                        imageFormat = BX_FORMAT_RGBA64_FLOAT;
                         break;
                     case VK_FORMAT_R8G8B8A8_SRGB:
                         imageFormat = BX_FORMAT_SRGB;
@@ -388,23 +424,51 @@ namespace VulkanEngine
                     case BX_FORMAT_RGB8:
                         imageFormat = VK_FORMAT_R8G8B8_UNORM;
                         break;
+                    case BX_FORMAT_BGR8:
+                        imageFormat = VK_FORMAT_B8G8R8_UNORM;
+                        break;
+                    case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA8:
                         imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
                         break;
                     case BX_FORMAT_BGRA8:
                         imageFormat = VK_FORMAT_B8G8R8A8_UNORM;
                         break;
+                    case BX_FORMAT_R16_FLOAT:
+                        imageFormat = VK_FORMAT_R16_SFLOAT;
+                        break;
+                    case BX_FORMAT_RG16_FLOAT:
+                        imageFormat = VK_FORMAT_R16G16_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGB16_FLOAT:
+                        imageFormat = VK_FORMAT_R16G16B16_SFLOAT;
+                        break;
                     case BX_FORMAT_RGBA16:
                         imageFormat = VK_FORMAT_R16G16B16A16_UNORM;
                         break;
-                    case BX_FORMAT_RGBA32:
+                    case BX_FORMAT_R32_FLOAT:
+                        imageFormat = VK_FORMAT_R32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RG32_FLOAT:
+                        imageFormat = VK_FORMAT_R32G32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGB32_FLOAT:
+                        imageFormat = VK_FORMAT_R32G32B32_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGBA32_FLOAT:
                         imageFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
                         break;
-                    case BX_FORMAT_RGBA64:
-                        imageFormat = VK_FORMAT_R64G64B64A64_SFLOAT;
+                    case BX_FORMAT_R64_FLOAT:
+                        imageFormat = VK_FORMAT_R64_SFLOAT;
                         break;
-                    case BX_FORMAT_RGBA:
-                        imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
+                    case BX_FORMAT_RG64_FLOAT:
+                        imageFormat = VK_FORMAT_R64G64_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGB64_FLOAT:
+                        imageFormat = VK_FORMAT_R64G64B64_SFLOAT;
+                        break;
+                    case BX_FORMAT_RGBA64_FLOAT:
+                        imageFormat = VK_FORMAT_R64G64B64A64_SFLOAT;
                         break;
                     case BX_FORMAT_SRGB:
                         imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
@@ -456,6 +520,11 @@ namespace VulkanEngine
                     imageUsageFlagBits |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
                 }
 
+                if ((texUsage& BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT) != 0)
+                {
+                    imageUsageFlagBits |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+                }
+
                 return imageUsageFlagBits;
             }
 
@@ -469,12 +538,22 @@ namespace VulkanEngine
                     case BX_FORMAT_R8:
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
+                    case BX_FORMAT_BGR8:
+                    case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA8:
                     case BX_FORMAT_BGRA8:
-                    case BX_FORMAT_RGBA:
+                    case BX_FORMAT_R16_FLOAT:
+                    case BX_FORMAT_RG16_FLOAT:
+                    case BX_FORMAT_RGB16_FLOAT:
                     case BX_FORMAT_RGBA16:
-                    case BX_FORMAT_RGBA32:
-                    case BX_FORMAT_RGBA64:
+                    case BX_FORMAT_R32_FLOAT:
+                    case BX_FORMAT_RG32_FLOAT:
+                    case BX_FORMAT_RGB32_FLOAT:
+                    case BX_FORMAT_RGBA32_FLOAT:
+                    case BX_FORMAT_R64_FLOAT:
+                    case BX_FORMAT_RG64_FLOAT:
+                    case BX_FORMAT_RGB64_FLOAT:
+                    case BX_FORMAT_RGBA64_FLOAT:
                     case BX_FORMAT_SRGB:
                         aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
                         break;
@@ -503,12 +582,22 @@ namespace VulkanEngine
                     case BX_FORMAT_R8:
                     case BX_FORMAT_RG8:
                     case BX_FORMAT_RGB8:
+                    case BX_FORMAT_BGR8:
+                    case BX_FORMAT_RGBA:
                     case BX_FORMAT_RGBA8:
                     case BX_FORMAT_BGRA8:
-                    case BX_FORMAT_RGBA:
+                    case BX_FORMAT_R16_FLOAT:
+                    case BX_FORMAT_RG16_FLOAT:
+                    case BX_FORMAT_RGB16_FLOAT:
                     case BX_FORMAT_RGBA16:
-                    case BX_FORMAT_RGBA32:
-                    case BX_FORMAT_RGBA64:
+                    case BX_FORMAT_R32_FLOAT:
+                    case BX_FORMAT_RG32_FLOAT:
+                    case BX_FORMAT_RGB32_FLOAT:
+                    case BX_FORMAT_RGBA32_FLOAT:
+                    case BX_FORMAT_R64_FLOAT:
+                    case BX_FORMAT_RG64_FLOAT:
+                    case BX_FORMAT_RGB64_FLOAT:
+                    case BX_FORMAT_RGBA64_FLOAT:
                     case BX_FORMAT_SRGB:
                         textureUsage = BX_TEXTURE_USAGE_COLOR_ATTACHMENT;
                         break;
@@ -549,6 +638,14 @@ namespace VulkanEngine
 
                         srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                         dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                    }
+                    else if (newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+                    {
+                        srcAccessMask = 0;
+                        dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+                        srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                        dstStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
                     }
                     else if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
                     {
@@ -705,6 +802,9 @@ namespace VulkanEngine
                     case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT:
                         vkImageLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
                         break;
+                    case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT:
+                        vkImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        break;
                     default:
                         NotSupported();
                         break;
@@ -726,6 +826,9 @@ namespace VulkanEngine
                     break;
                 case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL:
                     vkImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                    break;
+                case BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_ATTACHMENT_INPUT:
+                    vkImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                     break;
                 default:
                     NotSupported();

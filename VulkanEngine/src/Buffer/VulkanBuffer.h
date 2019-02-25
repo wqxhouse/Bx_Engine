@@ -30,7 +30,7 @@ namespace VulkanEngine
                 const VkDevice* const    pDevice,
                 Mgr::CmdBufferMgr* const pCmdBufferMgr);
 
-            ~VulkanBufferBase();
+            virtual ~VulkanBufferBase();
 
             BOOL createBuffer(
                 const VkPhysicalDevice&   hwDevice,

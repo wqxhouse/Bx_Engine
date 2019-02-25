@@ -51,7 +51,7 @@ namespace Object
                 const LightType        lightType,
                 const LightCreateInfo& lightCreateInfo);
 
-            ~LightBase();
+            virtual ~LightBase();
 
             virtual void translate(const Math::Vector3& transVector) {}
             virtual void rotate(const Math::Vector3& axis, const float angle) {}

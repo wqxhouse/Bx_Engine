@@ -93,6 +93,9 @@
     <ClCompile Include="src\Render\VulkanGraphicsPipeline.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\Render\VulkanDeferredRender.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Context\VulkanContext.h">

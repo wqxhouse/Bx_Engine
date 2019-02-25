@@ -17,9 +17,30 @@ namespace VulkanEngine
 {
     namespace Buffer
     {
+        struct VertexInputBindingCreateData
+        {
+            UINT                 bindingPoint;
+            BX_VERTEX_INPUT_RATE rate;
+        };
+
+        struct VertexInputAttributeCreateData
+        {
+            UINT     bindingPoint;
+            UINT     location;
+            VkFormat format;
+            UINT     offset;
+        };
+
         class VulkanVertexBuffer : public VulkanBufferBase
         {
         public:
+            VulkanVertexBuffer(
+                const VkDevice* const    pDevice,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr,
+                const UINT               vertexNum,
+                const UINT               vertexSize,
+                void*                    pVertexBufferData);
+
             VulkanVertexBuffer(
                 const VkDevice*    const                   pDevice,
                 Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
@@ -29,38 +50,68 @@ namespace VulkanEngine
                 const VkPhysicalDevice& hwDevice,
                 const BOOL              optimize);
 
-            static VkVertexInputBindingDescription createDescription(
-                const UINT                 bindingPoint,
-                const BX_VERTEX_INPUT_RATE rate);
-
-            static std::vector<VkVertexInputAttributeDescription>
-                createAttributeDescriptions(
+            static std::vector<VertexInputAttributeCreateData>
+                GenPosQuadAttributeListCreateData(
                     const UINT bindingPoint);
 
-            static std::vector<VkVertexInputAttributeDescription>
-                createAttributeDescriptionsMultipleTexture(
+            static std::vector<VertexInputAttributeCreateData>
+                GenSingleTextureChannelMeshAttributeListCreateData(
+                    const UINT bindingPoint);
+
+            static std::vector<VertexInputAttributeCreateData>
+                GenMultipleTextureChannelMeshAttributeListCreatData(
                     const UINT bindingPoint,
-                    const UINT texChannels);
+                    const UINT texChannelNum);
+
+            static VkVertexInputBindingDescription CreateDescription(
+                const UINT                 bindingPoint,
+                const UINT                 vertexSize,
+                const BX_VERTEX_INPUT_RATE rate);
+
+            static std::vector<VkVertexInputAttributeDescription> CreateAttributeDescriptions(
+                const std::vector<VertexInputAttributeCreateData>& vertexAttributeCreateDataList);
 
             INLINE const VkBuffer GetVertexBuffer() const
             {
                 return GetBuffer();
             }
 
-            INLINE UINT GetVertexNum() const
+            INLINE const VkVertexInputBindingDescription GetVertexInputBindingDescription() const
             {
-                return static_cast<UINT>(m_pVertexBufferData->size());
+                return m_bindingDescription;
             }
 
-            INLINE UINT GetVertexBufferSize() const
+            INLINE const std::vector<VkVertexInputAttributeDescription> GetVertexInputAttributeDescriptionList() const
             {
-                return GetVertexNum() * sizeof(Object::Model::Vertex);
+                return m_vertexInputAttributeList;
+            }
+
+            INLINE const UINT GetVertexNum() const
+            {
+                return m_vertexBufferNum;
+            }
+
+            INLINE const UINT GetVertexSize() const
+            {
+                return m_vertexSize;
+            }
+
+            INLINE const UINT GetVertexBufferSize() const
+            {
+                return m_vertexBufferSize;
             }
 
             ~VulkanVertexBuffer();
 
         private:
-            std::vector<Object::Model::Vertex>* m_pVertexBufferData;
+            VkVertexInputBindingDescription                m_bindingDescription;
+            std::vector<VkVertexInputAttributeDescription> m_vertexInputAttributeList;
+
+            UINT  m_vertexBufferNum;
+            UINT  m_vertexSize;
+            UINT  m_vertexBufferSize;
+
+            void* m_pVertexBufferData;
         };
     }
 }

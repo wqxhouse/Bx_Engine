@@ -14,6 +14,18 @@ namespace VulkanEngine
     namespace Buffer
     {
         VulkanIndexBuffer::VulkanIndexBuffer(
+            const VkDevice* const    pDevice,
+            Mgr::CmdBufferMgr* const pCmdBufferMgr,
+            std::vector<UINT>* const pIndexBufferData)
+            : VulkanBufferBase(pDevice, pCmdBufferMgr),
+              m_pIndexBufferData(pIndexBufferData)
+        {
+            assert(m_pIndexBufferData->size() > 0);
+
+            determineIndexType();
+        }
+
+        VulkanIndexBuffer::VulkanIndexBuffer(
             const VkDevice* const                      pDevice,
             Mgr::CmdBufferMgr* const                   pCmdBufferMgr,
             const std::shared_ptr<Object::Model::Mesh> pMesh)
@@ -23,19 +35,7 @@ namespace VulkanEngine
 
             assert(m_pIndexBufferData->size() > 0);
 
-            if (typeid(m_pIndexBufferData->at(0)) == typeid(uint32_t))
-            {
-                m_indexType = BX_INDEX_UINT32;
-            }
-            else if (typeid(m_pIndexBufferData->at(0)) == typeid(uint16_t))
-            {
-                m_indexType = BX_INDEX_UINT16;
-            }
-            else
-            {
-                printf("Unsupported index format!\n");
-                assert(FALSE);
-            }
+            determineIndexType();
         }
 
         VulkanIndexBuffer::~VulkanIndexBuffer()
@@ -63,6 +63,23 @@ namespace VulkanEngine
             assert(result == BX_SUCCESS);
 
             return result;
+        }
+
+        void VulkanIndexBuffer::determineIndexType()
+        {
+            if (typeid(m_pIndexBufferData->at(0)) == typeid(uint32_t))
+            {
+                m_indexType = BX_INDEX_UINT32;
+            }
+            else if (typeid(m_pIndexBufferData->at(0)) == typeid(uint16_t))
+            {
+                m_indexType = BX_INDEX_UINT16;
+            }
+            else
+            {
+                printf("Unsupported index format!\n");
+                assert(FALSE);
+            }
         }
     }
 }

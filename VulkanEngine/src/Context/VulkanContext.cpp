@@ -671,6 +671,7 @@ namespace VulkanEngine
                             m_swapchainExtent.height,
                             m_pSetting->m_graphicsSetting.antialasing,
                             Utility::VulkanUtility::GetImageFormat(m_swapchainSurfaceFormat.format),
+                            BX_TEXTURE_USAGE_VULKAN_NONE,
                             image);
 
                     m_pSwapchainTextures[i] = pBackbufferTex;
@@ -695,15 +696,37 @@ namespace VulkanEngine
     {
         BOOL status = BX_SUCCESS;
 
-        m_pRender = std::unique_ptr<Render::VulkanForwardRender>(
-            new Render::VulkanForwardRender(m_pSetting,
-                                            &(m_vkActiveHwGpuDeviceList[0]),
-                                            &m_vkDevice,
-                                            m_pCmdBufferMgr.get(),
-                                            m_pDescriptorMgr.get(),
-                                            m_pTextureMgr.get(),
-                                            m_pRenderSceneList[m_activeSceneIndex],
-                                            &m_pSwapchainTextures));
+        if (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_RENDERING ||
+            m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING)
+        {
+            m_pRender = std::unique_ptr<Render::VulkanForwardRender>(
+                new Render::VulkanForwardRender(m_pSetting,
+                                                &(m_vkActiveHwGpuDeviceList[0]),
+                                                &m_vkDevice,
+                                                m_pCmdBufferMgr.get(),
+                                                m_pDescriptorMgr.get(),
+                                                m_pTextureMgr.get(),
+                                                m_pRenderSceneList[m_activeSceneIndex],
+                                                &m_pSwapchainTextures));
+        }
+        else if (m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_RENDERING ||
+                 m_pSetting->m_graphicsSetting.renderingMethod == DEFERRED_TILED_RENDERING)
+        {
+            m_pRender = std::unique_ptr<Render::VulkanDeferredRender>(
+                new Render::VulkanDeferredRender(m_pSetting,
+                                                 &(m_vkActiveHwGpuDeviceList[0]),
+                                                 &m_vkDevice,
+                                                 m_pCmdBufferMgr.get(),
+                                                 m_pDescriptorMgr.get(),
+                                                 m_pTextureMgr.get(),
+                                                 m_pRenderSceneList[m_activeSceneIndex],
+                                                 &m_pSwapchainTextures));
+        }
+        else
+        {
+            NotSupported();
+        }
+
         m_pRender->EnableDepthTest();
         status = m_pRender->initialize();
 
