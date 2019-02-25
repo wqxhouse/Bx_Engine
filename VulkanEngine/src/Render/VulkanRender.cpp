@@ -155,6 +155,9 @@ namespace VulkanEngine
                                                          sizeof(m_transUniformbuffer[0]),
                                                          m_transUniformbuffer.data());
 
+            Buffer::VulkanUniformBuffer* pTestUniformBuffer =
+                new Buffer::VulkanUniformBuffer(m_pDevice);
+
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
 

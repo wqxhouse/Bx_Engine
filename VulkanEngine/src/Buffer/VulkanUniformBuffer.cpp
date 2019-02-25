@@ -59,7 +59,8 @@ namespace VulkanEngine
             const VkPhysicalDevice& hwDevice,
             const VkDeviceSize      uboNum,
             const VkDeviceSize      uboSize,
-            const void*             uboData)
+            const void*             uboData,
+            const BOOL              isdynamic)
         {
             BOOL result = BX_SUCCESS;
 
@@ -71,7 +72,7 @@ namespace VulkanEngine
             uboCreateInfo.bufferSize         = m_bufferSize;
             uboCreateInfo.bufferData         = uboData;
             uboCreateInfo.bufferOptimization = FALSE;
-            uboCreateInfo.bufferDynamic      = IsBufferDynamic();
+            uboCreateInfo.bufferDynamic      = isdynamic;
 
             result = createBuffer(hwDevice, uboCreateInfo);
 

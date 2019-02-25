@@ -39,6 +39,7 @@ namespace VulkanEngine
             BOOL result = BX_SUCCESS;
 
             m_bufferFlags.bits.enableOptimization = bufferCreateInfo.bufferOptimization;
+            m_bufferFlags.bits.dynamicBuffer      = bufferCreateInfo.bufferDynamic;
 
             assert((m_pCmdBufferMgr == NULL && m_bufferFlags.bits.enableOptimization == FALSE) ||
                    (m_pCmdBufferMgr != NULL));

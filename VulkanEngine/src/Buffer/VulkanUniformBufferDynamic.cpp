@@ -76,7 +76,8 @@ namespace VulkanEngine
             result = VulkanUniformBuffer::createUniformBuffer(hwDevice,
                                                               uboNum,
                                                               m_uniformStructSize,
-                                                              uboData);
+                                                              uboData,
+                                                              TRUE);
 
             assert(result == BX_SUCCESS);
 

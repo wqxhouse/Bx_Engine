@@ -32,7 +32,8 @@ namespace VulkanEngine
                 const VkPhysicalDevice& hwDevice,
                 const VkDeviceSize      uboNum,
                 const VkDeviceSize      uboSize,
-                const void*             uboData);
+                const void*             uboData,
+                const BOOL              isdynamic = FALSE);
 
             INLINE void updateUniformBufferData(
                 const void* uboData)
