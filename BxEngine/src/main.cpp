@@ -22,7 +22,7 @@ int main()
 {
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
+    setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
 
     // Memory
     Memory::MemoryPool          m_memPool(256 * 1024 * 1024);

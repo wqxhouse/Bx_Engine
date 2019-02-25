@@ -51,6 +51,7 @@ namespace VulkanEngine
             };
             props.viewportRects                  = { props.renderViewportRect };
             props.scissorRects                   = { props.renderViewportRect };
+            props.enableColor                    = TRUE;
 
             // Initialize shaders
             Shader::BxShaderMeta mainSceneShaderMeta          = {};
@@ -198,10 +199,13 @@ namespace VulkanEngine
             renderSources.pTextureResouceList = &mainSceneTextureResourceList;
 
             // Create render pass create data
+            VulkanGraphicsPipelineCreateData graphicsPipelineCreateData = {};
+            graphicsPipelineCreateData.pProps = &props;
+            graphicsPipelineCreateData.pShaderMeta = &mainSceneShaderMeta;
+            graphicsPipelineCreateData.pResource = &renderSources;
+
             VulkanRenderPassCreateData mainSceneRenderPassCreateData  = {};
-            mainSceneRenderPassCreateData.pProps                      = &props;
-            mainSceneRenderPassCreateData.pShaderMeta                 = &mainSceneShaderMeta;
-            mainSceneRenderPassCreateData.pResource                   = &renderSources;
+            mainSceneRenderPassCreateData.graphicsPipelineCreateData  = graphicsPipelineCreateData;
             mainSceneRenderPassCreateData.renderFramebufferNum        = backbufferNum;
             mainSceneRenderPassCreateData.renderSubPassNum            = 1;
             mainSceneRenderPassCreateData.pRenderTargetCreateDataList = &renderTargetsCreateData;
