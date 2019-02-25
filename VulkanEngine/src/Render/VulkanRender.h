@@ -44,7 +44,7 @@ namespace VulkanEngine
 
             INLINE BOOL AddRenderPass(
                 const BX_RENDER_PASS_STAGE        renderPassStage,
-                const VulkanRenderPassCreateData& renderPassCreateData)
+                const VulkanRenderpassCreateData& renderPassCreateData)
             {
                 switch (renderPassStage)
                 {

@@ -24,10 +24,7 @@ namespace VulkanEngine
               m_pRenderPass(pRenderPass),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescriptorMgr(pDescritorMgr),
-              m_shader(*pDevice),
-              m_enableColor(TRUE),
-              m_enableDepth(FALSE),
-              m_enableStencil(FALSE)
+              m_shader(*pDevice)
         {
             m_graphicsPipeline       = { *m_pDevice, vkDestroyPipeline       };
             m_graphicsPipelineLayout = { *m_pDevice, vkDestroyPipelineLayout };
@@ -38,35 +35,13 @@ namespace VulkanEngine
         }
 
         BOOL VulkanGraphicsPipeline::createGraphicsPipeline(
-            const VulkanGraphicsPipelineCreateData& renderTargetsCreateData,
-            const size_t                            renderTargetNum)
+            VulkanGraphicsPipelineCreateData* pGraphicsPipelineCreateData)
         {
             BOOL status = BX_SUCCESS;
 
-            VulkanRenderProperties* const pProps      = renderTargetsCreateData.pProps;
-            Shader::BxShaderMeta*   const pShaderMeta = renderTargetsCreateData.pShaderMeta;
-            VulkanRenderResources*  const pResource   = renderTargetsCreateData.pResource;
-
-            // Initialize draw data
-            const Rectangle* pRenderViewportRect = &(pProps->renderViewportRect);
-
-            m_renderViewport.offset =
-            {
-                static_cast<INT>(pRenderViewportRect->left),
-                static_cast<INT>(pRenderViewportRect->top)
-            };
-
-            m_renderViewport.extent =
-            {
-                (static_cast<UINT>(pRenderViewportRect->right) -
-                 static_cast<UINT>(pRenderViewportRect->left)),
-                (static_cast<UINT>(pRenderViewportRect->bottom) -
-                 static_cast<UINT>(pRenderViewportRect->top))
-            };
-
-            // TODO: Add suppport for Depth/Stencil only render
-            m_enableColor     = pProps->enableColor;
-            m_colorClearValue = pProps->sceneClearValue;
+            VulkanGraphicsPipelineProperties* const pProps = pGraphicsPipelineCreateData->pProps;
+            Shader::BxShaderMeta*   const pShaderMeta      = pGraphicsPipelineCreateData->pShaderMeta;
+            VulkanRenderResources*  const pResource        = pGraphicsPipelineCreateData->pResource;
 
             // Bind vertex/index buffer
             m_pVertexInputResourceList = pResource->pVertexInputResourceList;
@@ -124,16 +99,12 @@ namespace VulkanEngine
                 Utility::VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
             multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
 
-            // Depth/Stencil
-            m_enableDepth   = pProps->enableDepth;
-            m_enableStencil = pProps->enableStencil;
-
             VkPipelineColorBlendAttachmentState blendAttachmentState = {};
 
             VkPipelineColorBlendStateCreateInfo blendState = {};
             blendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 
-            if (IsColorEnabled())
+            if (pGraphicsPipelineCreateData->enableColor == TRUE)
             {
                 blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
                                                       VK_COLOR_COMPONENT_G_BIT |
@@ -164,7 +135,7 @@ namespace VulkanEngine
             VkPipelineDepthStencilStateCreateInfo  depthStencilState = {};
             depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 
-            if (IsDepthEnabled() == TRUE)
+            if (pGraphicsPipelineCreateData->enableDepth == TRUE)
             {
                 depthStencilState.depthTestEnable       = VK_TRUE;
                 depthStencilState.depthWriteEnable      = VK_TRUE;
@@ -174,20 +145,16 @@ namespace VulkanEngine
                 depthStencilState.maxDepthBounds        = 1.0f;
                 depthStencilState.stencilTestEnable     = VK_FALSE;
 
-                m_depthClearValue = pProps->depthClearValue;
-
                 pDepthStencilState = &depthStencilState;
             }
 
-            if (IsStencilEnabled() == TRUE)
+            if (pGraphicsPipelineCreateData->enableStencil == TRUE)
             {
                 NotImplemented();
 
                 depthStencilState.stencilTestEnable = VK_TRUE;
                 depthStencilState.front             = {};
                 depthStencilState.back              = {};
-
-                m_stencilClearValue = pProps->stencilClearValue;
 
                 pDepthStencilState = &depthStencilState;
             }
@@ -316,8 +283,10 @@ namespace VulkanEngine
                     descriptorCounter++;
                 }
 
-                descriptorLayoutList.resize(renderTargetNum, { *m_pDevice, vkDestroyDescriptorSetLayout });
-                for (size_t i = 0; i < renderTargetNum; ++i)
+                descriptorLayoutList.resize(pGraphicsPipelineCreateData->renderTargetNum,
+                                            { *m_pDevice, vkDestroyDescriptorSetLayout });
+
+                for (size_t i = 0; i < pGraphicsPipelineCreateData->renderTargetNum; ++i)
                 {
                     descriptorLayoutList[i] = m_pDescriptorMgr->createDescriptorSetLayout(descriptorCreateInfo);
                 }
@@ -332,8 +301,8 @@ namespace VulkanEngine
                 status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateData);
                 assert(status == BX_SUCCESS);
 
-                std::vector<UINT> descriptorSetIndexList(renderTargetNum);
-                for (size_t i = 0; i < renderTargetNum; ++i)
+                std::vector<UINT> descriptorSetIndexList(pGraphicsPipelineCreateData->renderTargetNum);
+                for (size_t i = 0; i < pGraphicsPipelineCreateData->renderTargetNum; ++i)
                 {
                     descriptorSetIndexList[i] = static_cast<UINT>(i);
                 }
@@ -360,7 +329,7 @@ namespace VulkanEngine
                 descriptorLayoutRawList =
                     VDeleter<VkDescriptorSetLayout>::GetRawVector(descriptorLayoutList);
 
-                pipelineLayoutCreateInfo.setLayoutCount = static_cast<UINT>(renderTargetNum);
+                pipelineLayoutCreateInfo.setLayoutCount = static_cast<UINT>(pGraphicsPipelineCreateData->renderTargetNum);
                 pipelineLayoutCreateInfo.pSetLayouts    = descriptorLayoutRawList.data();
             }
 

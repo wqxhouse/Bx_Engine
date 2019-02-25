@@ -18,6 +18,18 @@ namespace VulkanEngine
 {
     namespace Render
     {
+        struct VulkanRenderProperties
+        {
+            Rectangle                 renderViewportRect;
+            BOOL                      enableBlending;
+            BOOL                      enableColor;
+            std::vector<VkClearValue> sceneClearValue;
+            BOOL                      enableDepth;
+            VkClearValue              depthClearValue;
+            BOOL                      enableStencil;
+            VkClearValue              stencilClearValue;
+        };
+
         struct VulkanRenderTargetFramebufferCreateData
         {
             UINT                        framebufferIndex;
@@ -35,15 +47,19 @@ namespace VulkanEngine
             std::vector<VulkanRenderTargetFramebufferCreateData>* pRenderTargetFramebufferCreateData;
         };
 
-        struct VulkanRenderPassCreateData
+        struct VulkanRenderSubpassCreateData
         {
             // GraphicsPipeline create data
-            VulkanGraphicsPipelineCreateData           graphicsPipelineCreateData;
-
-            // Output
-            UINT                                       renderSubPassNum;
-            UINT                                       renderFramebufferNum;
+            VulkanSubpassGraphicsPipelineCreateData*   pSubpassGraphicsPipelineCreateData;
             std::vector<VulkanRenderTargetCreateData>* pRenderTargetCreateDataList;
+        };
+
+        struct VulkanRenderpassCreateData
+        {
+            VulkanRenderProperties* pRenderProperties;
+            UINT                    framebufferNum;
+
+            std::vector<VulkanRenderSubpassCreateData>* pSubpassCreateDataList;
         };
 
         class VulkanRenderPass
@@ -59,7 +75,7 @@ namespace VulkanEngine
             ~VulkanRenderPass();
 
             BOOL create(
-                const VulkanRenderPassCreateData& renderPassCreateData);
+                const VulkanRenderpassCreateData& renderPassCreateData);
 
             BOOL update(
                 const float                                    deltaTime,
@@ -75,6 +91,12 @@ namespace VulkanEngine
                 return &(m_framebufferList[framebufferIndex]);
             }
 
+            INLINE const VkRect2D& GetRenderViewport() const { return m_renderViewport; }
+
+            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;   }
+            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;   }
+            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil; }
+
         private:
             /*struct VulkanRenderPassUniformBufferUpdateData
             {
@@ -83,26 +105,50 @@ namespace VulkanEngine
                 BOOL                       isUpdate;
             };*/
 
-            // Create VkRenderPass and generate framebuffers
+            // Create render targets for a single subpass
             BOOL createRenderTargets(
-                const std::vector<VulkanRenderTargetCreateData>* pRenderTargetsCreateDataList,
-                const UINT                                       renderSubpassNum,
-                UINT                                             renderFramebufferNum);
+                IN  const std::vector<VulkanRenderTargetCreateData>*       pRenderTargetsCreateDataList,
+                OUT VkSubpassDescription*                                  pSubpassDescription,
+                OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
+                OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
+                OUT VkAttachmentReference*                                 pDepthSubpassAttachmentRef,
+                OUT std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTextureTable);
+
+            // Create render pass
+            BOOL createRenderPass(
+                const UINT                                  renderSubpassNum,
+                const std::vector<VkSubpassDescription>&    subpassDescriptionList,
+                const std::vector<VkAttachmentDescription>& attachmentDescriptionList);
+
+            // Generate framebuffers
+            BOOL createFramebuffers(
+                std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTexturePtrList,
+                const UINT                                             framebufferNum);
 
             // Context
-            const Setting*                          m_pSetting;
-            const VkDevice*                         m_pDevice;
-            Mgr::CmdBufferMgr* const                m_pCmdBufferMgr;
-            Mgr::DescriptorMgr* const               m_pDescriptorMgr;
+            const Setting*                                      m_pSetting;
+            const VkDevice*                                     m_pDevice;
+            Mgr::CmdBufferMgr* const                            m_pCmdBufferMgr;
+            Mgr::DescriptorMgr* const                           m_pDescriptorMgr;
 
-            VDeleter<VkRenderPass>                  m_renderPass;
+            VDeleter<VkRenderPass>                              m_renderPass;
 
-            VulkanGraphicsPipeline                  m_graphicsPipeline;
+            std::vector<VulkanGraphicsPipeline>                 m_graphicsPipelineList;
 
             // Resources
-            const Scene::RenderScene*               m_pScene;
+            const Scene::RenderScene*                           m_pScene;
 
-            std::vector<Buffer::VulkanFramebuffer>  m_framebufferList;
+            std::vector<Buffer::VulkanFramebuffer>              m_framebufferList;
+
+            std::vector<std::vector<Buffer::VulkanFramebuffer>> m_framebufferTable;
+
+            VkRect2D                                            m_renderViewport;
+
+            std::vector<VkClearValue>                           m_clearValueList;
+
+            BOOL                                                m_enableColor;
+            BOOL                                                m_enableDepth;
+            BOOL                                                m_enableStencil;
         };
     }
 }
