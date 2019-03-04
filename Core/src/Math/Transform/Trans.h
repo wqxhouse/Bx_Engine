@@ -79,7 +79,7 @@ public:
         return up;
     }
 
-	INLINE Math::Mat4 GetViewMat()
+	INLINE const Math::Mat4& GetViewMat()
 	{
         if (m_transFlags.bits.viewFlag == 1)
         {
@@ -89,7 +89,7 @@ public:
 		return viewMatrix;
 	}
 
-    INLINE Math::Mat4 GetTranslateMatrix()
+    INLINE const Math::Mat4& GetTranslateMatrix()
     {
         if (m_transFlags.bits.posFlag == 1)
         {
@@ -102,7 +102,7 @@ public:
         return translationMatrix;
     }
 
-    INLINE Math::Mat4 GetScaleMatrix()
+    INLINE const Math::Mat4& GetScaleMatrix()
     {
         if (m_transFlags.bits.scaleFlag == 1)
         {
