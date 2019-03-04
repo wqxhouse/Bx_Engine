@@ -23,10 +23,12 @@
 #define GBUFFER_DEPTH_BUFFER_INDEX     4
 #define GBUFFER_NUM                    (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
 
-#define TRANSFORM_MATRIX_UBO_INDEX 0
-#define LIGHT_UBO_INDEX            3
-#define CAM_UBO_INDEX              4
-#define VIEW_MATRIX_UBO_INDEX      5
+#define TRANSFORM_MATRIX_UBO_INDEX     0
+#define LIGHT_UBO_INDEX                3
+#define CAM_UBO_INDEX                  4
+#define VIEW_MATRIX_UBO_INDEX          5
+
+#define DESCRIPTOR_SET_NUM             2
 
 namespace VulkanEngine
 {
@@ -44,7 +46,8 @@ namespace VulkanEngine
             : VulkanRenderBase(pSetting, pHwDevice, pDevice, pCmdBufferMgr, pDescritorMgr, pTextureMgr,
                                pScene, ppBackbufferTextures)
         {
-
+            m_descriptorSetNum = DESCRIPTOR_SET_NUM;
+            m_descriptorUpdateDataTable.resize(DESCRIPTOR_SET_NUM);
         }
 
         VulkanDeferredRender::~VulkanDeferredRender()
@@ -267,7 +270,7 @@ namespace VulkanEngine
                 }
             }
 
-            status = m_mainSceneRenderPass.update(deltaTime, { m_descriptorUpdateDataList, std::vector<VulkanDescriptorUpdateData>() });
+            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
 
             assert(status == BX_SUCCESS);
 
@@ -338,9 +341,14 @@ namespace VulkanEngine
         }
 
         VulkanUniformBufferResource VulkanDeferredRender::createViewMatrixUniformBufferResource(
+            const UINT setIndex,
             const UINT viewMatrixUboIndex)
         {
             VulkanUniformBufferResource viewMatrixUniformBufferResource = {};
+
+            m_descriptorUpdateDataTable[setIndex].push_back(
+                { viewMatrixUboIndex,
+                  const_cast<Math::Mat4*>(&(m_pScene->GetCamera(0)->GetViewMatrix())) });
 
             Buffer::VulkanUniformBuffer* pViewMatUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
             pViewMatUniformBuffer->createUniformBuffer(
@@ -351,6 +359,7 @@ namespace VulkanEngine
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pViewMatUniformBuffer));
 
             viewMatrixUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            viewMatrixUniformBufferResource.setIndex         = setIndex;
             viewMatrixUniformBufferResource.bindingPoint     = viewMatrixUboIndex;
             viewMatrixUniformBufferResource.uniformbufferNum = 1;
             viewMatrixUniformBufferResource.pUniformBuffer   =
@@ -363,7 +372,7 @@ namespace VulkanEngine
         {
             std::vector<VulkanUniformBufferResource> gBufferUniformbufferResourceList =
             {
-                createTransMatrixUniformBufferResource(TRANSFORM_MATRIX_UBO_INDEX)
+                createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX)
             };
 
             return gBufferUniformbufferResourceList;
@@ -373,9 +382,9 @@ namespace VulkanEngine
         {
             std::vector<VulkanUniformBufferResource> shadingPassUniformbufferResourceList =
             {
-                createLightUniformBufferResource(LIGHT_UBO_INDEX),
-                createCamUniformBufferResource(CAM_UBO_INDEX),
-                createViewMatrixUniformBufferResource(VIEW_MATRIX_UBO_INDEX)
+                createLightUniformBufferResource(1, LIGHT_UBO_INDEX),
+                createCamUniformBufferResource(1, CAM_UBO_INDEX),
+                createViewMatrixUniformBufferResource(1, VIEW_MATRIX_UBO_INDEX)
             };
 
             return shadingPassUniformbufferResourceList;

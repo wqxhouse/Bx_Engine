@@ -15,6 +15,8 @@
 #define LIGHT_UBO_INDEX            1
 #define CAM_UBO_INDEX              2
 
+#define DESCRIPTOR_SET_NUM 1
+
 namespace VulkanEngine
 {
     namespace Render
@@ -31,6 +33,8 @@ namespace VulkanEngine
             : VulkanRenderBase(pSetting, pHwDevice, pDevice, pCmdBufferMgr, pDescritorMgr, pTextureMgr,
                                pScene, ppBackbufferTextures)
         {
+            m_descriptorSetNum = DESCRIPTOR_SET_NUM;
+            m_descriptorUpdateDataTable.resize(DESCRIPTOR_SET_NUM);
         }
 
         VulkanForwardRender::~VulkanForwardRender()
@@ -258,7 +262,7 @@ namespace VulkanEngine
                 }
             }
 
-            status = m_mainSceneRenderPass.update(deltaTime, { m_descriptorUpdateDataList });
+            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
             assert(status == BX_SUCCESS);
 
             for (VulkanRenderPass postRenderPass : m_postDrawPassList)
@@ -298,9 +302,9 @@ namespace VulkanEngine
         {
             std::vector<VulkanUniformBufferResource> uniformbufferResourceList =
             {
-                createTransMatrixUniformBufferResource(TRANSFORM_MATRIX_UBO_INDEX),
-                createLightUniformBufferResource(LIGHT_UBO_INDEX),
-                createCamUniformBufferResource(CAM_UBO_INDEX)
+                createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX),
+                createLightUniformBufferResource(0, LIGHT_UBO_INDEX),
+                createCamUniformBufferResource(0, CAM_UBO_INDEX)
             };
 
             return uniformbufferResourceList;

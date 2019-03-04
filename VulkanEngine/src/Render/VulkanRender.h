@@ -171,12 +171,15 @@ namespace VulkanEngine
             void genBackbufferDepthBuffer();
 
             VulkanUniformBufferResource createTransMatrixUniformBufferResource(
+                const UINT setIndex,
                 const UINT transMatrixUboIndex);
 
             VulkanUniformBufferResource createLightUniformBufferResource(
+                const UINT setIndex,
                 const UINT lightUboIndex);
 
             VulkanUniformBufferResource createCamUniformBufferResource(
+                const UINT setIndex,
                 const UINT camUboIndex);
 
             VulkanTextureResource createSceneTextures(
@@ -199,8 +202,9 @@ namespace VulkanEngine
 
             std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
 
+            UINT                                                         m_descriptorSetNum;
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
-            std::vector<VulkanDescriptorUpdateData>                      m_descriptorUpdateDataList;
+            std::vector<std::vector<VulkanDescriptorUpdateData>>         m_descriptorUpdateDataTable;
 
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
 
@@ -262,6 +266,7 @@ namespace VulkanEngine
             void createGBufferTextures();
 
             VulkanUniformBufferResource createViewMatrixUniformBufferResource(
+                const UINT setIndex,
                 const UINT viewMatrixUboIndex);
 
             std::vector<VulkanUniformBufferResource> createGbufferUniformBufferResource();

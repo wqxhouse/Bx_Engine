@@ -134,6 +134,7 @@ namespace VulkanEngine
         }
 
         VulkanUniformBufferResource VulkanRenderBase::createTransMatrixUniformBufferResource(
+            const UINT setIndex,
             const UINT transMatrixUboIndex)
         {
             VulkanUniformBufferResource transUniformBufferResource = {};
@@ -145,11 +146,14 @@ namespace VulkanEngine
             const UINT camNum = m_pScene->GetSceneCameraNum();
             const UINT objNum = camNum * modelNum;
 
-            assert(objNum <= DEFAULT_MAX_RENDER_SCENE_OBJ_NUM);
+            assert(
+                setIndex <  m_descriptorSetNum &&
+                objNum   <= DEFAULT_MAX_RENDER_SCENE_OBJ_NUM);
 
             m_transUniformbuffer.resize(objNum);
 
-            m_descriptorUpdateDataList.push_back({ transMatrixUboIndex, m_transUniformbuffer.data() });
+            m_descriptorUpdateDataTable[setIndex].push_back(
+                { transMatrixUboIndex, m_transUniformbuffer.data() });
 
             Buffer::VulkanUniformBufferDynamic * pMainSceneUniformbuffer =
                 new Buffer::VulkanUniformBufferDynamic(m_pDevice,
@@ -166,6 +170,7 @@ namespace VulkanEngine
 
             // Build transform uniform resource
             transUniformBufferResource.shaderType       = BX_VERTEX_SHADER;
+            transUniformBufferResource.setIndex         = setIndex;
             transUniformBufferResource.bindingPoint     = transMatrixUboIndex;
             transUniformBufferResource.uniformbufferNum = 1;
             transUniformBufferResource.pUniformBuffer   =
@@ -175,8 +180,11 @@ namespace VulkanEngine
         }
 
         VulkanUniformBufferResource VulkanRenderBase::createLightUniformBufferResource(
+            const UINT setIndex,
             const UINT lightUboIndex)
         {
+            assert(setIndex < m_descriptorSetNum);
+
             VulkanUniformBufferResource lightUniformBufferResource = {};
 
             // Create light uniform buffer update data
@@ -258,7 +266,7 @@ namespace VulkanEngine
             }
 
             const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
-            m_descriptorUpdateDataList.push_back({ lightUboIndex, &m_lightUbo });
+            m_descriptorUpdateDataTable[setIndex].push_back({ lightUboIndex, &m_lightUbo });
 
             // Create light uniform buffer
             Buffer::VulkanUniformBuffer* pLightUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
@@ -268,6 +276,7 @@ namespace VulkanEngine
 
             // Build light uniform resource
             lightUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            lightUniformBufferResource.setIndex         = setIndex;
             lightUniformBufferResource.bindingPoint     = lightUboIndex;
             lightUniformBufferResource.uniformbufferNum = 1;
             lightUniformBufferResource.pUniformBuffer   =
@@ -277,14 +286,18 @@ namespace VulkanEngine
         }
 
         VulkanUniformBufferResource VulkanRenderBase::createCamUniformBufferResource(
+            const UINT setIndex,
             const UINT camUboIndex)
         {
+            assert(setIndex < m_descriptorSetNum);
+
             VulkanUniformBufferResource camUniformBufferResource = {};
 
             /// Camera position uniform buffer
             // Create camera position uniform buffer update data
-            m_descriptorUpdateDataList.push_back({ camUboIndex,
-                                                   const_cast<Math::Vector3*>(&(m_pScene->GetCamera(0)->GetTrans()->GetPos())) });
+            m_descriptorUpdateDataTable[setIndex].push_back(
+                { camUboIndex,
+                  const_cast<Math::Vector3*>(&(m_pScene->GetCamera(0)->GetTrans()->GetPos())) });
 
             Buffer::VulkanUniformBuffer* pCameraPositionUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
             pCameraPositionUniformBuffer->createUniformBuffer(
@@ -297,6 +310,7 @@ namespace VulkanEngine
 
             // Build camera uniform resource
             camUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            camUniformBufferResource.setIndex         = setIndex;
             camUniformBufferResource.bindingPoint     = camUboIndex;
             camUniformBufferResource.uniformbufferNum = 1;
             camUniformBufferResource.pUniformBuffer   =

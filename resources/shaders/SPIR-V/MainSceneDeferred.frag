@@ -114,5 +114,12 @@ void main()
         m_lightData.directionalLightList[0].lightBase.color.xyz,
         vec3(0.5f));
 
-    outColor = vec4(diffuseRadiance * texture(TestTexture, texCoord).xyz, 1.0f);
+	vec3 specularRadiance = calPhongSpecularRadiance(
+        normalizedNormalView,
+        normalizedLightView,
+        m_lightData.directionalLightList[0].lightBase.color.xyz,
+        vec3(0.6f),
+        10.0f);
+
+    outColor = vec4((diffuseRadiance + specularRadiance)* texture(TestTexture, texCoord).xyz, 1.0f);
 }
