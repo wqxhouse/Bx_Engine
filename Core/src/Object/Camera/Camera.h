@@ -56,12 +56,12 @@ namespace Object
             virtual void update(float deltaTime);
             //virtual void draw() {}
 
-            inline CameraType GetCameraType()       const { return m_cameraType; }
+            INLINE CameraType GetCameraType()       const { return m_cameraType; }
 
-            inline Math::Mat4 GetViewMatrix()             { return m_pTrans->GetViewMat(); }
-            inline Math::Mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
-            inline float      GetNearClip()         const { return m_nearClip; }
-            inline float      GetFarClip()          const { return m_farClip; }
+            INLINE const Math::Mat4& GetViewMatrix()             { return m_pTrans->GetViewMat(); }
+            INLINE const Math::Mat4& GetProjectionMatrix() const { return m_projectionMatrix;     }
+            INLINE const float       GetNearClip()         const { return m_nearClip;             }
+            INLINE const float       GetFarClip()          const { return m_farClip;              }
 
             void setCamTrans(
                 const Math::Vector3& pos,

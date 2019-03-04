@@ -170,7 +170,14 @@ namespace VulkanEngine
 
             void genBackbufferDepthBuffer();
 
-            std::vector<VulkanUniformBufferResource> createUniformBufferResource();
+            VulkanUniformBufferResource createTransMatrixUniformBufferResource(
+                const UINT transMatrixUboIndex);
+
+            VulkanUniformBufferResource createLightUniformBufferResource(
+                const UINT lightUboIndex);
+
+            VulkanUniformBufferResource createCamUniformBufferResource(
+                const UINT camUboIndex);
 
             VulkanTextureResource createSceneTextures(
                 const UINT                setIndex,
@@ -228,6 +235,7 @@ namespace VulkanEngine
             void draw();
 
         private:
+            std::vector<VulkanUniformBufferResource> createUniformBufferResource();
         };
 
         class VulkanDeferredRender : public VulkanRenderBase
@@ -253,6 +261,8 @@ namespace VulkanEngine
         private:
             void createGBufferTextures();
 
+            std::vector<VulkanUniformBufferResource> createUniformBufferResource();
+
             std::vector<VulkanRenderTargetCreateData> genRenderTargetsCreateData(
                 IN  const std::vector<VulkanRenderTargetCreateDescriptor>&             RTDescList,
                 OUT std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>>* pRTFrameBuffersCreateDataList);
@@ -273,7 +283,8 @@ namespace VulkanEngine
             VulkanRenderSubpassCreateData genShadingPassCreateData(
                 IN const VulkanRenderProperties&                               renderProps,
                 IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
-                OUT Shader::BxShaderMeta*                                      pShadingPassShader,
+                OUT Shader::BxShaderMeta*                                      pShadingPassShaderMeta,
+                OUT std::vector<VulkanUniformBufferResource>*                  pShadingPassUniformBufferResourceList,
                 OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
                 OUT std::vector<VulkanTextureResource>*                        pInputAttachmentResourceList,
                 OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,

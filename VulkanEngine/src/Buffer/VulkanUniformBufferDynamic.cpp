@@ -70,8 +70,11 @@ namespace VulkanEngine
 
             assert(
                 (uboNum                     <= MAX_DYNAMIC_UNIFORM_STRUCT_NUM)  &&
+                (uboNum                     >  0)                               &&
                 (m_uniformStructSize        <= MAX_DYNAMIC_UNIFORM_STRUCT_SIZE) &&
-                (m_dynamicUniformBufferSize <= MAX_DYNAMIC_UNIFORM_SIZE));
+                (m_uniformStructSize        >  0)                               &&
+                (m_dynamicUniformBufferSize <= MAX_DYNAMIC_UNIFORM_SIZE)        &&
+                (m_dynamicUniformBufferSize >  0));
 
             result = VulkanUniformBuffer::createUniformBuffer(hwDevice,
                                                               uboNum,
