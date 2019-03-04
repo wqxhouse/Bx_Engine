@@ -17,9 +17,6 @@ namespace Object
             const UINT             objectId,
             const LightCreateInfo& lightCreateInfo)
             : LightBase(objectId, DIRECTIONAL_LIGHT, lightCreateInfo)
-                        /*new Trans(Math::Vector3(0.0f, 0.0f, 0.0f),
-                                  direction,
-                                  Math::Vector3(0.0f, 1.0f, 0.0f))*/
         {
             m_direction      = m_pTrans->GetFront();
             m_direction_vec4 = Math::Vector4(m_direction, 0.0f);

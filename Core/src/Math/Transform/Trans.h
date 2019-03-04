@@ -38,9 +38,9 @@ public:
         const Math::Vector3& center,
         const Math::Vector3& up,
         const Math::Vector3& scale,
-        const float      pitch,
-        const float      yaw,
-        const float      roll)
+        const float          pitch,
+        const float          yaw,
+        const float          roll)
     {
         this->pos   = pos;
         this->front = Math::Vector3::Normalize(center - pos);
@@ -59,7 +59,7 @@ public:
 
     void update();
 
-    INLINE Math::Vector3 GetPos() const
+    INLINE const Math::Vector3& GetPos() const
     {
         return pos;
     }

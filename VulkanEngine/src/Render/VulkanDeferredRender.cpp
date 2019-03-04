@@ -139,7 +139,7 @@ namespace VulkanEngine
             VulkanSubpassGraphicsPipelineCreateData   shadingPassGraphicsPipelineCreateData    = {};
 
             /// GBuffer subpass
-            std::vector<VulkanUniformBufferResource>   gBufferTransUniformBufferResource = createTransUniformBufferResource();
+            std::vector<VulkanUniformBufferResource>   gBufferTransUniformBufferResource = createUniformBufferResource();
 
             std::vector<VulkanDescriptorResources>     gBufferDescriptorResourcesList(1);
 
