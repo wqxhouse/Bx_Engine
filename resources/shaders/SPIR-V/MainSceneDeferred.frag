@@ -105,9 +105,10 @@ vec3 calPhongSpecularRadiance(
 void main()
 {
 	vec3 normalizedNormalView = normalize(subpassLoad(normalViewTexture).xyz);
-    vec2 texCoord             = subpassLoad(texCoordTexture).xy;
     vec3 normalizedLightView  = normalize((m_viewMat.viewMat * m_lightData.directionalLightList[0].direction).xyz);
-    
+
+    vec2 texCoord             = subpassLoad(texCoordTexture).xy;
+
     vec3 diffuseRadiance = calPhongDiffuseRadiance(
         normalizedNormalView,
         normalizedLightView,
@@ -121,5 +122,5 @@ void main()
         vec3(0.6f),
         10.0f);
 
-    outColor = vec4((diffuseRadiance + specularRadiance)* texture(TestTexture, texCoord).xyz, 1.0f);
+    outColor = vec4((diffuseRadiance + specularRadiance) * texture(TestTexture, texCoord).xyz, 1.0f);
 }
