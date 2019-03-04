@@ -61,7 +61,7 @@ layout (binding = 1) uniform LightData
 layout (binding = 2) uniform CamPosUniform
 {
     vec3 camPosWorld;
-} m_camPos;
+};
 
 // Calculate the diffuse radiance for phong shading
 // N(normal), L(light direction) must be normalized
@@ -88,7 +88,7 @@ vec3 calPhongSpecularRadiance(
 
     vec3 reflectVec  = normalize(2 * dot(N, -L) * N + L);
 
-    vec3 camPosView  = (fragViewMat * vec4(m_camPos.camPosWorld, 1.0f)).xyz;
+    vec3 camPosView  = (fragViewMat * vec4(camPosWorld, 1.0f)).xyz;
     vec3 V           = normalize(camPosView - posView);
 
     float VoR        = max(dot(V, reflectVec), 0.0f);
