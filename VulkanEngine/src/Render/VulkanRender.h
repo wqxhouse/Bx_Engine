@@ -116,11 +116,46 @@ namespace VulkanEngine
                 Math::Mat4 wvpMat;
             };
 
+            struct LightBaseUbo
+            {
+                Math::Vector4 color;
+                Math::Mat4    lightTransVP;
+            };
+
+            struct DirectionalLightUbo : public LightBaseUbo
+            {
+                Math::Vector4 direction;
+            };
+
+            struct PointLightUbo : public LightBaseUbo
+            {
+                Math::Vector3 position;
+                float         range;
+            };
+
+            struct SpotLightUbo : public LightBaseUbo
+            {
+                Math::Vector3 position;
+                float         innerRadiusCosine;
+
+                Math::Vector3 direction;
+                float         outerRadiusCosine;
+            };
+
             struct DynamicLightUbo
             {
-                Object::Light::DirectionalLight m_directionalLightList[MAX_DIRECTIONAL_LIGHT_NUM];
-                Object::Light::PointLight       m_pointLightList[MAX_DYNAMIC_POINT_LIGHT_NUM];
-                Object::Light::SpotLight        m_spotLightList[MAX_DYNAMIC_SPOT_LIGHT_NUM];
+                DynamicLightUbo() : directionalLightNum(0),
+                                    pointLightNum(0),
+                                    spotLightNum(0) {}
+
+                UINT                directionalLightNum; Math::Vector3 padding;
+                DirectionalLightUbo directionalLightList[MAX_DIRECTIONAL_LIGHT_NUM];
+
+                UINT                pointLightNum; Math::Vector3 padding2;
+                PointLightUbo       pointLightList[MAX_DYNAMIC_POINT_LIGHT_NUM];
+
+                UINT                spotLightNum; Math::Vector3 padding3;
+                SpotLightUbo        spotLightList[MAX_DYNAMIC_SPOT_LIGHT_NUM];
             };
 
             void parseScene();
@@ -135,7 +170,7 @@ namespace VulkanEngine
 
             void genBackbufferDepthBuffer();
 
-            std::vector<VulkanUniformBufferResource> createTransUniformBufferResource();
+            std::vector<VulkanUniformBufferResource> createUniformBufferResource();
 
             VulkanTextureResource createSceneTextures(
                 const UINT                setIndex,
@@ -158,11 +193,13 @@ namespace VulkanEngine
             std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
 
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
+            std::vector<VulkanDescriptorUpdateData>                      m_descriptorUpdateDataList;
 
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
 
-            std::vector<VulkanDescriptorUpdateData> m_descriptorUpdateDataList;
             std::vector<TransUbo>                   m_transUniformbuffer;
+
+            DynamicLightUbo                         m_lightUbo;
 
         private:
             BOOL m_isDepthTestEnabled;

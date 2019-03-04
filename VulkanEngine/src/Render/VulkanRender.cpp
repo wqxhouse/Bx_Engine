@@ -9,6 +9,11 @@
 
 #include "VulkanRender.h"
 
+#define TRANSFORM_MATRIX_UBO_INDEX 0
+#define LIGHT_UBO_INDEX            1
+#define CAM_UBO_INDEX              2
+#define UBO_NUM                    (CAM_UBO_INDEX + 1)
+
 namespace VulkanEngine
 {
     namespace Render
@@ -89,6 +94,7 @@ namespace VulkanEngine
                 }
             }
 
+            // Update object transform matrix
             const UINT camNum = m_pScene->GetSceneCameraNum();
             const UINT objNum = camNum * modelNum;
 
@@ -96,7 +102,92 @@ namespace VulkanEngine
 
             m_transUniformbuffer.resize(objNum);
 
-            m_descriptorUpdateDataList.push_back({ 0, m_transUniformbuffer.data() });
+            m_descriptorUpdateDataList.push_back({ TRANSFORM_MATRIX_UBO_INDEX, m_transUniformbuffer.data() });
+
+            // Update light data
+            memset(&m_lightUbo, 0, sizeof(DynamicLightUbo));
+
+            const UINT lightNum = m_pScene->GetSceneLightNum();
+
+            for (UINT lightIndex = 0; lightIndex < lightNum; ++lightIndex)
+            {
+                const Object::Light::LightBase* pLight = m_pScene->GetLight(lightIndex);
+                switch (pLight->GetLightType())
+                {
+                    case DIRECTIONAL_LIGHT:
+                    {
+                        const Object::Light::DirectionalLight* pDirectionalLight =
+                            static_cast<const Object::Light::DirectionalLight*>(pLight);
+
+                        DirectionalLightUbo* pDirectionalLightUbo =
+                            &(m_lightUbo.directionalLightList[m_lightUbo.directionalLightNum]);
+
+                        if (pDirectionalLight->IsEnable() == TRUE)
+                        {
+                            pDirectionalLightUbo->color = pDirectionalLight->GetLightColorVec4();
+                        }
+
+                        pDirectionalLightUbo->direction = Math::Vector4(pDirectionalLight->GetDir(), 0.0f);
+
+                        m_lightUbo.directionalLightNum++;
+
+                        break;
+                    }
+                    case POINT_LIGHT:
+                    {
+                        const Object::Light::PointLight* pPointLight =
+                            static_cast<const Object::Light::PointLight*>(pLight);
+
+                        PointLightUbo* pPointLightUbo =
+                            &(m_lightUbo.pointLightList[m_lightUbo.pointLightNum]);
+
+                        if (pPointLight->IsEnable() == TRUE)
+                        {
+                            pPointLightUbo->color = pPointLight->GetLightColorVec4();
+                        }
+
+                        pPointLightUbo->position = pPointLight->GetPos();
+                        pPointLightUbo->range    = pPointLight->GetRadius();
+
+                        m_lightUbo.pointLightNum++;
+
+                        break;
+                    }
+                    case SPOT_LIGHT:
+                    {
+                        const Object::Light::SpotLight* pSpotLight =
+                            static_cast<const Object::Light::SpotLight*>(pLight);
+
+                        SpotLightUbo* pSpotLightUbo =
+                            &(m_lightUbo.spotLightList[m_lightUbo.spotLightNum]);
+
+                        if (pSpotLight->IsEnable() == TRUE)
+                        {
+                            pSpotLightUbo->color = pSpotLight->GetLightColorVec4();
+                        }
+
+                        pSpotLightUbo->position          = pSpotLight->GetPos();
+                        pSpotLightUbo->direction         = pSpotLight->GetDir();
+                        pSpotLightUbo->innerRadiusCosine = pSpotLight->GetInnerAngleCosine();
+                        pSpotLightUbo->outerRadiusCosine = pSpotLight->GetOuterAngleCosine();
+
+                        m_lightUbo.spotLightNum++;
+
+                        break;
+                    }
+                    default:
+                    {
+                        NotSupported();
+                        break;
+                    }
+                }
+            }
+
+            m_descriptorUpdateDataList.push_back({ LIGHT_UBO_INDEX, &m_lightUbo });
+
+            // Update camera position data
+            m_descriptorUpdateDataList.push_back({ CAM_UBO_INDEX,
+                                                   const_cast<Math::Vector3*>(&(m_pScene->GetCamera(0)->GetTrans()->GetPos())) });
         }
 
         VulkanRenderTargetCreateData VulkanRenderBase::genAttachmentCreateData(
@@ -142,10 +233,13 @@ namespace VulkanEngine
             }
         }
 
-        std::vector<VulkanUniformBufferResource> VulkanRenderBase::createTransUniformBufferResource()
+        std::vector<VulkanUniformBufferResource> VulkanRenderBase::createUniformBufferResource()
         {
+            std::vector<VulkanUniformBufferResource> uniformbufferResourceList(UBO_NUM);
+
             const VkPhysicalDeviceProperties hwProps = Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
 
+            /// Transform matrix uniform buffer
             Buffer::VulkanUniformBufferDynamic* pMainSceneUniformbuffer =
                 new Buffer::VulkanUniformBufferDynamic(m_pDevice,
                                                        hwProps.limits.minUniformBufferOffsetAlignment);
@@ -153,22 +247,48 @@ namespace VulkanEngine
             pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
                                                          (UINT)m_transUniformbuffer.size(),
                                                          sizeof(m_transUniformbuffer[0]),
-                                                         m_transUniformbuffer.data());
-
-            Buffer::VulkanUniformBuffer* pTestUniformBuffer =
-                new Buffer::VulkanUniformBuffer(m_pDevice);
+                                                         static_cast<void*>(m_transUniformbuffer.data()));
 
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
 
-            std::vector<VulkanUniformBufferResource> transUniformbufferResourceList(1);
-            transUniformbufferResourceList[0].shaderType       = BX_VERTEX_SHADER;
-            transUniformbufferResourceList[0].bindingPoint     = 0;
-            transUniformbufferResourceList[0].uniformbufferNum = 1;
-            transUniformbufferResourceList[0].pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[0].get());
+            // Build transform uniform resource
+            uniformbufferResourceList[TRANSFORM_MATRIX_UBO_INDEX].shaderType       = BX_VERTEX_SHADER;
+            uniformbufferResourceList[TRANSFORM_MATRIX_UBO_INDEX].bindingPoint     = TRANSFORM_MATRIX_UBO_INDEX;
+            uniformbufferResourceList[TRANSFORM_MATRIX_UBO_INDEX].uniformbufferNum = 1;
+            uniformbufferResourceList[TRANSFORM_MATRIX_UBO_INDEX].pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[TRANSFORM_MATRIX_UBO_INDEX].get());
 
-            return transUniformbufferResourceList;
+            /// Light data uniform buffer
+            Buffer::VulkanUniformBuffer* pLightUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
+            pLightUniformBuffer->createUniformBuffer(*m_pHwDevice, 1, sizeof(m_lightUbo), static_cast<void*>(&m_lightUbo));
+
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pLightUniformBuffer));
+
+            // Build light uniform resource
+            uniformbufferResourceList[LIGHT_UBO_INDEX].shaderType       = BX_FRAGMENT_SHADER;
+            uniformbufferResourceList[LIGHT_UBO_INDEX].bindingPoint     = LIGHT_UBO_INDEX;
+            uniformbufferResourceList[LIGHT_UBO_INDEX].uniformbufferNum = 1;
+            uniformbufferResourceList[LIGHT_UBO_INDEX].pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[LIGHT_UBO_INDEX].get());
+
+            /// Camera position uniform buffer
+            Buffer::VulkanUniformBuffer* pCameraPositionUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
+            pCameraPositionUniformBuffer->createUniformBuffer(
+                *m_pHwDevice, 1, sizeof(Math::Vector3), static_cast<const void*>(&(m_pScene->GetCamera(0)->GetTrans()->GetPos())));
+
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pCameraPositionUniformBuffer));
+
+            // Build light uniform resource
+            uniformbufferResourceList[CAM_UBO_INDEX].shaderType       = BX_FRAGMENT_SHADER;
+            uniformbufferResourceList[CAM_UBO_INDEX].bindingPoint     = CAM_UBO_INDEX;
+            uniformbufferResourceList[CAM_UBO_INDEX].uniformbufferNum = 1;
+            uniformbufferResourceList[CAM_UBO_INDEX].pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[CAM_UBO_INDEX].get());
+
+            return uniformbufferResourceList;
         }
 
         VulkanTextureResource VulkanRenderBase::createSceneTextures(

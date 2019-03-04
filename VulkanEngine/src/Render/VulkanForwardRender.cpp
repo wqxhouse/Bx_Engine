@@ -115,9 +115,6 @@ namespace VulkanEngine
                 pRenderTargetCreateData->pRenderTargetFramebufferCreateData = pRenderTargetsFramebufferCreateData;
             }
 
-            // Initialize render pass resources
-            // std::vector<VulkanUniformBufferResource*> uniformbufferResources;
-
             // Initialize vertex input for render pass
             VulkanRenderResources renderSources         = {};
             renderSources.vertexDescriptionBindingPoint = 0;
@@ -129,7 +126,7 @@ namespace VulkanEngine
             descriptorResources.descriptorSetIndex        = 0;
 
             // Initialize uniform buffers for render pass
-            std::vector<VulkanUniformBufferResource> uniformBufferResourceList = createTransUniformBufferResource();
+            std::vector<VulkanUniformBufferResource> uniformBufferResourceList = createUniformBufferResource();
             descriptorResources.pUniformBufferResourceList                     = &uniformBufferResourceList;
 
             // Initialize textures for render pass
@@ -154,7 +151,7 @@ namespace VulkanEngine
                     BX_FORMAT_RGBA8,
                     textureSamplerCreateData);
 
-            std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 1, 1, pTexture) };
+            std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 3, 1, pTexture) };
             descriptorResources.pTextureResouceList                     = &sceneTextureResourceList;
 
             // Added descriptor resources to the resource list

@@ -13,8 +13,8 @@
 #include "../ObjectBase.h"
 
 #define MAX_DIRECTIONAL_LIGHT_NUM   16
-#define MAX_DYNAMIC_POINT_LIGHT_NUM 504
-#define MAX_DYNAMIC_SPOT_LIGHT_NUM  504
+#define MAX_DYNAMIC_POINT_LIGHT_NUM 16
+#define MAX_DYNAMIC_SPOT_LIGHT_NUM  16
 #define MAX_STATIC_POINT_LIGHT_NUM  8192
 #define MAX_STATIC_SPOT_LIGHT_NUM   8192
 
@@ -56,16 +56,16 @@ namespace Object
             virtual void translate(const Math::Vector3& transVector) {}
             virtual void rotate(const Math::Vector3& axis, const float angle) {}
 
-            virtual inline Math::Vector3 GetDir() { return Math::Vector3(); }
+            virtual INLINE Math::Vector3 GetDir() { return Math::Vector3(); }
 
-            inline LightType     GetLightType()      const { return m_lightType; }
-            inline Math::Vector3 GetLightColor()     const { return m_color; }
-            inline Math::Vector4 GetLightColorVec4() const { return m_light_vec4; }
-            inline void*         GetDataPtr() { return reinterpret_cast<void*>(&m_light_vec4); }
+            INLINE LightType     GetLightType()      const { return m_lightType; }
+            INLINE Math::Vector3 GetLightColor()     const { return m_color; }
+            INLINE Math::Vector4 GetLightColorVec4() const { return m_light_vec4; }
+            INLINE void*         GetDataPtr() { return reinterpret_cast<void*>(&m_light_vec4); }
 
-            inline BOOL          IsLightEnable()     const { return ((enableLight == TRUE_F) ? TRUE : FALSE); }
-            inline void          EnableLight() { enableLight = TRUE_F; }
-            inline void          DisableLight() { enableLight = FALSE_F; }
+            INLINE BOOL          IsLightEnable()     const { return ((enableLight == TRUE_F) ? TRUE : FALSE); }
+            INLINE void          EnableLight() { enableLight = TRUE_F; }
+            INLINE void          DisableLight() { enableLight = FALSE_F; }
 
         protected:
             /// Light data1
@@ -99,6 +99,8 @@ namespace Object
         class DirectionalLight : public LightBase
         {
         public:
+            DirectionalLight() : LightBase(INVALID_OBJECT_ID, DIRECTIONAL_LIGHT, {}) {}
+
             DirectionalLight(
                 const UINT             objectId,
                 const LightCreateInfo& lightCreateInfo);
@@ -107,10 +109,10 @@ namespace Object
 
             void rotate(const Math::Vector3& axis, const float angle);
 
-            static inline UINT GetDataSize() { return (sizeof(DirectionalLight)); }
+            static INLINE UINT GetDataSize() { return (sizeof(DirectionalLight)); }
 
-            inline Math::Vector3 GetDir()     const { return m_direction; }
-            inline Math::Vector4 GetDirVec4() const { return m_direction_vec4; }
+            INLINE Math::Vector3 GetDir()     const { return m_direction; }
+            INLINE Math::Vector4 GetDirVec4() const { return m_direction_vec4; }
 
         private:
             union
@@ -128,6 +130,8 @@ namespace Object
         class PointLight : public LightBase
         {
         public:
+            PointLight() : LightBase(INVALID_OBJECT_ID, POINT_LIGHT, {}) {}
+
             PointLight(
                 const UINT                  objectId,
                 const PointLightCreateInfo& pointLightCreateInfo);
@@ -136,9 +140,11 @@ namespace Object
 
             void translate(const Math::Vector3& transVector);
 
-            static inline UINT GetDataSize() { return (sizeof(PointLight)); }
+            static INLINE UINT GetDataSize()          { return (sizeof(PointLight)); }
 
-            inline Math::Vector3 GetPos()      const { return m_position; }
+            INLINE const Math::Vector3 GetPos() const { return m_position; }
+
+            INLINE const float GetRadius()      const { return m_radius; }
 
         private:
             union
@@ -156,6 +162,8 @@ namespace Object
         class SpotLight : public LightBase
         {
         public:
+            SpotLight() : LightBase(INVALID_OBJECT_ID, SPOT_LIGHT, {}) {}
+
             SpotLight(
                 const UINT                 objectId,
                 const SpotLightCreateInfo& spotLightCreateInfo);
@@ -165,7 +173,7 @@ namespace Object
             void translate(const Math::Vector3& transVector);
             void rotate(const Math::Vector3& axis, const float angle);
 
-            static inline UINT GetDataSize() { return (sizeof(SpotLight)); }
+            static INLINE UINT GetDataSize() { return (sizeof(SpotLight)); }
 
         private:
             union
@@ -183,15 +191,18 @@ namespace Object
             };
 
         public:
-            inline Math::Vector3  GetPos()           const { return m_position; }
-            inline Math::Vector3  GetDir()           const { return m_direction; }
-            inline Math::Vector4* GetSpotLightData() { return &(m_v4[0]); }
+            INLINE Math::Vector3  GetPos()           const { return m_position;  }
+            INLINE Math::Vector3  GetDir()           const { return m_direction; }
+            INLINE Math::Vector4* GetSpotLightData()       { return &(m_v4[0]);  }
 
-            inline float GetInnerAngleRadians() const { return std::acos(m_in_cosTheta)  * 2.0f; }
-            inline float GetOuterAngleRadians() const { return std::acos(m_out_cosTheta) * 2.0f; }
+            INLINE const float GetInnerAngleCosine() const { return m_in_cosTheta;  }
+            INLINE const float GetOuterAngleCosine() const { return m_out_cosTheta; }
 
-            inline float GetInnerAngleDegree() const { return Math::Degree(GetInnerAngleRadians()); }
-            inline float GetOuterAngleDegree() const { return Math::Degree(GetOuterAngleRadians()); }
+            INLINE float GetInnerAngleRadians() const { return std::acos(m_in_cosTheta)  * 2.0f; }
+            INLINE float GetOuterAngleRadians() const { return std::acos(m_out_cosTheta) * 2.0f; }
+
+            INLINE float GetInnerAngleDegree() const { return Math::Degree(GetInnerAngleRadians()); }
+            INLINE float GetOuterAngleDegree() const { return Math::Degree(GetOuterAngleRadians()); }
         };
 
         //TODO: other kinds of lights
