@@ -261,7 +261,11 @@ namespace VulkanEngine
         private:
             void createGBufferTextures();
 
-            std::vector<VulkanUniformBufferResource> createUniformBufferResource();
+            VulkanUniformBufferResource createViewMatrixUniformBufferResource(
+                const UINT viewMatrixUboIndex);
+
+            std::vector<VulkanUniformBufferResource> createGbufferUniformBufferResource();
+            std::vector<VulkanUniformBufferResource> createShadingPassUniformBufferResource();
 
             std::vector<VulkanRenderTargetCreateData> genRenderTargetsCreateData(
                 IN  const std::vector<VulkanRenderTargetCreateDescriptor>&             RTDescList,

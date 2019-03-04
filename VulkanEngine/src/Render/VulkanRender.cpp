@@ -160,6 +160,7 @@ namespace VulkanEngine
                 sizeof(m_transUniformbuffer[0]),
                 static_cast<void*>(m_transUniformbuffer.data()));
 
+            const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
 
@@ -168,7 +169,7 @@ namespace VulkanEngine
             transUniformBufferResource.bindingPoint     = transMatrixUboIndex;
             transUniformBufferResource.uniformbufferNum = 1;
             transUniformBufferResource.pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[transMatrixUboIndex].get());
+                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[descriptorBufferIndex].get());
 
             return transUniformBufferResource;
         }
@@ -256,6 +257,7 @@ namespace VulkanEngine
                 }
             }
 
+            const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
             m_descriptorUpdateDataList.push_back({ lightUboIndex, &m_lightUbo });
 
             // Create light uniform buffer
@@ -269,7 +271,7 @@ namespace VulkanEngine
             lightUniformBufferResource.bindingPoint     = lightUboIndex;
             lightUniformBufferResource.uniformbufferNum = 1;
             lightUniformBufferResource.pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[lightUboIndex].get());
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[descriptorBufferIndex].get());
 
             return lightUniformBufferResource;
         }
@@ -288,6 +290,8 @@ namespace VulkanEngine
             pCameraPositionUniformBuffer->createUniformBuffer(
                 *m_pHwDevice, 1, sizeof(Math::Vector3), static_cast<const void*>(&(m_pScene->GetCamera(0)->GetTrans()->GetPos())));
 
+            const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
+
             m_pDescriptorBufferList.push_back(
                 std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pCameraPositionUniformBuffer));
 
@@ -296,7 +300,7 @@ namespace VulkanEngine
             camUniformBufferResource.bindingPoint     = camUboIndex;
             camUniformBufferResource.uniformbufferNum = 1;
             camUniformBufferResource.pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[camUboIndex].get());
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[descriptorBufferIndex].get());
 
             return camUniformBufferResource;
         }

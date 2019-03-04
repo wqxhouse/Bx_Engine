@@ -146,16 +146,6 @@ namespace VulkanEngine
             /// GBuffer subpass
             std::vector<VulkanUniformBufferResource>   gBufferTransUniformBufferResource = createGbufferUniformBufferResource();
 
-            // Build light uniform resource
-            VulkanUniformBufferResource viewMatUniformBufferResource = {};
-            viewMatUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
-            viewMatUniformBufferResource.bindingPoint     = VIEW_MATRIX_UBO_INDEX;
-            viewMatUniformBufferResource.uniformbufferNum = 1;
-            viewMatUniformBufferResource.pUniformBuffer   =
-                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[m_pDescriptorBufferList.size() - 1].get());
-
-            gBufferTransUniformBufferResource.push_back(viewMatUniformBufferResource);
-
             std::vector<VulkanDescriptorResources>     gBufferDescriptorResourcesList(1);
 
             std::vector<VulkanRenderTargetCreateData*> gBufferRTCreateDataRefList =
