@@ -24,34 +24,34 @@ int main()
     setting.m_graphicsSetting.DisableSSAO();
     setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
 
-    // Memory
-    Memory::MemoryPool          m_memPool(256 * 1024 * 1024);
-    Memory::MemoryPoolAllocator m_allocator(&m_memPool,
-                                            DEFAULT_MAX_RENDER_SCENE_OBJ_NUM * DEFAULT_MAX_RENDER_SCENE_NUM,
-                                            static_cast<UINT>(Scene::RenderScene::GetMaxObjSize()),
-                                            0,
-                                            Memory::Allocator::DEFAULT_ALIGNMENT_SIZE);
-
-    Memory::MemoryPoolArena     m_arena(&m_allocator);
-
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);
     m_oglTemplate.run();
 #elif BX_VULKAN
+    // Memory
+    Memory::MemoryPool          m_memPool(256 * 1024 * 1024);
+    Memory::MemoryPoolAllocator m_allocator(&m_memPool,
+        DEFAULT_MAX_RENDER_SCENE_OBJ_NUM * DEFAULT_MAX_RENDER_SCENE_NUM,
+        static_cast<UINT>(Scene::RenderScene::GetMaxObjSize()),
+        0,
+        Memory::Allocator::DEFAULT_ALIGNMENT_SIZE);
+
+    Memory::MemoryPoolArena     m_arena(&m_allocator);
+
     std::unique_ptr<Scene::RenderScene> m_pScene =
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
 
-    m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+    /*m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
                           &(Trans(Math::Vector3(-2.0f, 0.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
+                                  Math::Vector3(0.0f, 1.0f,  0.0f))));*/
 
     m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-                          &(Trans(Math::Vector3(-2.0f, -2.0f,  0.0f),
+                          &(Trans(Math::Vector3(0.0f, 0.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 
-    m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+    /*m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
                           &(Trans(Math::Vector3(2.0f, 0.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
@@ -59,12 +59,12 @@ int main()
     m_pScene->AddObjModel("../resources/models/farmhouse/farmhouse_tri.obj", "../resources/models/farmhouse/farmhouse_tri.mtl",
                           &(Trans(Math::Vector3(2.0f, -2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
+                                  Math::Vector3(0.0f, 1.0f,  0.0f))));*/
 
     Object::Camera::ProspectiveCameraCreateInfo prosCamCreateInfo = {};
-    prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(0.0f, 5.0f, 50.0f),
+    prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(0.0f, 0.0f,  5.0f),
                                             Math::Vector3(0.0f, 0.0f, -1.0f),
-                                            Math::Vector3(0.0f, 1.0f, 0.0f)));
+                                            Math::Vector3(0.0f, 1.0f,  0.0f)));
     prosCamCreateInfo.speed       = 5.0f;
     prosCamCreateInfo.aspectRatio = static_cast<float>(setting.resolution.width) /
                                     static_cast<float>(setting.resolution.height);
@@ -73,6 +73,15 @@ int main()
     prosCamCreateInfo.farClip     = 100.0f;
 
     m_pScene->AddProspectiveCamera(prosCamCreateInfo);
+
+    Object::Light::LightCreateInfo lightCreateInfo = {};
+    lightCreateInfo.pTrans     = &(Trans(Math::Vector3(1.0f, 1.0f, 1.0f),
+                                         Math::Vector3(0.0f, 0.0f, 0.0f),
+                                         Math::Vector3(0.0f, 1.0f, 0.0f)));
+
+    lightCreateInfo.lightColor = Math::Vector3(1.0f, 1.0f, 1.0f);
+
+    m_pScene->AddDirectionalLight(lightCreateInfo);
 
     VulkanEngine::VulkanContext m_vulkanContext(&setting, m_arena);
     m_vulkanContext.AddScene(m_pScene.get());

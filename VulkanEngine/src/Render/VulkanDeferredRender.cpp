@@ -23,6 +23,11 @@
 #define GBUFFER_DEPTH_BUFFER_INDEX     4
 #define GBUFFER_NUM                    (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
 
+#define TRANSFORM_MATRIX_UBO_INDEX 0
+#define LIGHT_UBO_INDEX            3
+#define CAM_UBO_INDEX              4
+#define VIEW_MATRIX_UBO_INDEX      5
+
 namespace VulkanEngine
 {
     namespace Render
@@ -139,7 +144,17 @@ namespace VulkanEngine
             VulkanSubpassGraphicsPipelineCreateData   shadingPassGraphicsPipelineCreateData    = {};
 
             /// GBuffer subpass
-            std::vector<VulkanUniformBufferResource>   gBufferTransUniformBufferResource = createUniformBufferResource();
+            std::vector<VulkanUniformBufferResource>   gBufferTransUniformBufferResource = createGbufferUniformBufferResource();
+
+            // Build light uniform resource
+            VulkanUniformBufferResource viewMatUniformBufferResource = {};
+            viewMatUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            viewMatUniformBufferResource.bindingPoint     = VIEW_MATRIX_UBO_INDEX;
+            viewMatUniformBufferResource.uniformbufferNum = 1;
+            viewMatUniformBufferResource.pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[m_pDescriptorBufferList.size() - 1].get());
+
+            gBufferTransUniformBufferResource.push_back(viewMatUniformBufferResource);
 
             std::vector<VulkanDescriptorResources>     gBufferDescriptorResourcesList(1);
 
@@ -166,6 +181,8 @@ namespace VulkanEngine
                                                                                  &gBufferGraphicsPipelineCreateData);
 
             // Shading pass
+            std::vector<VulkanUniformBufferResource>   shadingPassUniformBufferResource = createShadingPassUniformBufferResource();
+
             std::vector<VulkanRenderTargetCreateData*> shadingPassRTCreateDataRefList =
             {
                 &(deferredRenderRTList[0])
@@ -181,6 +198,7 @@ namespace VulkanEngine
             deferredRenderSubpassCreateDataList[1] = genShadingPassCreateData(renderProperties,
                                                                               &shadingPassRTCreateDataRefList,
                                                                               &shadingPassShader,
+                                                                              &shadingPassUniformBufferResource,
                                                                               &shadingPassTextureResourceList,
                                                                               &shadingPassInputAttachmentResourceList,
                                                                               &shadingPassDescriptorResourcesList,
@@ -329,6 +347,50 @@ namespace VulkanEngine
             }
         }
 
+        VulkanUniformBufferResource VulkanDeferredRender::createViewMatrixUniformBufferResource(
+            const UINT viewMatrixUboIndex)
+        {
+            VulkanUniformBufferResource viewMatrixUniformBufferResource = {};
+
+            Buffer::VulkanUniformBuffer* pViewMatUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
+            pViewMatUniformBuffer->createUniformBuffer(
+                *m_pHwDevice, 1, sizeof(Math::Mat4), static_cast<const void*>(&(m_pScene->GetCamera(0)->GetViewMatrix())));
+
+            const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pViewMatUniformBuffer));
+
+            viewMatrixUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            viewMatrixUniformBufferResource.bindingPoint     = viewMatrixUboIndex;
+            viewMatrixUniformBufferResource.uniformbufferNum = 1;
+            viewMatrixUniformBufferResource.pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[descriptorBufferIndex].get());
+
+            return viewMatrixUniformBufferResource;
+        }
+
+        std::vector<VulkanUniformBufferResource> VulkanDeferredRender::createGbufferUniformBufferResource()
+        {
+            std::vector<VulkanUniformBufferResource> gBufferUniformbufferResourceList =
+            {
+                createTransMatrixUniformBufferResource(TRANSFORM_MATRIX_UBO_INDEX)
+            };
+
+            return gBufferUniformbufferResourceList;
+        }
+
+        std::vector<VulkanUniformBufferResource> VulkanDeferredRender::createShadingPassUniformBufferResource()
+        {
+            std::vector<VulkanUniformBufferResource> shadingPassUniformbufferResourceList =
+            {
+                createLightUniformBufferResource(LIGHT_UBO_INDEX),
+                createCamUniformBufferResource(CAM_UBO_INDEX),
+                createViewMatrixUniformBufferResource(VIEW_MATRIX_UBO_INDEX)
+            };
+
+            return shadingPassUniformbufferResourceList;
+        }
+
         std::vector<VulkanRenderTargetCreateData> VulkanDeferredRender::genRenderTargetsCreateData(
             IN  const std::vector<VulkanRenderTargetCreateDescriptor>&             RTDescList,
             OUT std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>>* pRTFrameBuffersCreateDataList)
@@ -442,7 +504,8 @@ namespace VulkanEngine
         VulkanRenderSubpassCreateData VulkanDeferredRender::genShadingPassCreateData(
             IN const VulkanRenderProperties&                               renderProps,
             IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
-            OUT Shader::BxShaderMeta*                                      pShadingPassShader,
+            OUT Shader::BxShaderMeta*                                      pShadingPassShaderMeta,
+            OUT std::vector<VulkanUniformBufferResource>*                  pShadingPassUniformBufferResourceList,
             OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
             OUT std::vector<VulkanTextureResource>*                        pInputAttachmentResourceList,
             OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,
@@ -460,8 +523,8 @@ namespace VulkanEngine
             const UINT backbufferNum    = static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
 
             // Backbuffer shader
-            pShadingPassShader->vertexShaderInfo   = { "MainSceneDeferred.vert.spv", "main" };
-            pShadingPassShader->fragmentShaderInfo = { "MainSceneDeferred.frag.spv", "main" };
+            pShadingPassShaderMeta->vertexShaderInfo   = { "MainSceneDeferred.vert.spv", "main" };
+            pShadingPassShaderMeta->fragmentShaderInfo = { "MainSceneDeferred.frag.spv", "main" };
 
             /// Create shading pass resources
             Buffer::VulkanVertexBuffer* pShadingPassQuadVertexBuffer =
@@ -484,7 +547,7 @@ namespace VulkanEngine
 
             pShadingPassDescriptorResources->descriptorSetIndex = 1;
 
-            pShadingPassDescriptorResources->pUniformBufferResourceList = NULL;
+            pShadingPassDescriptorResources->pUniformBufferResourceList = pShadingPassUniformBufferResourceList;
 
             pShadingPassResources->pDescriptorResourceList = pShadingPassDescriptorResourcesList;
 
@@ -511,7 +574,7 @@ namespace VulkanEngine
                     textureSamplerCreateData);
 
             pTextureResourceList->push_back(
-                createSceneTextures(shadingPassIndex, RTNum, 1, pTexture));
+                createSceneTextures(shadingPassIndex, 6, 1, pTexture));
 
             pShadingPassDescriptorResources->pTextureResouceList = pTextureResourceList;
 
@@ -568,7 +631,7 @@ namespace VulkanEngine
 
             pShadingPassGraphicsPipelineCreateData->subpassIndex                         = 1;
             pShadingPassGraphicsPipelineCreateData->pProps                               = pShadingPassGraphicsPipelineProps;
-            pShadingPassGraphicsPipelineCreateData->pShaderMeta                          = pShadingPassShader;
+            pShadingPassGraphicsPipelineCreateData->pShaderMeta                          = pShadingPassShaderMeta;
             pShadingPassGraphicsPipelineCreateData->pResource                            = pShadingPassResources;
             pShadingPassGraphicsPipelineCreateData->isScenePipeline                      = FALSE;
             pShadingPassGraphicsPipelineCreateData->pVertexInputBindingDescription       = pShadingPassVertexInputBindingDescription;
