@@ -98,6 +98,15 @@ vec3 calPhongSpecularRadiance(
     return specularRadiance;
 }
 
+vec3 gammaCorrection(
+    const vec3 color)
+{
+    float gammaCorrectionExponent = 1.0f / 2.2f;
+    vec3 outputColor = pow(color, vec3(gammaCorrectionExponent));
+
+    return outputColor;
+}
+
 void main()
 {
     vec3 normalizedNormalView = normalize(normalView);
@@ -116,5 +125,7 @@ void main()
         vec3(0.6f),
         10.0f);
 
-	outColor = vec4((specularRadiance + diffuseRadiance) * texture(TestTexture, fragTexCoord).xyz, 1.0f);
+    vec3 radiance = (diffuseRadiance + specularRadiance) * texture(TestTexture, fragTexCoord).xyz;
+
+    outColor = vec4(gammaCorrection(radiance), 1.0f);
 }
