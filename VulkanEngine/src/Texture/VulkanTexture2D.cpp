@@ -55,14 +55,7 @@ namespace VulkanEngine
 
             if (IsGenMipmap() == TRUE)
             {
-                UINT texEdgeLength = std::max(texWidth, texHeight);
-                m_mipmapLevel = 0;
-
-                while (texEdgeLength > 0)
-                {
-                    texEdgeLength >>= 1;
-                    m_mipmapLevel++;
-                }
+                m_mipmapLevel = static_cast<UINT>(std::floor(std::log2(std::max(texWidth, texHeight))) + 1);
             }
 
             return result;
