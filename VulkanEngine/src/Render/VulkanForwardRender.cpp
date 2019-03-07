@@ -147,9 +147,6 @@ namespace VulkanEngine
             textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
             textureSamplerCreateData.normalize                           = TRUE;
             textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.mipmapOffset                        = 0.0f;
-            textureSamplerCreateData.minLod                              = 0.0f;
-            textureSamplerCreateData.maxLod                              = 0.0f;
 
             Texture::VulkanTexture2D* pTexture =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",

@@ -298,9 +298,9 @@ namespace VulkanEngine
             samplerCreateInfo.compareEnable           = VK_FALSE;
             samplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
             samplerCreateInfo.mipmapMode              = Utility::VulkanUtility::GetVkMipmapMode(pSamplerCreateData->mipmapFilter);
-            samplerCreateInfo.mipLodBias              = pSamplerCreateData->mipmapOffset;
-            samplerCreateInfo.maxLod                  = pSamplerCreateData->maxLod;
-            samplerCreateInfo.minLod                  = pSamplerCreateData->minLod;
+            samplerCreateInfo.mipLodBias              = 0.0f;
+            samplerCreateInfo.minLod                  = 0.0f;
+            samplerCreateInfo.maxLod                  = ((m_texture2D.IsGenMipmap() == TRUE) ? static_cast<float>(m_mipmapLevel) : 0.0f);
 
             if (isSamplerAnisotropySupport == TRUE)
             {
