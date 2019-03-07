@@ -80,6 +80,7 @@ namespace VulkanEngine
                 const VkImage& image,
                 const UINT     width,
                 const UINT     height,
+                const UINT     levels,
                 const UINT     layers);
 
             void cmdDrawArrays(

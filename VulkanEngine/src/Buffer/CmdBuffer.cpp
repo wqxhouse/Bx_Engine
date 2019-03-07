@@ -284,6 +284,19 @@ namespace VulkanEngine
                                  static_cast<UINT>(imageMemoryBarrierList.size()), imageMemoryBarrierList.data());
         }
 
+        void CmdBuffer::cmdGenMipmaps(
+            const VkImage& image,
+            const UINT     width,
+            const UINT     height,
+            const UINT     levels,
+            const UINT     layers)
+        {
+            for (UINT mipLevel = 1; mipLevel < levels, ++mipLevel)
+            {
+
+            }
+        }
+
         void CmdBuffer::cmdDrawArrays(
             const VkPipeline& graphicsPipeline,
             const UINT        vertexCount,
