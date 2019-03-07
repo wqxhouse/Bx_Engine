@@ -236,7 +236,7 @@ namespace VulkanEngine
 
             if (IsGenMipmap() == TRUE)
             {
-                m_pCmdBufferMgr->genMipmaps(m_texImage, m_texture2D.GetTextureWidth(), m_texture2D.GetTextureHeight(), m_mipmapLevel, 1);
+                m_pCmdBufferMgr->genMipmaps(m_texImage, GetTextureWidth(), GetTextureHeight(), m_mipmapLevel, 1);
 
                 // Transfer the image layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL for preparing to be read by shader
                 Buffer::BxLayoutTransitionInfo transitionInfo = {};
@@ -300,7 +300,7 @@ namespace VulkanEngine
             samplerCreateInfo.mipmapMode              = Utility::VulkanUtility::GetVkMipmapMode(pSamplerCreateData->mipmapFilter);
             samplerCreateInfo.mipLodBias              = 0.0f;
             samplerCreateInfo.minLod                  = 0.0f;
-            samplerCreateInfo.maxLod                  = ((m_texture2D.IsGenMipmap() == TRUE) ? static_cast<float>(m_mipmapLevel) : 0.0f);
+            samplerCreateInfo.maxLod                  = ((IsGenMipmap() == TRUE) ? static_cast<float>(m_mipmapLevel) : 0.0f);
 
             if (isSamplerAnisotropySupport == TRUE)
             {
