@@ -76,11 +76,15 @@ namespace VulkanEngine
                 const VkImage&                image,
                 const BxLayoutTransitionInfo& layoutTransInfoList);
 
-            void cmdGenMipmaps(
-                const VkImage& image,
-                const UINT     width,
-                const UINT     height,
-                const UINT     levels,
+            void cmdBlitImage(
+                const VkImage& srcImage,
+                const VkImage& dstImage,
+                const UINT     srcWidth,
+                const UINT     srcHeight,
+                const UINT     srcMipLevel,
+                const UINT     dstWidth,
+                const UINT     dstHeight,
+                const UINT     dstMipLevel,
                 const UINT     layers);
 
             void cmdDrawArrays(
