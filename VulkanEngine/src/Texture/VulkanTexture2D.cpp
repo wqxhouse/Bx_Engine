@@ -23,7 +23,7 @@ namespace VulkanEngine
               VulkanTextureBase(pDevice, pCmdBufferMgr)
         {
             m_texImage       = { *m_pDevice, vkDestroyImage };
-            m_texImageMemory = { *m_pDevice, vkFreeMemory };
+            m_texImageMemory = { *m_pDevice, vkFreeMemory   };
         }
 
         VulkanTexture2D::VulkanTexture2D(

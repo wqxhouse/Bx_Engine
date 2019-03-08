@@ -30,8 +30,12 @@ namespace VulkanEngine
                 : m_pDevice(pDevice),
                   m_pCmdBufferMgr(pCmdBufferMgr)
             {
-                m_texImageView   = { *m_pDevice, vkDestroyImageView };
-                m_texSampler     = { *m_pDevice, vkDestroySampler   };
+                m_texImageView       = { *m_pDevice, vkDestroyImageView };
+                m_texSampler         = { *m_pDevice, vkDestroySampler   };
+
+                m_texMsaaImage       = { *m_pDevice, vkDestroyImage     };
+                m_texMsaaImageMemory = { *m_pDevice, vkFreeMemory       };
+                m_texMsaaImageView   = { *m_pDevice, vkDestroyImageView };
 
                 m_textureFlags.value = 0;
             }
@@ -63,6 +67,11 @@ namespace VulkanEngine
             INLINE VkImageView GetTextureImageView() const { return m_texImageView; }
             INLINE VkSampler   GetTextureSampler()   const { return m_texSampler;   }
 
+            INLINE VkImageView GetTextureResolveImageView() const
+            {
+                return m_texMsaaImageView;
+            }
+
             virtual INLINE TextureType   GetTextureType()        const = 0;
 
             virtual INLINE UINT          GetTextureWidth()       const = 0;
@@ -89,6 +98,10 @@ namespace VulkanEngine
             VDeleter<VkDeviceMemory> m_texImageMemory;
             VDeleter<VkImageView>    m_texImageView;
             VDeleter<VkSampler>      m_texSampler;
+
+            VDeleter<VkImage>        m_texMsaaImage;
+            VDeleter<VkDeviceMemory> m_texMsaaImageMemory;
+            VDeleter<VkImageView>    m_texMsaaImageView;
 
             UINT                     m_mipmapLevel;
 
