@@ -151,7 +151,7 @@ namespace VulkanEngine
             Texture::VulkanTexture2D* pTexture =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
                     m_pSetting->m_graphicsSetting.antialasing,
-                    FALSE,
+                    TRUE,
                     BX_FORMAT_RGBA8,
                     BX_FORMAT_RGBA8,
                     textureSamplerCreateData);
