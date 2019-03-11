@@ -72,6 +72,7 @@ namespace VulkanEngine
             std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
             std::vector<VulkanTextureResource>*       pTextureResouceList;
             std::vector<VulkanTextureResource>*       pInputAttachmentList;
+            std::vector<VulkanTextureResource>*       pResolveAttachmentList;
         };
 
         struct VulkanRenderResources

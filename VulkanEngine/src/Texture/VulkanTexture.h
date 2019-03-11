@@ -25,8 +25,9 @@ namespace VulkanEngine
         {
         public:
             VulkanTextureBase(
-                const VkDevice* const           pDevice,
-                Mgr::CmdBufferMgr* const        pCmdBufferMgr)
+                const VkDevice* const    pDevice,
+                Mgr::CmdBufferMgr* const pCmdBufferMgr,
+                const BOOL               isExternal)
                 : m_pDevice(pDevice),
                   m_pCmdBufferMgr(pCmdBufferMgr)
             {
@@ -38,6 +39,8 @@ namespace VulkanEngine
                 m_texMsaaImageView   = { *m_pDevice, vkDestroyImageView };
 
                 m_textureFlags.value = 0;
+
+                m_textureFlags.isExternal = isExternal;
             }
 
             virtual ~VulkanTextureBase()
@@ -50,8 +53,6 @@ namespace VulkanEngine
             virtual BOOL create(
                 const VkPhysicalDevice hwDevice) = 0;
 
-            virtual BOOL createTextureImageView() = 0;
-
             virtual BOOL createSampler(
                 const ::Texture::TextureSamplerCreateData* pSamplerCreateData,
                 const BOOL                                 isSamplerAnisotropySupport) = 0;
@@ -63,7 +64,6 @@ namespace VulkanEngine
 
             virtual void clean() {}
 
-            INLINE VkImage     GetTextureImage()     const { return m_texImage;     }
             INLINE VkImageView GetTextureImageView() const { return m_texImageView; }
             INLINE VkSampler   GetTextureSampler()   const { return m_texSampler;   }
 
@@ -115,6 +115,11 @@ namespace VulkanEngine
                     UINT reserve : 31;
                 };
             } m_textureFlags;
+
+        private:
+            virtual BOOL createTextureImageView(
+                const VkImage image,
+                VkImageView*  pImageView) = 0;
         };
 
         // Texture 2D
@@ -139,8 +144,6 @@ namespace VulkanEngine
 
             BOOL create(
                 const VkPhysicalDevice hwDevice);
-
-            BOOL createTextureImageView();
 
             BOOL createSampler(
                 const ::Texture::TextureSamplerCreateData* pSamplerCreateData,
@@ -170,6 +173,16 @@ namespace VulkanEngine
             INLINE void          FreeTextureData()             { m_texture2D.FreeTextureData();              }
 
         private:
+            BOOL createImage2D(
+                const VkPhysicalDevice hwDevice,
+                VkImage*               pImage,
+                VkDeviceMemory*        pImageMemory,
+                const UINT             sampleCount);
+
+            BOOL createTextureImageView(
+                const VkImage image,
+                VkImageView*  pImageView);
+
             ::Texture::Texture2D m_texture2D;
         };
 

@@ -41,7 +41,16 @@ namespace VulkanEngine
 
             for (size_t i = 0; i < backBufferNum; ++i)
             {
-                m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), ppBackbufferTextures->at(i) });
+                Texture::VulkanTextureBase* pBackbufferTexture = ppBackbufferTextures->at(i);
+
+                m_backBufferRTsCreateDataList[i].push_back(
+                    { static_cast<UINT>(i), { 1, pBackbufferTexture } });
+
+                if (pSetting->m_graphicsSetting.antialasing != Antialasing::AA_NONE)
+                {
+                    m_backBufferRTsCreateDataList[i].push_back(
+                        { static_cast<UINT>(i), { pBackbufferTexture->GetSampleNumber(), pBackbufferTexture } });
+                }
             }
 
             parseScene();
@@ -116,12 +125,12 @@ namespace VulkanEngine
             for (size_t i = 0; i < backBufferNum; ++i)
             {
                 Texture::VulkanTexture2D* pBackbufferColorTexture =
-                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][0].pTexture);
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[i][0].attachment.pTex);
 
                 TextureFormat depthBufferFormat =
                     ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
 
-                Texture::VulkanTexture2D * backbufferDepthTexture =
+                Texture::VulkanTexture2D* backbufferDepthTexture =
                     m_pTextureMgr->createTexture2DRenderTarget(
                         pBackbufferColorTexture->GetTextureWidth(),
                         pBackbufferColorTexture->GetTextureHeight(),
@@ -129,7 +138,8 @@ namespace VulkanEngine
                         depthBufferFormat,
                         BX_TEXTURE_USAGE_VULKAN_NONE);
 
-                m_backBufferRTsCreateDataList[i].push_back({ static_cast<UINT>(i), backbufferDepthTexture });
+                m_backBufferRTsCreateDataList[i].push_back(
+                    { static_cast<UINT>(i), { backbufferDepthTexture->GetSampleNumber(), backbufferDepthTexture} });
             }
         }
 

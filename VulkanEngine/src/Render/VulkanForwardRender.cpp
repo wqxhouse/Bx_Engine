@@ -51,7 +51,16 @@ namespace VulkanEngine
             //  Initialize graphics pipeline properties
             VulkanRenderProperties props = {};
             props.enableBlending         = TRUE;
-            props.sceneClearValue        = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+
+            if (m_pSetting->m_graphicsSetting.antialasing == AA_NONE)
+            {
+                props.sceneClearValue = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+            }
+            else
+            {
+                props.sceneClearValue = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } };
+            }
+
             props.renderViewportRect     =
             {
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
@@ -65,14 +74,22 @@ namespace VulkanEngine
             mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "MainSceneForward.frag.spv";
 
             /// Initialize render pass
+            const UINT sampleNum = m_pSetting->m_graphicsSetting.antialasing;
+
             std::vector<VulkanRenderTargetCreateDescriptor> renderTargetDescriptors =
             {
-                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }
+                { TRUE, 0, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }
             };
 
             assert((IsDepthTestEnabled() == TRUE)  ||
                    ((IsDepthTestEnabled()   == FALSE) &&
                     (IsStencilTestEnabled() == FALSE)));
+
+            if (m_pSetting->m_graphicsSetting.antialasing != AA_NONE)
+            {
+                renderTargetDescriptors.push_back(
+                    { TRUE, 0, 2, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR, FALSE, FALSE });
+            }
 
             // Create depth buffer
             if (IsDepthTestEnabled() == TRUE)
@@ -82,7 +99,7 @@ namespace VulkanEngine
 
                 genBackbufferDepthBuffer();
 
-                renderTargetDescriptors.push_back({ TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
+                renderTargetDescriptors.push_back({ TRUE, 0, 1, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
             }
 
             if (IsStencilTestEnabled() == TRUE)
@@ -105,6 +122,7 @@ namespace VulkanEngine
                 pRenderTargetCreateData->renderSubPassIndex = renderTargetDescriptors[attachmentIndex].renderSubPassIndex;
                 pRenderTargetCreateData->bindingPoint       = renderTargetDescriptors[attachmentIndex].bindingPoint;
                 pRenderTargetCreateData->attachmentIndex    = attachmentIndex;
+                pRenderTargetCreateData->sampleNum          = renderTargetDescriptors[attachmentIndex].sampleNum;
                 pRenderTargetCreateData->isStore            = renderTargetDescriptors[attachmentIndex].isStore;
                 pRenderTargetCreateData->layout             = renderTargetDescriptors[attachmentIndex].layout;
                 pRenderTargetCreateData->useStencil         = renderTargetDescriptors[attachmentIndex].useStencil;
@@ -150,7 +168,7 @@ namespace VulkanEngine
 
             Texture::VulkanTexture2D* pTexture =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    m_pSetting->m_graphicsSetting.antialasing,
+                    1,
                     TRUE,
                     BX_FORMAT_RGBA8,
                     BX_FORMAT_RGBA8,
@@ -158,6 +176,22 @@ namespace VulkanEngine
 
             std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 3, 1, pTexture) };
             descriptorResources.pTextureResouceList                     = &sceneTextureResourceList;
+
+            // Create resolve resources for MSAA
+            std::vector<VulkanTextureResource> resolveTextureResourceList(backbufferNum);
+            if (m_pSetting->m_graphicsSetting.antialasing != Antialasing::AA_NONE)
+            {
+                for (UINT backbufferIndex = 0; backbufferIndex < backbufferNum; ++backbufferIndex)
+                {
+                    VulkanTextureResource* resolveTextureResource = &(resolveTextureResourceList[backbufferIndex]);
+                    resolveTextureResource->setIndex              = 0;
+                    resolveTextureResource->attachmentIndex       = 0;
+                    resolveTextureResource->textureNum            = 1;
+                    resolveTextureResource->pTexture              = m_backBufferRTsCreateDataList[backbufferIndex][0].attachment.pTex;
+                }
+
+                descriptorResources.pResolveAttachmentList = &resolveTextureResourceList;
+            }
 
             // Added descriptor resources to the resource list
             descriptorResourceList.push_back(descriptorResources);

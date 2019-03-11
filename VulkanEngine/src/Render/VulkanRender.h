@@ -103,6 +103,7 @@ namespace VulkanEngine
                 BOOL                             isStore;
                 UINT                             renderSubPassIndex;
                 UINT                             bindingPoint;
+                UINT                             sampleNum;
                 BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout;
                 BOOL                             useStencil;
                 BOOL                             isStoreStencil;

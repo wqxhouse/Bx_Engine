@@ -22,7 +22,8 @@ int main()
 {
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    setting.m_graphicsSetting.antialasing = AA_VERY_HIGH;
 
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);

@@ -68,7 +68,6 @@ namespace VulkanEngine
 
             status = pNewTexture2D->initialize();
             status = pNewTexture2D->create(*m_pHwDevice);
-            status = pNewTexture2D->createTextureImageView();
 
             if (pTexture2DCreateData->texUsage == BX_TEXTURE_USAGE_SAMPLED)
             {
@@ -114,8 +113,7 @@ namespace VulkanEngine
 
             assert(status == BX_SUCCESS);
 
-            // No need to create image here
-            status = pNewTexture2D->createTextureImageView();
+            status = pNewTexture2D->create(*m_pHwDevice);
 
             assert(status == BX_SUCCESS);
 
@@ -157,10 +155,6 @@ namespace VulkanEngine
             assert(status == BX_SUCCESS);
 
             status = pNewTexture2D->create(*m_pHwDevice);
-
-            assert(status == BX_SUCCESS);
-
-            status = pNewTexture2D->createTextureImageView();
 
             assert(status == BX_SUCCESS);
 
@@ -207,10 +201,6 @@ namespace VulkanEngine
             assert(status == BX_SUCCESS);
 
             status = pNewTexture2D->create(*m_pHwDevice);
-
-            assert(status == BX_SUCCESS);
-
-            status = pNewTexture2D->createTextureImageView();
 
             assert(status == BX_SUCCESS);
 
