@@ -18,9 +18,10 @@ namespace VulkanEngine
         VulkanTexture2D::VulkanTexture2D(
             const VkDevice* const           pDevice,
             Mgr::CmdBufferMgr* const        pCmdBufferMgr,
-            ::Texture::Texture2DCreateData* pTex2DCreateData)
+            ::Texture::Texture2DCreateData* pTex2DCreateData,
+            const BOOL                      isResolve)
             : m_texture2D(pTex2DCreateData),
-              VulkanTextureBase(pDevice, pCmdBufferMgr, FALSE)
+              VulkanTextureBase(pDevice, pCmdBufferMgr, FALSE, isResolve)
         {
             m_texImage       = { *m_pDevice, vkDestroyImage };
             m_texImageMemory = { *m_pDevice, vkFreeMemory   };
@@ -30,14 +31,12 @@ namespace VulkanEngine
             const VkDevice* const           pDevice,
             Mgr::CmdBufferMgr* const        pCmdBufferMgr,
             ::Texture::Texture2DCreateData* pTex2DCreateData,
-            const VDeleter<VkImage>         image)
+            const VDeleter<VkImage>         image,
+            const BOOL                      isResolve)
             : m_texture2D(pTex2DCreateData),
-              VulkanTextureBase(pDevice, pCmdBufferMgr, TRUE)
+              VulkanTextureBase(pDevice, pCmdBufferMgr, TRUE, isResolve)
         {
             m_texImage = image;
-
-            m_textureFlags.value      = 0;
-            m_textureFlags.isExternal = TRUE;
         }
 
         VulkanTexture2D::~VulkanTexture2D()
@@ -66,20 +65,35 @@ namespace VulkanEngine
         {
             BOOL result = BX_SUCCESS;
 
-            if (m_textureFlags.isExternal == FALSE)
-            {
-                result = createImage2D(hwDevice, m_texImage.replace(), m_texImageMemory.replace(), 1);
-
-                assert(result == BX_SUCCESS);
-            }
-
-            result = createTextureImageView(m_texImage, m_texImageView.replace());
-
-            assert(result = BX_SUCCESS);
-
             const UINT sampleNum = GetSampleNumber();
-            if (sampleNum > 1)
+
+            if (sampleNum == 1)
             {
+                if (m_textureFlags.isExternal == FALSE)
+                {
+                    result = createImage2D(hwDevice, m_texImage.replace(), m_texImageMemory.replace(), 1);
+
+                    assert(result == BX_SUCCESS);
+                }
+
+                result = createTextureImageView(m_texImage, m_texImageView.replace());
+            }
+            else
+            {
+                if (IsResolve() == TRUE)
+                {
+                    if (m_textureFlags.isExternal == FALSE)
+                    {
+                        result = createImage2D(hwDevice, m_texImage.replace(), m_texImageMemory.replace(), 1);
+
+                        assert(result == BX_SUCCESS);
+                    }
+
+                    result = createTextureImageView(m_texImage, m_texImageView.replace());
+
+                    assert(result = BX_SUCCESS);
+                }
+
                 result = createImage2D(hwDevice, m_texMsaaImage.replace(), m_texMsaaImageMemory.replace(), sampleNum);
 
                 assert(result == BX_SUCCESS);

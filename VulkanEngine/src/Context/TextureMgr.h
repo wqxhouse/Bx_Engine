@@ -30,7 +30,8 @@ namespace VulkanEngine
             ~TextureMgr();
 
             Texture::VulkanTexture2D* createTexture2D(
-                ::Texture::Texture2DCreateData* pTexture2DCreateData);
+                ::Texture::Texture2DCreateData* pTexture2DCreateData,
+                const BOOL                      isResolve);
 
             Texture::VulkanTexture2D* createTexture2DRenderTargetFromImage(
                 const UINT              texWidth,
@@ -38,14 +39,16 @@ namespace VulkanEngine
                 const UINT              samples,
                 const TextureFormat     texFormat,
                 BX_VULKAN_TEXTURE_USAGE vulkanUsage,
-                const VDeleter<VkImage> image);
+                const VDeleter<VkImage> image,
+                const BOOL              isResolve);
 
             Texture::VulkanTexture2D* createTexture2DRenderTarget(
                 const UINT              texWidth,
                 const UINT              texHeight,
                 const UINT              samples,
                 const TextureFormat     texFormat,
-                BX_VULKAN_TEXTURE_USAGE vulkanUsage);
+                BX_VULKAN_TEXTURE_USAGE vulkanUsage,
+                const BOOL              isResolve);
 
             Texture::VulkanTexture2D* createTexture2DSampler(
                 const std::string&                   imageFile,

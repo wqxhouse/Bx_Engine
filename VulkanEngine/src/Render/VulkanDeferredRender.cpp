@@ -9,6 +9,22 @@
 
 #include "VulkanRender.h"
 
+/*
+    Attachment list
+    0: Backbuffer
+    1-3: GBuffer
+
+    NO_MSAA
+    4: DepthBuffer
+
+    MSAA
+    4: MSAA Backbuffer
+    5: DepthBuffer
+
+    The depth buffer is always at the last index for
+    easier to be cleared.
+*/
+
 #define BACK_BUFFER_INDEX              0
 /*
     GBuffer Structure
@@ -17,11 +33,14 @@
     2: TexCoord Buffer
     3: Depth    Buffer
 */
-#define GBUFFER_POS_BUFFER_INDEX       1
-#define GBUFFER_NORMAL_BUFFER_INDEX    2
-#define GBUFFER_TEXCOORD0_BUFFER_INDEX 3
-#define GBUFFER_DEPTH_BUFFER_INDEX     4
-#define GBUFFER_NUM                    (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
+#define GBUFFER_POS_BUFFER_INDEX        1
+#define GBUFFER_NORMAL_BUFFER_INDEX     2
+#define GBUFFER_TEXCOORD0_BUFFER_INDEX  3
+#define GBUFFER_DEPTH_BUFFER_INDEX      4
+#define GBUFFER_NUM                     (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
+
+#define GBUFFER_MSAA_BACK_BUFFER_INDEX  4
+#define GBUFFER_MSAA_DEPTH_BUFFER_INDEX (GBUFFER_DEPTH_BUFFER_INDEX + 1)
 
 #define TRANSFORM_MATRIX_UBO_INDEX     0
 #define LIGHT_UBO_INDEX                3
@@ -172,11 +191,19 @@ namespace VulkanEngine
 
             std::vector<VulkanRenderTargetCreateData*> gBufferRTCreateDataRefList =
             {
-                &(deferredRenderRTList[1]),
-                &(deferredRenderRTList[2]),
-                &(deferredRenderRTList[3]),
-                &(deferredRenderRTList[4])
+                &(deferredRenderRTList[GBUFFER_POS_BUFFER_INDEX]),
+                &(deferredRenderRTList[GBUFFER_NORMAL_BUFFER_INDEX]),
+                &(deferredRenderRTList[GBUFFER_TEXCOORD0_BUFFER_INDEX])
             };
+
+            if (m_pSetting->m_graphicsSetting.antialasing == AA_NONE)
+            {
+                gBufferRTCreateDataRefList.push_back(&(deferredRenderRTList[GBUFFER_DEPTH_BUFFER_INDEX]));
+            }
+            else
+            {
+                gBufferRTCreateDataRefList.push_back(&(deferredRenderRTList[GBUFFER_MSAA_DEPTH_BUFFER_INDEX]));
+            }
 
             std::vector<VulkanGraphicsPipelineRenderTargetProperties> gBufferGraphicsPipelineRTProps(GBUFFER_NUM - 1);
 
@@ -199,11 +226,15 @@ namespace VulkanEngine
 
             if (m_pSetting->m_graphicsSetting.antialasing == AA_NONE)
             {
-                shadingPassRTCreateDataRefList = { &(deferredRenderRTList[0]) };
+                shadingPassRTCreateDataRefList = { &(deferredRenderRTList[BACK_BUFFER_INDEX]) };
             }
             else
             {
-                shadingPassRTCreateDataRefList = { &(deferredRenderRTList[0]) , &(deferredRenderRTList[5]) };
+                shadingPassRTCreateDataRefList =
+                {
+                    &(deferredRenderRTList[BACK_BUFFER_INDEX]),
+                    &(deferredRenderRTList[GBUFFER_MSAA_BACK_BUFFER_INDEX])
+                };
             }
 
             std::vector<VulkanTextureResource> shadingPassTextureResourceList;
@@ -374,21 +405,24 @@ namespace VulkanEngine
                                                            m_pSetting->resolution.height,
                                                            sampleNum,
                                                            BX_FORMAT_RGBA32_FLOAT,
-                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
+                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT,
+                                                           FALSE);
 
             Texture::VulkanTexture2D* pNormalTexture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            sampleNum,
                                                            BX_FORMAT_RGBA32_FLOAT,
-                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
+                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT,
+                                                           FALSE);
 
             Texture::VulkanTexture2D* pTexCoord0Texture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            sampleNum,
                                                            BX_FORMAT_RG32_FLOAT,
-                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
+                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT,
+                                                           FALSE);
 
             UINT backbufferNum = static_cast<UINT>(m_backBufferRTsCreateDataList.size());
             for (UINT backbufferIndex = 0; backbufferIndex < backbufferNum; ++backbufferIndex)
@@ -636,7 +670,7 @@ namespace VulkanEngine
 
             Texture::VulkanTexture2D* pTexture =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    m_pSetting->m_graphicsSetting.antialasing,
+                    1,
                     TRUE,
                     BX_FORMAT_RGBA8,
                     BX_FORMAT_RGBA8,

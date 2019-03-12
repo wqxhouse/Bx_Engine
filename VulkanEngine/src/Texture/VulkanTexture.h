@@ -27,7 +27,8 @@ namespace VulkanEngine
             VulkanTextureBase(
                 const VkDevice* const    pDevice,
                 Mgr::CmdBufferMgr* const pCmdBufferMgr,
-                const BOOL               isExternal)
+                const BOOL               isExternal,
+                const BOOL               isResolve)
                 : m_pDevice(pDevice),
                   m_pCmdBufferMgr(pCmdBufferMgr)
             {
@@ -41,6 +42,7 @@ namespace VulkanEngine
                 m_textureFlags.value = 0;
 
                 m_textureFlags.isExternal = isExternal;
+                m_textureFlags.isResolve  = isResolve;
             }
 
             virtual ~VulkanTextureBase()
@@ -91,6 +93,11 @@ namespace VulkanEngine
             virtual INLINE void          FreeTextureData()             = 0;
 
         protected:
+            INLINE BOOL IsResolve() const
+            {
+                return m_textureFlags.isResolve;
+            }
+
             const VkDevice* const    m_pDevice;
             Mgr::CmdBufferMgr* const m_pCmdBufferMgr;
 
@@ -112,7 +119,8 @@ namespace VulkanEngine
                 struct
                 {
                     BOOL isExternal : 1;
-                    UINT reserve : 31;
+                    BOOL isResolve  : 1;
+                    UINT reserve    : 30;
                 };
             } m_textureFlags;
 
@@ -129,14 +137,16 @@ namespace VulkanEngine
             VulkanTexture2D(
                 const VkDevice* const           pDevice,
                 Mgr::CmdBufferMgr* const        pCmdBufferMgr,
-                ::Texture::Texture2DCreateData* pTex2DCreateData);
+                ::Texture::Texture2DCreateData* pTex2DCreateData,
+                const BOOL                      isResolve);
 
             // Bind the image which externally created (e.g. swapchain images)
             VulkanTexture2D(
                 const VkDevice* const           pDevice,
                 Mgr::CmdBufferMgr* const        pCmdBufferMgr,
                 ::Texture::Texture2DCreateData* pTex2DCreateData,
-                const VDeleter<VkImage>         image);
+                const VDeleter<VkImage>         image,
+                const BOOL                      isResolve);
 
             ~VulkanTexture2D();
 
