@@ -201,6 +201,8 @@ namespace VulkanEngine
             VulkanRenderPass              m_mainSceneRenderPass;
             std::vector<VulkanRenderPass> m_postDrawPassList;
 
+            const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
+
             std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
 
             UINT                                                         m_descriptorSetNum;
@@ -240,6 +242,8 @@ namespace VulkanEngine
             void draw();
 
         private:
+            void initializeBackbufferRTCreateData();
+
             std::vector<VulkanUniformBufferResource> createUniformBufferResource();
         };
 
@@ -264,6 +268,8 @@ namespace VulkanEngine
             void draw();
 
         private:
+            void initializeBackbufferRTCreateData();
+
             void createGBufferTextures();
 
             VulkanUniformBufferResource createViewMatrixUniformBufferResource(

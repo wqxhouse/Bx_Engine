@@ -37,6 +37,11 @@ struct GraphicsSetting
         ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_NONE;
     }
 
+    INLINE BOOL IsEnableAntialasing() const
+    {
+        return ((antialasing != AA_NONE) == TRUE);
+    }
+
     AmbientOcclutionSetting ambientOcclutionSetting =
     {
         AmbientOcclusion::AMBIENTOCCLUSION_SSAO,

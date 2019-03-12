@@ -11,9 +11,12 @@
 
 #include "VulkanRender.h"
 
-#define TRANSFORM_MATRIX_UBO_INDEX 0
-#define LIGHT_UBO_INDEX            1
-#define CAM_UBO_INDEX              2
+#define BACK_BUFFER_INDEX               0
+#define BACK_BUFFER_DEPTH_BUFFER_INDEX  1
+
+#define TRANSFORM_MATRIX_UBO_INDEX      0
+#define LIGHT_UBO_INDEX                 1
+#define CAM_UBO_INDEX                   2
 
 #define DESCRIPTOR_SET_NUM 1
 
@@ -44,6 +47,9 @@ namespace VulkanEngine
         BOOL VulkanForwardRender::initialize()
         {
             BOOL status = BX_SUCCESS;
+
+            // Initialize backbuffer render targets
+            initializeBackbufferRTCreateData();
 
             /// Initialize all render passes which need to be used in forward render
 
@@ -81,15 +87,15 @@ namespace VulkanEngine
                 { TRUE, 0, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }
             };
 
-            assert((IsDepthTestEnabled() == TRUE)  ||
-                   ((IsDepthTestEnabled()   == FALSE) &&
-                    (IsStencilTestEnabled() == FALSE)));
-
             if (m_pSetting->m_graphicsSetting.antialasing != AA_NONE)
             {
                 renderTargetDescriptors.push_back(
                     { TRUE, 0, 2, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR, FALSE, FALSE });
             }
+
+            assert((IsDepthTestEnabled() == TRUE)  ||
+                   ((IsDepthTestEnabled()   == FALSE) &&
+                    (IsStencilTestEnabled() == FALSE)));
 
             // Create depth buffer
             if (IsDepthTestEnabled() == TRUE)
@@ -326,6 +332,39 @@ namespace VulkanEngine
                 status = postRenderPass.draw();
 
                 assert(status == BX_SUCCESS);
+            }
+        }
+
+        void VulkanForwardRender::initializeBackbufferRTCreateData()
+        {
+            UINT backBufferTextureSize = 1;
+
+            if (m_pSetting->m_graphicsSetting.antialasing != AA_NONE)
+            {
+                backBufferTextureSize++;
+            }
+
+            const size_t backBufferNum  = m_ppBackbufferTextures->size();
+            for (size_t backBufferIndex = 0; backBufferIndex < backBufferNum; ++backBufferIndex)
+            {
+                m_backBufferRTsCreateDataList[backBufferIndex].resize(backBufferTextureSize);
+
+                Texture::VulkanTextureBase* pBackbufferTexture = m_ppBackbufferTextures->at(backBufferIndex);
+
+                m_backBufferRTsCreateDataList[backBufferIndex][BACK_BUFFER_INDEX] =
+                {
+                    static_cast<UINT>(backBufferIndex),
+                    { 1, pBackbufferTexture }
+                };
+
+                if (m_pSetting->m_graphicsSetting.antialasing != Antialasing::AA_NONE)
+                {
+                    m_backBufferRTsCreateDataList[backBufferIndex][BACK_BUFFER_INDEX + 1] =
+                    {
+                        static_cast<UINT>(backBufferIndex),
+                        { pBackbufferTexture->GetSampleNumber(), pBackbufferTexture }
+                    };
+                }
             }
         }
 

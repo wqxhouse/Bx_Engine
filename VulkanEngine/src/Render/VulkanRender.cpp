@@ -31,27 +31,13 @@ namespace VulkanEngine
               m_pScene(pScene),
               m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
               m_isDepthTestEnabled(FALSE),
-              m_isStencilTestEnabled(FALSE)
+              m_isStencilTestEnabled(FALSE),
+              m_ppBackbufferTextures(ppBackbufferTextures)
         {
             assert(ppBackbufferTextures->size() > 0);
 
-            size_t backBufferNum = ppBackbufferTextures->size();
-
+            const size_t backBufferNum = ppBackbufferTextures->size();
             m_backBufferRTsCreateDataList.resize(backBufferNum);
-
-            for (size_t i = 0; i < backBufferNum; ++i)
-            {
-                Texture::VulkanTextureBase* pBackbufferTexture = ppBackbufferTextures->at(i);
-
-                m_backBufferRTsCreateDataList[i].push_back(
-                    { static_cast<UINT>(i), { 1, pBackbufferTexture } });
-
-                if (pSetting->m_graphicsSetting.antialasing != Antialasing::AA_NONE)
-                {
-                    m_backBufferRTsCreateDataList[i].push_back(
-                        { static_cast<UINT>(i), { pBackbufferTexture->GetSampleNumber(), pBackbufferTexture } });
-                }
-            }
 
             parseScene();
         }

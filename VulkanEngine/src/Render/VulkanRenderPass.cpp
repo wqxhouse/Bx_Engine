@@ -618,7 +618,7 @@ namespace VulkanEngine
 
             if (subpassResolveAttachmentDescriptorInfoSize > 0)
             {
-                pSubpassDescription->pResolveAttachments     = pResolveSubpassAttachmentRef->data();
+                pSubpassDescription->pResolveAttachments = pResolveSubpassAttachmentRef->data();
             }
 
             return status;
