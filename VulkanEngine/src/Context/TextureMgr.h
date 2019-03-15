@@ -69,6 +69,8 @@ namespace VulkanEngine
                 return m_pTextureList[texIndex];
             }
 
+            INLINE const BOOL IsAnisotropySupport() const { return m_isSamplerAnisotropySupport; }
+
             static INLINE UINT GetTextureClassMaxSize()
             {
                 UINT maxSize = 0;

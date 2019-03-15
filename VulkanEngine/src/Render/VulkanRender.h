@@ -184,10 +184,10 @@ namespace VulkanEngine
                 const UINT camUboIndex);
 
             VulkanTextureResource createSceneTextures(
-                const UINT                setIndex,
-                const UINT                bindingPoint,
-                const UINT                textureNum,
-                Texture::VulkanTexture2D* pTexture);
+                const UINT                  setIndex,
+                const UINT                  bindingPoint,
+                const UINT                  textureNum,
+                Texture::VulkanTextureBase* pTexture);
 
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
@@ -268,6 +268,12 @@ namespace VulkanEngine
             void draw();
 
         private:
+            struct MsaaUniformBuffer
+            {
+                INT        sampleNum;
+                Resolution dimension;
+            } m_msaaUniformBuffer;
+
             void initializeBackbufferRTCreateData();
 
             void createGBufferTextures();
@@ -275,6 +281,10 @@ namespace VulkanEngine
             VulkanUniformBufferResource createViewMatrixUniformBufferResource(
                 const UINT setIndex,
                 const UINT viewMatrixUboIndex);
+
+            VulkanUniformBufferResource createMsaaUniformBufferResource(
+                const UINT setIndex,
+                const UINT msaaUboIndex);
 
             std::vector<VulkanUniformBufferResource> createGbufferUniformBufferResource();
             std::vector<VulkanUniformBufferResource> createShadingPassUniformBufferResource();
@@ -303,6 +313,7 @@ namespace VulkanEngine
                 OUT std::vector<VulkanUniformBufferResource>*                  pShadingPassUniformBufferResourceList,
                 OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
                 OUT std::vector<VulkanTextureResource>*                        pInputAttachmentResourceList,
+                OUT std::vector<VulkanTextureResource>*                        pResolveAttachmentResourceList,
                 OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,
                 OUT VulkanRenderResources*                                     pShadingPassResources,
                 OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pShadingPassGraphicsPipelineRTProperties,

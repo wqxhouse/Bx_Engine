@@ -317,10 +317,10 @@ namespace VulkanEngine
         }
 
         VulkanTextureResource VulkanRenderBase::createSceneTextures(
-            const UINT                setIndex,
-            const UINT                bindingPoint,
-            const UINT                textureNum,
-            Texture::VulkanTexture2D* pTexture)
+            const UINT                  setIndex,
+            const UINT                  bindingPoint,
+            const UINT                  textureNum,
+            Texture::VulkanTextureBase* pTexture)
         {
             VulkanTextureResource textureResource = {};
 

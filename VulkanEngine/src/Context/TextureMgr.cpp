@@ -134,7 +134,7 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
-            TextureUsage usage = vulkanUsage                    |
+            TextureUsage usage = vulkanUsage |
                                  Utility::VulkanUtility::GetTextureUsage(texFormat);
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
@@ -229,7 +229,5 @@ namespace VulkanEngine
             NotImplemented();
             return NULL;
         }
-
-
     }
 }

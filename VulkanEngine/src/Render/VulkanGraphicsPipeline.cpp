@@ -77,11 +77,14 @@ namespace VulkanEngine
             rasterizerCreateInfo.depthBiasEnable         = VK_FALSE;
 
             // Multisampling
+            VkSampleMask sampleMask = 0x7;
+
             VkPipelineMultisampleStateCreateInfo multiSamplingCreateInfo = {};
             multiSamplingCreateInfo.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
             multiSamplingCreateInfo.rasterizationSamples =
                 Utility::VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
             multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
+            multiSamplingCreateInfo.pSampleMask          = &sampleMask;
 
             // Blending states
             const std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pRenderTargetsProps =
