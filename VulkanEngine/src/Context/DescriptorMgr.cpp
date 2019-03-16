@@ -240,12 +240,21 @@ namespace VulkanEngine
                     }
                     case BX_SAMPLER_DESCRIPTOR:
                     {
+                        Texture::VulkanTextureBase* pDescriptorTexture =
+                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
+
                         VkDescriptorImageInfo descriptorImageInfo = {};
                         descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                        descriptorImageInfo.imageView   =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture->GetTextureImageView();
-                        descriptorImageInfo.sampler     =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture->GetTextureSampler();
+                        descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();
+
+                        if (pDescriptorTexture->GetSampleNumber() == 1)
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureImageView();
+                        }
+                        else
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
+                        }
 
                         descriptorImageInfoList.push_back(descriptorImageInfo);
 
@@ -258,10 +267,20 @@ namespace VulkanEngine
                     }
                     case BX_INPUT_ATTACHMENT_DESCRIPTOR:
                     {
+                        Texture::VulkanTextureBase* pDescriptorTexture =
+                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
+
                         VkDescriptorImageInfo descriptorImageInfo = {};
                         descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                        descriptorImageInfo.imageView   =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture->GetTextureImageView();
+
+                        if (pDescriptorTexture->GetSampleNumber() == 1)
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureImageView();
+                        }
+                        else
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
+                        }
 
                         descriptorImageInfoList.push_back(descriptorImageInfo);
 
