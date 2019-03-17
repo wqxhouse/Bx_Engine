@@ -14,7 +14,8 @@
 #define TRANSFORM_MATRIX_UBO_INDEX 0
 #define LIGHT_UBO_INDEX            1
 #define CAM_UBO_INDEX              2
-#define UBO_NUM                    (CAM_UBO_INDEX + 1)
+
+#define DESCRIPTOR_SET_NUM 1
 
 namespace VulkanEngine
 {
@@ -32,6 +33,8 @@ namespace VulkanEngine
             : VulkanRenderBase(pSetting, pHwDevice, pDevice, pCmdBufferMgr, pDescritorMgr, pTextureMgr,
                                pScene, ppBackbufferTextures)
         {
+            m_descriptorSetNum = DESCRIPTOR_SET_NUM;
+            m_descriptorUpdateDataTable.resize(DESCRIPTOR_SET_NUM);
         }
 
         VulkanForwardRender::~VulkanForwardRender()
@@ -259,7 +262,7 @@ namespace VulkanEngine
                 }
             }
 
-            status = m_mainSceneRenderPass.update(deltaTime, { m_descriptorUpdateDataList });
+            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
             assert(status == BX_SUCCESS);
 
             for (VulkanRenderPass postRenderPass : m_postDrawPassList)
@@ -297,11 +300,12 @@ namespace VulkanEngine
 
         std::vector<VulkanUniformBufferResource> VulkanForwardRender::createUniformBufferResource()
         {
-            std::vector<VulkanUniformBufferResource> uniformbufferResourceList(UBO_NUM);
-
-            uniformbufferResourceList[TRANSFORM_MATRIX_UBO_INDEX] = createTransMatrixUniformBufferResource(TRANSFORM_MATRIX_UBO_INDEX);
-            uniformbufferResourceList[LIGHT_UBO_INDEX]            = createLightUniformBufferResource(LIGHT_UBO_INDEX);
-            uniformbufferResourceList[CAM_UBO_INDEX]              = createCamUniformBufferResource(CAM_UBO_INDEX);
+            std::vector<VulkanUniformBufferResource> uniformbufferResourceList =
+            {
+                createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX),
+                createLightUniformBufferResource(0, LIGHT_UBO_INDEX),
+                createCamUniformBufferResource(0, CAM_UBO_INDEX)
+            };
 
             return uniformbufferResourceList;
         }

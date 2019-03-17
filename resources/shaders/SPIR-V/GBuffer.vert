@@ -24,8 +24,7 @@ void main()
     vec4 posViewHomogeneous = wvMat * vec4(pos, 1.0f);
     posView                 = posViewHomogeneous.xyz / posViewHomogeneous.w;
 
-    vec4 normalViewHomogeneous = wvMat * vec4(normal, 1.0f);
-    normalView                 = normalViewHomogeneous.xyz / normalViewHomogeneous.w;
+    normalView = (wvMat * vec4(normal, 0.0f)).xyz;
 
     fragTexCoord = texCoord;
 
