@@ -35,6 +35,7 @@ namespace VulkanEngine
         {
             PolyMode                                                   polyMode;
             CullMode                                                   cullMode;
+            UINT                                                       samples;
             std::vector<Rectangle>                                     viewportRects;
             std::vector<Rectangle>                                     scissorRects;
             std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pRenderTargetsProps;

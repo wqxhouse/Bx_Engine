@@ -561,8 +561,9 @@ namespace VulkanEngine
                 attachmentRef.layout                =
                     Utility::VulkanUtility::GetAttachmentRefVkImageLayout(pRenderTargetCreateData->layout);
 
-                if (m_pSetting->m_graphicsSetting.antialasing == AA_NONE ||
-                    pRenderTargetCreateData->layout           != BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT)
+                if (m_pSetting->m_graphicsSetting.IsEnableAntialasing() == FALSE ||
+                    m_pSetting->m_graphicsSetting.IsForwardRendering()  == FALSE ||
+                    pRenderTargetCreateData->layout                     != BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT)
                 {
                     switch (pRenderTargetCreateData->layout)
                     {

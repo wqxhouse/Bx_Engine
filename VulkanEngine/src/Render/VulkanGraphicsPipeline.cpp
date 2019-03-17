@@ -79,8 +79,7 @@ namespace VulkanEngine
             // Multisampling
             VkPipelineMultisampleStateCreateInfo multiSamplingCreateInfo = {};
             multiSamplingCreateInfo.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-            multiSamplingCreateInfo.rasterizationSamples =
-                Utility::VulkanUtility::GetVkSampleCount(m_pSetting->m_graphicsSetting.antialasing);
+            multiSamplingCreateInfo.rasterizationSamples = Utility::VulkanUtility::GetVkSampleCount(pProps->samples);
             multiSamplingCreateInfo.sampleShadingEnable  = VK_FALSE;
 
             // Blending states

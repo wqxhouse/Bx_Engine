@@ -217,7 +217,8 @@ namespace VulkanEngine
 
             VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties     = {};
             subpassGraphicsPipelineProperties.cullMode                             = CULLMODE_BACK;
-            subpassGraphicsPipelineProperties.polyMode                             = PolyMode::POLYMODE_FILL;
+            subpassGraphicsPipelineProperties.polyMode                             = POLYMODE_FILL;
+            subpassGraphicsPipelineProperties.samples                              = m_pSetting->m_graphicsSetting.antialasing;
             subpassGraphicsPipelineProperties.viewportRects                        = { props.renderViewportRect };
             subpassGraphicsPipelineProperties.scissorRects                         = { props.renderViewportRect };
             subpassGraphicsPipelineProperties.pRenderTargetsProps                  = &renderTargetsProps;

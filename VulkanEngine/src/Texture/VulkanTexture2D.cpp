@@ -176,15 +176,6 @@ namespace VulkanEngine
 
             const TextureUsage usage = GetTextureUsage();
 
-            // Same texture shouldn't be used as sampler and render target at the same time
-            // And it can't be color and depth/stencil render target at the same time
-            assert ((((usage & BX_TEXTURE_USAGE_SAMPLED)                  != 0)  &&
-                     ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT)         == 0)  &&
-                     ((usage & BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) == 0)) ||
-                    (((usage & BX_TEXTURE_USAGE_SAMPLED)                  == 0)  &&
-                      (usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT &
-                               BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) == 0));
-
             // The texture format must be optimized at this point
             assert(IsTextureOptimize() == TRUE);
 
@@ -219,7 +210,7 @@ namespace VulkanEngine
             }
 
             imageCreateInfo.usage       =
-                (VK_IMAGE_USAGE_TRANSFER_DST_BIT | Utility::VulkanUtility::GetVkImageUsage(GetTextureUsage()));
+                (VK_IMAGE_USAGE_TRANSFER_DST_BIT | Utility::VulkanUtility::GetVkImageUsage(usage));
             imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
             imageCreateInfo.samples     = Utility::VulkanUtility::GetVkSampleCount(sampleCount);
             imageCreateInfo.flags       = 0;
@@ -263,7 +254,10 @@ namespace VulkanEngine
             vkBindImageMemory(*m_pDevice, *pImage, *pImageMemory, 0);            
 
             Buffer::BxLayoutTransitionInfo transitionInfo = {};
-            if ((usage & BX_TEXTURE_USAGE_SAMPLED) != 0)
+            if (((usage & BX_TEXTURE_USAGE_SAMPLED)                   != 0) &&
+                (((usage & BX_TEXTURE_USAGE_RENDER_TARGET)            == 0) &&
+                 ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT)         == 0) &&
+                 ((usage & BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) == 0)))
             {
                 // Create image buffer
                 Buffer::VulkanBufferBase vkImageRawBuffer(m_pDevice, m_pCmdBufferMgr);
@@ -315,10 +309,36 @@ namespace VulkanEngine
             if (((usage & BX_TEXTURE_USAGE_SAMPLED)                 != 0) ||
                 ((usage & BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT) != 0))
             {
-                if (IsGenMipmap() == FALSE)
+                // TODO: Re-organize if-else blocks here
+                if ((IsGenMipmap()                                        == FALSE) &&
+                    (((usage & BX_TEXTURE_USAGE_RENDER_TARGET)            == 0)     &&
+                     ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT)         == 0)     &&
+                     ((usage & BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) == 0)))
                 {
                     transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
                     transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                }
+                else
+                {
+                    if (IsGenMipmap() == TRUE)
+                    {
+                        transitionInfo.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                        transitionInfo.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                    }
+                    else if ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)
+                    {
+                        transitionInfo.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                        transitionInfo.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                    }
+                    else if ((usage & BX_TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT) != 0)
+                    {
+                        transitionInfo.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                        transitionInfo.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                    }
+                    else
+                    {
+                        NotSupported();
+                    }
                 }
             }
             else if ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)

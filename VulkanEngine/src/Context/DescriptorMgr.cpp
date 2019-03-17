@@ -243,8 +243,14 @@ namespace VulkanEngine
                         Texture::VulkanTextureBase* pDescriptorTexture =
                             descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
 
+                        const TextureUsage usage = pDescriptorTexture->GetTextureUsage();
+
                         VkDescriptorImageInfo descriptorImageInfo = {};
-                        descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+                        // TODO: Transition the image layout instead of hard code in descriptor image info
+                        descriptorImageInfo.imageLayout = (((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) == 0) ?
+                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
                         descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();
 
                         if (pDescriptorTexture->GetSampleNumber() == 1)
@@ -271,7 +277,7 @@ namespace VulkanEngine
                             descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
 
                         VkDescriptorImageInfo descriptorImageInfo = {};
-                        descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        descriptorImageInfo.imageLayout           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
                         if (pDescriptorTexture->GetSampleNumber() == 1)
                         {
@@ -305,7 +311,8 @@ namespace VulkanEngine
             vkUpdateDescriptorSets(*m_pDevice,
                                    static_cast<UINT>(writeDescriptorSetList.size()),
                                    writeDescriptorSetList.data(),
-                                   0, NULL);
+                                   0,
+                                   NULL);
 
             return result;
         }
