@@ -7,15 +7,16 @@ layout (location = 2) in vec2 fragTexCoord;
 
 layout (location = 0) out vec3 posViewTexture;
 layout (location = 1) out vec3 normalViewTexture;
-layout (location = 2) out vec2 texCoordTexture;
+layout (location = 2) out vec4 albedoTexture;
+
+layout (binding = 1) uniform sampler2D TestTexture;
 
 // TODO
-// layout (location = 3) out vec3 diffuseTexture;
-// layout (locatoin = 4) out vec3 albedoTexture;
+// layout (locatoin = 3) out vec3 albedoTexture;
 
 void main()
 {
     posViewTexture    = posView;
     normalViewTexture = normalView;
-    texCoordTexture   = fragTexCoord;
+    albedoTexture     = texture(TestTexture, fragTexCoord);
 }

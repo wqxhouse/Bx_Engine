@@ -41,6 +41,7 @@
 
 // Set 0
 #define TRANSFORM_MATRIX_UBO_INDEX        0
+#define TEXTURE_UBO_INDEX                 1
 
 // Set 1
 #define GBUFFER_POS_TEX_INDEX             0
@@ -50,7 +51,6 @@
 #define CAM_UBO_INDEX                     4
 #define VIEW_MATRIX_UBO_INDEX             5
 #define MSAA_UBO_INDEX                    6
-#define TEXTURE_UBO_INDEX                 7
 
 #define DESCRIPTOR_SET_NUM                2
 
@@ -180,6 +180,8 @@ namespace VulkanEngine
             /// GBuffer subpass
             std::vector<VulkanUniformBufferResource>   gBufferTransUniformBufferResource = createGbufferUniformBufferResource();
 
+            std::vector<VulkanTextureResource>         gBufferTextureResourceList;
+
             std::vector<VulkanDescriptorResources>     gBufferDescriptorResourcesList(1);
 
             std::vector<VulkanRenderTargetCreateData*> gBufferRTCreateDataRefList =
@@ -200,6 +202,7 @@ namespace VulkanEngine
                                                                                  &gBufferRTCreateDataRefList,
                                                                                  &gBufferShaderMeta,
                                                                                  &gBufferTransUniformBufferResource,
+                                                                                 &gBufferTextureResourceList,
                                                                                  &gBufferDescriptorResourcesList,
                                                                                  &gBufferResources,
                                                                                  &gBufferGraphicsPipelineRTProps,
@@ -393,7 +396,7 @@ namespace VulkanEngine
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            sampleNum,
-                                                           BX_FORMAT_RG32_FLOAT,
+                                                           BX_FORMAT_RGBA32_FLOAT,
                                                            usage,
                                                            FALSE);
 
@@ -548,6 +551,7 @@ namespace VulkanEngine
             IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
             OUT Shader::BxShaderMeta*                                      pGBufferShaderMeta,
             OUT std::vector<VulkanUniformBufferResource>*                  pGBufferUniformBufferResourceList,
+            OUT std::vector<VulkanTextureResource>*                        pGBufferPassTextureResourceList,
             OUT std::vector<VulkanDescriptorResources>*                    pGBufferDescriptorResourcesList,
             OUT VulkanRenderResources*                                     pGBufferResources,
             OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pGBufferGraphicsPipelineRTProperties,
@@ -558,6 +562,8 @@ namespace VulkanEngine
         {
             VulkanRenderSubpassCreateData gBufferPassCreateData = {};
 
+            const UINT gBufferPassIndex = 0;
+
             //  GBuffer shaders
             pGBufferShaderMeta->vertexShaderInfo   = { "GBuffer.vert.spv", "main" };
             pGBufferShaderMeta->fragmentShaderInfo = { "GBuffer.frag.spv", "main" };
@@ -565,15 +571,37 @@ namespace VulkanEngine
             pGBufferResources->vertexDescriptionBindingPoint = 0;
             pGBufferResources->pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
-            VulkanDescriptorResources* pGBufferDescriptorResources = &(pGBufferDescriptorResourcesList->at(0));
+            VulkanDescriptorResources* pGBufferDescriptorResources =
+                &(pGBufferDescriptorResourcesList->at(TRANSFORM_MATRIX_UBO_INDEX));
 
             pGBufferDescriptorResources->descriptorSetIndex = 0;
 
             // Initialize uniform buffers for render pass
             pGBufferDescriptorResources->pUniformBufferResourceList = pGBufferUniformBufferResourceList;
 
-            // For GBuffer pass, no need to use textures
-            pGBufferDescriptorResources->pTextureResouceList = NULL;
+            // Initialize albedo textures for gbuffer pass
+            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
+            textureSamplerCreateData.minFilter       = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.magFilter       = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+            textureSamplerCreateData.addressingModeU = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER;
+            textureSamplerCreateData.addressingModeV = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER;
+            textureSamplerCreateData.anisotropyNum   = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
+            textureSamplerCreateData.borderColor     = { 0.0f, 0.0f, 0.0f, 0.0f };
+            textureSamplerCreateData.normalize       = TRUE;
+            textureSamplerCreateData.mipmapFilter    = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+
+            Texture::VulkanTexture2D* pTexture =
+                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
+                    1,
+                    TRUE,
+                    BX_FORMAT_RGBA8,
+                    BX_FORMAT_RGBA8,
+                    textureSamplerCreateData);
+
+            pGBufferPassTextureResourceList->push_back(
+                createSceneTextures(gBufferPassIndex, TEXTURE_UBO_INDEX, 1, pTexture));
+
+            pGBufferDescriptorResources->pTextureResouceList = pGBufferPassTextureResourceList;
 
             pGBufferResources->pDescriptorResourceList = pGBufferDescriptorResourcesList;
 
@@ -620,7 +648,7 @@ namespace VulkanEngine
             IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
             OUT Shader::BxShaderMeta*                                      pShadingPassShaderMeta,
             OUT std::vector<VulkanUniformBufferResource>*                  pShadingPassUniformBufferResourceList,
-            OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
+            OUT std::vector<VulkanTextureResource>*                        pShadingPassTextureResourceList,
             OUT std::vector<VulkanTextureResource>*                        pInputAttachmentResourceList,
             OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,
             OUT VulkanRenderResources*                                     pShadingPassResources,
@@ -672,30 +700,6 @@ namespace VulkanEngine
             pShadingPassDescriptorResources->pUniformBufferResourceList = pShadingPassUniformBufferResourceList;
 
             pShadingPassResources->pDescriptorResourceList = pShadingPassDescriptorResourcesList;
-
-            // Initialize textures for shading pass
-            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
-            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER;
-            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER;
-            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
-            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 0.0f };
-            textureSamplerCreateData.normalize                           = TRUE;
-            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-
-            Texture::VulkanTexture2D* pTexture =
-                m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    1,
-                    TRUE,
-                    BX_FORMAT_RGBA8,
-                    BX_FORMAT_RGBA8,
-                    textureSamplerCreateData);
-
-            pTextureResourceList->push_back(
-                createSceneTextures(shadingPassIndex, TEXTURE_UBO_INDEX, 1, pTexture));
-
-            pShadingPassDescriptorResources->pTextureResouceList = pTextureResourceList;
 
             // Create input attachment resources
             if (m_pSetting->m_graphicsSetting.IsEnableAntialasing() == FALSE)
@@ -753,14 +757,16 @@ namespace VulkanEngine
                     static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex);
                 pTexCoord0Texture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
 
-                 pTextureResourceList->push_back(
+                pShadingPassTextureResourceList->push_back(
                     createSceneTextures(shadingPassIndex, 0, 1, pPosTexture));
 
-                 pTextureResourceList->push_back(
+                pShadingPassTextureResourceList->push_back(
                     createSceneTextures(shadingPassIndex, 1, 1, pNormalTexture));
 
-                 pTextureResourceList->push_back(
+                pShadingPassTextureResourceList->push_back(
                     createSceneTextures(shadingPassIndex, 2, 1, pTexCoord0Texture));
+
+                pShadingPassDescriptorResources->pTextureResouceList = pShadingPassTextureResourceList;
             }
 
             /// Create shading pass graphics pipeline
