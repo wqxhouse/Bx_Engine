@@ -5,9 +5,11 @@
 #define MAX_POINT_LIGHT_NUM       16
 #define MAX_SPOT_LIGHT_NUM        16
 
-layout (input_attachment_index = 0, binding = 0) uniform subpassInput posViewTexture;
-layout (input_attachment_index = 1, binding = 1) uniform subpassInput normalViewTexture;
-layout (input_attachment_index = 2, binding = 2) uniform subpassInput albedoTexture;
+layout (binding = 0) uniform sampler2DMS posViewTexture;
+layout (binding = 1) uniform sampler2DMS normalViewTexture;
+layout (binding = 2) uniform sampler2DMS albedoTexture;
+
+layout (location = 0) in vec2 fragUV;
 
 layout (location = 0) out vec4 outColor;
 
@@ -65,9 +67,11 @@ layout (binding = 5) uniform ViewMatUniform
     mat4 viewMat;
 };
 
-// layout (binding = 6) uniform EmptyUniform {};
-
-layout (binding = 7) uniform sampler2D TestTexture;
+layout (binding = 6) uniform MsaaUniforms
+{
+    int   sampleNum;
+    ivec2 dimension;
+};
 
 // Calculate the diffuse radiance for phong shading
 // N(normal), L(light direction) must be normalized
@@ -84,6 +88,7 @@ vec3 calPhongDiffuseRadiance(
 // Calculate the specular radiance for phong shading
 // N(normal), L(light direction) and V(view direction) must be normalized
 vec3 calPhongSpecularRadiance(
+    const vec3  posView,
     const vec3  N,
     const vec3  L,
     const vec3  lightColor,
@@ -92,11 +97,9 @@ vec3 calPhongSpecularRadiance(
 {
     vec3 specularRadiance;
 
-	vec3 posView    = subpassLoad(posViewTexture).xyz;
-
     vec3 reflectVec  = normalize(2 * dot(N, -L) * N + L);
 
-	vec3 camPosView  = (viewMat * vec4(camPosWorld, 1.0f)).xyz;
+    vec3 camPosView  = (viewMat * vec4(camPosWorld, 1.0f)).xyz;
     vec3 V           = normalize(camPosView - posView);
 
     float VoR        = max(dot(V, reflectVec), 0.0f);
@@ -117,25 +120,36 @@ vec3 gammaCorrection(
 
 void main()
 {
-	vec3 normalizedNormalView = normalize(subpassLoad(normalViewTexture).xyz);
-    vec3 normalizedLightView  = normalize((viewMat * m_lightData.directionalLightList[0].direction).xyz);
+    const ivec2 unnormalizedFragUV = ivec2(fragUV.x * dimension.x, fragUV.y * dimension.y);
+    
+    const vec3 normalizedLightView  = normalize((viewMat * m_lightData.directionalLightList[0].direction).xyz);
+    
+    vec3 radiance = vec3(0.0f);
+    
+    for (int sampleIndex = 0; sampleIndex < sampleNum; ++sampleIndex)
+    {
+        vec3 posView              = texelFetch(posViewTexture, unnormalizedFragUV, sampleIndex).xyz;
+        
+        vec3 normalizedNormalView = normalize(texelFetch(normalViewTexture, unnormalizedFragUV, sampleIndex).xyz);
 
-    vec3 albedo               = subpassLoad(albedoTexture).xyz;
+        vec3 albedo               = texelFetch(albedoTexture, unnormalizedFragUV, sampleIndex).xyz;
+        
+        vec3 diffuseRadiance = calPhongDiffuseRadiance(
+            normalizedNormalView,
+            normalizedLightView,
+            m_lightData.directionalLightList[0].lightBase.color.xyz,
+            albedo.xyz);
 
-    vec3 diffuseRadiance = calPhongDiffuseRadiance(
-        normalizedNormalView,
-        normalizedLightView,
-        m_lightData.directionalLightList[0].lightBase.color.xyz,
-        albedo);
+        vec3 specularRadiance = calPhongSpecularRadiance(
+            posView,
+            normalizedNormalView,
+            normalizedLightView,
+            m_lightData.directionalLightList[0].lightBase.color.xyz,
+            vec3(0.6f),
+            10.0f);
 
-	vec3 specularRadiance = calPhongSpecularRadiance(
-        normalizedNormalView,
-        normalizedLightView,
-        m_lightData.directionalLightList[0].lightBase.color.xyz,
-        vec3(0.6f),
-        10.0f);
-
-    vec3 radiance = diffuseRadiance + specularRadiance;
-
-    outColor = vec4(gammaCorrection(radiance), 1.0f);
+        radiance += diffuseRadiance + specularRadiance;
+    }
+    
+    outColor = vec4(gammaCorrection(radiance / sampleNum), 1.0f);
 }
