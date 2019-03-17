@@ -298,6 +298,7 @@ namespace VulkanEngine
                 IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
                 OUT Shader::BxShaderMeta*                                      pGBufferShaderMeta,
                 OUT std::vector<VulkanUniformBufferResource>*                  pGBufferUniformBufferResourceList,
+                OUT std::vector<VulkanTextureResource>*                        pGBufferPassTextureResourceList,
                 OUT std::vector<VulkanDescriptorResources>*                    pGBufferDescriptorResourcesList,
                 OUT VulkanRenderResources*                                     pGBufferResources,
                 OUT std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pGBufferGraphicsPipelineRTProperties,
