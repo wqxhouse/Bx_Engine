@@ -105,7 +105,7 @@ namespace Memory
 
             if (mod != 0)
             {
-                res = static_cast<T>(valInt + mod);
+                res = static_cast<T>(valInt + (alignmentNum - mod));
             }
 
             return res;
