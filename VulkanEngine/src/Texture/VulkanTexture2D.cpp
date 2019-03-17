@@ -55,14 +55,7 @@ namespace VulkanEngine
 
             if (IsGenMipmap() == TRUE)
             {
-                UINT texEdgeLength = std::max(texWidth, texHeight);
-                m_mipmapLevel = 0;
-
-                while (texEdgeLength > 0)
-                {
-                    texEdgeLength >>= 1;
-                    m_mipmapLevel++;
-                }
+                m_mipmapLevel = static_cast<UINT>(std::floor(std::log2(std::max(texWidth, texHeight))) + 1);
             }
 
             return result;
@@ -127,6 +120,12 @@ namespace VulkanEngine
             imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
             imageCreateInfo.samples     = Utility::VulkanUtility::GetVkSampleCount(GetSampleNumber());
             imageCreateInfo.flags       = 0;
+
+            // The image needs to be used as blit source
+            if (IsGenMipmap() == TRUE)
+            {
+                imageCreateInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+            }
 
             VkResult createImageResult =
                 vkCreateImage(*m_pDevice, &imageCreateInfo, NULL, m_texImage.replace());
@@ -210,8 +209,11 @@ namespace VulkanEngine
             if (((usage & BX_TEXTURE_USAGE_SAMPLED)                 != 0) ||
                 ((usage & BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT) != 0))
             {
-                transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-                transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                if (IsGenMipmap() == FALSE)
+                {
+                    transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                    transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                }
             }
             else if ((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) != 0)
             {
@@ -231,6 +233,19 @@ namespace VulkanEngine
             result = m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
 
             assert(result == BX_SUCCESS);
+
+            if (IsGenMipmap() == TRUE)
+            {
+                m_pCmdBufferMgr->genMipmaps(m_texImage, GetTextureWidth(), GetTextureHeight(), m_mipmapLevel, 1);
+
+                // Transfer the image layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL for preparing to be read by shader
+                Buffer::BxLayoutTransitionInfo transitionInfo = {};
+                transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+                transitionInfo.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                transitionInfo.subResourceInfo.push_back({ VK_IMAGE_ASPECT_COLOR_BIT, 0, m_mipmapLevel, 0, 1 });
+
+                m_pCmdBufferMgr->imageLayoutTransition(m_texImage, transitionInfo);
+            }
 
             return result;
         }
@@ -283,9 +298,9 @@ namespace VulkanEngine
             samplerCreateInfo.compareEnable           = VK_FALSE;
             samplerCreateInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
             samplerCreateInfo.mipmapMode              = Utility::VulkanUtility::GetVkMipmapMode(pSamplerCreateData->mipmapFilter);
-            samplerCreateInfo.mipLodBias              = pSamplerCreateData->mipmapOffset;
-            samplerCreateInfo.maxLod                  = pSamplerCreateData->maxLod;
-            samplerCreateInfo.minLod                  = pSamplerCreateData->minLod;
+            samplerCreateInfo.mipLodBias              = 0.0f;
+            samplerCreateInfo.minLod                  = 0.0f;
+            samplerCreateInfo.maxLod                  = ((IsGenMipmap() == TRUE) ? static_cast<float>(m_mipmapLevel) : 0.0f);
 
             if (isSamplerAnisotropySupport == TRUE)
             {

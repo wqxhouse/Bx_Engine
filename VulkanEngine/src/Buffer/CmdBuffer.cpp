@@ -284,6 +284,46 @@ namespace VulkanEngine
                                  static_cast<UINT>(imageMemoryBarrierList.size()), imageMemoryBarrierList.data());
         }
 
+        void CmdBuffer::cmdBlitImage(
+            const VkImage& srcImage,
+            const VkImage& dstImage,
+            const UINT     srcWidth,
+            const UINT     srcHeight,
+            const UINT     srcMipLevel,
+            const UINT     dstWidth,
+            const UINT     dstHeight,
+            const UINT     dstMipLevel,
+            const UINT     layers)
+        {
+            VkImageBlit imageBlit   = {};
+            // SRC
+            imageBlit.srcOffsets[0] = { 0, 0, 0 };
+            imageBlit.srcOffsets[1] = { static_cast<INT>(srcWidth), static_cast<INT>(srcHeight), 1 };
+
+            imageBlit.srcSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageBlit.srcSubresource.mipLevel       = srcMipLevel;
+            imageBlit.srcSubresource.baseArrayLayer = 0;
+            imageBlit.srcSubresource.layerCount     = layers;
+
+            // DST
+            imageBlit.dstOffsets[0] = { 0, 0, 0 };
+            imageBlit.dstOffsets[1] = { static_cast<INT>(dstWidth), static_cast<INT>(dstHeight), 1 };
+
+            imageBlit.dstSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageBlit.dstSubresource.mipLevel       = dstMipLevel;
+            imageBlit.dstSubresource.baseArrayLayer = 0;
+            imageBlit.dstSubresource.layerCount     = layers;
+
+            vkCmdBlitImage(m_cmdBuffer,
+                           srcImage,
+                           VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                           dstImage,
+                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                           1,
+                           &imageBlit,
+                           VK_FILTER_LINEAR);
+        }
+
         void CmdBuffer::cmdDrawArrays(
             const VkPipeline& graphicsPipeline,
             const UINT        vertexCount,

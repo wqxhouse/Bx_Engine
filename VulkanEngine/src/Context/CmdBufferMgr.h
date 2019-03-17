@@ -30,9 +30,9 @@ namespace VulkanEngine
                 const UINT          queueFamilyIndex);
 
             BOOL addGraphicsCmdBuffers(
-                const BX_QUEUE_TYPE          queueType,
+                const BX_QUEUE_TYPE           queueType,
                 const BX_COMMAND_BUFFER_LEVLE level,
-                const UINT                   size);
+                const UINT                    size);
 
             BOOL copyBuffer(
                 const VkBuffer&                 srcBuffer,
@@ -47,6 +47,13 @@ namespace VulkanEngine
             BOOL imageLayoutTransition(
                 const VkImage&                        image,
                 const Buffer::BxLayoutTransitionInfo& layoutTransInfoList);
+
+            BOOL genMipmaps(
+                const VkImage& image,
+                const UINT     width,
+                const UINT     height,
+                const UINT     levels,
+                const UINT     layers);
 
             BOOL submitCommandBufferToQueue(
                 const UINT               queueFamilyIndex,

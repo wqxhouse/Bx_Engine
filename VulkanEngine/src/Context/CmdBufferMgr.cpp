@@ -101,7 +101,9 @@ namespace VulkanEngine
             if (status == BX_SUCCESS)
             {
                 copyCommandBuffer.cmdCopyBuffer(srcBuffer, dstBuffer, copyInfo);
-                copyCommandBuffer.endCmdBuffer();
+                status = copyCommandBuffer.endCmdBuffer();
+
+                assert(status == BX_SUCCESS);
             }
 
             VkSubmitInfo copyCommandSubmitInfo       = {};
@@ -140,7 +142,9 @@ namespace VulkanEngine
             if (status == BX_SUCCESS)
             {
                 copyCommandBuffer.cmdCopyBufferToImage(srcBuffer, dstImage, copyInfo);
-                copyCommandBuffer.endCmdBuffer();
+                status = copyCommandBuffer.endCmdBuffer();
+
+                assert(status == BX_SUCCESS);
             }
 
             VkSubmitInfo copyCommandSubmitInfo       = {};
@@ -178,7 +182,9 @@ namespace VulkanEngine
             if (status == BX_SUCCESS)
             {
                 imageLayoutTransitionBuffer.cmdImageLayoutTransition(image, layoutTransInfoList);
-                imageLayoutTransitionBuffer.endCmdBuffer();
+                status = imageLayoutTransitionBuffer.endCmdBuffer();
+
+                assert(status == BX_SUCCESS);
             }
 
             VkSubmitInfo copyCommandSubmitInfo       = {};
@@ -192,6 +198,80 @@ namespace VulkanEngine
             assert(status == BX_SUCCESS);
 
             freeCommandBuffer(m_cmdPool[BX_QUEUE_GRAPHICS], 1, &imageLayoutTransitionBuffer);
+
+            return status;
+        }
+
+        BOOL CmdBufferMgr::genMipmaps(
+            const VkImage& image,
+            const UINT     width,
+            const UINT     height,
+            const UINT     levels,
+            const UINT     layers)
+        {
+            BOOL status = BX_SUCCESS;
+
+            Buffer::BxCmdBufferCreateInfo cmdBufferCreateInfo = {};
+            cmdBufferCreateInfo.cmdBufferType                 = BX_GRAPHICS_COMMAND_BUFFER;
+            cmdBufferCreateInfo.bufferLevel                   = BX_DIRECT_COMMAND_BUFFER;
+            cmdBufferCreateInfo.pCommandPool                  = &(m_cmdPool[BX_QUEUE_GRAPHICS]);
+
+            Buffer::CmdBuffer imageBlitCmdBuffer =
+                Buffer::CmdBuffer::CreateCmdBuffer(m_pDevice, cmdBufferCreateInfo);
+
+            UINT prevMipWidth = width;
+            UINT prevMipHeight = height;
+
+            status = imageBlitCmdBuffer.beginCmdBuffer(FALSE);
+            assert(status == BX_SUCCESS);
+
+            if (status == BX_SUCCESS)
+            {
+                for (UINT mipLevel = 1; mipLevel < levels; ++mipLevel)
+                {
+                    UINT mipWidth  = std::max((prevMipWidth >> 1), 1u);
+                    UINT mipHeight = std::max((prevMipHeight >> 1), 1u);
+
+                    // We need to transfer every mipLevel - 1 image to VK_IMAGE_USAGE_TRANSFER_SRC_OPTIMAL before blit
+                    Buffer::BxLayoutTransitionInfo transitionInfo = {};
+                    transitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                    transitionInfo.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+                    transitionInfo.subResourceInfo.push_back({ VK_IMAGE_ASPECT_COLOR_BIT, mipLevel - 1, 1, 0, layers });
+
+                    imageBlitCmdBuffer.cmdImageLayoutTransition(image, transitionInfo);
+
+                    // Blit the image to do downsampling
+                    imageBlitCmdBuffer.cmdBlitImage(
+                        image, image, prevMipWidth, prevMipHeight, mipLevel - 1, mipWidth, mipHeight, mipLevel, layers);
+
+                    prevMipWidth  = mipWidth;
+                    prevMipHeight = mipHeight;
+                }
+
+                // Transfer the last layer to VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL for unifying
+                // all levels' layout in the same image
+                Buffer::BxLayoutTransitionInfo postTransitionInfo = {};
+                postTransitionInfo.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                postTransitionInfo.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+                postTransitionInfo.subResourceInfo.push_back({ VK_IMAGE_ASPECT_COLOR_BIT, levels - 1, 1, 0, layers });
+                imageBlitCmdBuffer.cmdImageLayoutTransition(image, postTransitionInfo);
+            }
+
+            status = imageBlitCmdBuffer.endCmdBuffer();
+
+            assert(status == BX_SUCCESS);
+
+            VkSubmitInfo genMipmapCommandSubmitInfo       = {};
+            genMipmapCommandSubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            genMipmapCommandSubmitInfo.commandBufferCount = 1;
+            genMipmapCommandSubmitInfo.pCommandBuffers    = imageBlitCmdBuffer.GetCmdBufferPtr();
+
+            status = submitCommandBufferToQueue(
+                m_pQueueMgr->GetHwQueueIndices().graphicsFamilyIndex, 1, &genMipmapCommandSubmitInfo, VK_NULL_HANDLE);
+
+            assert(status == BX_SUCCESS);
+
+            freeCommandBuffer(m_cmdPool[BX_QUEUE_GRAPHICS], 1, &imageBlitCmdBuffer);
 
             return status;
         }
