@@ -42,7 +42,7 @@
 
 #define DEFAULT_MAX_RENDER_SCENE_NUM 128
 #define DEFAULT_MAX_TEXTURE_NUM      16384
-#define DEFAULT_TEXTURE_CLASS_SIZE   512
+#define DEFAULT_TEXTURE_CLASS_SIZE   1024
 
 #define IN
 #define OUT
@@ -130,11 +130,11 @@ enum RenderingMethod
 
 enum Antialasing
 {
-    AA_NONE       = 0x00000001,
-    AA_LOW        = 0x00000002,
-    AA_HIGH       = 0x00000004,
-    AA_VERY_HIGHT = 0x00000008,
-    AA_EXTRA      = 0x00000010
+    AA_NONE      = 0x00000001,
+    AA_LOW       = 0x00000002,
+    AA_HIGH      = 0x00000004,
+    AA_VERY_HIGH = 0x00000008,
+    AA_EXTRA     = 0x00000010
 };
 
 enum Anisotropy

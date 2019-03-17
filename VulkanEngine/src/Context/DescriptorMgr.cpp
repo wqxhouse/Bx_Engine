@@ -240,12 +240,27 @@ namespace VulkanEngine
                     }
                     case BX_SAMPLER_DESCRIPTOR:
                     {
+                        Texture::VulkanTextureBase* pDescriptorTexture =
+                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
+
+                        const TextureUsage usage = pDescriptorTexture->GetTextureUsage();
+
                         VkDescriptorImageInfo descriptorImageInfo = {};
-                        descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                        descriptorImageInfo.imageView   =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture->GetTextureImageView();
-                        descriptorImageInfo.sampler     =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture->GetTextureSampler();
+
+                        // TODO: Transition the image layout instead of hard code in descriptor image info
+                        descriptorImageInfo.imageLayout = (((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) == 0) ?
+                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+                        descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();
+
+                        if (pDescriptorTexture->GetSampleNumber() == 1)
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureImageView();
+                        }
+                        else
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
+                        }
 
                         descriptorImageInfoList.push_back(descriptorImageInfo);
 
@@ -258,10 +273,20 @@ namespace VulkanEngine
                     }
                     case BX_INPUT_ATTACHMENT_DESCRIPTOR:
                     {
+                        Texture::VulkanTextureBase* pDescriptorTexture =
+                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
+
                         VkDescriptorImageInfo descriptorImageInfo = {};
-                        descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                        descriptorImageInfo.imageView   =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture->GetTextureImageView();
+                        descriptorImageInfo.imageLayout           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+                        if (pDescriptorTexture->GetSampleNumber() == 1)
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureImageView();
+                        }
+                        else
+                        {
+                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
+                        }
 
                         descriptorImageInfoList.push_back(descriptorImageInfo);
 
@@ -286,7 +311,8 @@ namespace VulkanEngine
             vkUpdateDescriptorSets(*m_pDevice,
                                    static_cast<UINT>(writeDescriptorSetList.size()),
                                    writeDescriptorSetList.data(),
-                                   0, NULL);
+                                   0,
+                                   NULL);
 
             return result;
         }

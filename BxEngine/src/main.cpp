@@ -22,7 +22,7 @@ int main()
 {
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
 
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);
@@ -36,23 +36,23 @@ int main()
         0,
         Memory::Allocator::DEFAULT_ALIGNMENT_SIZE);
 
-    Memory::MemoryPoolArena     m_arena(&m_allocator);
+    Memory::MemoryPoolArena m_arena(&m_allocator);
 
     std::unique_ptr<Scene::RenderScene> m_pScene =
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
 
     m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-                          &(Trans(Math::Vector3(-2.0f, 0.0f,  0.0f),
+                          &(Trans(Math::Vector3(-2.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 
     m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-                          &(Trans(Math::Vector3(0.0f, 0.0f,  0.0f),
+                          &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 
     m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-                          &(Trans(Math::Vector3(2.0f, 0.0f,  0.0f),
+                          &(Trans(Math::Vector3(2.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 

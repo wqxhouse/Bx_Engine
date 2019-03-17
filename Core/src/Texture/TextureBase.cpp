@@ -32,6 +32,9 @@ namespace Texture
         m_mipmap        = pTextureCreateData->mipmap;
         m_texOptimize   = pTextureCreateData->texOptimize;
         m_texPerserve   = pTextureCreateData->texPerserve;
+
+        // The sample number must be power of 2
+        assert(((m_samples) & (m_samples - 1)) == 0);
     }
 
     TextureBase::~TextureBase()

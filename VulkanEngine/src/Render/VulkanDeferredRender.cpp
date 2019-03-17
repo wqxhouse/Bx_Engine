@@ -9,7 +9,23 @@
 
 #include "VulkanRender.h"
 
-#define BACK_BUFFER_INDEX              0
+/*
+    Attachment list
+    0: Backbuffer
+    1-3: GBuffer
+
+    NO_MSAA
+    4: DepthBuffer
+
+    MSAA
+    4: MSAA Backbuffer
+    5: DepthBuffer
+
+    The depth buffer is always at the last index for
+    easier to be cleared.
+*/
+
+#define BACK_BUFFER_INDEX                 0
 /*
     GBuffer Structure
     0: Position Buffer
@@ -17,18 +33,26 @@
     2: TexCoord Buffer
     3: Depth    Buffer
 */
-#define GBUFFER_POS_BUFFER_INDEX       1
-#define GBUFFER_NORMAL_BUFFER_INDEX    2
-#define GBUFFER_TEXCOORD0_BUFFER_INDEX 3
-#define GBUFFER_DEPTH_BUFFER_INDEX     4
-#define GBUFFER_NUM                    (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
+#define GBUFFER_POS_BUFFER_INDEX          1
+#define GBUFFER_NORMAL_BUFFER_INDEX       2
+#define GBUFFER_ALBEDO_BUFFER_INDEX       3
+#define GBUFFER_DEPTH_BUFFER_INDEX        4
+#define GBUFFER_NUM                       (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
 
-#define TRANSFORM_MATRIX_UBO_INDEX     0
-#define LIGHT_UBO_INDEX                3
-#define CAM_UBO_INDEX                  4
-#define VIEW_MATRIX_UBO_INDEX          5
+// Set 0
+#define TRANSFORM_MATRIX_UBO_INDEX        0
 
-#define DESCRIPTOR_SET_NUM             2
+// Set 1
+#define GBUFFER_POS_TEX_INDEX             0
+#define GBUFFER_NORMAL_TEX_INDEX          1
+#define GBUFFER_ALBEDO_TEX_INDEX          2
+#define LIGHT_UBO_INDEX                   3
+#define CAM_UBO_INDEX                     4
+#define VIEW_MATRIX_UBO_INDEX             5
+#define MSAA_UBO_INDEX                    6
+#define TEXTURE_UBO_INDEX                 7
+
+#define DESCRIPTOR_SET_NUM                2
 
 namespace VulkanEngine
 {
@@ -58,6 +82,9 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
+            // Initialize backbuffer render targets
+            initializeBackbufferRTCreateData();
+
             const UINT backbufferNum =
                 static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
 
@@ -73,6 +100,7 @@ namespace VulkanEngine
                 { 0.0f, 0.0f, 0.0f, 1.0f },
                 { 0.0f, 0.0f, 0.0f, 1.0f }
             };
+
             renderProperties.renderViewportRect     =
             {
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
@@ -81,13 +109,15 @@ namespace VulkanEngine
             renderProperties.enableColor            = TRUE;
 
             // Render Targets Descriptors
+            const UINT sampleNum = m_pSetting->m_graphicsSetting.antialasing;
+
             std::vector<VulkanRenderTargetCreateDescriptor> deferredRenderRTDescList =
             {
-                // isStore | renderSubPassIndex | bindingPoint | layout | useStencil isStoreStencil;
-                { TRUE, 1, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }, // Backbuffer
-                { TRUE, 0, 0, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Position
-                { TRUE, 0, 1, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
-                { TRUE, 0, 2, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
+                // isStore | renderSubPassIndex | bindingPoint | sampleNum | layout | useStencil isStoreStencil;
+                { TRUE, 1, 0, 1,         BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }, // Backbuffer
+                { TRUE, 0, 0, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Position
+                { TRUE, 0, 1, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
+                { TRUE, 0, 2, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
             };
 
             // Create textures
@@ -105,7 +135,8 @@ namespace VulkanEngine
 
                 genBackbufferDepthBuffer();
 
-                deferredRenderRTDescList.push_back({ TRUE, 0, 3, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
+                deferredRenderRTDescList.push_back(
+                    { TRUE, 0, 3, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
             }
 
             if (IsStencilTestEnabled() == TRUE)
@@ -153,11 +184,15 @@ namespace VulkanEngine
 
             std::vector<VulkanRenderTargetCreateData*> gBufferRTCreateDataRefList =
             {
-                &(deferredRenderRTList[1]),
-                &(deferredRenderRTList[2]),
-                &(deferredRenderRTList[3]),
-                &(deferredRenderRTList[4])
+                &(deferredRenderRTList[GBUFFER_POS_BUFFER_INDEX]),
+                &(deferredRenderRTList[GBUFFER_NORMAL_BUFFER_INDEX]),
+                &(deferredRenderRTList[GBUFFER_ALBEDO_BUFFER_INDEX])
             };
+
+            if (IsDepthTestEnabled() == TRUE)
+            {
+                gBufferRTCreateDataRefList.push_back(&(deferredRenderRTList[GBUFFER_DEPTH_BUFFER_INDEX]));
+            }
 
             std::vector<VulkanGraphicsPipelineRenderTargetProperties> gBufferGraphicsPipelineRTProps(GBUFFER_NUM - 1);
 
@@ -176,10 +211,7 @@ namespace VulkanEngine
             // Shading pass
             std::vector<VulkanUniformBufferResource>   shadingPassUniformBufferResource = createShadingPassUniformBufferResource();
 
-            std::vector<VulkanRenderTargetCreateData*> shadingPassRTCreateDataRefList =
-            {
-                &(deferredRenderRTList[0])
-            };
+            std::vector<VulkanRenderTargetCreateData*> shadingPassRTCreateDataRefList = { &(deferredRenderRTList[BACK_BUFFER_INDEX]) };
 
             std::vector<VulkanTextureResource> shadingPassTextureResourceList;
             std::vector<VulkanTextureResource> shadingPassInputAttachmentResourceList;
@@ -307,36 +339,84 @@ namespace VulkanEngine
             }
         }
 
+        void VulkanDeferredRender::initializeBackbufferRTCreateData()
+        {
+            UINT backBufferTextureSize = 4;
+
+            const size_t backBufferNum  = m_ppBackbufferTextures->size();
+            for (size_t backBufferIndex = 0; backBufferIndex < backBufferNum; ++backBufferIndex)
+            {
+                m_backBufferRTsCreateDataList[backBufferIndex].resize(backBufferTextureSize);
+
+                Texture::VulkanTextureBase* pBackbufferTexture = m_ppBackbufferTextures->at(backBufferIndex);
+
+                m_backBufferRTsCreateDataList[backBufferIndex][BACK_BUFFER_INDEX] =
+                {
+                    static_cast<UINT>(backBufferIndex),
+                    { 1, pBackbufferTexture }
+                };
+            }
+        }
+
         void VulkanDeferredRender::createGBufferTextures()
         {
+            const UINT sampleNum = m_pSetting->m_graphicsSetting.antialasing;
+
+            TextureUsage usage = BX_TEXTURE_USAGE_NONE;
+
+            if (m_pSetting->m_graphicsSetting.IsEnableAntialasing() == FALSE)
+            {
+                usage = BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT;
+            }
+            else
+            {
+                usage = BX_TEXTURE_USAGE_SAMPLED;
+            }
+
             Texture::VulkanTexture2D* pPosTexture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
-                                                           m_pSetting->m_graphicsSetting.antialasing,
+                                                           sampleNum,
                                                            BX_FORMAT_RGBA32_FLOAT,
-                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
+                                                           usage,
+                                                           FALSE);
 
             Texture::VulkanTexture2D* pNormalTexture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
-                                                           m_pSetting->m_graphicsSetting.antialasing,
+                                                           sampleNum,
                                                            BX_FORMAT_RGBA32_FLOAT,
-                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
+                                                           usage,
+                                                           FALSE);
 
             Texture::VulkanTexture2D* pTexCoord0Texture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
-                                                           m_pSetting->m_graphicsSetting.antialasing,
+                                                           sampleNum,
                                                            BX_FORMAT_RG32_FLOAT,
-                                                           BX_TEXTURE_USAGE_VULKAN_INPUT_ATTACHMENT);
+                                                           usage,
+                                                           FALSE);
 
             UINT backbufferNum = static_cast<UINT>(m_backBufferRTsCreateDataList.size());
             for (UINT backbufferIndex = 0; backbufferIndex < backbufferNum; ++backbufferIndex)
             {
-                m_backBufferRTsCreateDataList[backbufferIndex].push_back({ backbufferIndex, pPosTexture });
-                m_backBufferRTsCreateDataList[backbufferIndex].push_back({ backbufferIndex, pNormalTexture });
-                m_backBufferRTsCreateDataList[backbufferIndex].push_back({ backbufferIndex, pTexCoord0Texture });
+                m_backBufferRTsCreateDataList[backbufferIndex][GBUFFER_POS_BUFFER_INDEX] =
+                {
+                    backbufferIndex,
+                    { sampleNum, pPosTexture }
+                };
 
+                m_backBufferRTsCreateDataList[backbufferIndex][GBUFFER_NORMAL_BUFFER_INDEX] =
+                {
+                    backbufferIndex,
+                    { sampleNum, pNormalTexture }
+                };
+
+                m_backBufferRTsCreateDataList[backbufferIndex][GBUFFER_ALBEDO_BUFFER_INDEX] =
+                {
+                    backbufferIndex,
+                    { sampleNum, pTexCoord0Texture }
+                };
             }
         }
 
@@ -378,6 +458,35 @@ namespace VulkanEngine
             return gBufferUniformbufferResourceList;
         }
 
+        VulkanUniformBufferResource VulkanDeferredRender::createMsaaUniformBufferResource(
+            const UINT setIndex,
+            const UINT msaaUboIndex)
+        {
+            VulkanUniformBufferResource msaaUniformBufferResource = {};
+
+            m_msaaUniformBuffer.sampleNum = m_pSetting->m_graphicsSetting.antialasing;
+            m_msaaUniformBuffer.dimension = m_pSetting->resolution;
+
+            m_descriptorUpdateDataTable[setIndex].push_back({ msaaUboIndex, static_cast<void*>(&m_msaaUniformBuffer) });
+
+            Buffer::VulkanUniformBuffer* pMsaaUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
+            pMsaaUniformBuffer->createUniformBuffer(
+                *m_pHwDevice, 1, sizeof(MsaaUniformBuffer), static_cast<void*>(&m_msaaUniformBuffer));
+
+            const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMsaaUniformBuffer));
+
+            msaaUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            msaaUniformBufferResource.setIndex         = setIndex;
+            msaaUniformBufferResource.bindingPoint     = msaaUboIndex;
+            msaaUniformBufferResource.uniformbufferNum = 1;
+            msaaUniformBufferResource.pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBuffer*>(m_pDescriptorBufferList[descriptorBufferIndex].get());
+
+            return msaaUniformBufferResource;
+        }
+
         std::vector<VulkanUniformBufferResource> VulkanDeferredRender::createShadingPassUniformBufferResource()
         {
             std::vector<VulkanUniformBufferResource> shadingPassUniformbufferResourceList =
@@ -386,6 +495,11 @@ namespace VulkanEngine
                 createCamUniformBufferResource(1, CAM_UBO_INDEX),
                 createViewMatrixUniformBufferResource(1, VIEW_MATRIX_UBO_INDEX)
             };
+
+            if (m_pSetting->m_graphicsSetting.IsEnableAntialasing() == TRUE)
+            {
+                shadingPassUniformbufferResourceList.push_back(createMsaaUniformBufferResource(1, MSAA_UBO_INDEX));
+            }
 
             return shadingPassUniformbufferResourceList;
         }
@@ -405,10 +519,10 @@ namespace VulkanEngine
                 const VulkanRenderTargetCreateDescriptor* pRTDesc = &(RTDescList[RTIndex]);
 
                 VulkanRenderTargetCreateData* pRTCreateData = &(renderTargetCreateDataList[RTIndex]);
-
                 pRTCreateData->renderSubPassIndex           = pRTDesc->renderSubPassIndex;
                 pRTCreateData->bindingPoint                 = pRTDesc->bindingPoint;
                 pRTCreateData->attachmentIndex              = static_cast<UINT>(RTIndex);
+                pRTCreateData->sampleNum                    = pRTDesc->sampleNum;
                 pRTCreateData->isStore                      = pRTDesc->isStore;
                 pRTCreateData->layout                       = pRTDesc->layout;
                 pRTCreateData->useStencil                   = pRTDesc->useStencil;
@@ -481,6 +595,7 @@ namespace VulkanEngine
 
             pGBufferGraphicsPipelineProperties->cullMode            = CULLMODE_BACK;
             pGBufferGraphicsPipelineProperties->polyMode            = POLYMODE_FILL;
+            pGBufferGraphicsPipelineProperties->samples             = m_pSetting->m_graphicsSetting.antialasing;
             pGBufferGraphicsPipelineProperties->viewportRects       = { renderProps.renderViewportRect };
             pGBufferGraphicsPipelineProperties->scissorRects        = { renderProps.renderViewportRect };
             pGBufferGraphicsPipelineProperties->pRenderTargetsProps = pGBufferGraphicsPipelineRTProperties;
@@ -522,8 +637,16 @@ namespace VulkanEngine
             const UINT backbufferNum    = static_cast<const UINT>(m_backBufferRTsCreateDataList.size());
 
             // Backbuffer shader
-            pShadingPassShaderMeta->vertexShaderInfo   = { "MainSceneDeferred.vert.spv", "main" };
-            pShadingPassShaderMeta->fragmentShaderInfo = { "MainSceneDeferred.frag.spv", "main" };
+            if (m_pSetting->m_graphicsSetting.IsEnableAntialasing() == FALSE)
+            {
+                pShadingPassShaderMeta->vertexShaderInfo   = { "MainSceneDeferred.vert.spv", "main" };
+                pShadingPassShaderMeta->fragmentShaderInfo = { "MainSceneDeferred.frag.spv", "main" };
+            }
+            else
+            {
+                pShadingPassShaderMeta->vertexShaderInfo   = { "MainSceneDeferredMS.vert.spv", "main" };
+                pShadingPassShaderMeta->fragmentShaderInfo = { "MainSceneDeferredMS.frag.spv", "main" };
+            }
 
             /// Create shading pass resources
             Buffer::VulkanVertexBuffer* pShadingPassQuadVertexBuffer =
@@ -539,7 +662,7 @@ namespace VulkanEngine
             m_shadingPassVertexInput[0].pIndexBuffer  = std::unique_ptr<Buffer::VulkanIndexBuffer>(pShadingPassQuadIndexBuffer);
 
             pShadingPassResources->vertexDescriptionBindingPoint = 0;
-            pShadingPassResources->pVertexInputResourceList = &m_shadingPassVertexInput;
+            pShadingPassResources->pVertexInputResourceList      = &m_shadingPassVertexInput;
 
             // Generate shading pass descriptor create data
             VulkanDescriptorResources* pShadingPassDescriptorResources = &(pShadingPassDescriptorResourcesList->at(0));
@@ -563,45 +686,82 @@ namespace VulkanEngine
 
             Texture::VulkanTexture2D* pTexture =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    m_pSetting->m_graphicsSetting.antialasing,
+                    1,
                     TRUE,
                     BX_FORMAT_RGBA8,
                     BX_FORMAT_RGBA8,
                     textureSamplerCreateData);
 
             pTextureResourceList->push_back(
-                createSceneTextures(shadingPassIndex, 6, 1, pTexture));
+                createSceneTextures(shadingPassIndex, TEXTURE_UBO_INDEX, 1, pTexture));
 
             pShadingPassDescriptorResources->pTextureResouceList = pTextureResourceList;
 
             // Create input attachment resources
-            pInputAttachmentResourceList->resize(GBUFFER_NUM - 1);
+            if (m_pSetting->m_graphicsSetting.IsEnableAntialasing() == FALSE)
+            {
+                pInputAttachmentResourceList->resize(GBUFFER_NUM - 1);
 
-            VulkanTextureResource* pPosTextureInputAttachment       = &(pInputAttachmentResourceList->at(GBUFFER_POS_BUFFER_INDEX - 1));
-            pPosTextureInputAttachment->bindingPoint                = 0;
-            pPosTextureInputAttachment->attachmentIndex             = 1;
-            pPosTextureInputAttachment->setIndex                    = shadingPassIndex;
-            pPosTextureInputAttachment->shaderType                  = BX_FRAGMENT_SHADER;
-            pPosTextureInputAttachment->textureNum                  = 1;
-            pPosTextureInputAttachment->pTexture                    = m_backBufferRTsCreateDataList[0][GBUFFER_POS_BUFFER_INDEX].pTexture;
+                VulkanTextureResource* pPosTextureInputAttachment       = &(pInputAttachmentResourceList->at(GBUFFER_POS_BUFFER_INDEX - 1));
+                pPosTextureInputAttachment->bindingPoint                = GBUFFER_POS_TEX_INDEX;
+                pPosTextureInputAttachment->attachmentIndex             = 1;
+                pPosTextureInputAttachment->setIndex                    = shadingPassIndex;
+                pPosTextureInputAttachment->shaderType                  = BX_FRAGMENT_SHADER;
+                pPosTextureInputAttachment->textureNum                  = 1;
+                pPosTextureInputAttachment->pTexture                    = m_backBufferRTsCreateDataList[0][GBUFFER_POS_BUFFER_INDEX].attachment.pTex;
 
-            VulkanTextureResource* pNormalTextureInputAttachment    = &(pInputAttachmentResourceList->at(GBUFFER_NORMAL_BUFFER_INDEX - 1));
-            pNormalTextureInputAttachment->bindingPoint             = 1;
-            pNormalTextureInputAttachment->attachmentIndex          = 2;
-            pNormalTextureInputAttachment->setIndex                 = shadingPassIndex;
-            pNormalTextureInputAttachment->shaderType               = BX_FRAGMENT_SHADER;
-            pNormalTextureInputAttachment->textureNum               = 1;
-            pNormalTextureInputAttachment->pTexture                 = m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].pTexture;
+                VulkanTextureResource* pNormalTextureInputAttachment    = &(pInputAttachmentResourceList->at(GBUFFER_NORMAL_BUFFER_INDEX - 1));
+                pNormalTextureInputAttachment->bindingPoint             = GBUFFER_NORMAL_TEX_INDEX;
+                pNormalTextureInputAttachment->attachmentIndex          = 2;
+                pNormalTextureInputAttachment->setIndex                 = shadingPassIndex;
+                pNormalTextureInputAttachment->shaderType               = BX_FRAGMENT_SHADER;
+                pNormalTextureInputAttachment->textureNum               = 1;
+                pNormalTextureInputAttachment->pTexture                 = m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].attachment.pTex;
 
-            VulkanTextureResource* pTexCoord0TextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_TEXCOORD0_BUFFER_INDEX - 1));
-            pTexCoord0TextureInputAttachment->bindingPoint          = 2;
-            pTexCoord0TextureInputAttachment->attachmentIndex       = 3;
-            pTexCoord0TextureInputAttachment->setIndex              = shadingPassIndex;
-            pTexCoord0TextureInputAttachment->shaderType            = BX_FRAGMENT_SHADER;
-            pTexCoord0TextureInputAttachment->textureNum            = 1;
-            pTexCoord0TextureInputAttachment->pTexture              = m_backBufferRTsCreateDataList[0][GBUFFER_TEXCOORD0_BUFFER_INDEX].pTexture;
+                VulkanTextureResource* pTexCoord0TextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_ALBEDO_BUFFER_INDEX - 1));
+                pTexCoord0TextureInputAttachment->bindingPoint          = GBUFFER_ALBEDO_TEX_INDEX;
+                pTexCoord0TextureInputAttachment->attachmentIndex       = 3;
+                pTexCoord0TextureInputAttachment->setIndex              = shadingPassIndex;
+                pTexCoord0TextureInputAttachment->shaderType            = BX_FRAGMENT_SHADER;
+                pTexCoord0TextureInputAttachment->textureNum            = 1;
+                pTexCoord0TextureInputAttachment->pTexture              = m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex;
 
-            pShadingPassDescriptorResources->pInputAttachmentList = pInputAttachmentResourceList;
+                pShadingPassDescriptorResources->pInputAttachmentList = pInputAttachmentResourceList;
+            }
+            else
+            {
+                // Create GBuffer resources
+                ::Texture::TextureSamplerCreateData gBufferSamplerCreateData = {};
+                gBufferSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                gBufferSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                gBufferSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER;
+                gBufferSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_BORDER;
+                gBufferSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
+                gBufferSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 0.0f };
+                gBufferSamplerCreateData.normalize                           = TRUE;
+                gBufferSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+
+                 Texture::VulkanTexture2D* pPosTexture       =
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_POS_BUFFER_INDEX].attachment.pTex);
+                pPosTexture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
+
+                 Texture::VulkanTexture2D* pNormalTexture    =
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].attachment.pTex);
+                pNormalTexture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
+
+                 Texture::VulkanTexture2D* pTexCoord0Texture =
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex);
+                pTexCoord0Texture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
+
+                 pTextureResourceList->push_back(
+                    createSceneTextures(shadingPassIndex, 0, 1, pPosTexture));
+
+                 pTextureResourceList->push_back(
+                    createSceneTextures(shadingPassIndex, 1, 1, pNormalTexture));
+
+                 pTextureResourceList->push_back(
+                    createSceneTextures(shadingPassIndex, 2, 1, pTexCoord0Texture));
+            }
 
             /// Create shading pass graphics pipeline
             const UINT shadingPassColorRenderTargetNum =
@@ -621,6 +781,7 @@ namespace VulkanEngine
 
             pShadingPassGraphicsPipelineProps->cullMode            = CULLMODE_BACK;
             pShadingPassGraphicsPipelineProps->polyMode            = POLYMODE_FILL;
+            pShadingPassGraphicsPipelineProps->samples             = 1;
             pShadingPassGraphicsPipelineProps->viewportRects       = { renderProps.renderViewportRect };
             pShadingPassGraphicsPipelineProps->scissorRects        = { renderProps.renderViewportRect };
             pShadingPassGraphicsPipelineProps->pRenderTargetsProps = pShadingPassGraphicsPipelineRTProperties;

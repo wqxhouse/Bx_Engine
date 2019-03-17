@@ -56,7 +56,8 @@ namespace VulkanEngine
         }
 
         Texture::VulkanTexture2D* TextureMgr::createTexture2D(
-            ::Texture::Texture2DCreateData* pTexture2DCreateData)
+            ::Texture::Texture2DCreateData* pTexture2DCreateData,
+            const BOOL                      isResolve)
         {
             BOOL status = BX_SUCCESS;
 
@@ -64,11 +65,10 @@ namespace VulkanEngine
                    pTexture2DCreateData->pSamplerCreateData != NULL);
 
             Texture::VulkanTexture2D* pNewTexture2D =
-                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, pTexture2DCreateData);
+                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, pTexture2DCreateData, isResolve);
 
             status = pNewTexture2D->initialize();
             status = pNewTexture2D->create(*m_pHwDevice);
-            status = pNewTexture2D->createTextureImageView();
 
             if (pTexture2DCreateData->texUsage == BX_TEXTURE_USAGE_SAMPLED)
             {
@@ -86,7 +86,8 @@ namespace VulkanEngine
             const UINT              samples,
             const TextureFormat     texFormat,
             BX_VULKAN_TEXTURE_USAGE vulkanUsage,
-            const VDeleter<VkImage> image)
+            const VDeleter<VkImage> image,
+            const BOOL              isResolve)
         {
             BOOL status = BX_SUCCESS;
 
@@ -108,14 +109,13 @@ namespace VulkanEngine
             texture2DCreateData.pSamplerCreateData = NULL;
 
             Texture::VulkanTexture2D* pNewTexture2D =
-                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData, image);
+                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData, image, isResolve);
 
             status = pNewTexture2D->initialize();
 
             assert(status == BX_SUCCESS);
 
-            // No need to create image here
-            status = pNewTexture2D->createTextureImageView();
+            status = pNewTexture2D->create(*m_pHwDevice);
 
             assert(status == BX_SUCCESS);
 
@@ -129,11 +129,12 @@ namespace VulkanEngine
             const UINT              texHeight,
             const UINT              samples,
             const TextureFormat     texFormat,
-            BX_VULKAN_TEXTURE_USAGE vulkanUsage)
+            BX_VULKAN_TEXTURE_USAGE vulkanUsage,
+            const BOOL              isResolve)
         {
             BOOL status = BX_SUCCESS;
 
-            TextureUsage usage = vulkanUsage                    |
+            TextureUsage usage = vulkanUsage |
                                  Utility::VulkanUtility::GetTextureUsage(texFormat);
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
@@ -150,17 +151,13 @@ namespace VulkanEngine
             texture2DCreateData.pSamplerCreateData = NULL;
 
             Texture::VulkanTexture2D* pNewTexture2D =
-                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData);
+                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData, isResolve);
 
             status = pNewTexture2D->initialize();
 
             assert(status == BX_SUCCESS);
 
             status = pNewTexture2D->create(*m_pHwDevice);
-
-            assert(status == BX_SUCCESS);
-
-            status = pNewTexture2D->createTextureImageView();
 
             assert(status == BX_SUCCESS);
 
@@ -200,17 +197,13 @@ namespace VulkanEngine
             texture2DCreateData.pSamplerCreateData = &textureSamplerCreateData;
 
             Texture::VulkanTexture2D* pNewTexture2D =
-                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData);
+                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData, FALSE);
 
             status = pNewTexture2D->initialize();
 
             assert(status == BX_SUCCESS);
 
             status = pNewTexture2D->create(*m_pHwDevice);
-
-            assert(status == BX_SUCCESS);
-
-            status = pNewTexture2D->createTextureImageView();
 
             assert(status == BX_SUCCESS);
 

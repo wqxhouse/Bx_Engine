@@ -142,6 +142,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\Release\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

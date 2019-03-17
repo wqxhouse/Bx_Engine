@@ -27,6 +27,13 @@ struct GraphicsSetting
     BOOL shadowCasting;
     Resolution shadowResolution     = { 128, 128 };
 
+    INLINE BOOL IsForwardRendering() const
+    {
+        return ((renderingMethod == FORWARD_RENDERING)      ||
+                (renderingMethod == FORWARD_PLUS_RENDERING) ||
+                (renderingMethod == FORWARD_CLUSTERED_RENDERING));
+    }
+
     INLINE void EnableSSAO()
     {
         ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_SSAO;
@@ -35,6 +42,11 @@ struct GraphicsSetting
     INLINE void DisableSSAO()
     {
         ambientOcclutionSetting.ambientOcclusion = AmbientOcclusion::AMBIENTOCCLUSION_NONE;
+    }
+
+    INLINE BOOL IsEnableAntialasing() const
+    {
+        return ((antialasing != AA_NONE) == TRUE);
     }
 
     AmbientOcclutionSetting ambientOcclutionSetting =

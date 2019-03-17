@@ -9,8 +9,6 @@ layout (input_attachment_index = 0, binding = 0) uniform subpassInput posViewTex
 layout (input_attachment_index = 1, binding = 1) uniform subpassInput normalViewTexture;
 layout (input_attachment_index = 2, binding = 2) uniform subpassInput texCoordTexture;
 
-layout (binding = 6) uniform sampler2D TestTexture;
-
 layout (location = 0) out vec4 outColor;
 
 struct LightBase
@@ -66,6 +64,10 @@ layout (binding = 5) uniform ViewMatUniform
 {
     mat4 viewMat;
 };
+
+// layout (binding = 6) uniform EmptyUniform {};
+
+layout (binding = 7) uniform sampler2D TestTexture;
 
 // Calculate the diffuse radiance for phong shading
 // N(normal), L(light direction) must be normalized

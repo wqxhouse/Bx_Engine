@@ -36,11 +36,20 @@ namespace VulkanEngine
             std::vector<VkImageView> attachmentImageViews(attachmentNum);
             m_pTextureList.resize(attachmentNum);
 
-            for (size_t i = 0;i < attachmentNum; ++i)
+            for (size_t i = 0; i < attachmentNum; ++i)
             {
-                Texture::VulkanTextureBase* pTex = attachmentsCreateData.ppAttachments->at(i);
+                VulkanAttachment*           pAttachment = attachmentsCreateData.ppAttachments->at(i);
+                Texture::VulkanTextureBase* pTex = pAttachment->pTex;
                 m_pTextureList[i]                = pTex;
-                attachmentImageViews[i]          = pTex->GetTextureImageView();
+
+                if (pAttachment->sampleNum == 1)
+                {
+                    attachmentImageViews[i] = pTex->GetTextureImageView();
+                }
+                else
+                {
+                    attachmentImageViews[i] = pTex->GetTextureResolveImageView();
+                }
             }
 
             VkFramebufferCreateInfo framebufferCreateInfo = {};

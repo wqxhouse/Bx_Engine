@@ -32,8 +32,8 @@ namespace VulkanEngine
 
         struct VulkanRenderTargetFramebufferCreateData
         {
-            UINT                        framebufferIndex;
-            Texture::VulkanTextureBase* pTexture;
+            UINT                     framebufferIndex;
+            Buffer::VulkanAttachment attachment;
         };
 
         struct VulkanRenderTargetCreateData
@@ -42,6 +42,7 @@ namespace VulkanEngine
             UINT                                                  renderSubPassIndex;
             UINT                                                  bindingPoint;
             UINT                                                  attachmentIndex;
+            UINT                                                  sampleNum;
             BX_FRAMEBUFFER_ATTACHMENT_LAYOUT                      layout;
             BOOL                                                  useStencil;
             BOOL                                                  isStoreStencil;
@@ -111,14 +112,16 @@ namespace VulkanEngine
 
             // Create render targets for a single subpass
             BOOL createRenderTargets(
-                IN  const std::vector<VulkanRenderTargetCreateData*>*      pRenderTargetsCreateDataRefList,
-                IN  const std::vector<const VulkanDescriptorInfo*>*        pSubpassinputAttachmentDescriptorInfoPtrList,
-                OUT VkSubpassDescription*                                  pSubpassDescription,
-                OUT std::vector<VkAttachmentDescription>*                  pAttachmentDescriptionList,
-                OUT std::vector<VkAttachmentReference>*                    pColorSubpassAttachmentRefList,
-                OUT VkAttachmentReference*                                 pDepthSubpassAttachmentRef,
-                OUT std::vector<VkAttachmentReference>*                    pInputSubpassAttachmentRef,
-                OUT std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTextureTable);
+                IN  const std::vector<VulkanRenderTargetCreateData*>*    pRenderTargetsCreateDataRefList,
+                IN  const std::vector<const VulkanDescriptorInfo*>*      pSubpassInputAttachmentDescriptorInfoPtrList,
+                IN  const std::vector<const VulkanDescriptorInfo*>*      pSubpassResolveAttachmentDescriptorInfoPtrList,
+                OUT VkSubpassDescription*                                pSubpassDescription,
+                OUT std::vector<VkAttachmentDescription>*                pAttachmentDescriptionList,
+                OUT std::vector<VkAttachmentReference>*                  pColorSubpassAttachmentRefList,
+                OUT VkAttachmentReference*                               pDepthSubpassAttachmentRef,
+                OUT std::vector<VkAttachmentReference>*                  pInputSubpassAttachmentRef,
+                OUT std::vector<VkAttachmentReference>*                  pResolveSubpassAttachmentRef,
+                OUT std::vector<std::vector<Buffer::VulkanAttachment*>>* pFramebuffersAttachmentsTable);
 
             // Create render pass
             BOOL createRenderPass(
@@ -129,8 +132,8 @@ namespace VulkanEngine
 
             // Generate framebuffers
             BOOL createFramebuffers(
-                std::vector<std::vector<Texture::VulkanTextureBase*>>* pFramebuffersTexturePtrList,
-                const UINT                                             framebufferNum);
+                std::vector<std::vector<Buffer::VulkanAttachment*>>* pFramebufferAttachmentPtrList,
+                const UINT                                           framebufferNum);
 
             // Context
             const Setting*                                      m_pSetting;

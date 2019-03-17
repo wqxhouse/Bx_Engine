@@ -35,6 +35,7 @@ namespace VulkanEngine
         {
             PolyMode                                                   polyMode;
             CullMode                                                   cullMode;
+            UINT                                                       samples;
             std::vector<Rectangle>                                     viewportRects;
             std::vector<Rectangle>                                     scissorRects;
             std::vector<VulkanGraphicsPipelineRenderTargetProperties>* pRenderTargetsProps;
@@ -72,6 +73,7 @@ namespace VulkanEngine
             std::vector<VulkanUniformBufferResource>* pUniformBufferResourceList;
             std::vector<VulkanTextureResource>*       pTextureResouceList;
             std::vector<VulkanTextureResource>*       pInputAttachmentList;
+            std::vector<VulkanTextureResource>*       pResolveAttachmentList;
         };
 
         struct VulkanRenderResources

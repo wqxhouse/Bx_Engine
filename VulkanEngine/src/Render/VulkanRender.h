@@ -103,6 +103,7 @@ namespace VulkanEngine
                 BOOL                             isStore;
                 UINT                             renderSubPassIndex;
                 UINT                             bindingPoint;
+                UINT                             sampleNum;
                 BX_FRAMEBUFFER_ATTACHMENT_LAYOUT layout;
                 BOOL                             useStencil;
                 BOOL                             isStoreStencil;
@@ -200,6 +201,8 @@ namespace VulkanEngine
             VulkanRenderPass              m_mainSceneRenderPass;
             std::vector<VulkanRenderPass> m_postDrawPassList;
 
+            const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
+
             std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
 
             UINT                                                         m_descriptorSetNum;
@@ -239,6 +242,8 @@ namespace VulkanEngine
             void draw();
 
         private:
+            void initializeBackbufferRTCreateData();
+
             std::vector<VulkanUniformBufferResource> createUniformBufferResource();
         };
 
@@ -263,11 +268,23 @@ namespace VulkanEngine
             void draw();
 
         private:
+            struct MsaaUniformBuffer
+            {
+                INT        sampleNum; const INT padding = 0;
+                Resolution dimension;
+            } m_msaaUniformBuffer;
+
+            void initializeBackbufferRTCreateData();
+
             void createGBufferTextures();
 
             VulkanUniformBufferResource createViewMatrixUniformBufferResource(
                 const UINT setIndex,
                 const UINT viewMatrixUboIndex);
+
+            VulkanUniformBufferResource createMsaaUniformBufferResource(
+                const UINT setIndex,
+                const UINT msaaUboIndex);
 
             std::vector<VulkanUniformBufferResource> createGbufferUniformBufferResource();
             std::vector<VulkanUniformBufferResource> createShadingPassUniformBufferResource();
@@ -294,7 +311,7 @@ namespace VulkanEngine
                 IN  std::vector<VulkanRenderTargetCreateData*>*                pRTCreateDataRefList,
                 OUT Shader::BxShaderMeta*                                      pShadingPassShaderMeta,
                 OUT std::vector<VulkanUniformBufferResource>*                  pShadingPassUniformBufferResourceList,
-                OUT std::vector<VulkanTextureResource>*                        pTextureResourceList,
+                OUT std::vector<VulkanTextureResource>*                        pShadingPassTextureResourceList,
                 OUT std::vector<VulkanTextureResource>*                        pInputAttachmentResourceList,
                 OUT std::vector<VulkanDescriptorResources>*                    pShadingPassDescriptorResourcesList,
                 OUT VulkanRenderResources*                                     pShadingPassResources,
@@ -308,10 +325,10 @@ namespace VulkanEngine
 
             float m_shadingPassQuad[8] =
             {
-                 1.0f, -1.0f,
                 -1.0f, -1.0f,
-                 1.0f,  1.0f,
-                -1.0f,  1.0f
+                -1.0f,  1.0f,
+                 1.0f, -1.0f,
+                 1.0f,  1.0f
             };
 
             std::vector<UINT> m_shadingPassQuadIndices =

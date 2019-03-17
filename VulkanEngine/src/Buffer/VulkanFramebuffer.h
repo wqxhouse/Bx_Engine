@@ -18,13 +18,19 @@ namespace VulkanEngine
 {
     namespace Buffer
     {
+        struct VulkanAttachment
+        {
+            UINT                        sampleNum;
+            Texture::VulkanTextureBase* pTex;
+        };
+
         struct FramebufferCreateData
         {
-            std::vector<Texture::VulkanTextureBase*>* ppAttachments;
-            VkRenderPass                              renderPass;
-            UINT                                      width;
-            UINT                                      height;
-            UINT                                      layers;
+            std::vector<VulkanAttachment*>* ppAttachments;
+            VkRenderPass                    renderPass;
+            UINT                            width;
+            UINT                            height;
+            UINT                            layers;
         };
 
         class VulkanFramebuffer
