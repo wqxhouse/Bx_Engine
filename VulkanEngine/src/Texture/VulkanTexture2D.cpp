@@ -146,23 +146,6 @@ namespace VulkanEngine
             return result;
         }
 
-        BOOL VulkanTexture2D::createDescriptorSetLayout(
-            const UINT               bindingPoint,
-            const UINT               descriptorNum,
-            const VkShaderStageFlags stageFlags)
-        {
-            BOOL result = BX_SUCCESS;
-
-            VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
-            descriptorSetLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            descriptorSetLayoutBinding.binding            = bindingPoint;
-            descriptorSetLayoutBinding.descriptorCount    = descriptorNum;
-            descriptorSetLayoutBinding.stageFlags         = stageFlags;
-            descriptorSetLayoutBinding.pImmutableSamplers = NULL;
-
-            return result;
-        }
-
         BOOL VulkanTexture2D::createImage2D(
             const VkPhysicalDevice hwDevice,
             VkImage*               pImage,

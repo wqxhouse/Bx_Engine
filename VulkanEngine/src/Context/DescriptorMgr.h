@@ -37,6 +37,7 @@ namespace VulkanEngine
             Texture::VulkanTextureBase*     pDescriptorTexture;
             UINT                            descriptorSetIndex;
             UINT                            descriptorBindingIndex;
+            UINT                            descriptorCount;
         };
 
         class DescriptorMgr

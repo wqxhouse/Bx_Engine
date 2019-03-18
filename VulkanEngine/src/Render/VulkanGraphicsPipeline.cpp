@@ -284,6 +284,7 @@ namespace VulkanEngine
                         pDescriptorUpdateInfo->descriptorType         = uniformDescriptorType;
                         pDescriptorUpdateInfo->descriptorSetIndex     = pUniformbufferResource->setIndex;
                         pDescriptorUpdateInfo->descriptorBindingIndex = pUniformbufferResource->bindingPoint;
+                        pDescriptorUpdateInfo->descriptorCount        = pUniformbufferResource->uniformbufferNum;
                         pDescriptorUpdateInfo->pDescriptorBuffer      = pUniformbufferResource->pUniformBuffer;
                         pDescriptorUpdateInfo->pDescriptorTexture     = NULL;
                     }
@@ -305,6 +306,7 @@ namespace VulkanEngine
                         pDescriptorUpdateInfo->descriptorType         = BX_SAMPLER_DESCRIPTOR;
                         pDescriptorUpdateInfo->descriptorSetIndex     = pTexResource->setIndex;
                         pDescriptorUpdateInfo->descriptorBindingIndex = pTexResource->bindingPoint;
+                        pDescriptorUpdateInfo->descriptorCount        = pTexResource->textureNum;
                         pDescriptorUpdateInfo->pDescriptorBuffer      = NULL;
                         pDescriptorUpdateInfo->pDescriptorTexture     = pTexResource->pTexture;
                     }
@@ -332,6 +334,7 @@ namespace VulkanEngine
                         pInputAttachmentDescriptorUpdateInfo->descriptorType         = BX_INPUT_ATTACHMENT_DESCRIPTOR;
                         pInputAttachmentDescriptorUpdateInfo->descriptorSetIndex     = pInputAttachmentDescriptorResource->setIndex;
                         pInputAttachmentDescriptorUpdateInfo->descriptorBindingIndex = pInputAttachmentDescriptorResource->bindingPoint;
+                        pInputAttachmentDescriptorUpdateInfo->descriptorCount        = 1;
                         pInputAttachmentDescriptorUpdateInfo->pDescriptorBuffer      = NULL;
                         pInputAttachmentDescriptorUpdateInfo->pDescriptorTexture     = pInputAttachmentDescriptorResource->pTexture;
                     }

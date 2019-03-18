@@ -12,7 +12,7 @@ layout (location = 3) in mat4 fragViewMat;
 
 layout(location = 0) out vec4 outColor;
 
-layout (binding = 3) uniform sampler2D TestTexture;
+layout (binding = 3) uniform sampler2D AlbedoTexture[256];
 
 struct LightBase
 {
@@ -125,7 +125,7 @@ void main()
         vec3(0.6f),
         10.0f);
 
-    vec3 radiance = (diffuseRadiance + specularRadiance) * texture(TestTexture, fragTexCoord).xyz;
+    vec3 radiance = (diffuseRadiance + specularRadiance) * texture(AlbedoTexture[0], fragTexCoord).xyz;
 
     outColor = vec4(gammaCorrection(radiance), 1.0f);
 }

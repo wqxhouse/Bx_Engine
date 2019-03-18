@@ -182,66 +182,71 @@ namespace VulkanEngine
 
             std::vector<VkWriteDescriptorSet> writeDescriptorSetList(descriptorUpdateNum);
 
-            std::vector<VkDescriptorBufferInfo> descriptorBufferInfoList;
-            std::vector<VkDescriptorImageInfo>  descriptorImageInfoList;
+            std::vector<std::vector<VkDescriptorBufferInfo>> descriptorBufferInfoTable;
+            std::vector<std::vector<VkDescriptorImageInfo>>  descriptorImageInfoTable;
 
-            descriptorBufferInfoList.reserve(descriptorUpdateNum);
-            descriptorImageInfoList.reserve(descriptorUpdateNum);
+            descriptorBufferInfoTable.reserve(descriptorUpdateNum);
+            descriptorImageInfoTable.reserve(descriptorUpdateNum);
 
             for (size_t descriptorUpdateIndex = 0;
                  descriptorUpdateIndex < descriptorUpdateNum;
                  ++descriptorUpdateIndex)
             {
-                BX_DESCRIPTOR_TYPE descriptorType = descriptorSetUpdateInfo[descriptorUpdateIndex].descriptorType;
+                const DescriptorUpdateInfo* pDescriptorUpdateInfo = &(descriptorSetUpdateInfo[descriptorUpdateIndex]);
+
+                BX_DESCRIPTOR_TYPE descriptorType = pDescriptorUpdateInfo->descriptorType;
 
                 writeDescriptorSetList[descriptorUpdateIndex].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSetList[descriptorUpdateIndex].descriptorType  = Utility::VulkanUtility::GetVkDescriptorType(descriptorType);
-                writeDescriptorSetList[descriptorUpdateIndex].descriptorCount = 1;
-                writeDescriptorSetList[descriptorUpdateIndex].dstSet          =
-                    m_descriptorSetList[descriptorSetUpdateInfo[descriptorUpdateIndex].descriptorSetIndex];
-                writeDescriptorSetList[descriptorUpdateIndex].dstBinding      =
-                    descriptorSetUpdateInfo[descriptorUpdateIndex].descriptorBindingIndex;
+                writeDescriptorSetList[descriptorUpdateIndex].descriptorCount = pDescriptorUpdateInfo->descriptorCount;
+                writeDescriptorSetList[descriptorUpdateIndex].dstSet          = m_descriptorSetList[pDescriptorUpdateInfo->descriptorSetIndex];
+                writeDescriptorSetList[descriptorUpdateIndex].dstBinding      = pDescriptorUpdateInfo->descriptorBindingIndex;
                 writeDescriptorSetList[descriptorUpdateIndex].dstArrayElement = 0;
 
                 switch (descriptorType)
                 {
                     case BX_UNIFORM_DESCRIPTOR:
                     {
+                        assert(pDescriptorUpdateInfo->descriptorCount <= 1);
+
+                        const size_t currentDescriptorBufferInfoIndex = descriptorBufferInfoTable.size();
+
                         VkDescriptorBufferInfo descriptorBufferInfo = {};
-                        descriptorBufferInfo.buffer = descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorBuffer->GetBuffer();
+                        descriptorBufferInfo.buffer = pDescriptorUpdateInfo->pDescriptorBuffer->GetBuffer();
                         descriptorBufferInfo.offset = 0;
-                        descriptorBufferInfo.range  = descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorBuffer->GetBufferSize();
+                        descriptorBufferInfo.range  = pDescriptorUpdateInfo->pDescriptorBuffer->GetBufferSize();
 
-                        descriptorBufferInfoList.push_back(descriptorBufferInfo);
-
-                        const size_t currentDescriptorBufferInfoIndex = descriptorBufferInfoList.size() - 1;
+                        descriptorBufferInfoTable.push_back( { descriptorBufferInfo } );
 
                         writeDescriptorSetList[descriptorUpdateIndex].pBufferInfo =
-                            &(descriptorBufferInfoList[currentDescriptorBufferInfoIndex]);
+                            descriptorBufferInfoTable[currentDescriptorBufferInfoIndex].data();
 
                         break;
                     }
                     case BX_UNIFORM_DESCRIPTOR_DYNAMIC:
                     {
+                        assert(pDescriptorUpdateInfo->descriptorCount <= 1);
+
                         // TODO: Just updating partial of dynamic buffer
+                        const size_t currentDescriptorBufferInfoIndex = descriptorBufferInfoTable.size();
+
                         VkDescriptorBufferInfo descriptorBufferInfo = {};
-                        descriptorBufferInfo.buffer = descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorBuffer->GetBuffer();
+                        descriptorBufferInfo.buffer = pDescriptorUpdateInfo->pDescriptorBuffer->GetBuffer();
                         descriptorBufferInfo.offset = 0;
-                        descriptorBufferInfo.range  = descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorBuffer->GetDescriptorObjectSize();
+                        descriptorBufferInfo.range  = pDescriptorUpdateInfo->pDescriptorBuffer->GetDescriptorObjectSize();
 
-                        descriptorBufferInfoList.push_back(descriptorBufferInfo);
-
-                        const size_t currentDescriptorBufferInfoIndex = descriptorBufferInfoList.size() - 1;
+                        descriptorBufferInfoTable.push_back( { descriptorBufferInfo } );
 
                         writeDescriptorSetList[descriptorUpdateIndex].pBufferInfo =
-                            &(descriptorBufferInfoList[currentDescriptorBufferInfoIndex]);
+                            descriptorBufferInfoTable[currentDescriptorBufferInfoIndex].data();
 
                         break;
                     }
                     case BX_SAMPLER_DESCRIPTOR:
                     {
-                        Texture::VulkanTextureBase* pDescriptorTexture =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
+                        Texture::VulkanTextureBase* pDescriptorTexture = pDescriptorUpdateInfo->pDescriptorTexture;
+
+                        const size_t currentDescriptorImageInfoIndex = descriptorImageInfoTable.size();
 
                         const TextureUsage usage = pDescriptorTexture->GetTextureUsage();
 
@@ -262,22 +267,29 @@ namespace VulkanEngine
                             descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
                         }
 
-                        descriptorImageInfoList.push_back(descriptorImageInfo);
+                        descriptorImageInfoTable.push_back(std::vector<VkDescriptorImageInfo>());
 
-                        const size_t currentDescriptorImageInfoIndex = descriptorImageInfoList.size() - 1;
+                        for (UINT samplerArrayIndex = 0;
+                            samplerArrayIndex < pDescriptorUpdateInfo->descriptorCount;
+                            samplerArrayIndex++)
+                        {
+                            descriptorImageInfoTable[currentDescriptorImageInfoIndex].push_back(descriptorImageInfo);
+                        }
 
                         writeDescriptorSetList[descriptorUpdateIndex].pImageInfo =
-                            &(descriptorImageInfoList[currentDescriptorImageInfoIndex]);
+                            descriptorImageInfoTable[currentDescriptorImageInfoIndex].data();
 
                         break;
                     }
                     case BX_INPUT_ATTACHMENT_DESCRIPTOR:
                     {
                         Texture::VulkanTextureBase* pDescriptorTexture =
-                            descriptorSetUpdateInfo[descriptorUpdateIndex].pDescriptorTexture;
+                            pDescriptorUpdateInfo->pDescriptorTexture;
 
                         VkDescriptorImageInfo descriptorImageInfo = {};
                         descriptorImageInfo.imageLayout           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+                        const size_t currentDescriptorImageInfoIndex = descriptorImageInfoTable.size();
 
                         if (pDescriptorTexture->GetSampleNumber() == 1)
                         {
@@ -288,12 +300,10 @@ namespace VulkanEngine
                             descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
                         }
 
-                        descriptorImageInfoList.push_back(descriptorImageInfo);
-
-                        const size_t currentDescriptorImageInfoIndex = descriptorImageInfoList.size() - 1;
+                        descriptorImageInfoTable.push_back( { descriptorImageInfo } );
 
                         writeDescriptorSetList[descriptorUpdateIndex].pImageInfo =
-                            &(descriptorImageInfoList[currentDescriptorImageInfoIndex]);
+                            descriptorImageInfoTable[currentDescriptorImageInfoIndex].data();
 
                         break;
                     }

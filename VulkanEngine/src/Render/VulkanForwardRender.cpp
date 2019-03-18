@@ -174,13 +174,13 @@ namespace VulkanEngine
 
             Texture::VulkanTexture2D* pTexture =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    1,
-                    TRUE,
-                    BX_FORMAT_RGBA8,
-                    BX_FORMAT_RGBA8,
-                    textureSamplerCreateData);
+                                                      1,
+                                                      TRUE,
+                                                      BX_FORMAT_RGBA8,
+                                                      BX_FORMAT_RGBA8,
+                                                      textureSamplerCreateData);
 
-            std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 3, 1, pTexture) };
+            std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 3, 256, pTexture) };
             descriptorResources.pTextureResouceList                     = &sceneTextureResourceList;
 
             // Create resolve resources for MSAA
