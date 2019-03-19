@@ -216,6 +216,52 @@ namespace VulkanEngine
             return pNewTexture2D;
         }
 
+        Texture::VulkanTexture2D* TextureMgr::createTexture2DSampler(
+            const UINT                           texWidth,
+            const UINT                           texHeight,
+            const UINT                           samples,
+            const BOOL                           mipmap,
+            const TextureFormat                  texLoadFormat,
+            const TextureFormat                  texStoreFormat,
+            ::Texture::TextureSamplerCreateData& textureSamplerCreateData,
+            const image_data*                    pImageData)
+        {
+            BOOL status = BX_SUCCESS;
+
+            ::Texture::Texture2DCreateData texture2DCreateData = {};
+            texture2DCreateData.texUsage                       = BX_TEXTURE_USAGE_SAMPLED;
+            texture2DCreateData.texWidth                       = static_cast<UINT>(texWidth);
+            texture2DCreateData.texHeight                      = static_cast<UINT>(texHeight);
+            texture2DCreateData.samples                        = samples;
+            texture2DCreateData.texLoadFormat                  = texLoadFormat;
+            texture2DCreateData.texStoreFormat                 = texStoreFormat;
+            texture2DCreateData.mipmap                         = mipmap;
+            texture2DCreateData.texOptimize                    = TRUE;
+            texture2DCreateData.texPerserve                    = FALSE;
+            texture2DCreateData.pSamplerCreateData             = &textureSamplerCreateData;
+            texture2DCreateData.textureData                    =
+                std::unique_ptr<image_data, ::Texture::TextureDeleter>(const_cast<image_data*>(pImageData));
+
+            Texture::VulkanTexture2D* pNewTexture2D =
+                BX_NEW(Texture::VulkanTexture2D, m_textureMgrArena)(m_pDevice, m_pCmdMgr, &texture2DCreateData, FALSE);
+
+            status = pNewTexture2D->initialize();
+
+            assert(status == BX_SUCCESS);
+
+            status = pNewTexture2D->create(*m_pHwDevice);
+
+            assert(status == BX_SUCCESS);
+
+            status = pNewTexture2D->createSampler(texture2DCreateData.pSamplerCreateData, m_isSamplerAnisotropySupport);
+
+            assert(status == BX_SUCCESS);
+
+            m_pTextureList.push_back(pNewTexture2D);
+
+            return pNewTexture2D;
+        }
+
         Texture::VulkanTexture3D* TextureMgr::createTexture3D(
             ::Texture::Texture3DCreateData* texture3DCreateData)
         {

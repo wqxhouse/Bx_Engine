@@ -137,7 +137,7 @@ namespace Object
                 const std::string&           textureFile,
                 const MESH_TEXTURE_MAP_TYPES type);
 
-            std::vector<Vertex>   m_vertexBuffer;
+            std::vector<Vertex> m_vertexBuffer;
             std::vector<UINT>   m_indexBuffer;
 
         private:

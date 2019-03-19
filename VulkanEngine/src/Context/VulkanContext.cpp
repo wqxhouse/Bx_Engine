@@ -601,8 +601,8 @@ namespace VulkanEngine
 
         m_swapchainExtent =
             VulkanUtility::GetSwapchainExtent(m_swapchainHwProperties.m_surfaceCapabilities,
-                m_pSetting->resolution.width,
-                m_pSetting->resolution.height);
+                                              m_pSetting->resolution.width,
+                                              m_pSetting->resolution.height);
 
         QueueFamilyIndices queueIndices = m_queueMgr.GetHwQueueIndices();
 
@@ -729,6 +729,7 @@ namespace VulkanEngine
         }
 
         m_pRender->EnableDepthTest();
+
         status = m_pRender->initialize();
 
         return status;

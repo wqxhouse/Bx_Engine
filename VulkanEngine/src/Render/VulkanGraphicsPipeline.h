@@ -47,6 +47,15 @@ namespace VulkanEngine
             std::unique_ptr<Buffer::VulkanIndexBuffer>  pIndexBuffer;
         };
 
+        struct VulkanMeshMaterialMapResource
+        {
+            UINT                                      meshIndex;
+            std::unique_ptr<Texture::VulkanTexture2D> pDiffuseMap;
+            std::unique_ptr<Texture::VulkanTexture2D> pSpecularMap;
+            std::unique_ptr<Texture::VulkanTexture2D> pNormalMap;
+            std::unique_ptr<Texture::VulkanTexture2D> pLightMap;
+        };
+
         struct VulkanDescriptorInfo
         {
             UINT           setIndex;

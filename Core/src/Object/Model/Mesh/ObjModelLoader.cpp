@@ -321,19 +321,39 @@ namespace Object
                         }
                         else if (materialStrs[0] == "Ni")
                         {
-                            // TODO
+                            // TODO: NotImplemented();
                         }
                         else if (materialStrs[0] == "illum")
                         {
-                            // TODO
+                            // TODO: NotImplemented();
                         }
                         else if (materialStrs[0] == "map_Kd")
                         {
-                            //m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.diffuseMap = new Texture2D(materialStrs[1]);
+                            Texture::Texture2DCreateData texture2DCreateData = {};
+
+                            int texWidth;
+                            int texHeight;
+                            int texChannels;
+
+                            texture2DCreateData.textureData =
+                                Texture::Texture2D::ReadImageData(materialStrs[1], &texWidth, &texHeight, &texChannels);
+
+                            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_SAMPLED;
+                            texture2DCreateData.texWidth           = static_cast<UINT>(texWidth);
+                            texture2DCreateData.texHeight          = static_cast<UINT>(texHeight);
+                            texture2DCreateData.samples            = 1;
+                            texture2DCreateData.texLoadFormat      = BX_FORMAT_RGBA8;
+                            texture2DCreateData.texStoreFormat     = BX_FORMAT_RGBA8;
+                            texture2DCreateData.mipmap             = TRUE;
+                            texture2DCreateData.texOptimize        = TRUE;
+                            texture2DCreateData.texPerserve        = FALSE;
+
+                            // m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.diffuseMap = new Texture::Texture2D(&texture2DCreateData);
                         }
                         else if (materialStrs[0] == "map_Ks")
                         {
-                            //m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.specMap = new Texture2D(materialStrs[1]);
+                            NotImplemented();
+                            // m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.specMap = new Texture::Texture2D(materialStrs[1]);
                         }
                     }
                 }

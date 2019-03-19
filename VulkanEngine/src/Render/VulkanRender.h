@@ -203,7 +203,8 @@ namespace VulkanEngine
 
             const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
 
-            std::vector<VulkanVertexInputResource> m_mainSceneVertexInputResourceList;
+            std::vector<VulkanVertexInputResource>              m_mainSceneVertexInputResourceList;
+            std::vector<VulkanMeshMaterialMapResource>          m_mainSceneMeshMaterialMapResourceList;
 
             UINT                                                         m_descriptorSetNum;
             std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;

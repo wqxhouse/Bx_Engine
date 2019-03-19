@@ -11,6 +11,7 @@
 
 #include "../../../Math/Matrix4x4.h"
 #include "../../../Core/TypeDef.h"
+#include "../../../Texture/Texture2D.h"
 
 class Texture2D;
 
@@ -126,13 +127,13 @@ namespace Object
         {
             struct MaterialMapStruct
             {
-                Texture2D* diffuseMap;
-                Texture2D* specMap;
-                Texture2D* normalMap;
-                Texture2D* lightMap;
+                Texture::Texture2D* diffuseMap;
+                Texture::Texture2D* specMap;
+                Texture::Texture2D* normalMap;
+                Texture::Texture2D* lightMap;
             }m_materialMapStruct;
 
-            Texture2D* m_materialMapTextures[4];
+            Texture::Texture2D* m_materialMapTextures[4];
         };
     }
 }
