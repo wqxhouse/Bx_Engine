@@ -23,8 +23,6 @@ namespace Object
             const std::vector<UINT>&          indices)
             : m_name(name),
             m_materialName(materialFile),
-            m_pMaterial(NULL),
-            m_pMaterialMap(NULL),
             useGlobalMaterial(FALSE)
         {
             initialize();
@@ -59,7 +57,6 @@ namespace Object
             const std::vector<UINT>&          texCoordIndices)
             : m_name(name),
             m_materialName(materialFile),
-            m_pMaterial(NULL),
             useGlobalMaterial(FALSE)
         {
             combineVertexData(counter, posBuf, normalBuf, texCoords,
@@ -103,12 +100,12 @@ namespace Object
             if (m_pMaterial != NULL &&
                 pMaterial->GetMaterialType() != m_pMaterial->GetMaterialType())
             {
-                SafeDelete(m_pMaterial);
-                m_pMaterial = pMaterial;
+                m_pMaterial.release();
+                m_pMaterial = std::unique_ptr<Material>(pMaterial);
             }
             else
             {
-                m_pMaterial = pMaterial;
+                m_pMaterial = std::unique_ptr<Material>(pMaterial);
             }
         }
 

@@ -120,18 +120,19 @@ namespace Object
             void* mapVertexBufferData();
 
             void setMaterial(Material* pMaterial);
-            inline void setMaterialMap(MaterialMap* pMaterialMap)
+            INLINE void setMaterialMap(MaterialMap* pMaterialMap)
             {
-                m_pMaterialMap = pMaterialMap;
+                m_pMaterialMap.release();
+                m_pMaterialMap = std::unique_ptr<MaterialMap>(pMaterialMap);
             }
 
-            inline Material*    GetMaterial() { return m_pMaterial; }
-            inline MaterialMap* GetMaterialMap() { return m_pMaterialMap; }
+            INLINE Material*    GetMaterial() { return m_pMaterial.get(); }
+            INLINE MaterialMap* GetMaterialMap() { return m_pMaterialMap.get(); }
 
-            inline void UseGlobalMaterial() { useGlobalMaterial = TRUE; }
-            inline void UseLocalMaterial() { useGlobalMaterial = FALSE; }
+            INLINE void UseGlobalMaterial() { useGlobalMaterial = TRUE; }
+            INLINE void UseLocalMaterial() { useGlobalMaterial = FALSE; }
 
-            //inline UINT GetVertexBufferObj() const { return m_vertexBufferObj; }
+            //INLINE UINT GetVertexBufferObj() const { return m_vertexBufferObj; }
 
             void AddTexture(
                 const std::string&           textureFile,
@@ -160,8 +161,8 @@ namespace Object
             std::string m_name;
             std::string m_materialName;
 
-            Material*    m_pMaterial;
-            MaterialMap* m_pMaterialMap;
+            std::unique_ptr<Material>    m_pMaterial;
+            std::unique_ptr<MaterialMap> m_pMaterialMap;
 
             UINT         m_materialBufferIndex;
 

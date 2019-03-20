@@ -348,7 +348,7 @@ namespace Object
                             texture2DCreateData.texOptimize        = TRUE;
                             texture2DCreateData.texPerserve        = FALSE;
 
-                            // m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.diffuseMap = new Texture::Texture2D(&texture2DCreateData);
+                            m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.diffuseMap = new Texture::Texture2D(&texture2DCreateData);
                         }
                         else if (materialStrs[0] == "map_Ks")
                         {

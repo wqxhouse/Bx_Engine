@@ -49,11 +49,11 @@ namespace VulkanEngine
 
         struct VulkanMeshMaterialMapResource
         {
-            UINT                                      meshIndex;
-            std::unique_ptr<Texture::VulkanTexture2D> pDiffuseMap;
-            std::unique_ptr<Texture::VulkanTexture2D> pSpecularMap;
-            std::unique_ptr<Texture::VulkanTexture2D> pNormalMap;
-            std::unique_ptr<Texture::VulkanTexture2D> pLightMap;
+            UINT                      meshIndex;
+            Texture::VulkanTexture2D* pDiffuseMap;
+            Texture::VulkanTexture2D* pSpecularMap;
+            Texture::VulkanTexture2D* pNormalMap;
+            Texture::VulkanTexture2D* pLightMap;
         };
 
         struct VulkanDescriptorInfo
@@ -72,8 +72,7 @@ namespace VulkanEngine
 
         struct VulkanTextureResource : public VulkanDescriptorInfo
         {
-            UINT                        textureNum;
-            Texture::VulkanTextureBase* pTexture;
+            std::vector<Texture::VulkanTextureBase*> pTextureList;
         };
 
         struct VulkanDescriptorResources

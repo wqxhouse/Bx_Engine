@@ -32,12 +32,12 @@ namespace VulkanEngine
 
         struct DescriptorUpdateInfo
         {
-            BX_DESCRIPTOR_TYPE              descriptorType;
-            Buffer::VulkanDescriptorBuffer* pDescriptorBuffer;
-            Texture::VulkanTextureBase*     pDescriptorTexture;
-            UINT                            descriptorSetIndex;
-            UINT                            descriptorBindingIndex;
-            UINT                            descriptorCount;
+            BX_DESCRIPTOR_TYPE                       descriptorType;
+            Buffer::VulkanDescriptorBuffer*          pDescriptorBuffer;
+            std::vector<Texture::VulkanTextureBase*> pDescriptorTextureList;
+            UINT                                     descriptorSetIndex;
+            UINT                                     descriptorBindingIndex;
+            UINT                                     descriptorCount;
         };
 
         class DescriptorMgr

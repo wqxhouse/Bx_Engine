@@ -185,10 +185,10 @@ namespace VulkanEngine
                         m_mainSceneMeshMaterialMapResourceList.push_back(
                         {
                             meshId++,
-                            std::unique_ptr<Texture::VulkanTexture2D>(pVulkanDiffuseMap),
-                            std::unique_ptr<Texture::VulkanTexture2D>(pVulkanSpecularMap),
-                            std::unique_ptr<Texture::VulkanTexture2D>(pVulkanNormalMap),
-                            std::unique_ptr<Texture::VulkanTexture2D>(pVulkanLightMap)
+                            pVulkanDiffuseMap,
+                            pVulkanSpecularMap,
+                            pVulkanNormalMap,
+                            pVulkanLightMap
                         });
                     }
                 }
@@ -262,18 +262,19 @@ namespace VulkanEngine
             m_descriptorUpdateDataTable[setIndex].push_back(
                 { transMatrixUboIndex, m_transUniformbuffer.data() });
 
-            Buffer::VulkanUniformBufferDynamic * pMainSceneUniformbuffer =
+            Buffer::VulkanUniformBufferDynamic* pTransUniformbuffer =
                 new Buffer::VulkanUniformBufferDynamic(m_pDevice,
                     hwProps.limits.minUniformBufferOffsetAlignment);
 
-            pMainSceneUniformbuffer->createUniformBuffer(*m_pHwDevice,
-                (UINT)m_transUniformbuffer.size(),
-                sizeof(m_transUniformbuffer[0]),
-                static_cast<void*>(m_transUniformbuffer.data()));
+            pTransUniformbuffer->
+                createUniformBuffer(*m_pHwDevice,
+                                    (UINT)m_transUniformbuffer.size(),
+                                    sizeof(m_transUniformbuffer[0]),
+                                    static_cast<void*>(m_transUniformbuffer.data()));
 
             const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
             m_pDescriptorBufferList.push_back(
-                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMainSceneUniformbuffer));
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pTransUniformbuffer));
 
             // Build transform uniform resource
             transUniformBufferResource.shaderType       = BX_VERTEX_SHADER;
@@ -427,18 +428,24 @@ namespace VulkanEngine
         }
 
         VulkanTextureResource VulkanRenderBase::createSceneTextures(
-            const UINT                setIndex,
-            const UINT                bindingPoint,
-            const UINT                textureNum,
-            Texture::VulkanTexture2D* pTexture)
+            const UINT                                    setIndex,
+            const UINT                                    bindingPoint,
+            const std::vector<Texture::VulkanTexture2D*>& texturePtrList)
         {
             VulkanTextureResource textureResource = {};
 
             textureResource.setIndex     = setIndex;
             textureResource.bindingPoint = bindingPoint;
-            textureResource.textureNum   = textureNum;
-            textureResource.pTexture     = pTexture;
             textureResource.shaderType   = BX_FRAGMENT_SHADER;
+
+            const size_t textureNum = texturePtrList.size();
+            textureResource.pTextureList.resize(textureNum);
+
+            for (size_t texIndex = 0; texIndex < textureNum; ++texIndex)
+            {
+                textureResource.pTextureList[texIndex] =
+                    static_cast<Texture::VulkanTextureBase*>(texturePtrList[texIndex]);
+            }
 
             return textureResource;
         }

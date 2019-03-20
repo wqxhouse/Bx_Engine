@@ -366,8 +366,11 @@ namespace VulkanEngine
                         if (graphicsPipeline.IsScenePipeline() == TRUE)
                         {
                             UINT vertexInputResourceCounter = 0;
+                            UINT modelCounter               = 0;
+                            UINT meshCounter                = 0;
 
                             const UINT camNum = pScene->GetSceneCameraNum();
+
                             for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
                             {
                                 Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
@@ -382,13 +385,14 @@ namespace VulkanEngine
                                         if (pModel->IsEnable() == TRUE)
                                         {
                                             Buffer::VulkanDescriptorBuffer* pDescriptorBuffer = NULL;
-                                            UINT dynamicUniformBufferOffset                   = 0;
+                                            UINT transUniformBufferOffset                     = 0;
+                                            UINT materialUniformBufferOffset                  = 0;
 
                                             if (uniformBufferDescUpdateInfoList.size() > 0)
                                             {
                                                 pDescriptorBuffer = uniformBufferDescUpdateInfoList[0].pDescriptorBuffer;
-                                                dynamicUniformBufferOffset =
-                                                    (camIndex * modelIndex + modelIndex) *
+                                                transUniformBufferOffset =
+                                                    modelCounter *
                                                     static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
                                             }
 
@@ -413,10 +417,16 @@ namespace VulkanEngine
                                                 {
                                                     if (m_pDescriptorMgr->GetDescriptorSet(subpassIndex) != VK_NULL_HANDLE)
                                                     {
+                                                        /*pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
+
+                                                        materialUniformBufferOffset =
+                                                            meshCounter *
+                                                            static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());*/
+
                                                         pCmdBuffer->cmdBindDynamicDescriptorSets(
                                                             graphicsPipeline.GetGraphicsPipelineLayout(),
                                                             { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) },
-                                                            { dynamicUniformBufferOffset });
+                                                            { transUniformBufferOffset });
                                                     }
                                                 }
 
@@ -428,8 +438,11 @@ namespace VulkanEngine
                                                 assert(status == BX_SUCCESS);
 
                                                 vertexInputResourceCounter++;
+                                                meshCounter++;
                                             }
                                         }
+
+                                        modelCounter++;
                                     }
                                 }
                             }

@@ -14,11 +14,14 @@
 #define BACK_BUFFER_INDEX               0
 #define BACK_BUFFER_DEPTH_BUFFER_INDEX  1
 
+// Descriptor binding points
 #define TRANSFORM_MATRIX_UBO_INDEX      0
-#define LIGHT_UBO_INDEX                 1
-#define CAM_UBO_INDEX                   2
+#define MATERIAL_UBO_INDEX              1
+#define LIGHT_UBO_INDEX                 2
+#define STATIC_UBO_INDEX                3
+#define ALBEDO_TEXTURE_INDEX            4
 
-#define DESCRIPTOR_SET_NUM 1
+#define DESCRIPTOR_SET_NUM              1
 
 namespace VulkanEngine
 {
@@ -180,8 +183,12 @@ namespace VulkanEngine
                                                       BX_FORMAT_RGBA8,
                                                       textureSamplerCreateData);
 
-            std::vector<VulkanTextureResource> sceneTextureResourceList = { createSceneTextures(0, 3, 256, pTexture) };
-            descriptorResources.pTextureResouceList                     = &sceneTextureResourceList;
+            std::vector<VulkanTextureResource> sceneTextureResourceList =
+            {
+                createSceneTextures(0, ALBEDO_TEXTURE_INDEX, { pTexture, pTexture })
+            };
+
+            descriptorResources.pTextureResouceList = &sceneTextureResourceList;
 
             // Create resolve resources for MSAA
             std::vector<VulkanTextureResource> resolveTextureResourceList(backbufferNum);
@@ -192,8 +199,9 @@ namespace VulkanEngine
                     VulkanTextureResource* resolveTextureResource = &(resolveTextureResourceList[backbufferIndex]);
                     resolveTextureResource->setIndex              = 0;
                     resolveTextureResource->attachmentIndex       = 0;
-                    resolveTextureResource->textureNum            = 1;
-                    resolveTextureResource->pTexture              = m_backBufferRTsCreateDataList[backbufferIndex][0].attachment.pTex;
+
+                    resolveTextureResource->pTextureList.push_back(
+                        m_backBufferRTsCreateDataList[backbufferIndex][0].attachment.pTex);
                 }
 
                 descriptorResources.pResolveAttachmentList = &resolveTextureResourceList;
@@ -375,7 +383,7 @@ namespace VulkanEngine
             {
                 createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX),
                 createLightUniformBufferResource(0, LIGHT_UBO_INDEX),
-                createCamUniformBufferResource(0, CAM_UBO_INDEX)
+                createCamUniformBufferResource(0, STATIC_UBO_INDEX)
             };
 
             return uniformbufferResourceList;

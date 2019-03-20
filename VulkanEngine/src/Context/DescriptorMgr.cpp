@@ -8,6 +8,7 @@
 //================================================================================================
 
 #include "DescriptorMgr.h"
+
 namespace VulkanEngine
 {
     namespace Mgr
@@ -244,7 +245,8 @@ namespace VulkanEngine
                     }
                     case BX_SAMPLER_DESCRIPTOR:
                     {
-                        Texture::VulkanTextureBase* pDescriptorTexture = pDescriptorUpdateInfo->pDescriptorTexture;
+                        Texture::VulkanTextureBase* pDescriptorTexture =
+                            pDescriptorUpdateInfo->pDescriptorTextureList[0];
 
                         const size_t currentDescriptorImageInfoIndex = descriptorImageInfoTable.size();
 
@@ -268,8 +270,8 @@ namespace VulkanEngine
                         descriptorImageInfoTable.push_back(std::vector<VkDescriptorImageInfo>());
 
                         for (UINT samplerArrayIndex = 0;
-                            samplerArrayIndex < pDescriptorUpdateInfo->descriptorCount;
-                            samplerArrayIndex++)
+                             samplerArrayIndex < pDescriptorUpdateInfo->descriptorCount;
+                             samplerArrayIndex++)
                         {
                             descriptorImageInfoTable[currentDescriptorImageInfoIndex].push_back(descriptorImageInfo);
                         }
@@ -282,7 +284,7 @@ namespace VulkanEngine
                     case BX_INPUT_ATTACHMENT_DESCRIPTOR:
                     {
                         Texture::VulkanTextureBase* pDescriptorTexture =
-                            pDescriptorUpdateInfo->pDescriptorTexture;
+                            pDescriptorUpdateInfo->pDescriptorTextureList[0];
 
                         VkDescriptorImageInfo descriptorImageInfo = {};
                         descriptorImageInfo.imageLayout           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

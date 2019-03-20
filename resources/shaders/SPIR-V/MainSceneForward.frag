@@ -5,14 +5,14 @@
 #define MAX_POINT_LIGHT_NUM       16
 #define MAX_SPOT_LIGHT_NUM        16
 
+#define MAX_MESH_NUM              256
+
 layout (location = 0) in vec3 posView;
 layout (location = 1) in vec3 normalView;
 layout (location = 2) in vec2 fragTexCoord;
 layout (location = 3) in mat4 fragViewMat;
 
 layout(location = 0) out vec4 outColor;
-
-layout (binding = 3) uniform sampler2D AlbedoTexture[256];
 
 struct LightBase
 {
@@ -46,7 +46,12 @@ struct SpotLight
     float outerCosTheta;
 };
 
-layout (binding = 1) uniform LightData
+/*layout (binding = 1) uniform MaterialUbo
+{
+	vec4 materialIndex;
+};*/
+
+layout (binding = 2) uniform LightData
 {
     uint             directionalLightNum;
     DirectionalLight directionalLightList[MAX_DIRECTIONAL_LIGHT_NUM];
@@ -58,10 +63,12 @@ layout (binding = 1) uniform LightData
     SpotLight        spotLightList[MAX_SPOT_LIGHT_NUM];
 } m_lightData;
 
-layout (binding = 2) uniform CamPosUniform
+layout (binding = 3) uniform StaticUniform
 {
     vec3 camPosWorld;
 };
+
+layout (binding = 4) uniform sampler2D AlbedoTexture[MAX_MESH_NUM];
 
 // Calculate the diffuse radiance for phong shading
 // N(normal), L(light direction) must be normalized
@@ -112,11 +119,14 @@ void main()
     vec3 normalizedNormalView = normalize(normalView);
     vec3 normalizedLightView  = normalize((fragViewMat * m_lightData.directionalLightList[0].direction).xyz);
 
+    // const uint albedoTextureIndex = uint(materialIndex.x);
+	vec3 albedo = texture(AlbedoTexture[0], fragTexCoord).xyz;
+
     vec3 diffuseRadiance = calPhongDiffuseRadiance(
         normalizedNormalView,
         normalizedLightView,
         m_lightData.directionalLightList[0].lightBase.color.xyz,
-        vec3(0.5f));
+        albedo);
 
     vec3 specularRadiance = calPhongSpecularRadiance(
         normalizedNormalView,
@@ -125,7 +135,7 @@ void main()
         vec3(0.6f),
         10.0f);
 
-    vec3 radiance = (diffuseRadiance + specularRadiance) * texture(AlbedoTexture[0], fragTexCoord).xyz;
+    vec3 radiance = (diffuseRadiance + specularRadiance);
 
     outColor = vec4(gammaCorrection(radiance), 1.0f);
 }

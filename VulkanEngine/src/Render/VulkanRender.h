@@ -117,6 +117,14 @@ namespace VulkanEngine
                 Math::Mat4 wvpMat;
             };
 
+            struct MaterialUbo
+            {
+                UINT albedoMapIndex;
+                UINT spcularMapIndex;
+                UINT normalMapIndex;
+                UINT lightMapIndex;
+            };
+
             struct LightBaseUbo
             {
                 Math::Vector4 color;
@@ -184,10 +192,9 @@ namespace VulkanEngine
                 const UINT camUboIndex);
 
             VulkanTextureResource createSceneTextures(
-                const UINT                setIndex,
-                const UINT                bindingPoint,
-                const UINT                textureNum,
-                Texture::VulkanTexture2D* pTexture);
+                const UINT                                    setIndex,
+                const UINT                                    bindingPoint,
+                const std::vector<Texture::VulkanTexture2D*>& texturePtrList);
 
             const Setting*          const m_pSetting;
             const VkPhysicalDevice* const m_pHwDevice;
@@ -213,6 +220,8 @@ namespace VulkanEngine
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
 
             std::vector<TransUbo>                   m_transUniformbuffer;
+
+            std::vector<MaterialUbo>                m_materialUniformBuffer;
 
             DynamicLightUbo                         m_lightUbo;
 

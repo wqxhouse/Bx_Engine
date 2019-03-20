@@ -599,7 +599,7 @@ namespace VulkanEngine
                     textureSamplerCreateData);
 
             pGBufferPassTextureResourceList->push_back(
-                createSceneTextures(gBufferPassIndex, TEXTURE_UBO_INDEX, 1, pTexture));
+                createSceneTextures(gBufferPassIndex, TEXTURE_UBO_INDEX, { pTexture }));
 
             pGBufferDescriptorResources->pTextureResouceList = pGBufferPassTextureResourceList;
 
@@ -711,24 +711,24 @@ namespace VulkanEngine
                 pPosTextureInputAttachment->attachmentIndex             = 1;
                 pPosTextureInputAttachment->setIndex                    = shadingPassIndex;
                 pPosTextureInputAttachment->shaderType                  = BX_FRAGMENT_SHADER;
-                pPosTextureInputAttachment->textureNum                  = 1;
-                pPosTextureInputAttachment->pTexture                    = m_backBufferRTsCreateDataList[0][GBUFFER_POS_BUFFER_INDEX].attachment.pTex;
+                pPosTextureInputAttachment->pTextureList                =
+                    { m_backBufferRTsCreateDataList[0][GBUFFER_POS_BUFFER_INDEX].attachment.pTex };
 
                 VulkanTextureResource* pNormalTextureInputAttachment    = &(pInputAttachmentResourceList->at(GBUFFER_NORMAL_BUFFER_INDEX - 1));
                 pNormalTextureInputAttachment->bindingPoint             = GBUFFER_NORMAL_TEX_INDEX;
                 pNormalTextureInputAttachment->attachmentIndex          = 2;
                 pNormalTextureInputAttachment->setIndex                 = shadingPassIndex;
                 pNormalTextureInputAttachment->shaderType               = BX_FRAGMENT_SHADER;
-                pNormalTextureInputAttachment->textureNum               = 1;
-                pNormalTextureInputAttachment->pTexture                 = m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].attachment.pTex;
+                pNormalTextureInputAttachment->pTextureList             =
+                    { m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].attachment.pTex };
 
                 VulkanTextureResource* pTexCoord0TextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_ALBEDO_BUFFER_INDEX - 1));
                 pTexCoord0TextureInputAttachment->bindingPoint          = GBUFFER_ALBEDO_TEX_INDEX;
                 pTexCoord0TextureInputAttachment->attachmentIndex       = 3;
                 pTexCoord0TextureInputAttachment->setIndex              = shadingPassIndex;
                 pTexCoord0TextureInputAttachment->shaderType            = BX_FRAGMENT_SHADER;
-                pTexCoord0TextureInputAttachment->textureNum            = 1;
-                pTexCoord0TextureInputAttachment->pTexture              = m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex;
+                pTexCoord0TextureInputAttachment->pTextureList          =
+                    { m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex };
 
                 pShadingPassDescriptorResources->pInputAttachmentList = pInputAttachmentResourceList;
             }
@@ -758,13 +758,13 @@ namespace VulkanEngine
                 pTexCoord0Texture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
 
                 pShadingPassTextureResourceList->push_back(
-                    createSceneTextures(shadingPassIndex, 0, 1, pPosTexture));
+                    createSceneTextures(shadingPassIndex, 0, { pPosTexture }));
 
                 pShadingPassTextureResourceList->push_back(
-                    createSceneTextures(shadingPassIndex, 1, 1, pNormalTexture));
+                    createSceneTextures(shadingPassIndex, 1, { pNormalTexture }));
 
                 pShadingPassTextureResourceList->push_back(
-                    createSceneTextures(shadingPassIndex, 2, 1, pTexCoord0Texture));
+                    createSceneTextures(shadingPassIndex, 2, { pTexCoord0Texture }));
 
                 pShadingPassDescriptorResources->pTextureResouceList = pShadingPassTextureResourceList;
             }

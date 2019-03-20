@@ -286,29 +286,42 @@ namespace VulkanEngine
                         pDescriptorUpdateInfo->descriptorBindingIndex = pUniformbufferResource->bindingPoint;
                         pDescriptorUpdateInfo->descriptorCount        = pUniformbufferResource->uniformbufferNum;
                         pDescriptorUpdateInfo->pDescriptorBuffer      = pUniformbufferResource->pUniformBuffer;
-                        pDescriptorUpdateInfo->pDescriptorTexture     = NULL;
                     }
 
                     descriptorCounter += uniformBufferDescriptorNum;
 
-                    for (UINT i = 0; i < textureDescriptorNum; ++i)
+                    for (UINT texDescriptorIndex = 0;
+                         texDescriptorIndex < textureDescriptorNum;
+                         ++texDescriptorIndex)
                     {
-                        Mgr::DescriptorCreateInfo* pDescriptorCreateInfo = &(pDescriptorCreateInfoList->at(i + descriptorCounter));
-                        Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo = &(m_textureDescriptorUpdateInfo[i]);
-                        Render::VulkanTextureResource* pTexResource      =
-                            &(descriptorResources->pTextureResouceList->at(i));
+                        Mgr::DescriptorCreateInfo* pDescriptorCreateInfo =
+                            &(pDescriptorCreateInfoList->at(texDescriptorIndex + descriptorCounter));
 
-                        pDescriptorCreateInfo->descriptorType = BX_SAMPLER_DESCRIPTOR;
-                        pDescriptorCreateInfo->bindingPoint   = pTexResource->bindingPoint;
-                        pDescriptorCreateInfo->descriptorNum  = pTexResource->textureNum;
-                        pDescriptorCreateInfo->shaderType     = pTexResource->shaderType;
+                        Mgr::DescriptorUpdateInfo* pDescriptorUpdateInfo =
+                            &(m_textureDescriptorUpdateInfo[texDescriptorIndex]);
+
+                        Render::VulkanTextureResource* pTexResource =
+                            &(descriptorResources->pTextureResouceList->at(texDescriptorIndex));
+
+                        const UINT textureNum = static_cast<UINT>(pTexResource->pTextureList.size());
+
+                        pDescriptorCreateInfo->descriptorType         = BX_SAMPLER_DESCRIPTOR;
+                        pDescriptorCreateInfo->bindingPoint           = pTexResource->bindingPoint;
+                        pDescriptorCreateInfo->descriptorNum          = textureNum;
+                        pDescriptorCreateInfo->shaderType             = pTexResource->shaderType;
 
                         pDescriptorUpdateInfo->descriptorType         = BX_SAMPLER_DESCRIPTOR;
                         pDescriptorUpdateInfo->descriptorSetIndex     = pTexResource->setIndex;
                         pDescriptorUpdateInfo->descriptorBindingIndex = pTexResource->bindingPoint;
-                        pDescriptorUpdateInfo->descriptorCount        = pTexResource->textureNum;
+                        pDescriptorUpdateInfo->descriptorCount        = textureNum;
                         pDescriptorUpdateInfo->pDescriptorBuffer      = NULL;
-                        pDescriptorUpdateInfo->pDescriptorTexture     = pTexResource->pTexture;
+
+                        pDescriptorUpdateInfo->pDescriptorTextureList.resize(textureNum);
+                        for (UINT texIndex = 0; texIndex < textureNum; ++texIndex)
+                        {
+
+                            pDescriptorUpdateInfo->pDescriptorTextureList[texIndex] = pTexResource->pTextureList[texIndex];
+                        }
                     }
 
                     descriptorCounter += textureDescriptorNum;
@@ -331,12 +344,15 @@ namespace VulkanEngine
                         pInputAttachmentDescriptorCreateInfo->descriptorNum  = 1;
                         pInputAttachmentDescriptorCreateInfo->shaderType     = pInputAttachmentDescriptorResource->shaderType;
 
-                        pInputAttachmentDescriptorUpdateInfo->descriptorType         = BX_INPUT_ATTACHMENT_DESCRIPTOR;
-                        pInputAttachmentDescriptorUpdateInfo->descriptorSetIndex     = pInputAttachmentDescriptorResource->setIndex;
-                        pInputAttachmentDescriptorUpdateInfo->descriptorBindingIndex = pInputAttachmentDescriptorResource->bindingPoint;
-                        pInputAttachmentDescriptorUpdateInfo->descriptorCount        = 1;
-                        pInputAttachmentDescriptorUpdateInfo->pDescriptorBuffer      = NULL;
-                        pInputAttachmentDescriptorUpdateInfo->pDescriptorTexture     = pInputAttachmentDescriptorResource->pTexture;
+                        pInputAttachmentDescriptorUpdateInfo->descriptorType            = BX_INPUT_ATTACHMENT_DESCRIPTOR;
+                        pInputAttachmentDescriptorUpdateInfo->descriptorSetIndex        = pInputAttachmentDescriptorResource->setIndex;
+                        pInputAttachmentDescriptorUpdateInfo->descriptorBindingIndex    = pInputAttachmentDescriptorResource->bindingPoint;
+                        pInputAttachmentDescriptorUpdateInfo->descriptorCount           = 1;
+                        pInputAttachmentDescriptorUpdateInfo->pDescriptorBuffer         = NULL;
+
+                        pInputAttachmentDescriptorUpdateInfo->
+                            pDescriptorTextureList.push_back(
+                                pInputAttachmentDescriptorResource->pTextureList[0]);
                     }
 
                     descriptorCounter += inputAttachmentDescriptorNum;
