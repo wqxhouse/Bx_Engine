@@ -123,6 +123,11 @@ namespace VulkanEngine
                 UINT spcularMapIndex;
                 UINT normalMapIndex;
                 UINT lightMapIndex;
+
+                // TODO: Avoid align the dynamic uniform buffer with hard code
+                // use the minUniformBufferOffsetAlignment from hw property to
+                // creat the UBO for dynamic uniform buffer
+                Math::Vector4 padding[15];
             };
 
             struct LightBaseUbo
@@ -183,6 +188,10 @@ namespace VulkanEngine
                 const UINT setIndex,
                 const UINT transMatrixUboIndex);
 
+            VulkanUniformBufferResource createMaterialUniformBufferResource(
+                const UINT setIndex,
+                const UINT materialUboIndex);
+
             VulkanUniformBufferResource createLightUniformBufferResource(
                 const UINT setIndex,
                 const UINT lightUboIndex);
@@ -196,38 +205,38 @@ namespace VulkanEngine
                 const UINT                                    bindingPoint,
                 const std::vector<Texture::VulkanTexture2D*>& texturePtrList);
 
-            const Setting*          const m_pSetting;
-            const VkPhysicalDevice* const m_pHwDevice;
-            const VkDevice*         const m_pDevice;
-            Mgr::CmdBufferMgr*      const m_pCmdBufferMgr;
-            Mgr::DescriptorMgr*     const m_pDescritorMgr;
-            Mgr::TextureMgr*        const m_pTextureMgr;
-            const Scene::RenderScene*     m_pScene;
+            const Setting*          const                                     m_pSetting;
+            const VkPhysicalDevice* const                                     m_pHwDevice;
+            const VkDevice*         const                                     m_pDevice;
+            Mgr::CmdBufferMgr*      const                                     m_pCmdBufferMgr;
+            Mgr::DescriptorMgr*     const                                     m_pDescritorMgr;
+            Mgr::TextureMgr*        const                                     m_pTextureMgr;
+            const Scene::RenderScene*                                         m_pScene;
 
-            std::vector<VulkanRenderPass> m_preDrawPassList;
-            VulkanRenderPass              m_mainSceneRenderPass;
-            std::vector<VulkanRenderPass> m_postDrawPassList;
+            std::vector<VulkanRenderPass>                                     m_preDrawPassList;
+            VulkanRenderPass                                                  m_mainSceneRenderPass;
+            std::vector<VulkanRenderPass>                                     m_postDrawPassList;
 
-            const std::vector<Texture::VulkanTexture2D*>* const m_ppBackbufferTextures;
+            const std::vector<Texture::VulkanTexture2D*>* const               m_ppBackbufferTextures;
 
-            std::vector<VulkanVertexInputResource>              m_mainSceneVertexInputResourceList;
-            std::vector<VulkanMeshMaterialMapResource>          m_mainSceneMeshMaterialMapResourceList;
+            std::vector<VulkanVertexInputResource>                            m_mainSceneVertexInputResourceList;
+            std::vector<VulkanMeshMaterialMapResource>                        m_mainSceneMeshMaterialMapResourceList;
 
-            UINT                                                         m_descriptorSetNum;
-            std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>> m_pDescriptorBufferList;
-            std::vector<std::vector<VulkanDescriptorUpdateData>>         m_descriptorUpdateDataTable;
+            UINT                                                              m_descriptorSetNum;
+            std::vector<std::unique_ptr<Buffer::VulkanDescriptorBuffer>>      m_pDescriptorBufferList;
+            std::vector<std::vector<VulkanDescriptorUpdateData>>              m_descriptorUpdateDataTable;
 
             std::vector<std::vector<VulkanRenderTargetFramebufferCreateData>> m_backBufferRTsCreateDataList;
 
-            std::vector<TransUbo>                   m_transUniformbuffer;
+            std::vector<TransUbo>                                             m_transUniformbuffer;
 
-            std::vector<MaterialUbo>                m_materialUniformBuffer;
+            std::vector<MaterialUbo>                                          m_materialUniformBuffer;
 
-            DynamicLightUbo                         m_lightUbo;
+            DynamicLightUbo                                                   m_lightUbo;
 
         private:
-            BOOL m_isDepthTestEnabled;
-            BOOL m_isStencilTestEnabled;
+            BOOL                                                              m_isDepthTestEnabled;
+            BOOL                                                              m_isStencilTestEnabled;
         };
 
         class VulkanForwardRender : public VulkanRenderBase

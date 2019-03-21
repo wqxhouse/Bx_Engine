@@ -417,16 +417,16 @@ namespace VulkanEngine
                                                 {
                                                     if (m_pDescriptorMgr->GetDescriptorSet(subpassIndex) != VK_NULL_HANDLE)
                                                     {
-                                                        /*pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
+                                                        pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
 
                                                         materialUniformBufferOffset =
                                                             meshCounter *
-                                                            static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());*/
+                                                            static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
 
                                                         pCmdBuffer->cmdBindDynamicDescriptorSets(
                                                             graphicsPipeline.GetGraphicsPipelineLayout(),
                                                             { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) },
-                                                            { transUniformBufferOffset });
+                                                            { transUniformBufferOffset, materialUniformBufferOffset });
                                                     }
                                                 }
 

@@ -245,27 +245,7 @@ namespace VulkanEngine
                     }
                     case BX_SAMPLER_DESCRIPTOR:
                     {
-                        Texture::VulkanTextureBase* pDescriptorTexture =
-                            pDescriptorUpdateInfo->pDescriptorTextureList[0];
-
                         const size_t currentDescriptorImageInfoIndex = descriptorImageInfoTable.size();
-
-                        const TextureUsage usage = pDescriptorTexture->GetTextureUsage();
-
-                        // TODO: Transition the image layout instead of hard code in descriptor image info
-                        VkDescriptorImageInfo descriptorImageInfo = {};
-                        descriptorImageInfo.imageLayout = (((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) == 0) ?
-                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-                        descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();
-
-                        if (pDescriptorTexture->GetSampleNumber() == 1)
-                        {
-                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureImageView();
-                        }
-                        else
-                        {
-                            descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
-                        }
 
                         descriptorImageInfoTable.push_back(std::vector<VkDescriptorImageInfo>());
 
@@ -273,6 +253,26 @@ namespace VulkanEngine
                              samplerArrayIndex < pDescriptorUpdateInfo->descriptorCount;
                              samplerArrayIndex++)
                         {
+                            Texture::VulkanTextureBase* pDescriptorTexture =
+                                pDescriptorUpdateInfo->pDescriptorTextureList[samplerArrayIndex];
+
+                            const TextureUsage usage = pDescriptorTexture->GetTextureUsage();
+
+                            // TODO: Transition the image layout instead of hard code in descriptor image info
+                            VkDescriptorImageInfo descriptorImageInfo = {};
+                            descriptorImageInfo.imageLayout = (((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) == 0) ?
+                                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+                            descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();
+
+                            if (pDescriptorTexture->GetSampleNumber() == 1)
+                            {
+                                descriptorImageInfo.imageView = pDescriptorTexture->GetTextureImageView();
+                            }
+                            else
+                            {
+                                descriptorImageInfo.imageView = pDescriptorTexture->GetTextureResolveImageView();
+                            }
+
                             descriptorImageInfoTable[currentDescriptorImageInfoIndex].push_back(descriptorImageInfo);
                         }
 

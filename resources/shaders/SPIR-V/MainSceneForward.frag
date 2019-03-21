@@ -46,10 +46,11 @@ struct SpotLight
     float outerCosTheta;
 };
 
-/*layout (binding = 1) uniform MaterialUbo
+layout (binding = 1) uniform MaterialUbo
 {
 	vec4 materialIndex;
-};*/
+	vec4 padding[15];
+};
 
 layout (binding = 2) uniform LightData
 {
@@ -119,8 +120,8 @@ void main()
     vec3 normalizedNormalView = normalize(normalView);
     vec3 normalizedLightView  = normalize((fragViewMat * m_lightData.directionalLightList[0].direction).xyz);
 
-    // const uint albedoTextureIndex = uint(materialIndex.x);
-	vec3 albedo = texture(AlbedoTexture[0], fragTexCoord).xyz;
+    const uint albedoTextureIndex = floatBitsToUint(materialIndex.x);
+	vec3 albedo = texture(AlbedoTexture[albedoTextureIndex], fragTexCoord).xyz;
 
     vec3 diffuseRadiance = calPhongDiffuseRadiance(
         normalizedNormalView,

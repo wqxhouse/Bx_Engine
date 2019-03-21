@@ -287,6 +287,62 @@ namespace VulkanEngine
             return transUniformBufferResource;
         }
 
+        VulkanUniformBufferResource VulkanRenderBase::createMaterialUniformBufferResource(
+            const UINT setIndex,
+            const UINT materialUboIndex)
+        {
+            VulkanUniformBufferResource materialUniformBufferResource = {};
+
+            const VkPhysicalDeviceProperties hwProps =
+                Utility::VulkanUtility::GetHwProperties(*m_pHwDevice);
+
+            // Create material uniform buffer update data
+            const UINT meshNum = static_cast<UINT>(m_mainSceneMeshMaterialMapResourceList.size());
+            const UINT camNum  = m_pScene->GetSceneCameraNum();
+            const UINT objNum  = camNum * meshNum;
+
+            assert(
+                setIndex <  m_descriptorSetNum &&
+                objNum   <= DEFAULT_MAX_RENDER_SCENE_OBJ_NUM);
+
+            m_materialUniformBuffer.resize(objNum);
+
+            memset(m_materialUniformBuffer.data(), 0, objNum * sizeof(MaterialUbo));
+
+            for (UINT i = 0; i < meshNum; ++i)
+            {
+                m_materialUniformBuffer[i].albedoMapIndex =
+                    m_mainSceneMeshMaterialMapResourceList[i].meshIndex;
+            }
+
+            m_descriptorUpdateDataTable[setIndex].push_back(
+                { materialUboIndex, m_materialUniformBuffer.data() });
+
+            Buffer::VulkanUniformBufferDynamic* pMaterialUniformbuffer =
+                new Buffer::VulkanUniformBufferDynamic(m_pDevice,
+                                                        hwProps.limits.minUniformBufferOffsetAlignment);
+
+            pMaterialUniformbuffer->
+                createUniformBuffer(*m_pHwDevice,
+                                    (UINT)m_materialUniformBuffer.size(),
+                                    sizeof(m_materialUniformBuffer[0]),
+                                    static_cast<void*>(m_materialUniformBuffer.data()));
+
+            const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
+            m_pDescriptorBufferList.push_back(
+                std::unique_ptr<Buffer::VulkanDescriptorBuffer>(pMaterialUniformbuffer));
+
+            // Build material uniform resource
+            materialUniformBufferResource.shaderType       = BX_FRAGMENT_SHADER;
+            materialUniformBufferResource.setIndex         = setIndex;
+            materialUniformBufferResource.bindingPoint     = materialUboIndex;
+            materialUniformBufferResource.uniformbufferNum = 1;
+            materialUniformBufferResource.pUniformBuffer   =
+                static_cast<Buffer::VulkanUniformBufferDynamic*>(m_pDescriptorBufferList[descriptorBufferIndex].get());
+
+            return materialUniformBufferResource;
+        }
+
         VulkanUniformBufferResource VulkanRenderBase::createLightUniformBufferResource(
             const UINT setIndex,
             const UINT lightUboIndex)
