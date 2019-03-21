@@ -179,11 +179,11 @@ namespace VulkanEngine
 
             Texture::VulkanTexture2D* pDefaultAlbedo =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    1,
-                    TRUE,
-                    BX_FORMAT_RGBA8,
-                    BX_FORMAT_RGBA8,
-                    textureSamplerCreateData);
+                                                      1,
+                                                      TRUE,
+                                                      BX_FORMAT_RGBA8,
+                                                      BX_FORMAT_RGBA8,
+                                                      textureSamplerCreateData);
 
             const size_t sceneAlbedoMaterialNum = m_mainSceneMeshMaterialMapResourceList.size();
             std::vector<Texture::VulkanTexture2D*> sceneAlbedoMapPtrList(sceneAlbedoMaterialNum);

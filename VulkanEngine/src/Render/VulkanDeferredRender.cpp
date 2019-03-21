@@ -41,7 +41,8 @@
 
 // Set 0
 #define TRANSFORM_MATRIX_UBO_INDEX        0
-#define TEXTURE_UBO_INDEX                 1
+#define MATERIAL_UBO_INDEX                1
+#define ALBEDO_TEXTURE_INDEX              2
 
 // Set 1
 #define GBUFFER_POS_TEX_INDEX             0
@@ -455,7 +456,8 @@ namespace VulkanEngine
         {
             std::vector<VulkanUniformBufferResource> gBufferUniformbufferResourceList =
             {
-                createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX)
+                createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX),
+                createMaterialUniformBufferResource(0, MATERIAL_UBO_INDEX)
             };
 
             return gBufferUniformbufferResourceList;
@@ -590,16 +592,37 @@ namespace VulkanEngine
             textureSamplerCreateData.normalize       = TRUE;
             textureSamplerCreateData.mipmapFilter    = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
 
-            Texture::VulkanTexture2D* pTexture =
+            Texture::VulkanTexture2D* pDefaultAlbedo =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
-                    1,
-                    TRUE,
-                    BX_FORMAT_RGBA8,
-                    BX_FORMAT_RGBA8,
-                    textureSamplerCreateData);
+                                                      1,
+                                                      TRUE,
+                                                      BX_FORMAT_RGBA8,
+                                                      BX_FORMAT_RGBA8,
+                                                      textureSamplerCreateData);
+
+            const size_t sceneAlbedoMaterialNum = m_mainSceneMeshMaterialMapResourceList.size();
+            std::vector<Texture::VulkanTexture2D*> sceneAlbedoMapPtrList(sceneAlbedoMaterialNum);
+
+            for (size_t albedoMaterialIndex = 0;
+                 albedoMaterialIndex < sceneAlbedoMaterialNum;
+                 albedoMaterialIndex++)
+            {
+                const Texture::VulkanTexture2D* pAlbedoMap =
+                    m_mainSceneMeshMaterialMapResourceList[albedoMaterialIndex].pDiffuseMap;
+
+                if (pAlbedoMap != NULL)
+                {
+                    sceneAlbedoMapPtrList[albedoMaterialIndex] =
+                        m_mainSceneMeshMaterialMapResourceList[albedoMaterialIndex].pDiffuseMap;
+                }
+                else
+                {
+                    sceneAlbedoMapPtrList[albedoMaterialIndex] = pDefaultAlbedo;
+                }
+            }
 
             pGBufferPassTextureResourceList->push_back(
-                createSceneTextures(gBufferPassIndex, TEXTURE_UBO_INDEX, { pTexture }));
+                createSceneTextures(gBufferPassIndex, ALBEDO_TEXTURE_INDEX, sceneAlbedoMapPtrList));
 
             pGBufferDescriptorResources->pTextureResouceList = pGBufferPassTextureResourceList;
 
