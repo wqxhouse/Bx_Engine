@@ -33,7 +33,7 @@ namespace Texture
 
         INLINE void FreeTextureData()
         {
-            m_textureData.~unique_ptr();
+            m_textureData.release();
         }
 
     private:
