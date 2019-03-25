@@ -23,6 +23,7 @@ int main()
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
     setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    //setting.m_graphicsSetting.antialasing     = AA_VERY_HIGH;
 
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);
@@ -41,44 +42,48 @@ int main()
     std::unique_ptr<Scene::RenderScene> m_pScene =
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
 
-    /*m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+    m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
                           &(Trans(Math::Vector3(-2.0f, 2.0f,  0.0f),
-                                  Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));*/
-
-    m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-                          &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 
-    /*m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+    /*m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+                          &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
+                                  Math::Vector3(0.0f, 0.0f, -1.0f),
+                                  Math::Vector3(0.0f, 1.0f,  0.0f))));*/
+
+    m_pScene->AddObjModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
                           &(Trans(Math::Vector3(2.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 
-    m_pScene->AddObjModel("../resources/models/farmhouse/farmhouse_tri.obj", "../resources/models/farmhouse/farmhouse_tri.mtl",
-                          &(Trans(Math::Vector3(2.0f, -2.0f,  0.0f),
+    /*m_pScene->AddObjModel("../resources/models/buddha/buddha.obj",
+                          "../resources/models/buddha/buddha.mtl",
+                          &(Trans(Math::Vector3(2.0f, -2.0f,  10.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));*/
 
+    Trans prosCamTrans(Math::Vector3(0.0f, 2.0f, 20.0f),
+                       Math::Vector3(0.0f, 0.0f, -1.0f),
+                       Math::Vector3(0.0f, 1.0f, 0.0f));
+
     Object::Camera::ProspectiveCameraCreateInfo prosCamCreateInfo = {};
-    prosCamCreateInfo.pTrans      = &(Trans(Math::Vector3(0.0f, 0.0f,  5.0f),
-                                            Math::Vector3(0.0f, 0.0f, -1.0f),
-                                            Math::Vector3(0.0f, 1.0f,  0.0f)));
+    prosCamCreateInfo.pTrans      = &prosCamTrans;
     prosCamCreateInfo.speed       = 5.0f;
     prosCamCreateInfo.aspectRatio = static_cast<float>(setting.resolution.width) /
                                     static_cast<float>(setting.resolution.height);
     prosCamCreateInfo.fov         = 70.0f;
     prosCamCreateInfo.nearClip    = 0.1f;
-    prosCamCreateInfo.farClip     = 100.0f;
+    prosCamCreateInfo.farClip     = 1000.0f;
 
     m_pScene->AddProspectiveCamera(prosCamCreateInfo);
 
-    Object::Light::LightCreateInfo lightCreateInfo = {};
-    lightCreateInfo.pTrans     = &(Trans(Math::Vector3(1.0f, 1.0f, 1.0f),
-                                         Math::Vector3(0.0f, 0.0f, 0.0f),
-                                         Math::Vector3(0.0f, 1.0f, 0.0f)));
+    Trans lightTrans(Math::Vector3(0.0f, 2.0f, 20.0f),
+                     Math::Vector3(0.0f, 0.0f, -1.0f),
+                     Math::Vector3(0.0f, 1.0f, 0.0f));
 
+    Object::Light::LightCreateInfo lightCreateInfo = {};
+    lightCreateInfo.pTrans     = &lightTrans;
     lightCreateInfo.lightColor = Math::Vector3(1.0f, 1.0f, 1.0f);
 
     m_pScene->AddDirectionalLight(lightCreateInfo);

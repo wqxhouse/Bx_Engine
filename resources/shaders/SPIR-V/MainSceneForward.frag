@@ -5,7 +5,7 @@
 #define MAX_POINT_LIGHT_NUM       16
 #define MAX_SPOT_LIGHT_NUM        16
 
-#define MAX_MESH_NUM              256
+#define MAX_MESH_NUM              512
 
 layout (location = 0) in vec3 posView;
 layout (location = 1) in vec3 normalView;

@@ -68,172 +68,175 @@ namespace VulkanEngine
                     {
                         const std::shared_ptr<Object::Model::Mesh> pMesh = pModel->GetMesh(meshIndex);
 
-                        Buffer::VulkanVertexBuffer* pVertexBuffer =
-                            new Buffer::VulkanVertexBuffer(m_pDevice,
-                                                           m_pCmdBufferMgr,
-                                                           pMesh);
-
-                        pVertexBuffer->createVertexBuffer(*m_pHwDevice, TRUE);
-
-                        Buffer::VulkanIndexBuffer* pIndexBuffer =
-                            new Buffer::VulkanIndexBuffer(m_pDevice,
-                                                          m_pCmdBufferMgr,
-                                                          pMesh);
-
-                        pIndexBuffer->createIndexBuffer(*m_pHwDevice, TRUE);
-
-                        m_mainSceneVertexInputResourceList.push_back(
+                        if (pMesh->m_vertexBuffer.size() > 0)
                         {
-                            std::unique_ptr<Buffer::VulkanVertexBuffer>(pVertexBuffer),
-                            std::unique_ptr<Buffer::VulkanIndexBuffer>(pIndexBuffer)
-                        });
+                            Buffer::VulkanVertexBuffer* pVertexBuffer =
+                                new Buffer::VulkanVertexBuffer(m_pDevice,
+                                                               m_pCmdBufferMgr,
+                                                               pMesh);
 
-                        /// Parse the mesh materials
-                        ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
-                        textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-                        textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
-                        textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-                        textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
-                        textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
-                        textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
-                        textureSamplerCreateData.normalize                           = TRUE;
-                        textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                            pVertexBuffer->createVertexBuffer(*m_pHwDevice, TRUE);
 
-                        const Object::Model::MaterialMap* pMaterialMap = pMesh->GetMaterialMap();
+                            Buffer::VulkanIndexBuffer* pIndexBuffer =
+                                new Buffer::VulkanIndexBuffer(m_pDevice,
+                                                              m_pCmdBufferMgr,
+                                                              pMesh);
 
-                        Texture::VulkanTexture2D* pVulkanDiffuseMap  = NULL;
-                        Texture::VulkanTexture2D* pVulkanSpecularMap = NULL;
-                        Texture::VulkanTexture2D* pVulkanNormalMap   = NULL;
-                        Texture::VulkanTexture2D* pVulkanLightMap    = NULL;
+                            pIndexBuffer->createIndexBuffer(*m_pHwDevice, TRUE);
 
-                        // Parse diffuse map
-                        {
-                            const ::Texture::Texture2D* pDiffuseMap =
-                                pMaterialMap->m_materialMapStruct.diffuseMap;
-
-                            if (pDiffuseMap != NULL)
+                            m_mainSceneVertexInputResourceList.push_back(
                             {
-                                pVulkanDiffuseMap =
-                                    m_pTextureMgr->createTexture2DSampler(pDiffuseMap->GetTextureWidth(),
-                                                                          pDiffuseMap->GetTextureHeight(),
-                                                                          1,
-                                                                          TRUE,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          textureSamplerCreateData,
-                                                                          static_cast<const image_data*>(pDiffuseMap->GetTextureData()));
-                            }
-                            else
-                            {
-                                const Object::Model::Material* pMaterial = pMesh->GetMaterial();
+                                std::unique_ptr<Buffer::VulkanVertexBuffer>(pVertexBuffer),
+                                std::unique_ptr<Buffer::VulkanIndexBuffer>(pIndexBuffer)
+                            });
 
-                                if (pMaterialMap != NULL)
+                            /// Parse the mesh materials
+                            ::Texture::TextureSamplerCreateData textureSamplerCreateData = {};
+                            textureSamplerCreateData.minFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                            textureSamplerCreateData.magFilter                           = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+                            textureSamplerCreateData.addressingModeU                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+                            textureSamplerCreateData.addressingModeV                     = BX_TEXTURE_SAMPLER_ADDRESSING_CLAMP_TO_EDGE;
+                            textureSamplerCreateData.anisotropyNum                       = static_cast<float>(m_pSetting->m_graphicsSetting.anisotropy);
+                            textureSamplerCreateData.borderColor                         = { 0.0f, 0.0f, 0.0f, 1.0f };
+                            textureSamplerCreateData.normalize                           = TRUE;
+                            textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
+
+                            const Object::Model::MaterialMap* pMaterialMap = pMesh->GetMaterialMap();
+
+                            Texture::VulkanTexture2D* pVulkanDiffuseMap  = NULL;
+                            Texture::VulkanTexture2D* pVulkanSpecularMap = NULL;
+                            Texture::VulkanTexture2D* pVulkanNormalMap   = NULL;
+                            Texture::VulkanTexture2D* pVulkanLightMap    = NULL;
+
+                            // Parse diffuse map
+                            {
+                                const ::Texture::Texture2D* pDiffuseMap =
+                                    pMaterialMap->m_materialMapStruct.diffuseMap;
+
+                                if (pDiffuseMap != NULL)
                                 {
-                                    UBYTE albedo[4];
-
-                                    switch (pMaterial->GetMaterialType())
-                                    {
-                                        case PHONG:
-                                        {
-                                            const Object::Model::SpecularMaterial* pSpecularMaterial =
-                                                static_cast<const Object::Model::SpecularMaterial*>(pMaterial);
-
-                                            albedo[0] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[0]);
-                                            albedo[1] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[1]);
-                                            albedo[2] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[2]);
-                                            albedo[3] = 255;
-
-                                            break;
-                                        }
-                                        default:
-                                            NotImplemented();
-                                    }
-
-                                    const size_t albedoDataSize = sizeof(image_data) * 4;
-
-                                    image_data* fixValueDiffuseMapData =
-                                        static_cast<image_data*>(malloc(albedoDataSize));
-
-                                    memcpy(fixValueDiffuseMapData, &(albedo[0]), albedoDataSize);
-
                                     pVulkanDiffuseMap =
-                                        m_pTextureMgr->createTexture2DSampler(1,
-                                                                              1,
+                                        m_pTextureMgr->createTexture2DSampler(pDiffuseMap->GetTextureWidth(),
+                                                                              pDiffuseMap->GetTextureHeight(),
                                                                               1,
                                                                               TRUE,
                                                                               BX_FORMAT_RGBA8,
                                                                               BX_FORMAT_RGBA8,
                                                                               textureSamplerCreateData,
-                                                                              &(fixValueDiffuseMapData[0]));
+                                                                              static_cast<const image_data*>(pDiffuseMap->GetTextureData()));
+                                }
+                                else
+                                {
+                                    const Object::Model::Material* pMaterial = pMesh->GetMaterial();
+
+                                    if (pMaterialMap != NULL)
+                                    {
+                                        UBYTE albedo[4] = { 0, 0, 0, 0 };
+
+                                        switch (pMaterial->GetMaterialType())
+                                        {
+                                            case PHONG:
+                                            {
+                                                const Object::Model::SpecularMaterial* pSpecularMaterial =
+                                                    static_cast<const Object::Model::SpecularMaterial*>(pMaterial);
+
+                                                albedo[0] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[0]);
+                                                albedo[1] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[1]);
+                                                albedo[2] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[2]);
+                                                albedo[3] = 255;
+
+                                                break;
+                                            }
+                                            default:
+                                                NotImplemented();
+                                        }
+
+                                        const size_t albedoDataSize = sizeof(image_data) * 4;
+
+                                        image_data* fixValueDiffuseMapData =
+                                            static_cast<image_data*>(malloc(albedoDataSize));
+
+                                        memcpy(fixValueDiffuseMapData, &(albedo[0]), albedoDataSize);
+
+                                        pVulkanDiffuseMap =
+                                            m_pTextureMgr->createTexture2DSampler(1,
+                                                                                  1,
+                                                                                  1,
+                                                                                  TRUE,
+                                                                                  BX_FORMAT_RGBA8,
+                                                                                  BX_FORMAT_RGBA8,
+                                                                                  textureSamplerCreateData,
+                                                                                  &(fixValueDiffuseMapData[0]));
+                                    }
                                 }
                             }
-                        }
 
-                        // Parse specular map
-                        {
-                            const ::Texture::Texture2D* pSpecularMap =
-                                pMaterialMap->m_materialMapStruct.specMap;
-
-                            if (pSpecularMap != NULL)
+                            // Parse specular map
                             {
-                                pVulkanSpecularMap =
-                                    m_pTextureMgr->createTexture2DSampler(pSpecularMap->GetTextureWidth(),
-                                                                          pSpecularMap->GetTextureHeight(),
-                                                                          1,
-                                                                          TRUE,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          textureSamplerCreateData,
-                                                                          static_cast<const image_data*>(pSpecularMap->GetTextureData()));
+                                const ::Texture::Texture2D* pSpecularMap =
+                                    pMaterialMap->m_materialMapStruct.specMap;
+
+                                if (pSpecularMap != NULL)
+                                {
+                                    pVulkanSpecularMap =
+                                        m_pTextureMgr->createTexture2DSampler(pSpecularMap->GetTextureWidth(),
+                                                                              pSpecularMap->GetTextureHeight(),
+                                                                              1,
+                                                                              TRUE,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              textureSamplerCreateData,
+                                                                              static_cast<const image_data*>(pSpecularMap->GetTextureData()));
+                                }
                             }
-                        }
 
-                        // Parse normal map
-                        {
-                            const ::Texture::Texture2D* pNormalMap =
-                                pMaterialMap->m_materialMapStruct.normalMap;
-
-                            if (pNormalMap != NULL)
+                            // Parse normal map
                             {
-                                pVulkanNormalMap =
-                                    m_pTextureMgr->createTexture2DSampler(pNormalMap->GetTextureWidth(),
-                                                                          pNormalMap->GetTextureHeight(),
-                                                                          1,
-                                                                          TRUE,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          textureSamplerCreateData,
-                                                                          static_cast<const image_data*>(pNormalMap->GetTextureData()));
+                                const ::Texture::Texture2D* pNormalMap =
+                                    pMaterialMap->m_materialMapStruct.normalMap;
+
+                                if (pNormalMap != NULL)
+                                {
+                                    pVulkanNormalMap =
+                                        m_pTextureMgr->createTexture2DSampler(pNormalMap->GetTextureWidth(),
+                                                                              pNormalMap->GetTextureHeight(),
+                                                                              1,
+                                                                              TRUE,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              textureSamplerCreateData,
+                                                                              static_cast<const image_data*>(pNormalMap->GetTextureData()));
+                                }
                             }
-                        }
 
-                        // Parse light map
-                        {
-                            const ::Texture::Texture2D* pLightMap =
-                                pMaterialMap->m_materialMapStruct.lightMap;
-
-                            if (pLightMap != NULL)
+                            // Parse light map
                             {
-                                pVulkanLightMap =
-                                    m_pTextureMgr->createTexture2DSampler(pLightMap->GetTextureWidth(),
-                                                                          pLightMap->GetTextureHeight(),
-                                                                          1,
-                                                                          TRUE,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          BX_FORMAT_RGBA8,
-                                                                          textureSamplerCreateData,
-                                                                          static_cast<const image_data*>(pLightMap->GetTextureData()));
-                            }
-                        }
+                                const ::Texture::Texture2D* pLightMap =
+                                    pMaterialMap->m_materialMapStruct.lightMap;
 
-                        m_mainSceneMeshMaterialMapResourceList.push_back(
-                        {
-                            meshId++,
-                            pVulkanDiffuseMap,
-                            pVulkanSpecularMap,
-                            pVulkanNormalMap,
-                            pVulkanLightMap
-                        });
+                                if (pLightMap != NULL)
+                                {
+                                    pVulkanLightMap =
+                                        m_pTextureMgr->createTexture2DSampler(pLightMap->GetTextureWidth(),
+                                                                              pLightMap->GetTextureHeight(),
+                                                                              1,
+                                                                              TRUE,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              textureSamplerCreateData,
+                                                                              static_cast<const image_data*>(pLightMap->GetTextureData()));
+                                }
+                            }
+
+                            m_mainSceneMeshMaterialMapResourceList.push_back(
+                            {
+                                meshId++,
+                                pVulkanDiffuseMap,
+                                pVulkanSpecularMap,
+                                pVulkanNormalMap,
+                                pVulkanLightMap
+                            });
+                        }
                     }
                 }
             }

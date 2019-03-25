@@ -399,46 +399,49 @@ namespace VulkanEngine
                                             const UINT meshNum = pModel->GetMeshNum();
                                             for (UINT meshIndex = 0; meshIndex < meshNum; ++meshIndex)
                                             {
-                                                const VulkanVertexInputResource* pVertexInputResource =
-                                                    &(pVertexInputResourceList->at(vertexInputResourceCounter));
-
-                                                Buffer::VulkanVertexBuffer* pVertexBuffer = pVertexInputResource->pVertexBuffer.get();
-                                                Buffer::VulkanIndexBuffer*  pIndexBuffer  = pVertexInputResource->pIndexBuffer.get();
-
-                                                pCmdBuffer->cmdBindVertexBuffers({ pVertexBuffer->GetVertexBuffer() },
-                                                                                 { 0 });
-
-                                                pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
-                                                                                { 0 },
-                                                                                pIndexBuffer->GetIndexType());
-
-                                                if (uniformBufferDescUpdateInfoList.size()  > 0 &&
-                                                    m_pDescriptorMgr->GetDescriptorSetNum() > 0)
+                                                if (pModel->GetMesh(meshIndex)->m_vertexBuffer.size() > 0)
                                                 {
-                                                    if (m_pDescriptorMgr->GetDescriptorSet(subpassIndex) != VK_NULL_HANDLE)
+                                                    const VulkanVertexInputResource* pVertexInputResource =
+                                                        &(pVertexInputResourceList->at(vertexInputResourceCounter));
+
+                                                    Buffer::VulkanVertexBuffer* pVertexBuffer = pVertexInputResource->pVertexBuffer.get();
+                                                    Buffer::VulkanIndexBuffer*  pIndexBuffer  = pVertexInputResource->pIndexBuffer.get();
+
+                                                    pCmdBuffer->cmdBindVertexBuffers({ pVertexBuffer->GetVertexBuffer() },
+                                                                                     { 0 });
+
+                                                    pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
+                                                                                    { 0 },
+                                                                                    pIndexBuffer->GetIndexType());
+
+                                                    if (uniformBufferDescUpdateInfoList.size()  > 0 &&
+                                                        m_pDescriptorMgr->GetDescriptorSetNum() > 0)
                                                     {
-                                                        pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
+                                                        if (m_pDescriptorMgr->GetDescriptorSet(subpassIndex) != VK_NULL_HANDLE)
+                                                        {
+                                                            pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
 
-                                                        materialUniformBufferOffset =
-                                                            meshCounter *
-                                                            static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
+                                                            materialUniformBufferOffset =
+                                                                meshCounter *
+                                                                static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
 
-                                                        pCmdBuffer->cmdBindDynamicDescriptorSets(
-                                                            graphicsPipeline.GetGraphicsPipelineLayout(),
-                                                            { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) },
-                                                            { transUniformBufferOffset, materialUniformBufferOffset });
+                                                            pCmdBuffer->cmdBindDynamicDescriptorSets(
+                                                                graphicsPipeline.GetGraphicsPipelineLayout(),
+                                                                { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) },
+                                                                { transUniformBufferOffset, materialUniformBufferOffset });
+                                                        }
                                                     }
+
+                                                    pCmdBuffer->cmdDrawElements(graphicsPipeline.GetGraphicsPipelineHandle(),
+                                                                                pIndexBuffer->GetIndexNum(),
+                                                                                0,
+                                                                                0);
+
+                                                    assert(status == BX_SUCCESS);
+
+                                                    vertexInputResourceCounter++;
+                                                    meshCounter++;
                                                 }
-
-                                                pCmdBuffer->cmdDrawElements(graphicsPipeline.GetGraphicsPipelineHandle(),
-                                                                            pIndexBuffer->GetIndexNum(),
-                                                                            0,
-                                                                            0);
-
-                                                assert(status == BX_SUCCESS);
-
-                                                vertexInputResourceCounter++;
-                                                meshCounter++;
                                             }
                                         }
 

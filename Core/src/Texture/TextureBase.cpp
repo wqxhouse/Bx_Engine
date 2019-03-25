@@ -50,6 +50,8 @@ namespace Texture
         std::unique_ptr<image_data, TextureDeleter> imageData(
             stbi_load(imageFile.data(), width, height, channels, STBI_rgb_alpha));
 
+        assert(imageData != NULL);
+
         return imageData;
     }
 }

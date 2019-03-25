@@ -176,14 +176,18 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
-            int texWidth;
-            int texHeight;
-            int texChannels;
+            INT texWidth    = 0;
+            INT texHeight   = 0;
+            INT texChannels = 0;
 
             ::Texture::Texture2DCreateData texture2DCreateData = {};
 
             texture2DCreateData.textureData =
                 ::Texture::Texture2D::ReadImageData(imageFile, &texWidth, &texHeight, &texChannels);
+
+            assert((texWidth    > 0) &&
+                   (texHeight   > 0) &&
+                   (texChannels > 0));
 
             texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_SAMPLED;
             texture2DCreateData.texWidth           = static_cast<UINT>(texWidth);
