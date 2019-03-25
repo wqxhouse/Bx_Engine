@@ -42,16 +42,17 @@ int main()
     std::unique_ptr<Scene::RenderScene> m_pScene =
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
 
+#if _DEBUG
     m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
                           &(Trans(Math::Vector3(-2.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
 
-    /*m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+    m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
                           &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));*/
-
+                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
+#else
     m_pScene->AddObjModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
                           &(Trans(Math::Vector3(2.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
@@ -62,6 +63,7 @@ int main()
                           &(Trans(Math::Vector3(2.0f, -2.0f,  10.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));*/
+#endif
 
     Trans prosCamTrans(Math::Vector3(0.0f, 2.0f, 20.0f),
                        Math::Vector3(0.0f, 0.0f, -1.0f),
