@@ -35,12 +35,10 @@ namespace VulkanEngine
               m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
               m_isDepthTestEnabled(FALSE),
               m_isStencilTestEnabled(FALSE),
-              m_ppBackbufferTextures(ppBackbufferTextures)
+              m_ppBackbufferTextures(ppBackbufferTextures),
+              m_backBufferRTsCreateDataList(ppBackbufferTextures->size())
         {
             assert(ppBackbufferTextures->size() > 0);
-
-            const size_t backBufferNum = ppBackbufferTextures->size();
-            m_backBufferRTsCreateDataList.resize(backBufferNum);
 
             parseScene();
         }

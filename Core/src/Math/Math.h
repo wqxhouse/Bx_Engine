@@ -14,7 +14,7 @@
 #include "../Core/TypeDef.h"
 #include "Quaternion.h"
 #include "Matrix4x4.h"
-#include "Structures.h"
+#include "Shape.h"
 
 namespace Math
 {

@@ -192,7 +192,7 @@ xcopy "$(ProjectDir)src\*.inl" "$(SolutionDir)lib\Core\include\" /Y/D/E</Command
     <ClInclude Include="src\Math\Matrix3x3.h" />
     <ClInclude Include="src\Math\Matrix4x4.h" />
     <ClInclude Include="src\Math\Quaternion.h" />
-    <ClInclude Include="src\Math\Structures.h" />
+    <ClInclude Include="src\Math\Shape.h" />
     <ClInclude Include="src\Math\Transform\Trans.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />

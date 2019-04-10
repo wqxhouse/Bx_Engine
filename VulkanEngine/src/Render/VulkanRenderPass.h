@@ -10,7 +10,7 @@
 #pragma once
 
 #include <Scene/RenderScene.h>
-#include <Math/Structures.h>
+#include <Math/Shape.h>
 
 #include "VulkanGraphicsPipeline.h"
 

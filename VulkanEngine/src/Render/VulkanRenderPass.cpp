@@ -22,9 +22,9 @@ namespace VulkanEngine
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescriptorMgr(pDescritorMgr),
-              m_pScene(pScene)
+              m_pScene(pScene),
+              m_renderPass(*m_pDevice, vkDestroyRenderPass)
         {
-            m_renderPass = { *m_pDevice, vkDestroyRenderPass };
         }
 
         VulkanRenderPass::~VulkanRenderPass()

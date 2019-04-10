@@ -24,10 +24,10 @@ namespace VulkanEngine
               m_pRenderPass(pRenderPass),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescriptorMgr(pDescritorMgr),
-              m_shader(*pDevice)
+              m_shader(*pDevice),
+              m_graphicsPipeline(*m_pDevice, vkDestroyPipeline),
+              m_graphicsPipelineLayout(*m_pDevice, vkDestroyPipelineLayout)
         {
-            m_graphicsPipeline       = { *m_pDevice, vkDestroyPipeline       };
-            m_graphicsPipelineLayout = { *m_pDevice, vkDestroyPipelineLayout };
         }
 
         VulkanGraphicsPipeline::~VulkanGraphicsPipeline()

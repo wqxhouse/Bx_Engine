@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../../Math/Structures.h"
+#include "../../Math/Shape.h"
 #include "../ObjectBase.h"
 
 #define CAMERA_SENSATIVE 0.05f

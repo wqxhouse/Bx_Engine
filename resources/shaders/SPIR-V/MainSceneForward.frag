@@ -109,7 +109,7 @@ vec3 calPhongSpecularRadiance(
 vec3 gammaCorrection(
     const vec3 color)
 {
-    float gammaCorrectionExponent = 1.0f / 2.2f;
+    float gammaCorrectionExponent = 0.4545454545f; // 1.0f/2.2f
     vec3 outputColor = pow(color, vec3(gammaCorrectionExponent));
 
     return outputColor;

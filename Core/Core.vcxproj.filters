@@ -72,9 +72,6 @@
     <ClInclude Include="src\Math\Quaternion.h">
       <Filter>src\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Math\Structures.h">
-      <Filter>src\Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Math\Vector2.h">
       <Filter>src\Math</Filter>
     </ClInclude>
@@ -160,6 +157,9 @@
       <Filter>src\Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\Math\BitUtils.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Shape.h">
       <Filter>src\Math</Filter>
     </ClInclude>
   </ItemGroup>

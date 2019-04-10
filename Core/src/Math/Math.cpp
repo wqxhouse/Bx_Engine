@@ -10,7 +10,7 @@
 #include <assert.h>
 
 #include "Math.h"
-#include "Structures.h"
+#include "Shape.h"
 
 #define BX_COORDINATE_RH
 #define BX_CLIP_SPACE_DEPTH_ZERO_TO_ONE
