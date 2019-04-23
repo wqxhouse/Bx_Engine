@@ -36,19 +36,29 @@ namespace Math
 			return vec3Ptr;
 		}
 
-		void setData(float x, float y, float z)
+		INLINE void setData(float x, float y, float z)
 		{
 			X = x;
 			Y = y;
 			Z = z;
 		}
 
-		float dot(const Vector3 &v) const
+        INLINE const BOOL IsNormalized() const
+        {
+            return FloatEqual(x * x + y * y + z * z, 0.0f);
+        }
+
+        INLINE const float Length() const
+        {
+            return std::sqrt(x * x + y * y + z * z);
+        }
+
+		INLINE const float Dot(const Vector3 &v) const
 		{
-			return x * v.x + y * v.y + z * v.z;
+			return (x * v.x + y * v.y + z * v.z);
 		}
 
-		Vector3 crossProduct(const Vector3 &v)
+		INLINE Vector3 crossProduct(const Vector3 &v)
 		{
 			Vector3 tempVector = *this;
 
@@ -190,7 +200,7 @@ namespace Math
 		};
 	};
     
-    inline const Vector3 operator+(
+    INLINE const Vector3 operator+(
         const Vector3& v1,
         const Vector3& v2)
     {
@@ -202,7 +212,7 @@ namespace Math
         return result;
     }
 
-    inline const Vector3 operator-(
+    INLINE const Vector3 operator-(
         const Vector3& v1,
         const Vector3& v2)
     {
@@ -214,7 +224,7 @@ namespace Math
         return result;
     }
 
-	inline Vector3 operator*(const float f, const Vector3& v)
+	INLINE Vector3 operator*(const float f, const Vector3& v)
 	{
 		Vector3 result;
 		result.X = f * v.X;
@@ -224,7 +234,7 @@ namespace Math
 		return result;
 	}
 
-    inline Vector3 operator*(const Vector3& v, const float f)
+    INLINE Vector3 operator*(const Vector3& v, const float f)
     {
         Vector3 result;
         result.X = f * v.X;
@@ -234,12 +244,12 @@ namespace Math
         return result;
     }
 
-	inline std::ostream& operator<<(std::ostream& out, const Vector3 &v)
+	INLINE std::ostream& operator<<(std::ostream& out, const Vector3 &v)
 	{
 		return out << "X:" << v.X << " Y:" << v.Y << " Z:" << v.Z;
 	}
 
-	inline std::ostream& operator<<(std::ostream& out, Vector3Ptr vPtr)
+	INLINE std::ostream& operator<<(std::ostream& out, Vector3Ptr vPtr)
 	{
 		return out << "X:" << vPtr->X << " Y:" << vPtr->Y << " Z:" << vPtr->Z;
 	}

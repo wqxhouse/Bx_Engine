@@ -105,11 +105,11 @@ namespace Math
 
         Vector3 res;
 
-        size_t size = axisList.size();
+        int size = static_cast<int>(axisList.size());
 
         Quaternion q = Quaternion(axisList[size - 1], angles[size - 1]);
 
-        for (size_t i = size - 2; i >= 0; --i)
+        for (int i = size - 2; i >= 0; --i)
         {
             q *= Quaternion(axisList[i], angles[i]);
         }
@@ -192,18 +192,18 @@ namespace Math
         viewMat[0][0] = right[0];
         viewMat[1][0] = right[1];
         viewMat[2][0] = right[2];
-        viewMat[3][0] = -right.dot(eyePos);
+        viewMat[3][0] = -right.Dot(eyePos);
 
         viewMat[0][1] = viewUp[0];
         viewMat[1][1] = viewUp[1];
         viewMat[2][1] = viewUp[2];
-        viewMat[3][1] = -viewUp.dot(eyePos);
+        viewMat[3][1] = -viewUp.Dot(eyePos);
 
 #if BX_COORDINATE_SYSTEM == BX_COORDINATE_SYATEM_RIGHT_HAND
         viewMat[0][2] = back[0];
         viewMat[1][2] = back[1];
         viewMat[2][2] = back[2];
-        viewMat[3][2] = nFront.dot(eyePos); // -back.dot(eyePos)
+        viewMat[3][2] = nFront.Dot(eyePos); // -back.dot(eyePos)
 
 #else
         viewMat[0][2] = nFront[0];
@@ -255,8 +255,8 @@ namespace Math
 
     Mat4 orthographicProjectionMatrix(
         const Rectangle& viewport,   ///< Viewport for the orthographic camera
-        const float         nearClip,   ///< Near clip
-        const float         farClip)    ///< Far clip
+        const float      nearClip,   ///< Near clip
+        const float      farClip)    ///< Far clip
     {
         assert(nearClip <= farClip);
 
@@ -275,6 +275,80 @@ namespace Math
         projMat[3][3] = 1.0f;
 
         return projMat;
+    }
+
+    float pointPlaneDis(const Plane& plane, const Vector3& point)
+    {
+        assert(plane.N.IsNormalized() == TRUE);
+
+        const float d0 = -plane.d;
+        const float d1 = point.Dot(plane.N);
+
+        return (d1 - d0);
+    }
+
+    Vector3 pointProjOnRay(
+        const Vector3& point,
+        const Ray&     ray)
+    {
+        assert(ray.dir.IsNormalized() == TRUE);
+
+        const Vector3 OP = point - ray.origin;
+
+        return ray.dir * OP.Dot(ray.dir);
+    }
+
+    Vector3 pointProjOnPlane(
+        const Plane&   plane,
+        const Vector3& point)
+    {
+        const float dis = pointPlaneDis(plane, point);
+
+        return (point - (dis * plane.N));
+    }
+
+    Vector3 vectorProj(
+        const Vector3& v1,
+        const Vector3& v2)
+    {
+        return v2 * (Vector3::dot(v1, v2) / v2.Length());
+    }
+
+    Vector3 rayPlaneProj(
+        const Plane& plane,
+        const Ray&   ray)
+    {
+        assert(ray.dir.IsNormalized() == TRUE);
+
+        const Vector3 originProj = pointProjOnPlane(plane, ray.origin);
+        const Vector3 pointProj  = pointProjOnPlane(plane, ray.origin + ray.dir);
+
+        return (pointProj - originProj);
+    }
+
+    BOOL raySphereIntersection(
+        const Sphere& sphere,
+        const Ray&    ray)
+    {
+        BOOL intersect = FALSE;
+
+        const Vector3 OC = sphere.center - ray.origin;
+        const Vector3 projOC = vectorProj(ray.dir, projOC);
+
+        const Vector3 disVec = projOC - OC;
+
+        intersect = (disVec.Length() <= sphere.radius);
+
+        return intersect;
+    }
+
+    BOOL rayAABBIntersection(
+        const AABB&    aabb,
+        const Vector3& v)
+    {
+        BOOL intersection = FALSE;
+
+        return intersection;
     }
 
 	Quaternion operator*(const float& f, const Quaternion& q)

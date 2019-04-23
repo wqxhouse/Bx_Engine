@@ -77,6 +77,41 @@ namespace Math
         const float      nearClip,   ///< Near clip
         const float      farClip);    ///< Far clip
 
+    // Distance
+    float pointPlaneDis(
+        const Plane& plane,
+        const Vector3& point);
+
+    // Projections
+    Vector3 pointProjOnRay(
+        const Vector3& point,
+        const Ray&     ray);
+
+    Vector3 pointProjOnPlane(
+        const Plane&   plane,
+        const Vector3& point);
+
+    Vector3 vectorProj(
+        const Vector3& v1,  // Project origin vector
+        const Vector3& v2); // Project destination
+
+    Vector3 rayPlaneProj(
+        const Plane& plane,
+        const Ray&   ray);
+
+    // Intersections
+    BOOL raySphereIntersection(
+        const Sphere& sphere,
+        const Ray&    ray);
+
+    BOOL rayAABBIntersection(
+        const AABB&    aabb,
+        const Vector3& v);
+
+    BOOL trianglePlaneIntersection(
+        const Plane&    plane,
+        const Triangle& tri);
+
     INLINE Mat4 operator*(const Mat4& m1, const Mat4& m2)
     {
 #ifdef BX_MATRIX_MAJOR_COLUMN
