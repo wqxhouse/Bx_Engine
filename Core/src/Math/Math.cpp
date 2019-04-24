@@ -238,10 +238,6 @@ namespace Math
         projMat[1][1] = invTangent;
 #endif
 
-        projMat[2][2] = (nearClip + farClip) * invNagClipDis;
-        projMat[2][3] = -1;
-        projMat[3][2] = 2.0f * nearClip * farClip * invNagClipDis;
-
 #if BX_CLIP_SPACE_DEPTH == BX_DEPTH_ZERO_TO_ONE
         projMat[2][2] = farClip * invNagClipDis;
         projMat[3][2] = nearClip * farClip * invNagClipDis;
@@ -249,6 +245,8 @@ namespace Math
         projMat[2][2] = (nearClip + farClip) * invNagClipDis;
         projMat[3][2] = 2.0f * nearClip * farClip * invNagClipDis;
 #endif
+
+        projMat[2][3] = -1;
 
         return projMat;
     }
@@ -326,6 +324,60 @@ namespace Math
         return (pointProj - originProj);
     }
 
+    BOOL rayTriangleIntersection(
+        const Triangle& tri,
+        const Ray&      ray)
+    {
+        BOOL intersect = FALSE;
+
+        const Vector3& v0 = tri.v0;
+        const Vector3& v1 = tri.v1;
+        const Vector3& v2 = tri.v2;
+
+        const Vector3 v0v1 = v1 - v0;
+        const Vector3 v0v2 = v2 - v0;
+
+        // Calculate the triangle plane
+        const Vector3 N = Vector3::crossProduct(v0v1, v0v2);
+        const float   D = Vector3::dot(N, v0);
+
+        // Calculate the distance from ray origin to intersection point
+        // between ray and plane
+        const float t = -(N.Dot(ray.origin) + D) / (N.Dot(ray.dir));
+
+        if (t >= 0)
+        {
+            // Find the intersection point P
+            const Vector3 P = ray.origin +  t * ray.dir;
+
+            // In-Out test
+            const Vector3 v0p = P - v0;
+            const Vector3 v1p = P - v1;
+            const Vector3 v2p = P - v2;
+
+            const Vector3 c1 = Vector3::crossProduct(v0v1, v0p);
+
+            if (c1.Dot(N) >= 0)
+            {
+                const Vector3 v1v2 = v2 - v1;
+                const Vector3 c2   = Vector3::crossProduct(v1v2, v1p);
+
+                if (c2.Dot(N) >= 0)
+                {
+                    const Vector3 v2v0 = v0 - v2;
+                    const Vector3 c3   = Vector3::crossProduct(v2v0, v2p);
+
+                    if (c2.Dot(N) >= 0)
+                    {
+                        intersect = TRUE;
+                    }
+                }
+            }
+        }
+
+        return intersect;
+    }
+
     BOOL raySphereIntersection(
         const Sphere& sphere,
         const Ray&    ray)
@@ -343,12 +395,83 @@ namespace Math
     }
 
     BOOL rayAABBIntersection(
-        const AABB&    aabb,
-        const Vector3& v)
+        const AABB& aabb,
+        const Ray&  v)
     {
         BOOL intersection = FALSE;
 
+        const Vector3& minPoint = aabb.minPoint;
+        const Vector3& maxPoint = aabb.maxPoint;
+        const Vector3& origin   = v.origin;
+        const Vector3& dir      = v.dir;
+
+        assert (minPoint.x < maxPoint.x &&
+                minPoint.y < maxPoint.y &&
+                minPoint.z < maxPoint.z);
+
+        const BOOL alignX = (FloatEqual(dir.x, 0.0f) == TRUE);
+        const BOOL alignY = (FloatEqual(dir.y, 0.0f) == TRUE);
+        const BOOL alignZ = (FloatEqual(dir.z, 0.0f) == TRUE);
+
+        const float invDirX = 1.0f / dir.x;
+        float tmaxX         = (minPoint.x - origin.x) * invDirX;
+        float tminX         = (maxPoint.x - origin.x) * invDirX;
+
+        if (tmaxX < tminX) { swap<float>(&tmaxX, &tminX); }
+
+        if (tmaxX > 0)
+        {
+            const float invDirY = 1.0f / dir.y;
+            float tminY         = (minPoint.y - origin.y) * invDirY;
+            float tmaxY         = (maxPoint.y - origin.y) * invDirY;
+
+            if (tmaxY < tminY) { swap<float>(&tmaxY, &tminY); }
+
+            const BOOL insideXY = ((tminX <= tmaxY && tminY <= tmaxX) == TRUE);
+
+            if ((alignX    == TRUE) ||
+                (alignY    == TRUE) ||
+                ((tmaxY    >  0)    &&
+                  insideXY == TRUE))
+            {
+                const float invDirZ = 1.0f / dir.z;
+                float tminZ         = (minPoint.z - origin.z) * invDirZ;
+                float tmaxZ         = (maxPoint.z - origin.z) * invDirZ;
+
+                if (tmaxZ < tminZ) { swap<float>(&tmaxZ, &tminZ); }
+
+                const BOOL insideYZ = ((tminY <= tmaxZ && tminZ <= tmaxY) == TRUE);
+                const BOOL insideXZ = ((tminZ <= tmaxX && tminX <= tmaxZ) == TRUE);
+
+                // This ray is not aligning to any axis
+                if (alignX == FALSE && alignY == FALSE && alignZ == FALSE)
+                {
+                    if ((tminY <= tmaxZ && tminZ <= tmaxY) &&
+                        (tminZ <= tmaxX && tminX <= tmaxZ))
+                    {
+                        intersection = TRUE;
+                    }
+                }
+                else // alignX == TRUE || alignY == TRUE || alignZ == TRUE
+                {
+                    if ((tminX >= minPoint.x && tminX <= maxPoint.x) ||
+                        (tminY >= minPoint.y && tminY <= maxPoint.y) ||
+                        (tminZ >= minPoint.z && tminZ <= maxPoint.z))
+                    {
+                        intersection = TRUE;
+                    }
+                }
+            }
+        }
+
         return intersection;
+    }
+
+    BOOL trianglePlaneIntersection(
+        const Plane&    plane,
+        const Triangle& tri)
+    {
+        return 0;
     }
 
 	Quaternion operator*(const float& f, const Quaternion& q)

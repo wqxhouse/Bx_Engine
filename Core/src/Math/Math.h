@@ -28,6 +28,15 @@ namespace Math
         return (abs(a - b) < std::numeric_limits<double>::epsilon());
     }
 
+    template <typename T>
+    INLINE void swap(T* a, T* b)
+    {
+        const T* c = a;
+
+        b = a;
+        a = c;
+    }
+
     float Radians(const float degree);
 
     float Degree(const float radiance);
@@ -100,13 +109,17 @@ namespace Math
         const Ray&   ray);
 
     // Intersections
+    BOOL rayTriangleIntersection(
+        const Triangle& tri,
+        const Ray&      ray);
+
     BOOL raySphereIntersection(
         const Sphere& sphere,
         const Ray&    ray);
 
     BOOL rayAABBIntersection(
-        const AABB&    aabb,
-        const Vector3& v);
+        const AABB& aabb,
+        const Ray&  v);
 
     BOOL trianglePlaneIntersection(
         const Plane&    plane,
