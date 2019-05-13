@@ -18,23 +18,12 @@
 
 namespace Math
 {
-    INLINE BOOL FloatEqual(const float a, const float b)
+    template<typename T>
+    void swap(T* l, T* r)
     {
-        return (abs(a - b) < std::numeric_limits<float>::epsilon());
-    }
-
-    INLINE BOOL DoubleEqual(const double a, const double b)
-    {
-        return (abs(a - b) < std::numeric_limits<double>::epsilon());
-    }
-
-    template <typename T>
-    INLINE void swap(T* a, T* b)
-    {
-        const T* c = a;
-
-        b = a;
-        a = c;
+        T temp = *l;
+        *l = *r;
+        *r = temp;
     }
 
     float Radians(const float degree);
@@ -137,12 +126,4 @@ namespace Math
 	Quaternion operator*(const float& f, const Quaternion& q);
 
 	Quaternion operator*(const Vector4& v, const Quaternion& q);
-
-    template<typename T>
-    void swap(T* l, T* r)
-    {
-        T temp = *l;
-        *l     = *r;
-        *r     = temp;
-    }
 }

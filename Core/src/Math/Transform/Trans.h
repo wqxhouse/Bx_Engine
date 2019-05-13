@@ -26,7 +26,7 @@ public:
 		this->pos = pos;
 		this->front = Math::Vector3::Normalize(center - pos);
 		this->up    = Math::Vector3::Normalize(up);
-		this->right = Math::Vector3::Normalize(Math::Vector3::crossProduct(front, up));
+		this->right = Math::Vector3::Normalize(Math::Vector3::CrossProduct(front, up));
 
         initialize();
 
@@ -45,7 +45,7 @@ public:
         this->pos   = pos;
         this->front = Math::Vector3::Normalize(center - pos);
         this->up    = Math::Vector3::Normalize(up);
-        this->right = Math::Vector3::Normalize(Math::Vector3::crossProduct(front, up));
+        this->right = Math::Vector3::Normalize(Math::Vector3::CrossProduct(front, up));
 
         this->scale = scale;
         this->pitch = pitch;
@@ -132,7 +132,7 @@ public:
         this->pos   = pos;
         this->front = Math::Vector3::Vector3::Normalize(center - pos);
         this->up    = Math::Vector3::Normalize(up);
-        this->right = Math::Vector3::Normalize(Math::Vector3::crossProduct(front, up));
+        this->right = Math::Vector3::Normalize(Math::Vector3::CrossProduct(front, up));
 
         m_transFlags.bits.transFlag = 1;
         m_transFlags.bits.posFlag   = 1;
@@ -145,7 +145,7 @@ public:
     {
         this->front = front;
         this->right = right;
-        this->up    = Math::Vector3::Normalize(Math::Vector3::crossProduct(right, front));
+        this->up    = Math::Vector3::Normalize(Math::Vector3::CrossProduct(right, front));
 
         m_transFlags.bits.viewFlag = 1;
     }

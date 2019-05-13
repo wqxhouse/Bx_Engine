@@ -184,26 +184,26 @@ namespace Math
 
         Vector3 nFront = Vector3::Normalize(front);
 
-        Vector3 right  = Vector3::crossProduct(nFront, up);
-        Vector3 viewUp = Vector3::crossProduct(right, nFront);
+        Vector3 right  = Vector3::CrossProduct(nFront, up);
+        Vector3 viewUp = Vector3::CrossProduct(right, nFront);
 
         Vector3 back   = Vector3(-nFront.x, -nFront.y, -nFront.z);
 
         viewMat[0][0] = right[0];
         viewMat[1][0] = right[1];
         viewMat[2][0] = right[2];
-        viewMat[3][0] = -right.Dot(eyePos);
+        viewMat[3][0] = -right.dot(eyePos);
 
         viewMat[0][1] = viewUp[0];
         viewMat[1][1] = viewUp[1];
         viewMat[2][1] = viewUp[2];
-        viewMat[3][1] = -viewUp.Dot(eyePos);
+        viewMat[3][1] = -viewUp.dot(eyePos);
 
 #if BX_COORDINATE_SYSTEM == BX_COORDINATE_SYATEM_RIGHT_HAND
         viewMat[0][2] = back[0];
         viewMat[1][2] = back[1];
         viewMat[2][2] = back[2];
-        viewMat[3][2] = nFront.Dot(eyePos); // -back.dot(eyePos)
+        viewMat[3][2] = nFront.dot(eyePos); // -back.dot(eyePos)
 
 #else
         viewMat[0][2] = nFront[0];
@@ -277,10 +277,10 @@ namespace Math
 
     float pointPlaneDis(const Plane& plane, const Vector3& point)
     {
-        assert(plane.N.IsNormalized() == TRUE);
+        assert(plane.N.isNormalized() == TRUE);
 
         const float d0 = -plane.d;
-        const float d1 = point.Dot(plane.N);
+        const float d1 = point.dot(plane.N);
 
         return (d1 - d0);
     }
@@ -289,11 +289,11 @@ namespace Math
         const Vector3& point,
         const Ray&     ray)
     {
-        assert(ray.dir.IsNormalized() == TRUE);
+        assert(ray.dir.isNormalized() == TRUE);
 
         const Vector3 OP = point - ray.origin;
 
-        return ray.dir * OP.Dot(ray.dir);
+        return ray.dir * OP.dot(ray.dir);
     }
 
     Vector3 pointProjOnPlane(
@@ -309,14 +309,14 @@ namespace Math
         const Vector3& v1,
         const Vector3& v2)
     {
-        return v2 * (Vector3::dot(v1, v2) / v2.Length());
+        return v2 * (Vector3::Dot(v1, v2) / v2.length());
     }
 
     Vector3 rayPlaneProj(
         const Plane& plane,
         const Ray&   ray)
     {
-        assert(ray.dir.IsNormalized() == TRUE);
+        assert(ray.dir.isNormalized() == TRUE);
 
         const Vector3 originProj = pointProjOnPlane(plane, ray.origin);
         const Vector3 pointProj  = pointProjOnPlane(plane, ray.origin + ray.dir);
@@ -338,12 +338,12 @@ namespace Math
         const Vector3 v0v2 = v2 - v0;
 
         // Calculate the triangle plane
-        const Vector3 N = Vector3::crossProduct(v0v1, v0v2);
-        const float   D = Vector3::dot(N, v0);
+        const Vector3 N = Vector3::CrossProduct(v0v1, v0v2);
+        const float   D = Vector3::Dot(N, v0);
 
         // Calculate the distance from ray origin to intersection point
         // between ray and plane
-        const float t = -(N.Dot(ray.origin) + D) / (N.Dot(ray.dir));
+        const float t = -(N.dot(ray.origin) + D) / (N.dot(ray.dir));
 
         if (t >= 0)
         {
@@ -355,19 +355,19 @@ namespace Math
             const Vector3 v1p = P - v1;
             const Vector3 v2p = P - v2;
 
-            const Vector3 c1 = Vector3::crossProduct(v0v1, v0p);
+            const Vector3 c1 = Vector3::CrossProduct(v0v1, v0p);
 
-            if (c1.Dot(N) >= 0)
+            if (c1.dot(N) >= 0)
             {
                 const Vector3 v1v2 = v2 - v1;
-                const Vector3 c2   = Vector3::crossProduct(v1v2, v1p);
+                const Vector3 c2   = Vector3::CrossProduct(v1v2, v1p);
 
-                if (c2.Dot(N) >= 0)
+                if (c2.dot(N) >= 0)
                 {
                     const Vector3 v2v0 = v0 - v2;
-                    const Vector3 c3   = Vector3::crossProduct(v2v0, v2p);
+                    const Vector3 c3   = Vector3::CrossProduct(v2v0, v2p);
 
-                    if (c2.Dot(N) >= 0)
+                    if (c2.dot(N) >= 0)
                     {
                         intersect = TRUE;
                     }
@@ -389,7 +389,7 @@ namespace Math
 
         const Vector3 disVec = projOC - OC;
 
-        intersect = (disVec.Length() <= sphere.radius);
+        intersect = (disVec.length() <= sphere.radius);
 
         return intersect;
     }

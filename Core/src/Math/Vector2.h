@@ -11,6 +11,16 @@
 
 namespace Math
 {
+    INLINE BOOL FloatEqual(const float a, const float b)
+    {
+        return (abs(a - b) < std::numeric_limits<float>::epsilon());
+    }
+
+    INLINE BOOL DoubleEqual(const double a, const double b)
+    {
+        return (abs(a - b) < std::numeric_limits<double>::epsilon());
+    }
+
 	class Vector2
 	{
 	public:

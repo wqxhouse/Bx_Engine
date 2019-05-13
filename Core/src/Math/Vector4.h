@@ -74,7 +74,7 @@ namespace Math
             Vector3 v1 = ToVector3();
             Vector3 v2 = v.ToVector3();
 
-            Vector3 res = Vector3::crossProduct(v1, v2);
+            Vector3 res = Vector3::CrossProduct(v1, v2);
 
             X = res.X;
             Y = res.Y;
@@ -109,7 +109,7 @@ namespace Math
             Vector3 v3_1 = v1.ToVector3();
             Vector3 v3_2 = v2.ToVector3();
 
-            Vector3 res = Vector3::crossProduct(v3_1, v3_2);
+            Vector3 res = Vector3::CrossProduct(v3_1, v3_2);
 
             Vector4 newVector4 = Vector4(res, 1.0f);
 

@@ -85,7 +85,7 @@ namespace Math
 		{
 			Vector4 v;
 			v.W    = w * q.w - m_v.dot(q.m_v);
-			v.m_v3 = m_w * q.m_v + q.m_w * m_v + Vector3::crossProduct(m_v, q.m_v);
+			v.m_v3 = m_w * q.m_v + q.m_w * m_v + Vector3::CrossProduct(m_v, q.m_v);
 
 			return Quaternion(v);
 		}

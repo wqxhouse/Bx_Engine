@@ -14,6 +14,7 @@
 #include <iostream>
 #include <typeinfo>
 
+#include "../Core/TypeDef.h"
 #include "Vector2.h"
 
 namespace Math
@@ -43,17 +44,17 @@ namespace Math
 			Z = z;
 		}
 
-        INLINE const BOOL IsNormalized() const
+        INLINE const BOOL isNormalized() const
         {
             return FloatEqual(x * x + y * y + z * z, 0.0f);
         }
 
-        INLINE const float Length() const
+        INLINE const float length() const
         {
             return std::sqrt(x * x + y * y + z * z);
         }
 
-		INLINE const float Dot(const Vector3 &v) const
+		INLINE const float dot(const Vector3 &v) const
 		{
 			return (x * v.x + y * v.y + z * v.z);
 		}
@@ -75,7 +76,7 @@ namespace Math
 		static Vector3 YIdentity() { return Vector3(0, 1, 0); }
 		static Vector3 ZIdentity() { return Vector3(0, 0, 1); }
 
-		static float dot(const Vector3 &v1, const Vector3 &v2)
+		static float Dot(const Vector3 &v1, const Vector3 &v2)
 		{
 			return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
 		}
@@ -92,7 +93,7 @@ namespace Math
             return result;
         }
 
-		static Vector3 crossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
+		static Vector3 CrossProduct(const Vector3 &leftVec3, const Vector3 &rightVec3)
 		{
 			Vector3 result;
             result.X = leftVec3.Y * rightVec3.Z - leftVec3.Z * rightVec3.Y;
@@ -102,7 +103,7 @@ namespace Math
 			return result;
 		}
 
-		static Vector3 crossProduct(const Vector3Ptr leftVec3, const Vector3Ptr rightVec3)
+		static Vector3 CrossProduct(const Vector3Ptr leftVec3, const Vector3Ptr rightVec3)
 		{
 			Vector3 result;
             result.X = leftVec3->Y * rightVec3->Z - leftVec3->Z * rightVec3->Y;
