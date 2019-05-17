@@ -312,22 +312,25 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RayTracer_Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\lib\Core\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\lib\Core\include;..\lib\RayTracer\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_RAYTRACER;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <AdditionalDependencies>RayTracer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\lib\RayTracer\;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\RayTracer\$(Platform)\Debug;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RayTracer_Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\lib\Core\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\lib\Core\include;..\lib\RayTracer\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_RAYTRACER;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>RayTracer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\lib\RayTracer\;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RayTracer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\lib\RayTracer\$(Platform)\Release;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

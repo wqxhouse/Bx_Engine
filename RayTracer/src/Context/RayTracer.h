@@ -9,6 +9,8 @@
 
 #pragma once
 
+#if BX_RAYTRACER
+
 #include <Core/PCH.h>
 #include <Setting/Setting.h>
 
@@ -24,3 +26,5 @@ namespace RayTracingEngine
         const Setting* const m_pSetting;
     };
 }
+
+#endif

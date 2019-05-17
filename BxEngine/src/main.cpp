@@ -15,10 +15,9 @@
 #if BX_OPENGL
 #include "OpenGLTemplate.h"
 #elif BX_VULKAN
-#include "Context\VulkanContext.h"
+#include "Context/VulkanContext.h"
 #elif BX_RAYTRACER
-#include "Core/PCH.h"
-#include "Setting/Setting.h"
+#include "Context/RayTracer.h"
 #endif
 
 #include <thread>
@@ -29,7 +28,7 @@ int main()
 
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+    setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
     //setting.m_graphicsSetting.antialasing     = AA_VERY_HIGH;
 
 #if BX_OPENGL
@@ -107,7 +106,7 @@ int main()
     m_vulkanContext.initialize();
     m_vulkanContext.run();
 #elif BX_RAYTRACER
-
+    RayTracingEngine::RayTracer m_rayTracer(&setting);
 #endif
     
 	return 0;

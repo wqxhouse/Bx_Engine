@@ -64,6 +64,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\lib\Core\include\;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BX_RAYTRACER;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,6 +91,7 @@ xcopy  "$(ProjectDir)$(Platform)\Debug\*.pdb" "$(SolutionDir)lib\RayTracer\$(Pla
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\lib\Core\include\;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BX_RAYTRACER;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
