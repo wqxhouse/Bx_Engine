@@ -16,32 +16,35 @@ namespace Object
         Material::Material(
             const MaterialType materialType,
             const std::string& materialName,
-            const float refraction,
-            const float alpha,
-            const bool transparency)
+            const float        refraction,
+            const float        alpha,
+            const bool         transparency)
             : m_materialType(materialType),
-            m_materialName(materialName)
+              m_materialName(materialName),
+              m_shadingMethod(ShadingMethod::Phong)
         {
-            this->refraction = refraction;
-            this->alpha = alpha;
+            this->refraction   = refraction;
+            this->alpha        = alpha;
             this->transparency = transparency;
         }
 
-        void Material::setShadingMethod(const ShadingMethod shadingMethod)
+        void Material::setShadingMethod(
+            const ShadingMethod shadingMethod)
         {
         }
 
-        SpecularMaterial::SpecularMaterial(const std::string & materialName)
+        PhongMaterial::PhongMaterial(
+            const std::string & materialName)
             : Material(PHONG, materialName, 1.0f, 1.0f, false),
             m_specularMaterialData(0.0f)
         {
         }
 
-        SpecularMaterial::SpecularMaterial(
-            const std::string& materialName,
-            const Math::Vector3&     ka,
-            const Math::Vector3&     kd,
-            const Math::Vector3&     ks,
+        PhongMaterial::PhongMaterial(
+            const std::string&   materialName,
+            const Math::Vector3& ka,
+            const Math::Vector3& kd,
+            const Math::Vector3& ks,
             float ns)
             : Material(PHONG, materialName, 1.0f, 1.0f, false),
             m_specularMaterialData(0.0f)
@@ -52,15 +55,15 @@ namespace Object
             this->ns = ns;
         }
 
-        SpecularMaterial::SpecularMaterial(
-            const std::string& materialName,
-            const Math::Vector3& ka,
-            const Math::Vector3& kd,
+        PhongMaterial::PhongMaterial(
+            const std::string&    materialName,
+            const Math::Vector3&  ka,
+            const Math::Vector3&  kd,
             const Math::Vector3 & ks,
-            float ns,
-            float refraction,
-            float alpha,
-            bool transparency)
+            float                 ns,
+            float                 refraction,
+            float                 alpha,
+            bool                  transparency)
             : Material(PHONG, materialName, refraction, alpha, transparency)
         {
             this->ka = ka;

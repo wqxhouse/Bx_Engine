@@ -28,7 +28,7 @@ int main()
 
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
+    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
     //setting.m_graphicsSetting.antialasing     = AA_VERY_HIGH;
 
 #if BX_OPENGL
@@ -58,11 +58,16 @@ int main()
                           &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
+
+    Trans prosCamTrans(Math::Vector3(0.0f, 2.0f,  5.0f),
+                       Math::Vector3(0.0f, 0.0f, -1.0f),
+                       Math::Vector3(0.0f, 1.0f,  0.0f));
+
 #else
-    /*m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
+    m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
                           &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));*/
+                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
 
     m_pScene->AddObjModel("../resources/models/sponza/sponza_big.obj", "../resources/models/sponza/sponza_big.mtl",
                           &(Trans(Math::Vector3(2.0f, 2.0f,  0.0f),
@@ -74,11 +79,11 @@ int main()
                           &(Trans(Math::Vector3(2.0f, -2.0f,  10.0f),
                                   Math::Vector3(0.0f, 0.0f, -1.0f),
                                   Math::Vector3(0.0f, 1.0f,  0.0f))));
-#endif
 
     Trans prosCamTrans(Math::Vector3(0.0f, 2.0f, 20.0f),
                        Math::Vector3(0.0f, 0.0f, -1.0f),
                        Math::Vector3(0.0f, 1.0f, 0.0f));
+#endif
 
     Object::Camera::ProspectiveCameraCreateInfo prosCamCreateInfo = {};
     prosCamCreateInfo.pTrans      = &prosCamTrans;
@@ -96,8 +101,8 @@ int main()
                      Math::Vector3(0.0f, 1.0f, 0.0f));
 
     Object::Light::LightCreateInfo lightCreateInfo = {};
-    lightCreateInfo.pTrans     = &lightTrans;
-    lightCreateInfo.lightColor = Math::Vector3(1.0f, 1.0f, 1.0f);
+    lightCreateInfo.pTrans                         = &lightTrans;
+    lightCreateInfo.lightColor                     = Math::Vector3(1.0f, 1.0f, 1.0f);
 
     m_pScene->AddDirectionalLight(lightCreateInfo);
 
@@ -105,6 +110,7 @@ int main()
     m_vulkanContext.AddScene(m_pScene.get());
     m_vulkanContext.initialize();
     m_vulkanContext.run();
+
 #elif BX_RAYTRACER
     RayTracingEngine::RayTracer m_rayTracer(&setting);
 #endif

@@ -28,5 +28,5 @@ void main()
     gBufferNormalViewTexture = normalView;
 
     const uint albedoTextureIndex = floatBitsToUint(materialIndex.x);
-    gbufferAlbedoTexture     = texture(AlbedoTexture[albedoTextureIndex], fragTexCoord);
+    gbufferAlbedoTexture          = texture(AlbedoTexture[albedoTextureIndex], fragTexCoord);
 }

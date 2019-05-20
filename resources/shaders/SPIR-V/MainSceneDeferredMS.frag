@@ -5,14 +5,6 @@
 #define MAX_POINT_LIGHT_NUM       16
 #define MAX_SPOT_LIGHT_NUM        16
 
-layout (binding = 0) uniform sampler2DMS posViewTexture;
-layout (binding = 1) uniform sampler2DMS normalViewTexture;
-layout (binding = 2) uniform sampler2DMS albedoTexture;
-
-layout (location = 0) in vec2 fragUV;
-
-layout (location = 0) out vec4 outColor;
-
 struct LightBase
 {
     vec4 color;
@@ -44,6 +36,14 @@ struct SpotLight
     vec3  direction;
     float outerCosTheta;
 };
+
+layout (location = 0) in vec2 fragUV;
+
+layout (location = 0) out vec4 outColor;
+
+layout (binding = 0) uniform sampler2DMS posViewTexture;
+layout (binding = 1) uniform sampler2DMS normalViewTexture;
+layout (binding = 2) uniform sampler2DMS albedoTexture;
 
 layout (binding = 3) uniform LightData
 {

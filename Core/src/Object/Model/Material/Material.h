@@ -46,19 +46,19 @@ namespace Object
             float alpha;
         };
 
-        class SpecularMaterial : public Material
+        class PhongMaterial : public Material
         {
         public:
-            SpecularMaterial(const std::string& materialName);
-            SpecularMaterial(const std::string& materialName,
+            PhongMaterial(const std::string& materialName);
+            PhongMaterial(const std::string& materialName,
                 const Math::Vector3& ka, const Math::Vector3& kd, const Math::Vector3& ks, float ns);
-            SpecularMaterial(const std::string& materialName,
+            PhongMaterial(const std::string& materialName,
                 const Math::Vector3& ka, const Math::Vector3& kd, const Math::Vector3& ks,
                 float ns, float refraction, float alpha, bool transparency);
 
-            ~SpecularMaterial() {}
+            ~PhongMaterial() {}
 
-            void operator=(const SpecularMaterial& material)
+            void operator=(const PhongMaterial& material)
             {
                 m_specularMaterialData = material.m_specularMaterialData;
             }
@@ -85,7 +85,8 @@ namespace Object
                 albedoVector4(Math::Vector4(1.0f)),
                 roughness(0.5f),
                 metallic(0.5f),
-                fresnel(1.0f)
+                fresnel(1.0f),
+                useSpecularMap(0.0f)
             {
 
             }

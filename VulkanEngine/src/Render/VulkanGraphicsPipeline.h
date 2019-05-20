@@ -54,6 +54,8 @@ namespace VulkanEngine
             Texture::VulkanTexture2D* pSpecularMap;
             Texture::VulkanTexture2D* pNormalMap;
             Texture::VulkanTexture2D* pLightMap;
+
+            float                     ns;
         };
 
         struct VulkanDescriptorInfo

@@ -20,6 +20,7 @@
 #define LIGHT_UBO_INDEX                 2
 #define STATIC_UBO_INDEX                3
 #define ALBEDO_TEXTURE_INDEX            4
+#define SPECULAR_TEXTURE_INDEX          5
 
 #define DESCRIPTOR_SET_NUM              1
 
@@ -177,7 +178,7 @@ namespace VulkanEngine
             textureSamplerCreateData.normalize       = TRUE;
             textureSamplerCreateData.mipmapFilter    = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
 
-            Texture::VulkanTexture2D* pDefaultAlbedo =
+            Texture::VulkanTexture2D* pDefaultMaterialTexMap =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
                                                       1,
                                                       TRUE,
@@ -185,30 +186,46 @@ namespace VulkanEngine
                                                       BX_FORMAT_RGBA8,
                                                       textureSamplerCreateData);
 
-            const size_t sceneAlbedoMaterialNum = m_mainSceneMeshMaterialMapResourceList.size();
-            std::vector<Texture::VulkanTexture2D*> sceneAlbedoMapPtrList(sceneAlbedoMaterialNum);
+            const size_t sceneMaterialNum = m_mainSceneMeshMaterialMapResourceList.size();
+            std::vector<Texture::VulkanTexture2D*> sceneAlbedoMapPtrList(sceneMaterialNum);
+            std::vector<Texture::VulkanTexture2D*> sceneSpecularMapPtrList(sceneMaterialNum);
 
-            for (size_t albedoMaterialIndex = 0;
-                 albedoMaterialIndex < sceneAlbedoMaterialNum;
-                 albedoMaterialIndex++)
+            for (size_t materialIndex = 0;
+                 materialIndex < sceneMaterialNum;
+                 materialIndex++)
             {
-                const Texture::VulkanTexture2D* pAlbedoMap =
-                    m_mainSceneMeshMaterialMapResourceList[albedoMaterialIndex].pDiffuseMap;
+                VulkanMeshMaterialMapResource* pMaterialMapResource =
+                    &(m_mainSceneMeshMaterialMapResourceList[materialIndex]);
+
+                // Diffuse
+                const Texture::VulkanTexture2D* pAlbedoMap = pMaterialMapResource->pDiffuseMap;
 
                 if (pAlbedoMap != NULL)
                 {
-                    sceneAlbedoMapPtrList[albedoMaterialIndex] =
-                        m_mainSceneMeshMaterialMapResourceList[albedoMaterialIndex].pDiffuseMap;
+                    sceneAlbedoMapPtrList[materialIndex] = pMaterialMapResource->pDiffuseMap;
                 }
                 else
                 {
-                    sceneAlbedoMapPtrList[albedoMaterialIndex] = pDefaultAlbedo;
+                    sceneAlbedoMapPtrList[materialIndex] = pDefaultMaterialTexMap;
+                }
+
+                // Specular
+                const Texture::VulkanTexture2D* pSpecularMap = pMaterialMapResource->pSpecularMap;
+
+                if (pSpecularMap != NULL)
+                {
+                    sceneSpecularMapPtrList[materialIndex] = pMaterialMapResource->pSpecularMap;
+                }
+                else
+                {
+                    sceneSpecularMapPtrList[materialIndex] = pDefaultMaterialTexMap;
                 }
             }
 
             std::vector<VulkanTextureResource> sceneTextureResourceList =
             {
-                createSceneTextures(0, ALBEDO_TEXTURE_INDEX, sceneAlbedoMapPtrList)
+                createSceneTextures(0, ALBEDO_TEXTURE_INDEX, sceneAlbedoMapPtrList),
+                createSceneTextures(0, SPECULAR_TEXTURE_INDEX, sceneSpecularMapPtrList)
             };
 
             descriptorResources.pTextureResouceList = &sceneTextureResourceList;

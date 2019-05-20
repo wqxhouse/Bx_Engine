@@ -54,7 +54,7 @@ namespace Object
             std::string tempMeshName;
             std::string tempMaterialName;
 
-            std::unordered_map<string, SpecularMaterial*> m_materialHashMap;
+            std::unordered_map<string, PhongMaterial*> m_materialHashMap;
             std::unordered_map<string, MaterialMap*> m_materialTextureHashMap;
         };
     }

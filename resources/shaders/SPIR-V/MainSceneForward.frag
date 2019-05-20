@@ -48,8 +48,9 @@ struct SpotLight
 
 layout (binding = 1) uniform MaterialUbo
 {
-	vec4 materialIndex;
-	vec4 padding[15];
+	vec4  materialIndex;
+    float ns; // vec3 paddingNS;
+	vec4  padding[14];
 };
 
 layout (binding = 2) uniform LightData
@@ -66,10 +67,11 @@ layout (binding = 2) uniform LightData
 
 layout (binding = 3) uniform StaticUniform
 {
-    vec3 camPosWorld;
+    vec3  camPosWorld;
 };
 
 layout (binding = 4) uniform sampler2D AlbedoTexture[MAX_MESH_NUM];
+layout (binding = 5) uniform sampler2D SpecularTexture[MAX_MESH_NUM];
 
 // Calculate the diffuse radiance for phong shading
 // N(normal), L(light direction) must be normalized
@@ -120,8 +122,9 @@ void main()
     vec3 normalizedNormalView = normalize(normalView);
     vec3 normalizedLightView  = normalize((fragViewMat * m_lightData.directionalLightList[0].direction).xyz);
 
-    const uint albedoTextureIndex = floatBitsToUint(materialIndex.x);
-	vec3 albedo = texture(AlbedoTexture[albedoTextureIndex], fragTexCoord).xyz;
+    const uint materialIndex = floatBitsToUint(materialIndex.x);
+	vec3 albedo   = texture(AlbedoTexture[materialIndex], fragTexCoord).xyz;
+    vec3 specular = texture(SpecularTexture[materialIndex], fragTexCoord).xyz;
 
     vec3 diffuseRadiance = calPhongDiffuseRadiance(
         normalizedNormalView,
@@ -133,8 +136,8 @@ void main()
         normalizedNormalView,
         normalizedLightView,
         m_lightData.directionalLightList[0].lightBase.color.xyz,
-        vec3(0.6f),
-        10.0f);
+        specular,
+        ns);
 
     vec3 radiance = (diffuseRadiance + specularRadiance);
 

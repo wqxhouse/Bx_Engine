@@ -312,7 +312,7 @@ namespace Object
                         if (materialStrs[0] == "newmtl")
                         {
                             tempMaterialName = materialStrs[1];
-                            m_materialHashMap[materialStrs[1]] = new SpecularMaterial(tempMaterialName);
+                            m_materialHashMap[materialStrs[1]] = new PhongMaterial(tempMaterialName);
                             m_materialTextureHashMap[materialStrs[1]] = new MaterialMap();
                         }
                         else if (materialStrs[0] == "Ns") // Specular exponent
@@ -327,7 +327,8 @@ namespace Object
                         {
                             // TODO: NotImplemented();
                         }
-                        else if (materialStrs[0] == "map_Kd")
+                        else if (materialStrs[0] == "map_Kd" ||
+                                 materialStrs[0] == "map_Ks")
                         {
                             Texture::Texture2DCreateData texture2DCreateData = {};
 
@@ -335,25 +336,28 @@ namespace Object
                             int texHeight;
                             int texChannels;
 
-                            texture2DCreateData.textureData =
+                            texture2DCreateData.textureData    =
                                 Texture::Texture2D::ReadImageData(materialStrs[1], &texWidth, &texHeight, &texChannels);
+                            texture2DCreateData.texUsage       = BX_TEXTURE_USAGE_SAMPLED;
+                            texture2DCreateData.texWidth       = static_cast<UINT>(texWidth);
+                            texture2DCreateData.texHeight      = static_cast<UINT>(texHeight);
+                            texture2DCreateData.samples        = 1;
+                            texture2DCreateData.texLoadFormat  = BX_FORMAT_RGBA8;
+                            texture2DCreateData.texStoreFormat = BX_FORMAT_RGBA8;
+                            texture2DCreateData.mipmap         = TRUE;
+                            texture2DCreateData.texOptimize    = TRUE;
+                            texture2DCreateData.texPerserve    = FALSE;
 
-                            texture2DCreateData.texUsage           = BX_TEXTURE_USAGE_SAMPLED;
-                            texture2DCreateData.texWidth           = static_cast<UINT>(texWidth);
-                            texture2DCreateData.texHeight          = static_cast<UINT>(texHeight);
-                            texture2DCreateData.samples            = 1;
-                            texture2DCreateData.texLoadFormat      = BX_FORMAT_RGBA8;
-                            texture2DCreateData.texStoreFormat     = BX_FORMAT_RGBA8;
-                            texture2DCreateData.mipmap             = TRUE;
-                            texture2DCreateData.texOptimize        = TRUE;
-                            texture2DCreateData.texPerserve        = FALSE;
-
-                            m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.diffuseMap = new Texture::Texture2D(&texture2DCreateData);
-                        }
-                        else if (materialStrs[0] == "map_Ks")
-                        {
-                            NotImplemented();
-                            // m_materialTextureHashMap[tempMaterialName]->m_materialMapStruct.specMap = new Texture::Texture2D(materialStrs[1]);
+                            if (materialStrs[0] == "map_Kd")
+                            {
+                                m_materialTextureHashMap[tempMaterialName]->
+                                    m_materialMapStruct.diffuseMap = new Texture::Texture2D(&texture2DCreateData);
+                            }
+                            else // map_Ks
+                            {
+                                m_materialTextureHashMap[tempMaterialName]->
+                                    m_materialMapStruct.specMap = new Texture::Texture2D(&texture2DCreateData);
+                            }
                         }
                     }
                 }

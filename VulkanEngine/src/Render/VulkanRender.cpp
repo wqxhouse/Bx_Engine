@@ -99,6 +99,7 @@ namespace VulkanEngine
                             textureSamplerCreateData.normalize                           = TRUE;
                             textureSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
 
+                            const Object::Model::Material*    pMaterial    = pMesh->GetMaterial();
                             const Object::Model::MaterialMap* pMaterialMap = pMesh->GetMaterialMap();
 
                             Texture::VulkanTexture2D* pVulkanDiffuseMap  = NULL;
@@ -107,6 +108,7 @@ namespace VulkanEngine
                             Texture::VulkanTexture2D* pVulkanLightMap    = NULL;
 
                             // Parse diffuse map
+                            if (pMaterialMap != NULL)
                             {
                                 const ::Texture::Texture2D* pDiffuseMap =
                                     pMaterialMap->m_materialMapStruct.diffuseMap;
@@ -125,54 +127,49 @@ namespace VulkanEngine
                                 }
                                 else
                                 {
-                                    const Object::Model::Material* pMaterial = pMesh->GetMaterial();
+                                    UBYTE albedo[4] = { 0, 0, 0, 0 };
 
-                                    if (pMaterialMap != NULL)
+                                    switch (pMaterial->GetMaterialType())
                                     {
-                                        UBYTE albedo[4] = { 0, 0, 0, 0 };
-
-                                        switch (pMaterial->GetMaterialType())
+                                        case PHONG:
                                         {
-                                            case PHONG:
-                                            {
-                                                const Object::Model::SpecularMaterial* pSpecularMaterial =
-                                                    static_cast<const Object::Model::SpecularMaterial*>(pMaterial);
+                                            const Object::Model::PhongMaterial* pPhoneMaterial =
+                                                static_cast<const Object::Model::PhongMaterial*>(pMaterial);
 
-                                                albedo[0] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[0]);
-                                                albedo[1] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[1]);
-                                                albedo[2] = static_cast<UBYTE>(255.0f * pSpecularMaterial->kd[2]);
-                                                albedo[3] = 255;
+                                            albedo[0] = static_cast<UBYTE>(255.0f * pPhoneMaterial->kd[0]);
+                                            albedo[1] = static_cast<UBYTE>(255.0f * pPhoneMaterial->kd[1]);
+                                            albedo[2] = static_cast<UBYTE>(255.0f * pPhoneMaterial->kd[2]);
+                                            albedo[3] = 255;
 
-                                                break;
-                                            }
-                                            default:
-                                                NotImplemented();
+                                            break;
                                         }
-
-                                        const size_t albedoDataSize = sizeof(image_data) * 4;
-
-                                        image_data* fixValueDiffuseMapData =
-                                            static_cast<image_data*>(malloc(albedoDataSize));
-
-                                        memcpy(fixValueDiffuseMapData, &(albedo[0]), albedoDataSize);
-
-                                        pVulkanDiffuseMap =
-                                            m_pTextureMgr->createTexture2DSampler(1,
-                                                                                  1,
-                                                                                  1,
-                                                                                  TRUE,
-                                                                                  BX_FORMAT_RGBA8,
-                                                                                  BX_FORMAT_RGBA8,
-                                                                                  textureSamplerCreateData,
-                                                                                  &(fixValueDiffuseMapData[0]));
+                                        default:
+                                            NotImplemented();
                                     }
+
+                                    const size_t albedoDataSize = sizeof(image_data) * 4;
+
+                                    image_data* fixValueDiffuseMapData =
+                                        static_cast<image_data*>(malloc(albedoDataSize));
+
+                                    memcpy(fixValueDiffuseMapData, &(albedo[0]), albedoDataSize);
+
+                                    pVulkanDiffuseMap =
+                                        m_pTextureMgr->createTexture2DSampler(1,
+                                                                              1,
+                                                                              1,
+                                                                              TRUE,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              BX_FORMAT_RGBA8,
+                                                                              textureSamplerCreateData,
+                                                                              &(fixValueDiffuseMapData[0]));
                                 }
                             }
 
                             // Parse specular map
+                            if (pMaterialMap != NULL)
                             {
-                                const ::Texture::Texture2D* pSpecularMap =
-                                    pMaterialMap->m_materialMapStruct.specMap;
+                                const ::Texture::Texture2D* pSpecularMap = pMaterialMap->m_materialMapStruct.specMap;
 
                                 if (pSpecularMap != NULL)
                                 {
@@ -186,9 +183,54 @@ namespace VulkanEngine
                                                                               textureSamplerCreateData,
                                                                               static_cast<const image_data*>(pSpecularMap->GetTextureData()));
                                 }
+                                else
+                                {
+                                    UBYTE specular[4] = { 0, 0, 0, 0 };
+
+                                    switch (pMaterial->GetMaterialType())
+                                    {
+                                        case PHONG:
+                                        {
+                                            const Object::Model::PhongMaterial* pPhoneMaterial =
+                                                static_cast<const Object::Model::PhongMaterial*>(pMaterial);
+
+                                            specular[0] = static_cast<UBYTE>(255.0f * pPhoneMaterial->ks[0]);
+                                            specular[1] = static_cast<UBYTE>(255.0f * pPhoneMaterial->ks[1]);
+                                            specular[2] = static_cast<UBYTE>(255.0f * pPhoneMaterial->ks[2]);
+                                            specular[3] = static_cast<UBYTE>(255.0f * pPhoneMaterial->ns);
+
+                                            break;
+                                        }
+                                        default:
+                                            NotImplemented();
+                                    }
+
+                                    const size_t specularDataSize = sizeof(image_data) * 4;
+
+                                    image_data* fixValueSpecularMapData =
+                                        static_cast<image_data*>(malloc(specularDataSize));
+
+                                    assert(fixValueSpecularMapData != NULL);
+
+                                    if (fixValueSpecularMapData != NULL)
+                                    {
+                                        memcpy(fixValueSpecularMapData, &(specular[0]), specularDataSize);
+
+                                        pVulkanSpecularMap =
+                                            m_pTextureMgr->createTexture2DSampler(1,
+                                                                                  1,
+                                                                                  1,
+                                                                                  TRUE,
+                                                                                  BX_FORMAT_RGBA8,
+                                                                                  BX_FORMAT_RGBA8,
+                                                                                  textureSamplerCreateData,
+                                                                                  &(fixValueSpecularMapData[0]));
+                                    }
+                                }
                             }
 
                             // Parse normal map
+                            if (pMaterialMap != NULL)
                             {
                                 const ::Texture::Texture2D* pNormalMap =
                                     pMaterialMap->m_materialMapStruct.normalMap;
@@ -208,6 +250,7 @@ namespace VulkanEngine
                             }
 
                             // Parse light map
+                            if (pMaterialMap != NULL)
                             {
                                 const ::Texture::Texture2D* pLightMap =
                                     pMaterialMap->m_materialMapStruct.lightMap;
@@ -226,13 +269,21 @@ namespace VulkanEngine
                                 }
                             }
 
+                            // Parse specular intense
+                            float ns = 0.0f;
+                            if (pMaterial->GetMaterialType() == MaterialType::PHONG)
+                            {
+                                ns = static_cast<const Object::Model::PhongMaterial*>(pMaterial)->ns;
+                            }
+
                             m_mainSceneMeshMaterialMapResourceList.push_back(
                             {
                                 meshId++,
                                 pVulkanDiffuseMap,
                                 pVulkanSpecularMap,
                                 pVulkanNormalMap,
-                                pVulkanLightMap
+                                pVulkanLightMap,
+                                ns
                             });
                         }
                     }
@@ -358,6 +409,18 @@ namespace VulkanEngine
             {
                 m_materialUniformBuffer[i].albedoMapIndex =
                     m_mainSceneMeshMaterialMapResourceList[i].meshIndex;
+
+                m_materialUniformBuffer[i].spcularMapIndex =
+                    m_mainSceneMeshMaterialMapResourceList[i].meshIndex;
+
+                m_materialUniformBuffer[i].normalMapIndex =
+                    m_mainSceneMeshMaterialMapResourceList[i].meshIndex;
+
+                m_materialUniformBuffer[i].lightMapIndex =
+                    m_mainSceneMeshMaterialMapResourceList[i].meshIndex;
+
+                m_materialUniformBuffer[i].ns =
+                    m_mainSceneMeshMaterialMapResourceList[i].ns;
             }
 
             m_descriptorUpdateDataTable[setIndex].push_back(

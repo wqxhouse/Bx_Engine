@@ -124,10 +124,12 @@ namespace VulkanEngine
                 UINT normalMapIndex;
                 UINT lightMapIndex;
 
+                float ns;
                 // TODO: Avoid align the dynamic uniform buffer with hard code
                 // use the minUniformBufferOffsetAlignment from hw property to
                 // creat the UBO for dynamic uniform buffer
-                Math::Vector4 padding[15];
+                Math::Vector3 paddingNS;
+                Math::Vector4 padding[14];
             };
 
             struct LightBaseUbo
