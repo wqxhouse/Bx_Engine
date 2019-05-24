@@ -9,18 +9,18 @@ layout (location = 2) in vec2 fragTexCoord;
 
 layout (location = 0) out vec3 gBufferPosViewTexture;
 layout (location = 1) out vec3 gBufferNormalViewTexture;
-layout (location = 2) out vec4 gbufferAlbedoTexture;
+layout (location = 2) out vec4 gBufferAlbedoTexture;
+layout (location = 3) out vec4 gBufferSpecularTexture;
 
 layout (binding = 1) uniform MaterialUbo
 {
-	vec4 materialIndex;
-	vec4 padding[15];
+	vec4  materialIndex;
+    float ns; // vec3 paddingNS;
+	vec4  padding[14];
 };
 
 layout (binding = 2) uniform sampler2D AlbedoTexture[MAX_MESH_NUM];
-
-// TODO
-// layout (locatoin = 3) out vec3 specularTexture;
+layout (binding = 3) uniform sampler2D SpecularTexture[MAX_MESH_NUM];
 
 void main()
 {
@@ -28,5 +28,8 @@ void main()
     gBufferNormalViewTexture = normalView;
 
     const uint albedoTextureIndex = floatBitsToUint(materialIndex.x);
-    gbufferAlbedoTexture          = texture(AlbedoTexture[albedoTextureIndex], fragTexCoord);
+    const uint specTextureIndex   = floatBitsToUint(materialIndex.y);
+    
+    gBufferAlbedoTexture          = texture(AlbedoTexture[albedoTextureIndex], fragTexCoord);
+    gBufferSpecularTexture        = vec4(texture(SpecularTexture[specTextureIndex], fragTexCoord).xyz, ns);
 }

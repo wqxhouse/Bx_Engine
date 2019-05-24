@@ -260,8 +260,7 @@ namespace VulkanEngine
 
                             // TODO: Transition the image layout instead of hard code in descriptor image info
                             VkDescriptorImageInfo descriptorImageInfo = {};
-                            descriptorImageInfo.imageLayout = (((usage & BX_TEXTURE_USAGE_COLOR_ATTACHMENT) == 0) ?
-                                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+                            descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                             descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();
 
                             if (pDescriptorTexture->GetSampleNumber() == 1)

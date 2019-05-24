@@ -8,6 +8,7 @@
 layout (input_attachment_index = 0, binding = 0) uniform subpassInput posViewTexture;
 layout (input_attachment_index = 1, binding = 1) uniform subpassInput normalViewTexture;
 layout (input_attachment_index = 2, binding = 2) uniform subpassInput albedoTexture;
+layout (input_attachment_index = 3, binding = 3) uniform subpassInput specularTexture;
 
 layout (location = 0) out vec4 outColor;
 
@@ -43,7 +44,7 @@ struct SpotLight
     float outerCosTheta;
 };
 
-layout (binding = 3) uniform LightData
+layout (binding = 4) uniform LightData
 {
     uint             directionalLightNum;
     DirectionalLight directionalLightList[MAX_DIRECTIONAL_LIGHT_NUM];
@@ -55,19 +56,17 @@ layout (binding = 3) uniform LightData
     SpotLight        spotLightList[MAX_SPOT_LIGHT_NUM];
 } m_lightData;
 
-layout (binding = 4) uniform CamPosUniform
+layout (binding = 5) uniform CamPosUniform
 {
     vec3 camPosWorld;
 };
 
-layout (binding = 5) uniform ViewMatUniform
+layout (binding = 6) uniform ViewMatUniform
 {
     mat4 viewMat;
 };
 
-// layout (binding = 6) uniform EmptyUniform {};
-
-layout (binding = 7) uniform sampler2D TestTexture;
+// layout (binding = 7) uniform EmptyUniform {};
 
 // Calculate the diffuse radiance for phong shading
 // N(normal), L(light direction) must be normalized
@@ -121,6 +120,7 @@ void main()
     vec3 normalizedLightView  = normalize((viewMat * m_lightData.directionalLightList[0].direction).xyz);
 
     vec3 albedo               = subpassLoad(albedoTexture).xyz;
+    vec4 specular             = subpassLoad(specularTexture);
 
     vec3 diffuseRadiance = calPhongDiffuseRadiance(
         normalizedNormalView,
@@ -132,8 +132,8 @@ void main()
         normalizedNormalView,
         normalizedLightView,
         m_lightData.directionalLightList[0].lightBase.color.xyz,
-        vec3(0.6f),
-        10.0f);
+        specular.xyz,
+        specular.w);
 
     vec3 radiance = diffuseRadiance + specularRadiance;
 

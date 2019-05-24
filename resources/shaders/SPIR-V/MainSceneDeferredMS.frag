@@ -44,8 +44,9 @@ layout (location = 0) out vec4 outColor;
 layout (binding = 0) uniform sampler2DMS posViewTexture;
 layout (binding = 1) uniform sampler2DMS normalViewTexture;
 layout (binding = 2) uniform sampler2DMS albedoTexture;
+layout (binding = 3) uniform sampler2DMS specularTexture;
 
-layout (binding = 3) uniform LightData
+layout (binding = 4) uniform LightData
 {
     uint             directionalLightNum;
     DirectionalLight directionalLightList[MAX_DIRECTIONAL_LIGHT_NUM];
@@ -57,17 +58,17 @@ layout (binding = 3) uniform LightData
     SpotLight        spotLightList[MAX_SPOT_LIGHT_NUM];
 } m_lightData;
 
-layout (binding = 4) uniform CamPosUniform
+layout (binding = 5) uniform CamPosUniform
 {
     vec3 camPosWorld;
 };
 
-layout (binding = 5) uniform ViewMatUniform
+layout (binding = 6) uniform ViewMatUniform
 {
     mat4 viewMat;
 };
 
-layout (binding = 6) uniform MsaaUniforms
+layout (binding = 7) uniform MsaaUniforms
 {
     int   sampleNum;
     ivec2 dimension;
@@ -134,6 +135,8 @@ void main()
 
         vec3 albedo               = texelFetch(albedoTexture, unnormalizedFragUV, sampleIndex).xyz;
         
+        vec4 specular             = texelFetch(specularTexture, unnormalizedFragUV, sampleIndex);
+        
         vec3 diffuseRadiance = calPhongDiffuseRadiance(
             normalizedNormalView,
             normalizedLightView,
@@ -145,8 +148,8 @@ void main()
             normalizedNormalView,
             normalizedLightView,
             m_lightData.directionalLightList[0].lightBase.color.xyz,
-            vec3(0.6f),
-            10.0f);
+            specular.xyz,
+            specular.w);
 
         radiance += diffuseRadiance + specularRadiance;
     }

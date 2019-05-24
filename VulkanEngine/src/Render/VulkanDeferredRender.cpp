@@ -36,22 +36,25 @@
 #define GBUFFER_POS_BUFFER_INDEX          1
 #define GBUFFER_NORMAL_BUFFER_INDEX       2
 #define GBUFFER_ALBEDO_BUFFER_INDEX       3
-#define GBUFFER_DEPTH_BUFFER_INDEX        4
+#define GBUFFER_SPECULAR_BUFFER_INDEX     4
+#define GBUFFER_DEPTH_BUFFER_INDEX        5
 #define GBUFFER_NUM                       (GBUFFER_DEPTH_BUFFER_INDEX - GBUFFER_POS_BUFFER_INDEX + 1)
 
 // Set 0
 #define TRANSFORM_MATRIX_UBO_INDEX        0
 #define MATERIAL_UBO_INDEX                1
 #define ALBEDO_TEXTURE_INDEX              2
+#define SPECULAR_TEXTURE_INDEX            3
 
 // Set 1
 #define GBUFFER_POS_TEX_INDEX             0
 #define GBUFFER_NORMAL_TEX_INDEX          1
 #define GBUFFER_ALBEDO_TEX_INDEX          2
-#define LIGHT_UBO_INDEX                   3
-#define CAM_UBO_INDEX                     4
-#define VIEW_MATRIX_UBO_INDEX             5
-#define MSAA_UBO_INDEX                    6
+#define GBUFFER_SPECULAR_TEX_INDEX        3
+#define LIGHT_UBO_INDEX                   4
+#define CAM_UBO_INDEX                     5
+#define VIEW_MATRIX_UBO_INDEX             6
+#define MSAA_UBO_INDEX                    7
 
 #define DESCRIPTOR_SET_NUM                2
 
@@ -99,6 +102,7 @@ namespace VulkanEngine
                 { 0.0f, 0.0f, 0.0f, 1.0f },
                 { 0.0f, 0.0f, 0.0f, 1.0f },
                 { 0.0f, 0.0f, 0.0f, 1.0f },
+                { 0.0f, 0.0f, 0.0f, 1.0f },
                 { 0.0f, 0.0f, 0.0f, 1.0f }
             };
 
@@ -118,7 +122,8 @@ namespace VulkanEngine
                 { TRUE, 1, 0, 1,         BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_PRESENT, FALSE, FALSE }, // Backbuffer
                 { TRUE, 0, 0, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Position
                 { TRUE, 0, 1, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Normal
-                { TRUE, 0, 2, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }  // TexCoord
+                { TRUE, 0, 2, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Albedo
+                { TRUE, 0, 3, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_COLOR,   FALSE, FALSE }, // Specular
             };
 
             // Create textures
@@ -137,7 +142,7 @@ namespace VulkanEngine
                 genBackbufferDepthBuffer();
 
                 deferredRenderRTDescList.push_back(
-                    { TRUE, 0, 3, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
+                    { TRUE, 0, 4, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
             }
 
             if (IsStencilTestEnabled() == TRUE)
@@ -189,7 +194,8 @@ namespace VulkanEngine
             {
                 &(deferredRenderRTList[GBUFFER_POS_BUFFER_INDEX]),
                 &(deferredRenderRTList[GBUFFER_NORMAL_BUFFER_INDEX]),
-                &(deferredRenderRTList[GBUFFER_ALBEDO_BUFFER_INDEX])
+                &(deferredRenderRTList[GBUFFER_ALBEDO_BUFFER_INDEX]),
+                &(deferredRenderRTList[GBUFFER_SPECULAR_BUFFER_INDEX])
             };
 
             if (IsDepthTestEnabled() == TRUE)
@@ -345,7 +351,7 @@ namespace VulkanEngine
 
         void VulkanDeferredRender::initializeBackbufferRTCreateData()
         {
-            UINT backBufferTextureSize = 4;
+            const UINT backBufferTextureSize = 5;
 
             const size_t backBufferNum  = m_ppBackbufferTextures->size();
             for (size_t backBufferIndex = 0; backBufferIndex < backBufferNum; ++backBufferIndex)
@@ -393,7 +399,15 @@ namespace VulkanEngine
                                                            usage,
                                                            FALSE);
 
-            Texture::VulkanTexture2D* pTexCoord0Texture =
+            Texture::VulkanTexture2D* pAlbedoTexture =
+                m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
+                                                           m_pSetting->resolution.height,
+                                                           sampleNum,
+                                                           BX_FORMAT_RGBA32_FLOAT,
+                                                           usage,
+                                                           FALSE);
+
+            Texture::VulkanTexture2D* pSpecularTexture =
                 m_pTextureMgr->createTexture2DRenderTarget(m_pSetting->resolution.width,
                                                            m_pSetting->resolution.height,
                                                            sampleNum,
@@ -419,7 +433,13 @@ namespace VulkanEngine
                 m_backBufferRTsCreateDataList[backbufferIndex][GBUFFER_ALBEDO_BUFFER_INDEX] =
                 {
                     backbufferIndex,
-                    { sampleNum, pTexCoord0Texture }
+                    { sampleNum, pAlbedoTexture }
+                };
+
+                m_backBufferRTsCreateDataList[backbufferIndex][GBUFFER_SPECULAR_BUFFER_INDEX] =
+                {
+                    backbufferIndex,
+                    { sampleNum, pSpecularTexture }
                 };
             }
         }
@@ -592,7 +612,7 @@ namespace VulkanEngine
             textureSamplerCreateData.normalize       = TRUE;
             textureSamplerCreateData.mipmapFilter    = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
 
-            Texture::VulkanTexture2D* pDefaultAlbedo =
+            Texture::VulkanTexture2D* pDefaultMaterialTexMap =
                 m_pTextureMgr->createTexture2DSampler("../resources/textures/teaport/wall.jpg",
                                                       1,
                                                       TRUE,
@@ -600,29 +620,47 @@ namespace VulkanEngine
                                                       BX_FORMAT_RGBA8,
                                                       textureSamplerCreateData);
 
-            const size_t sceneAlbedoMaterialNum = m_mainSceneMeshMaterialMapResourceList.size();
-            std::vector<Texture::VulkanTexture2D*> sceneAlbedoMapPtrList(sceneAlbedoMaterialNum);
+            const size_t sceneMaterialNum = m_mainSceneMeshMaterialMapResourceList.size();
+            std::vector<Texture::VulkanTexture2D*> sceneAlbedoMapPtrList(sceneMaterialNum);
+            std::vector<Texture::VulkanTexture2D*> sceneSpecularMapPtrList(sceneMaterialNum);
 
-            for (size_t albedoMaterialIndex = 0;
-                 albedoMaterialIndex < sceneAlbedoMaterialNum;
-                 albedoMaterialIndex++)
+            for (size_t materialIndex = 0;
+                materialIndex < sceneMaterialNum;
+                materialIndex++)
             {
-                const Texture::VulkanTexture2D* pAlbedoMap =
-                    m_mainSceneMeshMaterialMapResourceList[albedoMaterialIndex].pDiffuseMap;
+                VulkanMeshMaterialMapResource* pMaterialMapResource =
+                    &(m_mainSceneMeshMaterialMapResourceList[materialIndex]);
+
+                // Diffuse
+                const Texture::VulkanTexture2D* pAlbedoMap = pMaterialMapResource->pDiffuseMap;
 
                 if (pAlbedoMap != NULL)
                 {
-                    sceneAlbedoMapPtrList[albedoMaterialIndex] =
-                        m_mainSceneMeshMaterialMapResourceList[albedoMaterialIndex].pDiffuseMap;
+                    sceneAlbedoMapPtrList[materialIndex] = pMaterialMapResource->pDiffuseMap;
                 }
                 else
                 {
-                    sceneAlbedoMapPtrList[albedoMaterialIndex] = pDefaultAlbedo;
+                    sceneAlbedoMapPtrList[materialIndex] = pDefaultMaterialTexMap;
+                }
+
+                // Specular
+                const Texture::VulkanTexture2D* pSpecularMap = pMaterialMapResource->pSpecularMap;
+
+                if (pSpecularMap != NULL)
+                {
+                    sceneSpecularMapPtrList[materialIndex] = pMaterialMapResource->pSpecularMap;
+                }
+                else
+                {
+                    sceneSpecularMapPtrList[materialIndex] = pDefaultMaterialTexMap;
                 }
             }
 
             pGBufferPassTextureResourceList->push_back(
                 createSceneTextures(gBufferPassIndex, ALBEDO_TEXTURE_INDEX, sceneAlbedoMapPtrList));
+
+            pGBufferPassTextureResourceList->push_back(
+                createSceneTextures(gBufferPassIndex, SPECULAR_TEXTURE_INDEX, sceneSpecularMapPtrList));
 
             pGBufferDescriptorResources->pTextureResouceList = pGBufferPassTextureResourceList;
 
@@ -745,13 +783,21 @@ namespace VulkanEngine
                 pNormalTextureInputAttachment->pTextureList             =
                     { m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].attachment.pTex };
 
-                VulkanTextureResource* pTexCoord0TextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_ALBEDO_BUFFER_INDEX - 1));
-                pTexCoord0TextureInputAttachment->bindingPoint          = GBUFFER_ALBEDO_TEX_INDEX;
-                pTexCoord0TextureInputAttachment->attachmentIndex       = 3;
-                pTexCoord0TextureInputAttachment->setIndex              = shadingPassIndex;
-                pTexCoord0TextureInputAttachment->shaderType            = BX_FRAGMENT_SHADER;
-                pTexCoord0TextureInputAttachment->pTextureList          =
+                VulkanTextureResource* pAlbedoTextureInputAttachment    = &(pInputAttachmentResourceList->at(GBUFFER_ALBEDO_BUFFER_INDEX - 1));
+                pAlbedoTextureInputAttachment->bindingPoint             = GBUFFER_ALBEDO_TEX_INDEX;
+                pAlbedoTextureInputAttachment->attachmentIndex          = 3;
+                pAlbedoTextureInputAttachment->setIndex                 = shadingPassIndex;
+                pAlbedoTextureInputAttachment->shaderType               = BX_FRAGMENT_SHADER;
+                pAlbedoTextureInputAttachment->pTextureList             =
                     { m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex };
+
+                VulkanTextureResource* pSpecularTextureInputAttachment = &(pInputAttachmentResourceList->at(GBUFFER_SPECULAR_BUFFER_INDEX - 1));
+                pSpecularTextureInputAttachment->bindingPoint          = GBUFFER_SPECULAR_TEX_INDEX;
+                pSpecularTextureInputAttachment->attachmentIndex       = 4;
+                pSpecularTextureInputAttachment->setIndex              = shadingPassIndex;
+                pSpecularTextureInputAttachment->shaderType            = BX_FRAGMENT_SHADER;
+                pSpecularTextureInputAttachment->pTextureList          =
+                    { m_backBufferRTsCreateDataList[0][GBUFFER_SPECULAR_BUFFER_INDEX].attachment.pTex };
 
                 pShadingPassDescriptorResources->pInputAttachmentList = pInputAttachmentResourceList;
             }
@@ -768,17 +814,21 @@ namespace VulkanEngine
                 gBufferSamplerCreateData.normalize                           = TRUE;
                 gBufferSamplerCreateData.mipmapFilter                        = BX_TEXTURE_SAMPLER_FILTER_LINEAR;
 
-                 Texture::VulkanTexture2D* pPosTexture       =
+                Texture::VulkanTexture2D* pPosTexture       =
                     static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_POS_BUFFER_INDEX].attachment.pTex);
                 pPosTexture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
 
-                 Texture::VulkanTexture2D* pNormalTexture    =
+                Texture::VulkanTexture2D* pNormalTexture    =
                     static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_NORMAL_BUFFER_INDEX].attachment.pTex);
                 pNormalTexture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
 
-                 Texture::VulkanTexture2D* pTexCoord0Texture =
+                Texture::VulkanTexture2D* pAlbedoTexture =
                     static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_ALBEDO_BUFFER_INDEX].attachment.pTex);
-                pTexCoord0Texture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
+                pAlbedoTexture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
+
+                Texture::VulkanTexture2D* pSpecularTexture =
+                    static_cast<Texture::VulkanTexture2D*>(m_backBufferRTsCreateDataList[0][GBUFFER_SPECULAR_BUFFER_INDEX].attachment.pTex);
+                pSpecularTexture->createSampler(&gBufferSamplerCreateData, m_pTextureMgr->IsAnisotropySupport());
 
                 pShadingPassTextureResourceList->push_back(
                     createSceneTextures(shadingPassIndex, 0, { pPosTexture }));
@@ -787,7 +837,10 @@ namespace VulkanEngine
                     createSceneTextures(shadingPassIndex, 1, { pNormalTexture }));
 
                 pShadingPassTextureResourceList->push_back(
-                    createSceneTextures(shadingPassIndex, 2, { pTexCoord0Texture }));
+                    createSceneTextures(shadingPassIndex, 2, { pAlbedoTexture }));
+
+                pShadingPassTextureResourceList->push_back(
+                    createSceneTextures(shadingPassIndex, 3, { pSpecularTexture }));
 
                 pShadingPassDescriptorResources->pTextureResouceList = pShadingPassTextureResourceList;
             }
