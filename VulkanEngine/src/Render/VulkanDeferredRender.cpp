@@ -245,13 +245,31 @@ namespace VulkanEngine
                                                                               &shadingPassGraphicsPipelineCreateData);
 
             // Create dependencies
-            std::vector<VkSubpassDependency> deferredRenderDependencies(1);
-            deferredRenderDependencies[0].srcSubpass    = 0;
-            deferredRenderDependencies[0].dstSubpass    = 1;
-            deferredRenderDependencies[0].srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-            deferredRenderDependencies[0].dstStageMask  = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-            deferredRenderDependencies[0].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-            deferredRenderDependencies[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+            std::vector<VkSubpassDependency> deferredRenderDependencies(3);
+
+            deferredRenderDependencies[0].srcSubpass      = VK_SUBPASS_EXTERNAL;
+            deferredRenderDependencies[0].dstSubpass      = 0;
+            deferredRenderDependencies[0].srcStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+            deferredRenderDependencies[0].dstStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            deferredRenderDependencies[0].srcAccessMask   = VK_ACCESS_MEMORY_READ_BIT;
+            deferredRenderDependencies[0].dstAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+            deferredRenderDependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+            deferredRenderDependencies[1].srcSubpass      = 0;
+            deferredRenderDependencies[1].dstSubpass      = 1;
+            deferredRenderDependencies[1].srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            deferredRenderDependencies[1].dstStageMask    = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            deferredRenderDependencies[1].srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+            deferredRenderDependencies[1].dstAccessMask   = VK_ACCESS_SHADER_READ_BIT;
+            deferredRenderDependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+            deferredRenderDependencies[2].srcSubpass      = 0;
+            deferredRenderDependencies[2].dstSubpass      = VK_SUBPASS_EXTERNAL;
+            deferredRenderDependencies[2].srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            deferredRenderDependencies[2].dstStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+            deferredRenderDependencies[2].srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+            deferredRenderDependencies[2].dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT;
+            deferredRenderDependencies[2].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
             VulkanRenderpassCreateData renderPassCreateData  = {};
             renderPassCreateData.pRenderProperties           = &renderProperties;

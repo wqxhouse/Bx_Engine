@@ -91,7 +91,7 @@ namespace VulkanEngine
 
                     result = createTextureImageView(m_texImage, m_texImageView.replace());
 
-                    assert(result = BX_SUCCESS);
+                    assert(result == BX_SUCCESS);
                 }
 
                 result = createImage2D(hwDevice, m_texMsaaImage.replace(), m_texMsaaImageMemory.replace(), sampleNum);

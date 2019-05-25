@@ -20,16 +20,12 @@
 #include "Context/RayTracer.h"
 #endif
 
-#include <thread>
-
 int main()
 {
-    std::thread::hardware_concurrency();
-
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
-    //setting.m_graphicsSetting.antialasing     = AA_VERY_HIGH;
+    setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
+    setting.m_graphicsSetting.antialasing     = AA_LOW;
 
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);
@@ -38,10 +34,10 @@ int main()
     // Memory
     Memory::MemoryPool          m_memPool(256 * 1024 * 1024);
     Memory::MemoryPoolAllocator m_allocator(&m_memPool,
-        DEFAULT_MAX_RENDER_SCENE_OBJ_NUM * DEFAULT_MAX_RENDER_SCENE_NUM,
-        static_cast<UINT>(Scene::RenderScene::GetMaxObjSize()),
-        0,
-        Memory::Allocator::DEFAULT_ALIGNMENT_SIZE);
+                                            DEFAULT_MAX_RENDER_SCENE_OBJ_NUM * DEFAULT_MAX_RENDER_SCENE_NUM,
+                                            static_cast<UINT>(Scene::RenderScene::GetMaxObjSize()),
+                                            0,
+                                            Memory::Allocator::DEFAULT_ALIGNMENT_SIZE);
 
     Memory::MemoryPoolArena m_arena(&m_allocator);
 

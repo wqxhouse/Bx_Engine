@@ -258,7 +258,6 @@ namespace VulkanEngine
 
                             const TextureUsage usage = pDescriptorTexture->GetTextureUsage();
 
-                            // TODO: Transition the image layout instead of hard code in descriptor image info
                             VkDescriptorImageInfo descriptorImageInfo = {};
                             descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                             descriptorImageInfo.sampler     = pDescriptorTexture->GetTextureSampler();

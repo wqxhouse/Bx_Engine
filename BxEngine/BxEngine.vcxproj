@@ -229,11 +229,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.101.0\Include;..\lib\Core\include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.106.0\Include;..\lib\Core\include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_VULKAN;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.101.0\Lib;..\lib\Core\$(Platform)\Debug\;..\lib\Vulkan\$(Platform)\Debug\;..\extern\glfw-3.2.1\bin\$(Platform)\Debug\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.106.0\Lib;..\lib\Core\$(Platform)\Debug\;..\lib\Vulkan\$(Platform)\Debug\;..\extern\glfw-3.2.1\bin\$(Platform)\Debug\</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;VulkanEngine_d.lib;glfw3_d.lib;Core_d.lib;%(AdditionalDependencies)Core_d.lib</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -299,14 +299,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.101.0\Include;..\lib\Core\include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.106.0\Include;..\lib\Core\include;..\lib\Vulkan\include;..\extern\glfw-3.2.1\include;..\extern\glm;..\extern\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BX_VULKAN;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>vulkan-1.lib;VulkanEngine.lib;glfw3.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.101.0\Lib;..\lib\Core\$(Platform)\Release\;..\lib\Vulkan\$(Platform)\Release\;..\extern\glfw-3.2.1\bin\$(Platform)\Release\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.106.0\Lib;..\lib\Core\$(Platform)\Release\;..\lib\Vulkan\$(Platform)\Release\;..\extern\glfw-3.2.1\bin\$(Platform)\Release\</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
