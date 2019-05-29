@@ -15,9 +15,11 @@ namespace VulkanEngine
     {
         DescriptorMgr::DescriptorMgr(
             const VkDevice* const pDevice,
+            CmdBufferMgr*         pCmdMgr,
             const UINT            maxDescriptorSet)
             : m_pDevice(pDevice),
-              m_maxDescriptorSet(maxDescriptorSet)
+              m_maxDescriptorSet(maxDescriptorSet),
+              m_pCmdMgr(pCmdMgr)
         {
             m_descriptorPool = { *pDevice, vkDestroyDescriptorPool };
 

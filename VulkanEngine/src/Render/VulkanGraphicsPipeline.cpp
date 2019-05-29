@@ -370,7 +370,7 @@ namespace VulkanEngine
                         VDeleter<VkDescriptorSetLayout>::GetRawVector(descriptorLayoutList),
                         descriptorSetIndexList);
 
-                assert(status = BX_SUCCESS);
+                assert(status == BX_SUCCESS);
 
                 if (m_uniformBufferDescriptorUpdateInfo.size() > 0)
                 {
@@ -387,7 +387,7 @@ namespace VulkanEngine
                     status = m_pDescriptorMgr->updateDescriptorSet(m_inputAttachmentUpdateInfo);
                 }
 
-                assert(status = BX_SUCCESS);
+                assert(status == BX_SUCCESS);
             }
 
             VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};

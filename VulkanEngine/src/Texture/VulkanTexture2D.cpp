@@ -248,7 +248,7 @@ namespace VulkanEngine
                 Buffer::BxBufferCreateInfo imageRawBufferCreateInfo = {};
                 imageRawBufferCreateInfo.bufferData                 = ((sampleCount > 1) ? NULL : GetTextureData());
                 imageRawBufferCreateInfo.bufferOptimization         = FALSE;
-                imageRawBufferCreateInfo.bufferSize                 = texWidth * texHeight * 4;
+                imageRawBufferCreateInfo.bufferSize                 = static_cast<VkDeviceSize>(texWidth * texHeight * 4);
                 imageRawBufferCreateInfo.bufferUsage                = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
                 imageRawBufferCreateInfo.bufferDynamic              = FALSE;
 

@@ -119,17 +119,34 @@ namespace VulkanEngine
 
             struct MaterialUbo
             {
+                MaterialUbo() {}
+                ~MaterialUbo() {}
+
                 UINT albedoMapIndex;
                 UINT spcularMapIndex;
                 UINT normalMapIndex;
                 UINT lightMapIndex;
 
-                float ns;
-                // TODO: Avoid align the dynamic uniform buffer with hard code
-                // use the minUniformBufferOffsetAlignment from hw property to
-                // creat the UBO for dynamic uniform buffer
-                Math::Vector3 paddingNS;
-                Math::Vector4 padding[14];
+                union
+                {
+                    struct PhongMaterial
+                    {
+                        float ns;
+                        // TODO: Avoid align the dynamic uniform buffer with hard code
+                        // use the minUniformBufferOffsetAlignment from hw property to
+                        // creat the UBO for dynamic uniform buffer
+                        Math::Vector3 paddingNS;
+                        Math::Vector4 reserve[14];
+                    } phongMaterial;
+
+                    struct CookTorrancePbrMaterial
+                    {
+                        float roughness;       Math::Vector3 padding0;
+                        Math::Vector3 fresnel; float         padding1;
+                        float metallic;        Math::Vector3 padding2;
+                        Math::Vector4 reserve[12];
+                    } cooktorrancePbrMaterial;
+                };
             };
 
             struct LightBaseUbo

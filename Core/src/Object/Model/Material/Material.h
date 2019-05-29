@@ -38,10 +38,10 @@ namespace Object
             std::string m_materialName;
             //UINT        m_materialId;
 
-            MaterialType m_materialType;
+            MaterialType  m_materialType;
             ShadingMethod m_shadingMethod;
 
-            bool transparency;
+            bool  transparency;
             float refraction;
             float alpha;
         };
@@ -82,21 +82,14 @@ namespace Object
             // TODO: Load material from file
             CookTorranceMaterial()
                 : Material(COOKTORRANCE, "", 1.0f, 1.0f, false),
-                albedoVector4(Math::Vector4(1.0f)),
                 roughness(0.5f),
                 metallic(0.5f),
-                fresnel(1.0f),
-                useSpecularMap(0.0f)
+                fresnel(1.0f)
             {
 
             }
 
             ~CookTorranceMaterial() {}
-
-            inline void* GetCookTorranceMaterialData()
-            {
-                return static_cast<void*>(&albedoVector4);
-            }
 
             static inline size_t GetOpaqueCookTorranceMaterialDataSize()
             {
@@ -105,23 +98,13 @@ namespace Object
 
             void operator=(const CookTorranceMaterial& material)
             {
-                albedo = material.albedo;
                 roughness = material.roughness;
                 fresnel = material.fresnel;
             }
 
-            union
-            {
-                struct
-                {
-                    Math::Vector3 albedo; UINT useDiffuseMap;
-                };
-                Math::Vector4 albedoVector4;
-            };
-            float roughness;
-            float metallic;
-            float fresnel;
-            float useSpecularMap; // Vector4
+            float         roughness;
+            Math::Vector3 fresnel;
+            float         metallic;
         };
 
         union MaterialMap

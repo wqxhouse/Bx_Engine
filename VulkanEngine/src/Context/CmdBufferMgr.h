@@ -84,16 +84,16 @@ namespace VulkanEngine
 
                 switch (type)
                 {
-                case BX_GRAPHICS_COMMAND_BUFFER:
-                    pCmdBuf = &(m_graphicsCmdBuffers[index]);
-                    break;
-                case BX_COMPUTE_COMMAND_BUFFER:
-                    pCmdBuf = &(m_computeCmdBuffers[index]);
-                    break;
-                default:
-                    printf("Unsupported command buffer type!\n");
-                    assert(FALSE);
-                    break;
+                    case BX_GRAPHICS_COMMAND_BUFFER:
+                        pCmdBuf = &(m_graphicsCmdBuffers[index]);
+                        break;
+                    case BX_COMPUTE_COMMAND_BUFFER:
+                        pCmdBuf = &(m_computeCmdBuffers[index]);
+                        break;
+                    default:
+                        printf("Unsupported command buffer type!\n");
+                        assert(FALSE);
+                        break;
                 }
 
                 return pCmdBuf;

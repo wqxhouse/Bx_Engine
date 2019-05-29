@@ -81,7 +81,15 @@ namespace VulkanEngine
             // Initialize shaders
             Shader::BxShaderMeta mainSceneShaderMeta          = {};
             mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "MainSceneForward.vert.spv";
-            mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "MainSceneForward.frag.spv";
+
+            if (m_pSetting->m_graphicsSetting.shadingMethod == ShadingMethod::Phong)
+            {
+                mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "MainSceneForward.frag.spv";
+            }
+            else if (m_pSetting->m_graphicsSetting.shadingMethod == ShadingMethod::PBR_COOK_TORRANCE)
+            {
+                mainSceneShaderMeta.fragmentShaderInfo.shaderFile = "MainSceneForwardPBR.frag.spv";
+            }
 
             /// Initialize render pass
             const UINT sampleNum = m_pSetting->m_graphicsSetting.antialasing;

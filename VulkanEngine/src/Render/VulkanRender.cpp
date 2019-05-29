@@ -36,7 +36,8 @@ namespace VulkanEngine
               m_isDepthTestEnabled(FALSE),
               m_isStencilTestEnabled(FALSE),
               m_ppBackbufferTextures(ppBackbufferTextures),
-              m_backBufferRTsCreateDataList(ppBackbufferTextures->size())
+              m_backBufferRTsCreateDataList(ppBackbufferTextures->size()),
+              m_materialUniformBuffer(DEFAULT_MAX_RENDER_SCENE_OBJ_NUM)
         {
             assert(ppBackbufferTextures->size() > 0);
 
@@ -401,8 +402,6 @@ namespace VulkanEngine
                 setIndex <  m_descriptorSetNum &&
                 objNum   <= DEFAULT_MAX_RENDER_SCENE_OBJ_NUM);
 
-            m_materialUniformBuffer.resize(objNum);
-
             memset(m_materialUniformBuffer.data(), 0, objNum * sizeof(MaterialUbo));
 
             for (UINT i = 0; i < meshNum; ++i)
@@ -419,8 +418,21 @@ namespace VulkanEngine
                 m_materialUniformBuffer[i].lightMapIndex =
                     m_mainSceneMeshMaterialMapResourceList[i].meshIndex;
 
-                m_materialUniformBuffer[i].ns =
-                    m_mainSceneMeshMaterialMapResourceList[i].ns;
+                if (m_pSetting->m_graphicsSetting.shadingMethod == ShadingMethod::Phong)
+                {
+                    m_materialUniformBuffer[i].phongMaterial.ns =
+                        m_mainSceneMeshMaterialMapResourceList[i].ns;
+                }
+                else if (m_pSetting->m_graphicsSetting.shadingMethod == ShadingMethod::PBR_COOK_TORRANCE)
+                {
+                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.roughness = 0.3f;
+                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.fresnel   = Math::Vector3(0.2f, 0.2f, 0.2f);
+                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.metallic  = 0.0f;
+                }
+                else
+                {
+                    NotImplemented();
+                }
             }
 
             m_descriptorUpdateDataTable[setIndex].push_back(

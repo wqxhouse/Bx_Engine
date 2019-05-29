@@ -45,6 +45,7 @@ namespace VulkanEngine
         public:
             explicit DescriptorMgr(
                 const VkDevice* const pDevice,
+                CmdBufferMgr*         pCmdMgr,
                 const UINT            maxDescriptorSet);
 
             ~DescriptorMgr();
@@ -76,6 +77,8 @@ namespace VulkanEngine
 
         private:
             const VkDevice*              m_pDevice;
+
+            CmdBufferMgr*                m_pCmdMgr;
 
             VDeleter<VkDescriptorPool>   m_descriptorPool;
             std::vector<VkDescriptorSet> m_descriptorSetList;

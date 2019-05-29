@@ -257,8 +257,8 @@ namespace VulkanEngine
 
             deferredRenderDependencies[1].srcSubpass      = 0;
             deferredRenderDependencies[1].dstSubpass      = 1;
-            deferredRenderDependencies[1].srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-            deferredRenderDependencies[1].dstStageMask    = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            deferredRenderDependencies[1].srcStageMask    = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+            deferredRenderDependencies[1].dstStageMask    = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
             deferredRenderDependencies[1].srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
             deferredRenderDependencies[1].dstAccessMask   = VK_ACCESS_SHADER_READ_BIT;
             deferredRenderDependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
@@ -398,7 +398,7 @@ namespace VulkanEngine
             }
             else
             {
-                usage = BX_TEXTURE_USAGE_SAMPLED;
+                usage = BX_TEXTURE_USAGE_SAMPLED | BX_TEXTURE_USAGE_COLOR_ATTACHMENT;
             }
 
             Texture::VulkanTexture2D* pPosTexture =

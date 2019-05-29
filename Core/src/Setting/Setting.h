@@ -20,6 +20,7 @@ struct AmbientOcclutionSetting
 struct GraphicsSetting
 {
     RenderingMethod renderingMethod = RenderingMethod::FORWARD_RENDERING;
+    ShadingMethod   shadingMethod   = ShadingMethod::Phong;
     Antialasing     antialasing     = Antialasing::AA_NONE;
     Anisotropy      anisotropy      = Anisotropy::ANISOTROPY_FOUR;
     BOOL            blend           = FALSE;

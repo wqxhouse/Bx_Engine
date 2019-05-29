@@ -61,8 +61,14 @@ namespace VulkanEngine
 
             virtual void clean() {}
 
+            INLINE VkImage     GetTextureImage()     const { return m_texImage;     }
             INLINE VkImageView GetTextureImageView() const { return m_texImageView; }
             INLINE VkSampler   GetTextureSampler()   const { return m_texSampler;   }
+
+            INLINE VkImage GetTextureResolveImage() const
+            {
+                return m_texMsaaImage;
+            }
 
             INLINE VkImageView GetTextureResolveImageView() const
             {

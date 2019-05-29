@@ -24,8 +24,9 @@ int main()
 {
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = DEFERRED_RENDERING;
-    setting.m_graphicsSetting.antialasing     = AA_LOW;
+    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    setting.m_graphicsSetting.shadingMethod = ShadingMethod::PBR_COOK_TORRANCE;
+    // setting.m_graphicsSetting.antialasing     = AA_LOW;
 
 #if BX_OPENGL
     OpenGLTemplate m_oglTemplate(&setting);
@@ -45,15 +46,20 @@ int main()
         std::unique_ptr<Scene::RenderScene>(new Scene::RenderScene(&setting, &m_arena, 4096));
 
 #if _DEBUG
-    m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
-                          &(Trans(Math::Vector3(-2.0f, 2.0f,  0.0f),
-                                  Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
-
     m_pScene->AddObjModel("../resources/models/sphere/sphere.obj", "../resources/models/sphere/sphere.mtl",
-                          &(Trans(Math::Vector3(0.0f, 2.0f,  0.0f),
-                                  Math::Vector3(0.0f, 0.0f, -1.0f),
-                                  Math::Vector3(0.0f, 1.0f,  0.0f))));
+                          &(Trans(Math::Vector3(3.0f, 0.0f, 0.0f),
+                                  Math::Vector3(0.0f, 0.0f, 0.0f),
+                                  Math::Vector3(0.0f, 1.0f, 0.0f))));
+
+    m_pScene->AddObjModel("../resources/models/box/box.obj", "../resources/models/box/box.mtl",
+                          &(Trans(Math::Vector3(0.0f, -1.0f,0.0f),
+                                  Math::Vector3(0.0f, 0.0f, 0.0f),
+                                  Math::Vector3(0.0f, 1.0f, 0.0f))));
+
+    m_pScene->AddObjModel("../resources/models/plane/plane.obj", "../resources/models/plane/plane.mtl",
+                          &(Trans(Math::Vector3(0.0f, -1.0f, 0.0f),
+                                  Math::Vector3(0.0f,  0.0f, 0.0f),
+                                  Math::Vector3(0.0f,  1.0f, 0.0f))));
 
     Trans prosCamTrans(Math::Vector3(0.0f, 2.0f,  5.0f),
                        Math::Vector3(0.0f, 0.0f, -1.0f),
@@ -92,8 +98,8 @@ int main()
 
     m_pScene->AddProspectiveCamera(prosCamCreateInfo);
 
-    Trans lightTrans(Math::Vector3(0.0f, 2.0f, 20.0f),
-                     Math::Vector3(0.0f, 0.0f, -1.0f),
+    Trans lightTrans(Math::Vector3(1.0f, 1.0f, 1.0f),
+                     Math::Vector3(0.0f, 0.0f, 0.0f),
                      Math::Vector3(0.0f, 1.0f, 0.0f));
 
     Object::Light::LightCreateInfo lightCreateInfo = {};

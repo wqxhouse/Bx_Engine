@@ -267,10 +267,10 @@ namespace VulkanEngine
         if (status == BX_SUCCESS)
         {
             m_pDescriptorMgr = std::unique_ptr<Mgr::DescriptorMgr>(
-                new Mgr::DescriptorMgr(&m_vkDevice, static_cast<UINT>(m_pSwapchainTextures.size())));
+                new Mgr::DescriptorMgr(&m_vkDevice, m_pCmdBufferMgr.get(), static_cast<UINT>(m_pSwapchainTextures.size())));
         }
 
-        if (status = BX_SUCCESS)
+        if (status == BX_SUCCESS)
         {
             status = createRender();
 
