@@ -10,3 +10,4 @@ newmtl wire_177148027
 	Ka 0.6941 0.5804 0.1059
 	Kd 0.6941 0.5804 0.1059
 	Ks 0.3500 0.3500 0.3500
+    map_Kd ..\resources\textures\teaport\wall.jpg

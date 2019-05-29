@@ -53,7 +53,7 @@ layout (binding = 1) uniform MaterialUbo
 {
 	vec4  materialIndex;
     float roughness;
-    vec3  fresnel;
+    vec3  fresnel; float padding;
     float metallic;
 
 	vec4  reserve[12];

@@ -426,8 +426,8 @@ namespace VulkanEngine
                 else if (m_pSetting->m_graphicsSetting.shadingMethod == ShadingMethod::PBR_COOK_TORRANCE)
                 {
                     m_materialUniformBuffer[i].cooktorrancePbrMaterial.roughness = 0.3f;
-                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.fresnel   = Math::Vector3(0.2f, 0.2f, 0.2f);
-                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.metallic  = 0.0f;
+                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.fresnel   = Math::Vector3(0.5f, 0.5f, 0.5f);
+                    m_materialUniformBuffer[i].cooktorrancePbrMaterial.metallic  = 0.5f;
                 }
                 else
                 {
