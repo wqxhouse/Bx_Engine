@@ -535,7 +535,7 @@ namespace VulkanEngine
             std::vector<VulkanUniformBufferResource> shadingPassUniformbufferResourceList =
             {
                 createLightUniformBufferResource(1, LIGHT_UBO_INDEX),
-                createCamUniformBufferResource(1, CAM_UBO_INDEX),
+                createCamUniformBufferResource(m_pScene->GetCamera(0), 1, CAM_UBO_INDEX),
                 createViewMatrixUniformBufferResource(1, VIEW_MATRIX_UBO_INDEX)
             };
 

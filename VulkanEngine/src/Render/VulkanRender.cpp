@@ -323,7 +323,7 @@ namespace VulkanEngine
                 TextureFormat depthBufferFormat =
                     ((IsStencilTestEnabled() == FALSE) ? BX_FORMAT_DEPTH32 : BX_FORMAT_DEPTH24_STENCIL);
 
-                Texture::VulkanTexture2D* backbufferDepthTexture =
+                Texture::VulkanTexture2D* pBackbufferDepthTexture =
                     m_pTextureMgr->createTexture2DRenderTarget(
                         pBackbufferColorTexture->GetTextureWidth(),
                         pBackbufferColorTexture->GetTextureHeight(),
@@ -333,8 +333,167 @@ namespace VulkanEngine
                         ((m_pSetting->m_graphicsSetting.antialasing == AA_NONE) ? FALSE : TRUE));
 
                 m_backBufferRTsCreateDataList[i].push_back(
-                    { static_cast<UINT>(i), { backbufferDepthTexture->GetSampleNumber(), backbufferDepthTexture} });
+                    { static_cast<UINT>(i), { pBackbufferDepthTexture->GetSampleNumber(), pBackbufferDepthTexture } });
             }
+        }
+
+        BOOL VulkanRenderBase::createShadowPass()
+        {
+            BOOL status = BX_SUCCESS;
+
+            //  Initialize graphics pipeline properties
+            VulkanRenderProperties props = {};
+            props.enableBlending         = FALSE;
+            props.enableColor            = FALSE;
+            props.enableDepth            = TRUE;
+            props.enableStencil          = FALSE;
+
+            props.depthClearValue = { 1.0f, 0.0f };
+
+            props.renderViewportRect =
+            {
+                0.0f, static_cast<float>(m_pSetting->resolution.width),
+                static_cast<float>(m_pSetting->resolution.height), 0.0f
+            };
+
+            Shader::BxShaderMeta shadowmapShaderMeta          = {};
+            shadowmapShaderMeta.vertexShaderInfo.shaderFile   = "ShadowMap.vert.spv";
+            shadowmapShaderMeta.fragmentShaderInfo.shaderFile = "ShadowMap.frag.spv";
+
+            /// Initialize render pass
+            const UINT sampleNum = m_pSetting->m_graphicsSetting.antialasing;
+
+            Texture::VulkanTexture2D* pShadowMapTexture =
+                m_pTextureMgr->createTexture2DRenderTarget(
+                    m_pSetting->resolution.width,
+                    m_pSetting->resolution.height,
+                    sampleNum,
+                    BX_FORMAT_DEPTH32,
+                    BX_TEXTURE_USAGE_VULKAN_NONE,
+                    ((m_pSetting->m_graphicsSetting.antialasing == AA_NONE) ? FALSE : TRUE));
+
+            Texture::VulkanTexture2D* pShadowMapResolveTexture = NULL;
+
+            std::vector<VulkanRenderTargetCreateDescriptor> shadowMapDescriptors =
+            {
+                { TRUE, 0, 0, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE }
+            };
+
+            if (m_pSetting->m_graphicsSetting.antialasing != AA_NONE)
+            {
+                shadowMapDescriptors.push_back(
+                    { TRUE, 0, 1, sampleNum, BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL, FALSE, FALSE });
+
+                pShadowMapResolveTexture =
+                    m_pTextureMgr->createTexture2DRenderTarget(
+                        m_pSetting->resolution.width,
+                        m_pSetting->resolution.height,
+                        1,
+                        BX_FORMAT_DEPTH32,
+                        BX_TEXTURE_USAGE_VULKAN_NONE,
+                        FALSE);
+            }
+
+            VulkanRenderTargetCreateData shadowPassRTCreateData = {};
+            shadowPassRTCreateData.renderSubPassIndex           = 0;
+            shadowPassRTCreateData.bindingPoint                 = 0;
+            shadowPassRTCreateData.attachmentIndex              = 0;
+            shadowPassRTCreateData.sampleNum                    = sampleNum;
+            shadowPassRTCreateData.isStore                      = TRUE;
+            shadowPassRTCreateData.layout                       = BX_FRAMEBUFFER_ATTACHMENT_LAYOUT_DEPTH_STENCIL;
+            shadowPassRTCreateData.useStencil                   = FALSE;
+            shadowPassRTCreateData.isStoreStencil               = FALSE;
+
+            std::vector<VulkanRenderTargetFramebufferCreateData> shadowPassFboCreateDataList(1);
+            shadowPassFboCreateDataList[0].framebufferIndex = 0;
+            shadowPassFboCreateDataList[0].attachment       = { sampleNum, pShadowMapTexture };
+
+            shadowPassRTCreateData.pRenderTargetFramebufferCreateData = &shadowPassFboCreateDataList;
+
+            // Initialize vertex input for render pass
+            VulkanRenderResources renderSources         = {};
+            renderSources.vertexDescriptionBindingPoint = 0;
+            renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
+
+            const UINT shadowPassUboSetIndex   = 0;
+            const UINT shadowPassTransUboIndex = 0;
+            const UINT shadowPassCamUboIndex   = 1;
+
+            std::vector<VulkanUniformBufferResource> shadowPassUniformBufferResourceList =
+            {
+                createTransMatrixUniformBufferResource(shadowPassUboSetIndex, shadowPassTransUboIndex),
+                createCamUniformBufferResource(m_pScene->GetCamera(0), shadowPassUboSetIndex, shadowPassCamUboIndex)
+            };
+
+            VulkanDescriptorResources shadowPassDescriptorResources  = {};
+            shadowPassDescriptorResources.descriptorSetIndex         = 0;
+            shadowPassDescriptorResources.pUniformBufferResourceList = &shadowPassUniformBufferResourceList;
+
+            std::vector<VulkanTextureResource> resolveShadowMap(1);
+            resolveShadowMap[0].setIndex     = 0;
+            resolveShadowMap[0].bindingPoint = 0;
+
+            resolveShadowMap[0].pTextureList.push_back(pShadowMapResolveTexture);
+
+            if (m_pSetting->m_graphicsSetting.antialasing != Antialasing::AA_NONE)
+            {
+                shadowPassDescriptorResources.pResolveAttachmentList = &resolveShadowMap;
+            }
+
+            std::vector<VulkanDescriptorResources> descriptorResourceList = { shadowPassDescriptorResources };
+
+            renderSources.pDescriptorResourceList = &descriptorResourceList;
+
+            // Create render pass create data
+            std::vector<VulkanGraphicsPipelineRenderTargetProperties> renderTargetsProps(1);
+            renderTargetsProps[0].enableBlend = FALSE;
+
+            VkVertexInputBindingDescription vertexInputBindingDescription =
+                Buffer::VulkanVertexBuffer::CreateDescription(0, sizeof(Object::Model::Vertex), BX_VERTEX_INPUT_RATE_VERTEX);
+
+            std::vector<VkVertexInputAttributeDescription> vertexAttributeDescription =
+                Buffer::VulkanVertexBuffer::CreateAttributeDescriptions(
+                    Buffer::VulkanVertexBuffer::GenSingleTextureChannelMeshAttributeListCreateData(0));
+
+            VulkanGraphicsPipelineProperties subpassGraphicsPipelineProperties     = {};
+            subpassGraphicsPipelineProperties.cullMode                             = CULLMODE_BACK;
+            subpassGraphicsPipelineProperties.polyMode                             = POLYMODE_FILL;
+            subpassGraphicsPipelineProperties.samples                              = m_pSetting->m_graphicsSetting.antialasing;
+            subpassGraphicsPipelineProperties.viewportRects                        = { props.renderViewportRect };
+            subpassGraphicsPipelineProperties.scissorRects                         = { props.renderViewportRect };
+            subpassGraphicsPipelineProperties.pRenderTargetsProps                  = &renderTargetsProps;
+
+            VulkanSubpassGraphicsPipelineCreateData subpassGraphicsPipelineCreateData = {};
+            subpassGraphicsPipelineCreateData.subpassIndex                            = 0;
+            subpassGraphicsPipelineCreateData.pProps                                  = &subpassGraphicsPipelineProperties;
+            subpassGraphicsPipelineCreateData.pShaderMeta                             = &shadowmapShaderMeta;
+            subpassGraphicsPipelineCreateData.pResource                               = &renderSources;
+            subpassGraphicsPipelineCreateData.isScenePipeline                         = TRUE;
+            subpassGraphicsPipelineCreateData.pVertexInputBindingDescription          = &vertexInputBindingDescription;
+            subpassGraphicsPipelineCreateData.pVertexInputAttributeDescriptionList    = &vertexAttributeDescription;
+
+            std::vector<VulkanRenderTargetCreateData*> shadowPasspRTCreateDataList = { &shadowPassRTCreateData };
+
+            std::vector<VulkanRenderSubpassCreateData> renderSubpassCreateDataList(1);
+            renderSubpassCreateDataList[0].pSubpassGraphicsPipelineCreateData    = &subpassGraphicsPipelineCreateData;
+            renderSubpassCreateDataList[0].pSubpassRenderTargetCreateDataRefList = &shadowPasspRTCreateDataList;
+
+            std::vector<VulkanRenderTargetCreateData> shadowPassRTCreateDataList = { shadowPassRTCreateData };
+            VulkanRenderpassCreateData renderPassCreateData                      = {};
+            renderPassCreateData.pRenderProperties                               = &props;
+            renderPassCreateData.pSubpassCreateDataList                          = &renderSubpassCreateDataList;
+            renderPassCreateData.framebufferNum                                  = 1;
+            renderPassCreateData.pRenderTargetCreateDataList                     = &shadowPassRTCreateDataList;
+
+            VulkanRenderPass shadowPass(m_pSetting, m_pDevice, m_pCmdBufferMgr, m_pDescritorMgr, m_pScene);
+
+            status = shadowPass.create(renderPassCreateData);
+
+            assert(status == BX_SUCCESS);
+
+            m_preDrawPassList.push_back(shadowPass);
+
+            return status;
         }
 
         VulkanUniformBufferResource VulkanRenderBase::createTransMatrixUniformBufferResource(
@@ -570,8 +729,9 @@ namespace VulkanEngine
         }
 
         VulkanUniformBufferResource VulkanRenderBase::createCamUniformBufferResource(
-            const UINT setIndex,
-            const UINT camUboIndex)
+            const Object::Camera::CameraBase* const pCam,
+            const UINT                              setIndex,
+            const UINT                              camUboIndex)
         {
             assert(setIndex < m_descriptorSetNum);
 
@@ -585,7 +745,7 @@ namespace VulkanEngine
 
             Buffer::VulkanUniformBuffer* pCameraPositionUniformBuffer = new Buffer::VulkanUniformBuffer(m_pDevice);
             pCameraPositionUniformBuffer->createUniformBuffer(
-                *m_pHwDevice, 1, sizeof(Math::Vector3), static_cast<const void*>(&(m_pScene->GetCamera(0)->GetTrans()->GetPos())));
+                *m_pHwDevice, 1, sizeof(Math::Vector3), static_cast<const void*>(&(pCam->GetTrans()->GetPos())));
 
             const size_t descriptorBufferIndex = m_pDescriptorBufferList.size();
 

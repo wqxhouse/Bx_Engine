@@ -56,11 +56,108 @@ namespace VulkanEngine
             initializeBackbufferRTCreateData();
 
             /// Initialize all render passes which need to be used in forward render
+            if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
+            {
+                status = createShadowPass();
+            }
+
+            status = createMainSceneRenderPass();
+
+            assert(status == BX_SUCCESS);
+
+            return status;
+        }
+
+        BOOL VulkanForwardRender::update(
+            const float deltaTime)
+        {
+            BOOL status = BX_SUCCESS;
+
+            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
+            {
+                // status = preRenderPass.update(deltaTime);
+
+                assert(status == BX_SUCCESS);
+            }
+
+            const Scene::RenderScene* pScene = m_pScene;
+
+            const UINT camNum   = pScene->GetSceneCameraNum();
+            const UINT modelNum = pScene->GetSceneModelNum();
+
+            for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
+            {
+                Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
+
+                if (pCam->IsEnable() == TRUE)
+                {
+                    pCam->update(deltaTime);
+
+                    const Math::Mat4* pViewMat = &(pCam->GetViewMatrix());
+                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
+
+                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
+
+                    for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
+                    {
+                        Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
+
+                        if (pModel->IsEnable() == TRUE)
+                        {
+                            m_transUniformbuffer[modelIndex].worldMat = pModel->GetTrans()->GetTransMatrix();
+                            m_transUniformbuffer[modelIndex].viewMat  = *pViewMat;
+                            m_transUniformbuffer[modelIndex].projMat  = *pProspectMat;
+                            m_transUniformbuffer[modelIndex].wvpMat   = vpMat * m_transUniformbuffer[modelIndex].worldMat;
+                        }
+                    }
+                }
+            }
+
+            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
+            assert(status == BX_SUCCESS);
+
+            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
+            {
+                // status = postRenderPass.update(deltaTime);
+
+                assert(status == BX_SUCCESS);
+            }
+
+            return status;
+        }
+
+        void VulkanForwardRender::draw()
+        {
+            BOOL status = BX_SUCCESS;
+
+            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
+            {
+                status = preRenderPass.draw();
+
+                assert(status == BX_SUCCESS);
+            }
+
+            m_mainSceneRenderPass.draw();
+
+            assert(status == BX_SUCCESS);
+
+            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
+            {
+                status = postRenderPass.draw();
+
+                assert(status == BX_SUCCESS);
+            }
+        }
+
+        BOOL VulkanForwardRender::createMainSceneRenderPass()
+        {
+            BOOL status = BX_SUCCESS;
 
             /// Initialize default render pass for main scene
             //  Initialize graphics pipeline properties
             VulkanRenderProperties props = {};
             props.enableBlending         = TRUE;
+            props.enableColor            = TRUE;
 
             if (m_pSetting->m_graphicsSetting.antialasing == AA_NONE)
             {
@@ -71,16 +168,15 @@ namespace VulkanEngine
                 props.sceneClearValue = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } };
             }
 
-            props.renderViewportRect     =
+            props.renderViewportRect =
             {
                 0.0f, static_cast<float>(m_pSetting->resolution.width),
                 static_cast<float>(m_pSetting->resolution.height), 0.0f
             };
-            props.enableColor            = TRUE;
 
             // Initialize shaders
-            Shader::BxShaderMeta mainSceneShaderMeta          = {};
-            mainSceneShaderMeta.vertexShaderInfo.shaderFile   = "MainSceneForward.vert.spv";
+            Shader::BxShaderMeta mainSceneShaderMeta        = {};
+            mainSceneShaderMeta.vertexShaderInfo.shaderFile = "MainSceneForward.vert.spv";
 
             if (m_pSetting->m_graphicsSetting.shadingMethod == ShadingMethod::Phong)
             {
@@ -306,90 +402,7 @@ namespace VulkanEngine
 
             status = m_mainSceneRenderPass.create(renderPassCreateData);
 
-            assert(status == BX_SUCCESS);
-
             return status;
-        }
-
-        BOOL VulkanForwardRender::update(
-            const float deltaTime)
-        {
-            BOOL status = BX_SUCCESS;
-
-            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
-            {
-                // status = preRenderPass.update(deltaTime);
-
-                assert(status == BX_SUCCESS);
-            }
-
-            const Scene::RenderScene* pScene = m_pScene;
-
-            const UINT camNum   = pScene->GetSceneCameraNum();
-            const UINT modelNum = pScene->GetSceneModelNum();
-
-            for (UINT camIndex = 0; camIndex < camNum; ++camIndex)
-            {
-                Object::Camera::CameraBase* pCam = pScene->GetCamera(camIndex);
-
-                if (pCam->IsEnable() == TRUE)
-                {
-                    pCam->update(deltaTime);
-
-                    const Math::Mat4* pViewMat = &(pCam->GetViewMatrix());
-                    const Math::Mat4* pProspectMat = &(pCam->GetProjectionMatrix());
-
-                    const Math::Mat4 vpMat = (*pProspectMat) * (*pViewMat);
-
-                    for (UINT modelIndex = 0; modelIndex < modelNum; ++modelIndex)
-                    {
-                        Object::Model::ModelObject* pModel = pScene->GetModel(modelIndex);
-
-                        if (pModel->IsEnable() == TRUE)
-                        {
-                            m_transUniformbuffer[modelIndex].worldMat = pModel->GetTrans()->GetTransMatrix();
-                            m_transUniformbuffer[modelIndex].viewMat  = *pViewMat;
-                            m_transUniformbuffer[modelIndex].projMat  = *pProspectMat;
-                            m_transUniformbuffer[modelIndex].wvpMat   = vpMat * m_transUniformbuffer[modelIndex].worldMat;
-                        }
-                    }
-                }
-            }
-
-            status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
-            assert(status == BX_SUCCESS);
-
-            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
-            {
-                // status = postRenderPass.update(deltaTime);
-
-                assert(status == BX_SUCCESS);
-            }
-
-            return status;
-        }
-
-        void VulkanForwardRender::draw()
-        {
-            BOOL status = BX_SUCCESS;
-
-            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
-            {
-                status = preRenderPass.draw();
-
-                assert(status == BX_SUCCESS);
-            }
-
-            m_mainSceneRenderPass.draw();
-
-            assert(status == BX_SUCCESS);
-
-            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
-            {
-                status = postRenderPass.draw();
-
-                assert(status == BX_SUCCESS);
-            }
         }
 
         void VulkanForwardRender::initializeBackbufferRTCreateData()
@@ -432,7 +445,7 @@ namespace VulkanEngine
                 createTransMatrixUniformBufferResource(0, TRANSFORM_MATRIX_UBO_INDEX),
                 createMaterialUniformBufferResource(0, MATERIAL_UBO_INDEX),
                 createLightUniformBufferResource(0, LIGHT_UBO_INDEX),
-                createCamUniformBufferResource(0, STATIC_UBO_INDEX),
+                createCamUniformBufferResource(m_pScene->GetCamera(0), 0, STATIC_UBO_INDEX),
             };
 
             return uniformbufferResourceList;

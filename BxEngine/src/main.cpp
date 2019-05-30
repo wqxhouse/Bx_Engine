@@ -25,6 +25,7 @@ int main()
 	Setting setting;
     setting.m_graphicsSetting.DisableSSAO();
     setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    setting.m_graphicsSetting.shadowCasting = TRUE;
     setting.m_graphicsSetting.shadingMethod = ShadingMethod::PBR_COOK_TORRANCE;
     // setting.m_graphicsSetting.antialasing     = AA_LOW;
 

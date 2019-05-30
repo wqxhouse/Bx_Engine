@@ -203,6 +203,8 @@ namespace VulkanEngine
 
             void genBackbufferDepthBuffer();
 
+            BOOL createShadowPass();
+
             VulkanUniformBufferResource createTransMatrixUniformBufferResource(
                 const UINT setIndex,
                 const UINT transMatrixUboIndex);
@@ -216,8 +218,9 @@ namespace VulkanEngine
                 const UINT lightUboIndex);
 
             VulkanUniformBufferResource createCamUniformBufferResource(
-                const UINT setIndex,
-                const UINT camUboIndex);
+                const Object::Camera::CameraBase* const pCam,
+                const UINT                              setIndex,
+                const UINT                              camUboIndex);
 
             VulkanTextureResource createSceneTextures(
                 const UINT                                    setIndex,
@@ -280,6 +283,8 @@ namespace VulkanEngine
             void draw();
 
         private:
+            BOOL createMainSceneRenderPass();
+
             void initializeBackbufferRTCreateData();
 
             std::vector<VulkanUniformBufferResource> createUniformBufferResource();
