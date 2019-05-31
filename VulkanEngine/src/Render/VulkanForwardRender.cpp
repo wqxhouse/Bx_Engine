@@ -41,7 +41,13 @@ namespace VulkanEngine
                                pScene, ppBackbufferTextures)
         {
             m_descriptorSetNum = DESCRIPTOR_SET_NUM;
-            m_descriptorUpdateDataTable.resize(DESCRIPTOR_SET_NUM);
+
+            if (m_pSetting->m_graphicsSetting.shadowCasting == TRUE)
+            {
+                m_descriptorSetNum++;
+            }
+
+            m_descriptorUpdateDataTable.resize(m_descriptorSetNum);
         }
 
         VulkanForwardRender::~VulkanForwardRender()
@@ -72,13 +78,6 @@ namespace VulkanEngine
             const float deltaTime)
         {
             BOOL status = BX_SUCCESS;
-
-            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
-            {
-                // status = preRenderPass.update(deltaTime);
-
-                assert(status == BX_SUCCESS);
-            }
 
             const Scene::RenderScene* pScene = m_pScene;
 
@@ -113,10 +112,17 @@ namespace VulkanEngine
                 }
             }
 
+            for (const VulkanRenderPass& preRenderPass : m_preDrawPassList)
+            {
+                // status = preRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
+
+                assert(status == BX_SUCCESS);
+            }
+
             status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
             assert(status == BX_SUCCESS);
 
-            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
+            for (const VulkanRenderPass& postRenderPass : m_postDrawPassList)
             {
                 // status = postRenderPass.update(deltaTime);
 
@@ -130,9 +136,11 @@ namespace VulkanEngine
         {
             BOOL status = BX_SUCCESS;
 
-            for (VulkanRenderPass preRenderPass : m_preDrawPassList)
+            UINT preDrawNum = static_cast<UINT>(m_preDrawPassList.size());
+
+            for (UINT preDrawPassIndex = 0; preDrawPassIndex < preDrawNum; ++preDrawPassIndex)
             {
-                status = preRenderPass.draw();
+                status = m_preDrawPassList[preDrawPassIndex].draw();
 
                 assert(status == BX_SUCCESS);
             }
@@ -141,9 +149,10 @@ namespace VulkanEngine
 
             assert(status == BX_SUCCESS);
 
-            for (VulkanRenderPass postRenderPass : m_postDrawPassList)
+            UINT postDrawNum = static_cast<UINT>(m_postDrawPassList.size());
+            for (UINT postDrawPassIndex = 0; postDrawPassIndex < postDrawNum; ++postDrawPassIndex)
             {
-                status = postRenderPass.draw();
+                status = m_postDrawPassList[postDrawPassIndex].draw();
 
                 assert(status == BX_SUCCESS);
             }

@@ -9,6 +9,8 @@
 
 #include "CmdBufferMgr.h"
 
+#define MAIN_RENDER_PASS_CMD_BUFFER_RESERVE_INDEX 3
+
 namespace VulkanEngine
 {
     namespace Mgr
@@ -21,6 +23,10 @@ namespace VulkanEngine
               m_pQueueMgr(pQueueMgr)
         {
             m_cmdPool.resize(queueFamilyNum, { *m_pDevice, vkDestroyCommandPool });
+
+            m_graphicsCmdBuffers.resize(
+                MAIN_RENDER_PASS_CMD_BUFFER_RESERVE_INDEX,
+                Buffer::CmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, BX_DIRECT_COMMAND_BUFFER, VkCommandBuffer()));
         }
 
         CmdBufferMgr::~CmdBufferMgr()
@@ -51,7 +57,8 @@ namespace VulkanEngine
         BOOL CmdBufferMgr::addGraphicsCmdBuffers(
             const BX_QUEUE_TYPE           queueType,
             const BX_COMMAND_BUFFER_LEVLE level,
-            const UINT                    size)
+            const UINT                    size,
+            const BOOL                    isMainRenderPassCmd)
         {
             BOOL status = BX_SUCCESS;
 
@@ -70,10 +77,21 @@ namespace VulkanEngine
 
             if (status == BX_SUCCESS)
             {
-                for (size_t i = 0; i < size; ++i)
+                if (isMainRenderPassCmd == TRUE)
                 {
-                    m_graphicsCmdBuffers.push_back(
-                        { BX_GRAPHICS_COMMAND_BUFFER, level, graphicsCmdBuffers[i] });
+                    for (size_t cmdIndex = 0; cmdIndex < size; ++cmdIndex)
+                    {
+                        m_graphicsCmdBuffers[cmdIndex] =
+                            { BX_GRAPHICS_COMMAND_BUFFER, level, graphicsCmdBuffers[cmdIndex] };
+                    }
+                }
+                else
+                {
+                    for (size_t cmdIndex = 0; cmdIndex < size; ++cmdIndex)
+                    {
+                        m_graphicsCmdBuffers.push_back(
+                            { BX_GRAPHICS_COMMAND_BUFFER, level, graphicsCmdBuffers[cmdIndex] });
+                    }
                 }
             }
 

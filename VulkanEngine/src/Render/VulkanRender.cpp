@@ -32,7 +32,7 @@ namespace VulkanEngine
               m_pDescritorMgr(pDescritorMgr),
               m_pTextureMgr(pTextureMgr),
               m_pScene(pScene),
-              m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene),
+              m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene, TRUE),
               m_isDepthTestEnabled(FALSE),
               m_isStencilTestEnabled(FALSE),
               m_ppBackbufferTextures(ppBackbufferTextures),
@@ -415,22 +415,23 @@ namespace VulkanEngine
             renderSources.vertexDescriptionBindingPoint = 0;
             renderSources.pVertexInputResourceList      = &m_mainSceneVertexInputResourceList;
 
-            const UINT shadowPassUboSetIndex   = 0;
+            const UINT shadowPassUboSetIndex   =
+                ((m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_RENDERING) ||
+                 (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_PLUS_RENDERING) ||
+                 (m_pSetting->m_graphicsSetting.renderingMethod == FORWARD_CLUSTERED_RENDERING) == TRUE) ? 1 : 2;
             const UINT shadowPassTransUboIndex = 0;
-            const UINT shadowPassCamUboIndex   = 1;
 
             std::vector<VulkanUniformBufferResource> shadowPassUniformBufferResourceList =
             {
-                createTransMatrixUniformBufferResource(shadowPassUboSetIndex, shadowPassTransUboIndex),
-                createCamUniformBufferResource(m_pScene->GetCamera(0), shadowPassUboSetIndex, shadowPassCamUboIndex)
+                createTransMatrixUniformBufferResource(shadowPassUboSetIndex, shadowPassTransUboIndex)
             };
 
             VulkanDescriptorResources shadowPassDescriptorResources  = {};
-            shadowPassDescriptorResources.descriptorSetIndex         = 0;
+            shadowPassDescriptorResources.descriptorSetIndex         = shadowPassUboSetIndex;
             shadowPassDescriptorResources.pUniformBufferResourceList = &shadowPassUniformBufferResourceList;
 
             std::vector<VulkanTextureResource> resolveShadowMap(1);
-            resolveShadowMap[0].setIndex     = 0;
+            resolveShadowMap[0].setIndex     = shadowPassUboSetIndex;
             resolveShadowMap[0].bindingPoint = 0;
 
             resolveShadowMap[0].pTextureList.push_back(pShadowMapResolveTexture);
@@ -479,19 +480,16 @@ namespace VulkanEngine
             renderSubpassCreateDataList[0].pSubpassRenderTargetCreateDataRefList = &shadowPasspRTCreateDataList;
 
             std::vector<VulkanRenderTargetCreateData> shadowPassRTCreateDataList = { shadowPassRTCreateData };
+
             VulkanRenderpassCreateData renderPassCreateData                      = {};
             renderPassCreateData.pRenderProperties                               = &props;
             renderPassCreateData.pSubpassCreateDataList                          = &renderSubpassCreateDataList;
             renderPassCreateData.framebufferNum                                  = 1;
             renderPassCreateData.pRenderTargetCreateDataList                     = &shadowPassRTCreateDataList;
 
-            VulkanRenderPass shadowPass(m_pSetting, m_pDevice, m_pCmdBufferMgr, m_pDescritorMgr, m_pScene);
-
-            status = shadowPass.create(renderPassCreateData);
+            status = AddRenderPass(BX_RENDER_PASS_PRE_RENDER, renderPassCreateData);
 
             assert(status == BX_SUCCESS);
-
-            m_preDrawPassList.push_back(shadowPass);
 
             return status;
         }

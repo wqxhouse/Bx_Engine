@@ -32,7 +32,8 @@ namespace VulkanEngine
             BOOL addGraphicsCmdBuffers(
                 const BX_QUEUE_TYPE           queueType,
                 const BX_COMMAND_BUFFER_LEVLE level,
-                const UINT                    size);
+                const UINT                    size,
+                const BOOL                    isMainRenderPassCmd);
 
             BOOL copyBuffer(
                 const VkBuffer&                 srcBuffer,

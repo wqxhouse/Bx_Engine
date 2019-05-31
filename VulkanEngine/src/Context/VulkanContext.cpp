@@ -334,15 +334,65 @@ namespace VulkanEngine
             const VkQueue& submitQueue =
                 m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().graphicsFamilyIndex).m_queue;
 
-            VkPipelineStageFlags waitStages[]      = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-            VkSemaphore          waitSemaphore[]   = { m_renderSemaphore };
-            VkSemaphore          signalSemaphore[] = { m_presentSemaphore };
+            VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+            // Assumption: every render pass only bind to one command buffer
+            const std::vector<Render::VulkanRenderPass>& preDrawPassList = m_pRender->GetPreDrawPassList();
+            const UINT preDrawPassNum = static_cast<UINT>(preDrawPassList.size());
+
+            std::vector<VkSemaphore> waitSemaphoreList = { m_renderSemaphore };
+
+            if (preDrawPassNum > 0)
+            {
+                VkSemaphore lastPreDrawPassSemaphore = m_preDrawSemaphoreList.back();
+                waitSemaphoreList.push_back(lastPreDrawPassSemaphore);
+            }
+
+            VkSemaphore signalSemaphore[] = { m_presentSemaphore };
+
+            for (UINT preDrawPassIndex = 0;
+                 preDrawPassIndex < static_cast<UINT>(preDrawPassList.size());
+                 ++preDrawPassIndex)
+            {
+                const std::vector<UINT>& cmdBufferIndexList =
+                    preDrawPassList[preDrawPassIndex].GetCmdBufferIndexList();
+
+                VkSubmitInfo submitInfo         = {};
+                submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+                submitInfo.pWaitDstStageMask    = waitStages;
+                submitInfo.commandBufferCount   = 1;
+                submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
+                    GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, cmdBufferIndexList[0])->GetCmdBufferPtr();
+
+                if (preDrawPassIndex == 0)
+                {
+                    submitInfo.waitSemaphoreCount   = static_cast<UINT>(waitSemaphoreList.size());
+                    submitInfo.pWaitSemaphores      = waitSemaphoreList.data();
+                    submitInfo.signalSemaphoreCount = 1;
+                    submitInfo.pSignalSemaphores    = &(m_preDrawSemaphoreList[0]);
+                }
+                else
+                {
+                    submitInfo.waitSemaphoreCount   = 1;
+                    submitInfo.pWaitSemaphores      = &(m_preDrawSemaphoreList[preDrawPassIndex - 1]);
+                    submitInfo.signalSemaphoreCount = 1;
+                    submitInfo.pSignalSemaphores    = &(m_preDrawSemaphoreList[preDrawPassIndex]);
+                }
+
+                VkResult submitResult = vkQueueSubmit(submitQueue,
+                                                      1,
+                                                      &submitInfo,
+                                                      VK_NULL_HANDLE);
+
+                status = VulkanUtility::GetBxStatus(submitResult);
+                assert(status == BX_SUCCESS);
+            }
 
             VkSubmitInfo submitInfo         = {};
             submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
             submitInfo.pWaitDstStageMask    = waitStages;
             submitInfo.waitSemaphoreCount   = 1;
-            submitInfo.pWaitSemaphores      = waitSemaphore;
+            submitInfo.pWaitSemaphores      = &(waitSemaphoreList[0]);
             submitInfo.signalSemaphoreCount = 1;
             submitInfo.pSignalSemaphores    = signalSemaphore;
             submitInfo.commandBufferCount   = 1;
@@ -752,6 +802,20 @@ namespace VulkanEngine
             m_vkDevice, &semaphoreCreateInfo, NULL, m_presentSemaphore.replace());
 
         assert(semaphoreCreateResult == VK_SUCCESS);
+
+        const std::vector<Render::VulkanRenderPass>& preDrawPassList = m_pRender->GetPreDrawPassList();
+        const UINT preDrawPassNum = static_cast<UINT>(preDrawPassList.size());
+
+        m_preDrawSemaphoreList.resize(preDrawPassNum);
+        for (UINT preDrawPassIndex = 0;
+            preDrawPassIndex < static_cast<UINT>(preDrawPassList.size());
+            ++preDrawPassIndex)
+        {
+            semaphoreCreateResult = vkCreateSemaphore(
+                m_vkDevice, &semaphoreCreateInfo, NULL, m_preDrawSemaphoreList[preDrawPassIndex].replace());
+
+            assert(semaphoreCreateResult == VK_SUCCESS);
+        }
 
         status = VulkanUtility::GetBxStatus(semaphoreCreateResult);
 

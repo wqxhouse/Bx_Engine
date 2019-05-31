@@ -1,4 +1,3 @@
-#include "VulkanRenderPass.h"
 //=================================================================================================
 //
 //  Bx Engine
@@ -7,6 +6,8 @@
 //  All code licensed under the MIT license
 //
 //================================================================================================
+
+#include "VulkanRenderPass.h"
 
 namespace VulkanEngine
 {
@@ -17,18 +18,27 @@ namespace VulkanEngine
             const VkDevice*     const pDevice,
             Mgr::CmdBufferMgr*  const pCmdBufferMgr,
             Mgr::DescriptorMgr* const pDescritorMgr,
-            const Scene::RenderScene* pScene)
+            const Scene::RenderScene* pScene,
+            const BOOL                isMainRenderPass)
             : m_pSetting(pSetting),
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescriptorMgr(pDescritorMgr),
               m_pScene(pScene),
-              m_renderPass(*m_pDevice, vkDestroyRenderPass)
+              m_renderPass(*m_pDevice, vkDestroyRenderPass),
+              m_renderViewport(),
+              m_isMainRenderPass(isMainRenderPass),
+              m_enableColor(FALSE),
+              m_enableDepth(FALSE),
+              m_enableStencil(FALSE)
         {
         }
 
         VulkanRenderPass::~VulkanRenderPass()
         {
+#if _DEBUG
+            printf("Release vulkan render pass.\n");
+#endif
         }
 
         BOOL VulkanRenderPass::create(
@@ -313,12 +323,30 @@ namespace VulkanEngine
             const Scene::RenderScene* pScene = m_pScene;
 
             const UINT framebufferSize = static_cast<UINT>(m_framebufferList.size());
-            const UINT cmdBufferOffset = m_pCmdBufferMgr->GetGraphicsCmdBufferNum();
+
+            UINT cmdBufferOffset = 0;
+            UINT cmdBufferEnd = 0;
+
+            if (IsMainRenderPass() == TRUE)
+            {
+                cmdBufferEnd = framebufferSize;
+            }
+            else
+            {
+                cmdBufferOffset = m_pCmdBufferMgr->GetGraphicsCmdBufferNum();
+                cmdBufferEnd = cmdBufferOffset + framebufferSize;
+            }
+
+            for (UINT cmdBufferIndex = cmdBufferOffset; cmdBufferIndex < cmdBufferEnd; ++cmdBufferIndex)
+            {
+                m_cmdBufferIndexList.push_back(cmdBufferIndex);
+            }
 
             status = m_pCmdBufferMgr->
                 addGraphicsCmdBuffers(BX_QUEUE_GRAPHICS,
                                       BX_DIRECT_COMMAND_BUFFER,
-                                      framebufferSize);
+                                      framebufferSize,
+                                      IsMainRenderPass());
 
             if (status == BX_FAIL)
             {
@@ -326,13 +354,11 @@ namespace VulkanEngine
                 assert(BX_FAIL);
             }
 
-            const size_t framebufferNum = m_framebufferList.size();
-            const UINT   cmdBufferEnd   = cmdBufferOffset + static_cast<UINT>(framebufferNum);
-
-            for (UINT i = cmdBufferOffset; i < cmdBufferEnd; ++i)
+            for (UINT cmdBufferIndex = cmdBufferOffset, fboIndex = 0;
+                 cmdBufferIndex < cmdBufferEnd; ++cmdBufferIndex, ++fboIndex)
             {
                 Buffer::CmdBuffer* const pCmdBuffer =
-                    m_pCmdBufferMgr->GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, i);
+                    m_pCmdBufferMgr->GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, cmdBufferIndex);
 
                 status = pCmdBuffer->beginCmdBuffer(TRUE);
 
@@ -340,7 +366,7 @@ namespace VulkanEngine
                 if (status == BX_SUCCESS)
                 {
                     pCmdBuffer->beginRenderPass(m_renderPass,
-                                                m_framebufferList[i].GetFramebufferHandle(),
+                                                m_framebufferList[fboIndex].GetFramebufferHandle(),
                                                 m_renderViewport,
                                                 m_clearValueList);
 
@@ -392,8 +418,7 @@ namespace VulkanEngine
                                             {
                                                 pDescriptorBuffer = uniformBufferDescUpdateInfoList[0].pDescriptorBuffer;
                                                 transUniformBufferOffset =
-                                                    modelCounter *
-                                                    static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
+                                                    modelCounter * static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
                                             }
 
                                             const UINT meshNum = pModel->GetMeshNum();
@@ -414,10 +439,11 @@ namespace VulkanEngine
                                                                                     { 0 },
                                                                                     pIndexBuffer->GetIndexType());
 
-                                                    if (uniformBufferDescUpdateInfoList.size()  > 0 &&
+                                                    if (uniformBufferDescUpdateInfoList.size()  > 1 &&
                                                         m_pDescriptorMgr->GetDescriptorSetNum() > 0)
                                                     {
-                                                        if (m_pDescriptorMgr->GetDescriptorSet(subpassIndex) != VK_NULL_HANDLE)
+                                                        const UINT descriptorSetIndex = uniformBufferDescUpdateInfoList[1].descriptorSetIndex;
+                                                        if (m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) != VK_NULL_HANDLE)
                                                         {
                                                             pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
 
@@ -427,7 +453,7 @@ namespace VulkanEngine
 
                                                             pCmdBuffer->cmdBindDynamicDescriptorSets(
                                                                 graphicsPipeline.GetGraphicsPipelineLayout(),
-                                                                { m_pDescriptorMgr->GetDescriptorSet(subpassIndex) },
+                                                                { m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) },
                                                                 { transUniformBufferOffset, materialUniformBufferOffset });
                                                         }
                                                     }

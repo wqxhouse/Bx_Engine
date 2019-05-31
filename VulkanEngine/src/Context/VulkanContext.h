@@ -129,6 +129,9 @@ namespace VulkanEngine
         VDeleter<VkSemaphore> m_renderSemaphore;
         VDeleter<VkSemaphore> m_presentSemaphore;
 
+        std::vector<VDeleter<VkSemaphore>> m_preDrawSemaphoreList;
+        std::vector<VDeleter<VkSemaphore>> m_postDrawSemaphoreList;
+
         // Scene
         std::vector<Scene::RenderScene*> m_pRenderSceneList;
         UINT                             m_activeSceneIndex;

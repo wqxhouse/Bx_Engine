@@ -46,19 +46,20 @@ namespace VulkanEngine
                 const BX_RENDER_PASS_STAGE        renderPassStage,
                 const VulkanRenderpassCreateData& renderPassCreateData)
             {
+                BOOL status = BX_SUCCESS;
+
                 switch (renderPassStage)
                 {
                     case BX_RENDER_PASS_PRE_RENDER:
                     {
-                        size_t prePassSize = m_preDrawPassList.size();
-
                         m_preDrawPassList.push_back(VulkanRenderPass(m_pSetting,
                                                                      m_pDevice,
                                                                      m_pCmdBufferMgr,
                                                                      m_pDescritorMgr,
-                                                                     m_pScene));
+                                                                     m_pScene,
+                                                                     FALSE));
 
-                        m_preDrawPassList.at(prePassSize).create(renderPassCreateData);
+                        status = m_preDrawPassList.back().create(renderPassCreateData);
 
                         break;
                     }
@@ -66,20 +67,19 @@ namespace VulkanEngine
                     {
                         m_mainSceneRenderPass.clean();
 
-                        m_mainSceneRenderPass.create(renderPassCreateData);
+                        status = m_mainSceneRenderPass.create(renderPassCreateData);
                         break;
                     }
                     case BX_RENDER_PASS_POST_RENDER:
                     {
-                        size_t postPassSize = m_postDrawPassList.size();
-
                         m_postDrawPassList.push_back(VulkanRenderPass(m_pSetting,
                                                                       m_pDevice,
                                                                       m_pCmdBufferMgr,
                                                                       m_pDescritorMgr,
-                                                                      m_pScene));
+                                                                      m_pScene,
+                                                                      FALSE));
 
-                        m_postDrawPassList.at(postPassSize).create(renderPassCreateData);
+                        status = m_postDrawPassList.back().create(renderPassCreateData);
 
                         break;
                     }
@@ -87,6 +87,18 @@ namespace VulkanEngine
                         NotSupported();
                         break;
                 }
+
+                return status;
+            }
+
+            INLINE const std::vector<VulkanRenderPass>& GetPreDrawPassList() const
+            {
+                return m_preDrawPassList;
+            }
+
+            INLINE const std::vector<VulkanRenderPass>& GetPostDrawPassList() const
+            {
+                return m_postDrawPassList;
             }
 
             INLINE BOOL IsDepthTestEnabled()   const { return m_isDepthTestEnabled;     }

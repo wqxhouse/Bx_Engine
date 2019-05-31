@@ -75,7 +75,8 @@ namespace VulkanEngine
                 const VkDevice*     const pDevice,
                 Mgr::CmdBufferMgr*  const pCmdBufferMgr,
                 Mgr::DescriptorMgr* const pDescritorMgr,
-                const Scene::RenderScene* pScene);
+                const Scene::RenderScene* pScene,
+                const BOOL                isMainRenderPass);
 
             ~VulkanRenderPass();
 
@@ -96,11 +97,17 @@ namespace VulkanEngine
                 return &(m_framebufferList[framebufferIndex]);
             }
 
+            INLINE const std::vector<UINT>& GetCmdBufferIndexList() const
+            {
+                return m_cmdBufferIndexList;
+            }
+
             INLINE const VkRect2D& GetRenderViewport() const { return m_renderViewport; }
 
-            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;   }
-            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;   }
-            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil; }
+            INLINE const BOOL IsMainRenderPass() const { return m_isMainRenderPass;  }
+            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;       }
+            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;       }
+            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil;     }
 
         private:
             /*struct VulkanRenderPassUniformBufferUpdateData
@@ -155,6 +162,10 @@ namespace VulkanEngine
             VkRect2D                                            m_renderViewport;
 
             std::vector<VkClearValue>                           m_clearValueList;
+
+            std::vector<UINT>                                   m_cmdBufferIndexList;
+
+            const BOOL                                          m_isMainRenderPass;
 
             BOOL                                                m_enableColor;
             BOOL                                                m_enableDepth;
