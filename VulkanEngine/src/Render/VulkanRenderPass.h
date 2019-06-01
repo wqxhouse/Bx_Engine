@@ -168,6 +168,8 @@ namespace VulkanEngine
 
             std::vector<UINT>                                   m_cmdBufferIndexList;
 
+            std::vector<UINT>                                   m_descriptorSetIndexList;
+
             const BOOL                                          m_isMainRenderPass;
 
             BOOL                                                m_enableColor;

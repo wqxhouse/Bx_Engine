@@ -29,6 +29,16 @@ namespace VulkanEngine
                 const UINT               descriptorNum,
                 const VkShaderStageFlags stageFlags) = 0;
 
+            template <typename T>
+            void GetBufferData(T** ppData) const
+            {
+                const VkDevice       device = *GetDevice();
+                const VkDeviceMemory memory = ((IsBufferOptimized() == TRUE) ? m_gpuBufferMemory : m_hostBufferMemory);
+
+                vkMapMemory(device, memory, 0, m_bufferSize, 0, reinterpret_cast<void**>(ppData));
+                vkUnmapMemory(device, memory);
+            }
+
             INLINE const VkDescriptorSetLayout GetDescriptorSetLayout() const
             {
                 return m_descriptorSetLayout;

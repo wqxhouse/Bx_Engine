@@ -22,7 +22,7 @@
 #define ALBEDO_TEXTURE_INDEX            4
 #define SPECULAR_TEXTURE_INDEX          5
 
-#define DESCRIPTOR_SET_NUM              1
+#define DESCRIPTOR_SET_NUM              2
 
 namespace VulkanEngine
 {
@@ -112,9 +112,9 @@ namespace VulkanEngine
                 }
             }
 
-            for (const VulkanRenderPass& preRenderPass : m_preDrawPassList)
+            for (VulkanRenderPass& preRenderPass : m_preDrawPassList)
             {
-                // status = preRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
+                status = preRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
 
                 assert(status == BX_SUCCESS);
             }
@@ -122,7 +122,7 @@ namespace VulkanEngine
             status = m_mainSceneRenderPass.update(deltaTime, m_descriptorUpdateDataTable);
             assert(status == BX_SUCCESS);
 
-            for (const VulkanRenderPass& postRenderPass : m_postDrawPassList)
+            for (VulkanRenderPass& postRenderPass : m_postDrawPassList)
             {
                 // status = postRenderPass.update(deltaTime);
 

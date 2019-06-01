@@ -7,8 +7,8 @@ layout (location = 2) in vec2 texCoord;
 
 layout (binding = 0) uniform Trans
 {
-	mat4 wvpMat;
     mat4 padding[3];
+	mat4 wvpMat;
 };
 
 void main()

@@ -470,8 +470,8 @@ namespace VulkanEngine
                 Buffer::VulkanDescriptorBuffer* pDescriptorBuffer =
                     m_uniformBufferDescriptorUpdateInfo[i].pDescriptorBuffer;
 
-                status = pDescriptorBuffer->updateBufferData(pDescriptorBuffer->GetBufferSize(),
-                    updateDataList[i].pData);
+                status = pDescriptorBuffer->updateBufferData(
+                    pDescriptorBuffer->GetBufferSize(), updateDataList[i].pData);
             }
 
             assert(status == BX_SUCCESS);

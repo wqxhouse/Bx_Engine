@@ -111,6 +111,9 @@ namespace VulkanEngine
             std::vector<std::vector<const VulkanDescriptorInfo*>> inputAttachmentDescriptorInfoPtrTable(renderSubpassNum);
             std::vector<std::vector<const VulkanDescriptorInfo*>> resolveAttachmentDescriptorInfoPtrTable(renderSubpassNum);
 
+            UINT descriptorSetIndexMap[VK_MAX_DESCRIPTION_SIZE];
+            memset(descriptorSetIndexMap, 0, m_pDescriptorMgr->GetMaxDescriporSet() * sizeof(UINT));
+
             // Iterate all subpasses (no necessary follow the subpass index order)
             for (UINT subpassIter = 0; subpassIter < renderSubpassNum; ++subpassIter)
             {
@@ -133,6 +136,14 @@ namespace VulkanEngine
                 {
                     const VulkanDescriptorResources* descriptorResources =
                         &(pSubpassDescriptorResourcesList->at(descriptorResourceIndex));
+
+                    assert(descriptorResources->descriptorSetIndex < m_pDescriptorMgr->GetMaxDescriporSet());
+
+                    if (descriptorSetIndexMap[descriptorResources->descriptorSetIndex] == 0)
+                    {
+                        descriptorSetIndexMap[descriptorResources->descriptorSetIndex] = 0;
+                        m_descriptorSetIndexList.push_back(descriptorResources->descriptorSetIndex);
+                    }
 
                     if (descriptorResources->pUniformBufferResourceList != NULL)
                     {
@@ -311,7 +322,8 @@ namespace VulkanEngine
 
             for (size_t pipelineIndex = 0; pipelineIndex < graphicsPipelineNum; ++pipelineIndex)
             {
-                status = m_graphicsPipelineList[pipelineIndex].update(deltaTime, updateDataTable[pipelineIndex]);
+                status = m_graphicsPipelineList[pipelineIndex].update(
+                    deltaTime, updateDataTable[m_descriptorSetIndexList[pipelineIndex]]);
             }
 
             assert(status == BX_SUCCESS);
@@ -454,6 +466,7 @@ namespace VulkanEngine
 
                                                             const UINT descriptorSetIndex =
                                                                 uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].descriptorSetIndex;
+
                                                             if (m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) != VK_NULL_HANDLE)
                                                             {
                                                                 pDescriptorBuffer = uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].pDescriptorBuffer;

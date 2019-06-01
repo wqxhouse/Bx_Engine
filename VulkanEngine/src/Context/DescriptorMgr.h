@@ -78,6 +78,11 @@ namespace VulkanEngine
                 return m_descriptorSetList[descriptorSetIndex];
             }
 
+            const UINT GetMaxDescriporSet() const
+            {
+                return m_maxDescriptorSet;
+            }
+
         private:
             const VkDevice*                           m_pDevice;
 
