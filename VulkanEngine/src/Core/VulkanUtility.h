@@ -86,7 +86,7 @@ namespace VulkanEngine
             static INLINE VkShaderStageFlags GetVkShaderStageFlag(
                 const BX_SHADER_TYPE shaderType)
             {
-                VkShaderStageFlags shaderStageFlags;
+                VkShaderStageFlags shaderStageFlags = 0;
 
                 switch (shaderType)
                 {
@@ -119,7 +119,7 @@ namespace VulkanEngine
             static INLINE VkPolygonMode GetVkPolygonMode(
                 const PolyMode polyMode)
             {
-                VkPolygonMode vkPolyMode = VK_POLYGON_MODE_BEGIN_RANGE;
+                VkPolygonMode vkPolyMode = VK_POLYGON_MODE_MAX_ENUM;
 
                 switch (polyMode)
                 {
@@ -143,7 +143,7 @@ namespace VulkanEngine
             static INLINE VkCullModeFlags GetVkCullMode(
                 const CullMode cullMode)
             {
-                VkCullModeFlags vkCullMode;
+                VkCullModeFlags vkCullMode = VK_CULL_MODE_NONE;
 
                 switch (cullMode)
                 {
@@ -228,7 +228,7 @@ namespace VulkanEngine
             static INLINE VkCommandBufferLevel GetVkCmdBufferLevel(
                 const BX_COMMAND_BUFFER_LEVLE cmdBufferLevel)
             {
-                VkCommandBufferLevel vkCmdBufferLevel;
+                VkCommandBufferLevel vkCmdBufferLevel = VK_COMMAND_BUFFER_LEVEL_MAX_ENUM;
 
                 switch (cmdBufferLevel)
                 {
@@ -249,7 +249,7 @@ namespace VulkanEngine
             static INLINE VkVertexInputRate GetVkVertexInputRate(
                 const BX_VERTEX_INPUT_RATE rate)
             {
-                VkVertexInputRate inputRate;
+                VkVertexInputRate inputRate = VK_VERTEX_INPUT_RATE_MAX_ENUM;
 
                 switch (rate)
                 {
@@ -270,7 +270,7 @@ namespace VulkanEngine
             static INLINE VkIndexType GetVkIndexType(
                 const BX_INDEX_TYPE type)
             {
-                VkIndexType indexType;
+                VkIndexType indexType = VK_INDEX_TYPE_MAX_ENUM;
 
                 switch (type)
                 {
@@ -291,7 +291,7 @@ namespace VulkanEngine
             static INLINE VkDescriptorType GetVkDescriptorType(
                 const BX_DESCRIPTOR_TYPE type)
             {
-                VkDescriptorType descriptorType;
+                VkDescriptorType descriptorType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
 
                 switch (type)
                 {
@@ -321,7 +321,7 @@ namespace VulkanEngine
             static INLINE TextureFormat GetImageFormat(
                 const VkFormat vkFormat)
             {
-                TextureFormat imageFormat;
+                TextureFormat imageFormat = BX_FORMAT_NONE;
 
                 switch (vkFormat)
                 {
@@ -411,7 +411,7 @@ namespace VulkanEngine
             static INLINE VkFormat GetVkImageFormat(
                 const TextureFormat format)
             {
-                VkFormat imageFormat;
+                VkFormat imageFormat = VK_FORMAT_UNDEFINED;
 
                 switch (format)
                 {
@@ -531,7 +531,7 @@ namespace VulkanEngine
             static INLINE VkImageAspectFlagBits GetVkImageAspect(
                 const TextureFormat format)
             {
-                VkImageAspectFlagBits aspectMask;
+                VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_FLAG_BITS_MAX_ENUM;
 
                 switch (format)
                 {
@@ -575,7 +575,7 @@ namespace VulkanEngine
             static INLINE TextureUsage GetTextureUsage(
                 const TextureFormat format)
             {
-                TextureUsage textureUsage;
+                TextureUsage textureUsage = BX_TEXTURE_SAMPLER_FILTER_MAX;
 
                 switch (format)
                 {
@@ -624,10 +624,10 @@ namespace VulkanEngine
                 OUT VkPipelineStageFlags* pSrcStage,
                 OUT VkPipelineStageFlags* pDstStage)
             {
-                VkAccessFlags        srcAccessMask;
-                VkAccessFlags        dstAccessMask;
-                VkPipelineStageFlags srcStage;
-                VkPipelineStageFlags dstStage;
+                VkAccessFlags        srcAccessMask = VK_ACCESS_FLAG_BITS_MAX_ENUM;
+                VkAccessFlags        dstAccessMask = VK_ACCESS_FLAG_BITS_MAX_ENUM;
+                VkPipelineStageFlags srcStage      = VK_PIPELINE_STAGE_FLAG_BITS_MAX_ENUM;
+                VkPipelineStageFlags dstStage      = VK_PIPELINE_STAGE_FLAG_BITS_MAX_ENUM;
 
                 if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED)
                 {
@@ -743,7 +743,7 @@ namespace VulkanEngine
             static INLINE VkFilter GetVkFilter(
                 const TextureSamplerFilter samplerFilter)
             {
-                VkFilter filter;
+                VkFilter filter = VK_FILTER_MAX_ENUM;
 
                 switch (samplerFilter)
                 {
@@ -767,7 +767,7 @@ namespace VulkanEngine
             static INLINE VkSamplerMipmapMode GetVkMipmapMode(
                 const TextureSamplerFilter samplerFilter)
             {
-                VkSamplerMipmapMode mipmapMode;
+                VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_MAX_ENUM;
 
                 switch (samplerFilter)
                 {
@@ -788,7 +788,7 @@ namespace VulkanEngine
             static INLINE VkSamplerAddressMode GetVkAddressMode(
                 const TextureSamplerAddressingMode samplerAddressingMode)
             {
-                VkSamplerAddressMode addressMode;
+                VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_MAX_ENUM;
 
                 switch (samplerAddressingMode)
                 {
@@ -815,7 +815,7 @@ namespace VulkanEngine
             static INLINE VkBorderColor GetVkBorderColor(
                 const Math::Vector4& color)
             {
-                VkBorderColor borderColor;
+                VkBorderColor borderColor = VK_BORDER_COLOR_MAX_ENUM;
 
                 if (Math::FloatEqual(color.r, 0.0f) &&
                     Math::FloatEqual(color.g, 0.0f) &&
