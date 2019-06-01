@@ -44,6 +44,7 @@ namespace VulkanEngine
 
             INLINE BOOL AddRenderPass(
                 const BX_RENDER_PASS_STAGE        renderPassStage,
+                const RenderPassType              renderPassType,
                 const VulkanRenderpassCreateData& renderPassCreateData)
             {
                 BOOL status = BX_SUCCESS;
@@ -58,7 +59,7 @@ namespace VulkanEngine
                                                                      m_pDescriptorMgr,
                                                                      m_pScene,
                                                                      m_renderPassNum,
-                                                                     FALSE));
+                                                                     renderPassType));
 
                         m_renderPassNum++;
 
@@ -81,7 +82,7 @@ namespace VulkanEngine
                                                                       m_pDescriptorMgr,
                                                                       m_pScene,
                                                                       m_renderPassNum,
-                                                                      FALSE));
+                                                                      renderPassType));
 
                         m_renderPassNum++;
 

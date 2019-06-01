@@ -20,7 +20,7 @@ namespace VulkanEngine
             Mgr::DescriptorMgr* const pDescritorMgr,
             const Scene::RenderScene* pScene,
             const UINT                renderpassIndex,
-            const BOOL                isMainRenderPass)
+            const RenderPassType      renderPassType)
             : m_pSetting(pSetting),
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr),
@@ -29,7 +29,7 @@ namespace VulkanEngine
               m_renderpassIndex(renderpassIndex),
               m_renderPass(*m_pDevice, vkDestroyRenderPass),
               m_renderViewport(),
-              m_isMainRenderPass(isMainRenderPass),
+              m_renderPassType(renderPassType),
               m_enableColor(FALSE),
               m_enableDepth(FALSE),
               m_enableStencil(FALSE)
@@ -457,19 +457,14 @@ namespace VulkanEngine
                                                     if (uniformBufferDescUpdateInfoList.size()  > 0 &&
                                                         m_pDescriptorMgr->GetDescriptorSetNum() > 0)
                                                     {
-                                                        // TODO: Avoid hard code
-                                                        UINT uniformBufferDescUpdateIndex = 0;
-
-                                                        if (uniformBufferDescUpdateInfoList.size() > 1)
+                                                        if (IsMainRenderPass() == TRUE)
                                                         {
-                                                            uniformBufferDescUpdateIndex = 1;
-
                                                             const UINT descriptorSetIndex =
-                                                                uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].descriptorSetIndex;
+                                                                uniformBufferDescUpdateInfoList[1].descriptorSetIndex;
 
                                                             if (m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) != VK_NULL_HANDLE)
                                                             {
-                                                                pDescriptorBuffer = uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].pDescriptorBuffer;
+                                                                pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
 
                                                                 materialUniformBufferOffset =
                                                                     meshCounter *
@@ -481,17 +476,19 @@ namespace VulkanEngine
                                                                     { transUniformBufferOffset, materialUniformBufferOffset });
                                                             }
                                                         }
-                                                        else
+                                                        else if (IsShadowPass() == TRUE)
                                                         {
                                                             const UINT descriptorSetIndex =
-                                                                uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].descriptorSetIndex;
-
-                                                            pDescriptorBuffer = uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].pDescriptorBuffer;
+                                                                uniformBufferDescUpdateInfoList[0].descriptorSetIndex;
 
                                                             pCmdBuffer->cmdBindDynamicDescriptorSets(
                                                                 graphicsPipeline.GetGraphicsPipelineLayout(),
                                                                 { m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) },
                                                                 { transUniformBufferOffset });
+                                                        }
+                                                        else
+                                                        {
+                                                            NotImplemented();
                                                         }
                                                     }
 

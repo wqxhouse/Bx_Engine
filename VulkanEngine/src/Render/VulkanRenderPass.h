@@ -18,6 +18,14 @@ namespace VulkanEngine
 {
     namespace Render
     {
+        enum RenderPassType
+        {
+            MAIN_RENDER_PASS = 0,
+            GBUFFER_PASS     = 1,
+            SHADOW_PASS      = 2,
+            GENERAL_PASS
+        };
+
         struct VulkanRenderProperties
         {
             Rectangle                 renderViewportRect;
@@ -77,7 +85,7 @@ namespace VulkanEngine
                 Mgr::DescriptorMgr* const pDescritorMgr,
                 const Scene::RenderScene* pScene,
                 const UINT                renderpassIndex,
-                const BOOL                isMainRenderPass);
+                const RenderPassType      renderPassType);
 
             ~VulkanRenderPass();
 
@@ -105,10 +113,13 @@ namespace VulkanEngine
 
             INLINE const VkRect2D& GetRenderViewport() const { return m_renderViewport; }
 
-            INLINE const BOOL IsMainRenderPass() const { return m_isMainRenderPass;  }
-            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;       }
-            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;       }
-            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil;     }
+            INLINE const BOOL IsMainRenderPass() const { return (m_renderPassType == MAIN_RENDER_PASS);  }
+            INLINE const BOOL IsGBufferPass()    const { return (m_renderPassType == GBUFFER_PASS);      }
+            INLINE const BOOL IsShadowPass()     const { return (m_renderPassType == SHADOW_PASS);       }
+
+            INLINE const BOOL IsColorEnabled()   const { return m_enableColor;                           }
+            INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;                           }
+            INLINE const BOOL IsStencilEnabled() const { return m_enableStencil;                         }
 
 
             std::vector<VulkanGraphicsPipeline>                 m_graphicsPipelineList;
@@ -146,6 +157,7 @@ namespace VulkanEngine
                 const UINT                                           framebufferNum);
 
             const UINT                                          m_renderpassIndex;
+            const RenderPassType                                m_renderPassType;
 
             // Context
             const Setting*                                      m_pSetting;
@@ -169,8 +181,6 @@ namespace VulkanEngine
             std::vector<UINT>                                   m_cmdBufferIndexList;
 
             std::vector<UINT>                                   m_descriptorSetIndexList;
-
-            const BOOL                                          m_isMainRenderPass;
 
             BOOL                                                m_enableColor;
             BOOL                                                m_enableDepth;

@@ -33,7 +33,7 @@ namespace VulkanEngine
               m_pTextureMgr(pTextureMgr),
               m_pScene(pScene),
               m_renderPassNum(1),
-              m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene, 0, TRUE),
+              m_mainSceneRenderPass(pSetting, pDevice, pCmdBufferMgr, pDescritorMgr, pScene, 0, MAIN_RENDER_PASS),
               m_isDepthTestEnabled(FALSE),
               m_isStencilTestEnabled(FALSE),
               m_ppBackbufferTextures(ppBackbufferTextures),
@@ -488,7 +488,7 @@ namespace VulkanEngine
             renderPassCreateData.framebufferNum                                  = 1;
             renderPassCreateData.pRenderTargetCreateDataList                     = &shadowPassRTCreateDataList;
 
-            status = AddRenderPass(BX_RENDER_PASS_PRE_RENDER, renderPassCreateData);
+            status = AddRenderPass(BX_RENDER_PASS_PRE_RENDER, SHADOW_PASS, renderPassCreateData);
 
             assert(status == BX_SUCCESS);
 
