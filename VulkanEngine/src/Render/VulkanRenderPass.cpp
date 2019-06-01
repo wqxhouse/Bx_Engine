@@ -38,9 +38,6 @@ namespace VulkanEngine
 
         VulkanRenderPass::~VulkanRenderPass()
         {
-#if _DEBUG
-            printf("Release vulkan render pass.\n");
-#endif
         }
 
         BOOL VulkanRenderPass::create(

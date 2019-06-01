@@ -797,7 +797,7 @@ namespace VulkanEngine
         const std::vector<Render::VulkanRenderPass>& preDrawPassList = m_pRender->GetPreDrawPassList();
         const UINT preDrawPassNum = static_cast<UINT>(preDrawPassList.size());
 
-        m_preDrawSemaphoreList.resize(preDrawPassNum);
+        m_preDrawSemaphoreList.resize(preDrawPassNum, { m_vkDevice, vkDestroySemaphore });
         for (UINT preDrawPassIndex = 0;
             preDrawPassIndex < static_cast<UINT>(preDrawPassList.size());
             ++preDrawPassIndex)
