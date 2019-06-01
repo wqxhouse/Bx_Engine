@@ -55,9 +55,12 @@ namespace VulkanEngine
                         m_preDrawPassList.push_back(VulkanRenderPass(m_pSetting,
                                                                      m_pDevice,
                                                                      m_pCmdBufferMgr,
-                                                                     m_pDescritorMgr,
+                                                                     m_pDescriptorMgr,
                                                                      m_pScene,
+                                                                     m_renderPassNum,
                                                                      FALSE));
+
+                        m_renderPassNum++;
 
                         status = m_preDrawPassList.back().create(renderPassCreateData);
 
@@ -75,9 +78,12 @@ namespace VulkanEngine
                         m_postDrawPassList.push_back(VulkanRenderPass(m_pSetting,
                                                                       m_pDevice,
                                                                       m_pCmdBufferMgr,
-                                                                      m_pDescritorMgr,
+                                                                      m_pDescriptorMgr,
                                                                       m_pScene,
+                                                                      m_renderPassNum,
                                                                       FALSE));
+
+                        m_renderPassNum++;
 
                         status = m_postDrawPassList.back().create(renderPassCreateData);
 
@@ -243,13 +249,14 @@ namespace VulkanEngine
             const VkPhysicalDevice* const                                     m_pHwDevice;
             const VkDevice*         const                                     m_pDevice;
             Mgr::CmdBufferMgr*      const                                     m_pCmdBufferMgr;
-            Mgr::DescriptorMgr*     const                                     m_pDescritorMgr;
+            Mgr::DescriptorMgr*     const                                     m_pDescriptorMgr;
             Mgr::TextureMgr*        const                                     m_pTextureMgr;
             const Scene::RenderScene*                                         m_pScene;
 
             std::vector<VulkanRenderPass>                                     m_preDrawPassList;
             VulkanRenderPass                                                  m_mainSceneRenderPass;
             std::vector<VulkanRenderPass>                                     m_postDrawPassList;
+            UINT                                                              m_renderPassNum;
 
             const std::vector<Texture::VulkanTexture2D*>* const               m_ppBackbufferTextures;
 

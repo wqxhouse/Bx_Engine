@@ -19,12 +19,14 @@ namespace VulkanEngine
             Mgr::CmdBufferMgr*  const pCmdBufferMgr,
             Mgr::DescriptorMgr* const pDescritorMgr,
             const Scene::RenderScene* pScene,
+            const UINT                renderpassIndex,
             const BOOL                isMainRenderPass)
             : m_pSetting(pSetting),
               m_pDevice(pDevice),
               m_pCmdBufferMgr(pCmdBufferMgr),
               m_pDescriptorMgr(pDescritorMgr),
               m_pScene(pScene),
+              m_renderpassIndex(renderpassIndex),
               m_renderPass(*m_pDevice, vkDestroyRenderPass),
               m_renderViewport(),
               m_isMainRenderPass(isMainRenderPass),
@@ -264,7 +266,7 @@ namespace VulkanEngine
                 descriptorPoolCreateDataList.push_back(inputAttachmentDescriptorPoolCreateInfo);
             }
 
-            status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateDataList);
+            status = m_pDescriptorMgr->createDescriptorPool(descriptorPoolCreateDataList, m_renderpassIndex);
             assert(status == BX_SUCCESS);
 
             // Create graphics pipelines for each subpass
@@ -278,6 +280,7 @@ namespace VulkanEngine
                 const UINT subpassIndex = pSubpassGraphicsPipelineCreateData->subpassIndex;
 
                 VulkanGraphicsPipelineCreateData graphicsPipelineCreateData     = {};
+                graphicsPipelineCreateData.renderPassIndex                      = m_renderpassIndex;
                 graphicsPipelineCreateData.subpassIndex                         = subpassIndex;
                 graphicsPipelineCreateData.enableColor                          = IsColorEnabled();
                 graphicsPipelineCreateData.enableDepth                          = IsDepthEnabled();
@@ -434,18 +437,6 @@ namespace VulkanEngine
 
                                                     pCmdBuffer->cmdBindVertexBuffers({ pVertexBuffer->GetVertexBuffer() },
                                                                                      { 0 });
-
-                                                    /*void* pData = NULL;
-                                                    VkBuffer indexBuffer = pIndexBuffer->GetBuffer();
-                                                    vkMapMemory(*m_pDevice, pIndexBuffer->m_gpuBufferMemory, 0, pIndexBuffer->GetIndexNum() * sizeof(UINT), 0, &pData);
-                                                    UINT* pUintData = (UINT*)pData;
-                                                    vkUnmapMemory(*m_pDevice, pIndexBuffer->m_gpuBufferMemory);
-
-                                                    void* pData2 = NULL;
-                                                    VkBuffer vertexBuffer = pVertexBuffer->GetBuffer();
-                                                    vkMapMemory(*m_pDevice, pVertexBuffer->m_gpuBufferMemory, 0, pVertexBuffer->GetVertexBufferSize(), 0, &pData2);
-                                                    UINT* pUintData2 = (UINT*)pData2;
-                                                    vkUnmapMemory(*m_pDevice, pVertexBuffer->m_gpuBufferMemory);*/
 
                                                     pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
                                                                                     { 0 },

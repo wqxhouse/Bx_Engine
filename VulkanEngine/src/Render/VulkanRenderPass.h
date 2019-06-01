@@ -76,6 +76,7 @@ namespace VulkanEngine
                 Mgr::CmdBufferMgr*  const pCmdBufferMgr,
                 Mgr::DescriptorMgr* const pDescritorMgr,
                 const Scene::RenderScene* pScene,
+                const UINT                renderpassIndex,
                 const BOOL                isMainRenderPass);
 
             ~VulkanRenderPass();
@@ -143,6 +144,8 @@ namespace VulkanEngine
             BOOL createFramebuffers(
                 std::vector<std::vector<Buffer::VulkanAttachment*>>* pFramebufferAttachmentPtrList,
                 const UINT                                           framebufferNum);
+
+            const UINT                                          m_renderpassIndex;
 
             // Context
             const Setting*                                      m_pSetting;

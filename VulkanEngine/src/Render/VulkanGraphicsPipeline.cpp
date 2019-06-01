@@ -368,7 +368,8 @@ namespace VulkanEngine
                 status = m_pDescriptorMgr->
                     createDescriptorSets(
                         VDeleter<VkDescriptorSetLayout>::GetRawVector(descriptorLayoutList),
-                        descriptorSetIndexList);
+                        descriptorSetIndexList,
+                        pGraphicsPipelineCreateData->renderPassIndex);
 
                 assert(status == BX_SUCCESS);
 

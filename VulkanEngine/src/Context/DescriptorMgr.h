@@ -51,15 +51,18 @@ namespace VulkanEngine
             ~DescriptorMgr();
 
             BOOL createDescriptorPool(
-                const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData);
+                const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
+                const UINT                                   renderpassIndex);
 
             BOOL createDescriptorSets(
                 const VkDescriptorSetLayout descriptorSetLayout,
-                const std::vector<UINT>&    descriptorSetIndexList);
+                const std::vector<UINT>&    descriptorSetIndexList,
+                const UINT                  renderpassIndex);
 
             BOOL createDescriptorSets(
                 const std::vector<VkDescriptorSetLayout>& descriptorSetLayoutList,
-                const std::vector<UINT>&                  descriptorSetIndexList);
+                const std::vector<UINT>&                  descriptorSetIndexList,
+                const UINT                                renderpassIndex);
 
             BOOL updateDescriptorSet(
                 const std::vector<DescriptorUpdateInfo>& descriptorSetUpdateInfo);
@@ -76,14 +79,16 @@ namespace VulkanEngine
             }
 
         private:
-            const VkDevice*              m_pDevice;
+            const VkDevice*                           m_pDevice;
 
-            CmdBufferMgr*                m_pCmdMgr;
+            CmdBufferMgr*                             m_pCmdMgr;
 
-            VDeleter<VkDescriptorPool>   m_descriptorPool;
-            std::vector<VkDescriptorSet> m_descriptorSetList;
+            std::vector<VDeleter<VkDescriptorPool>>   m_descriptorPoolList;
+            std::vector<VkDescriptorSet>              m_descriptorSetList;
 
-            UINT                         m_maxDescriptorSet;
+            const UINT                                m_maxDescriptorSet;
+
+            const static UINT                         m_maxDescriptorPoolNum;
         };
     }
 }

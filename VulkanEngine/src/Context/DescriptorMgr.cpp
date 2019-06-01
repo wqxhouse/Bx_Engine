@@ -13,16 +13,17 @@ namespace VulkanEngine
 {
     namespace Mgr
     {
+        const UINT DescriptorMgr::m_maxDescriptorPoolNum = 64;
+
         DescriptorMgr::DescriptorMgr(
             const VkDevice* const pDevice,
             CmdBufferMgr*         pCmdMgr,
             const UINT            maxDescriptorSet)
             : m_pDevice(pDevice),
               m_maxDescriptorSet(maxDescriptorSet),
-              m_pCmdMgr(pCmdMgr)
+              m_pCmdMgr(pCmdMgr),
+              m_descriptorPoolList(m_maxDescriptorPoolNum, { *pDevice, vkDestroyDescriptorPool })
         {
-            m_descriptorPool = { *pDevice, vkDestroyDescriptorPool };
-
             m_descriptorSetList.resize(static_cast<size_t>(maxDescriptorSet));
         }
 
@@ -31,8 +32,11 @@ namespace VulkanEngine
         }
 
         BOOL DescriptorMgr::createDescriptorPool(
-            const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData)
+            const std::vector<DescriptorPoolCreateInfo>& descriptorPoolCreateData,
+            const UINT                                   renderpassIndex)
         {
+            assert(m_descriptorPoolList[renderpassIndex] == VK_NULL_HANDLE);
+
             BOOL result = BX_SUCCESS;
 
             size_t descriptorPoolCreateNum = descriptorPoolCreateData.size();
@@ -56,7 +60,7 @@ namespace VulkanEngine
                 vkCreateDescriptorPool(*m_pDevice,
                                        &descriptorPoolCreateInfo,
                                        NULL,
-                                       m_descriptorPool.replace());
+                                       m_descriptorPoolList[renderpassIndex].replace());
 
             result = Utility::VulkanUtility::GetBxStatus(descriptorPoolCreateResult);
 
@@ -107,7 +111,8 @@ namespace VulkanEngine
 
         BOOL DescriptorMgr::createDescriptorSets(
             const VkDescriptorSetLayout descriptorSetLayout,
-            const std::vector<UINT>&    descriptorSetIndexList)
+            const std::vector<UINT>&    descriptorSetIndexList,
+            const UINT                  renderpassIndex)
         {
             BOOL result = BX_SUCCESS;
 
@@ -117,7 +122,7 @@ namespace VulkanEngine
 
             VkDescriptorSetAllocateInfo descriptorSetAllocInfo = {};
             descriptorSetAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            descriptorSetAllocInfo.descriptorPool     = m_descriptorPool;
+            descriptorSetAllocInfo.descriptorPool     = m_descriptorPoolList[renderpassIndex];
             descriptorSetAllocInfo.pSetLayouts        = descriptorSetLayoutList.data();
             descriptorSetAllocInfo.descriptorSetCount = static_cast<UINT>(descriptorSetNum);
 
@@ -142,7 +147,8 @@ namespace VulkanEngine
 
         BOOL DescriptorMgr::createDescriptorSets(
             const std::vector<VkDescriptorSetLayout>& descriptorSetLayoutList,
-            const std::vector<UINT>&                  descriptorSetIndexList)
+            const std::vector<UINT>&                  descriptorSetIndexList,
+            const UINT                                renderpassIndex)
         {
             assert(descriptorSetLayoutList.size() == descriptorSetIndexList.size());
 
@@ -153,7 +159,7 @@ namespace VulkanEngine
 
             VkDescriptorSetAllocateInfo descriptorSetAllocInfo = {};
             descriptorSetAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            descriptorSetAllocInfo.descriptorPool     = m_descriptorPool;
+            descriptorSetAllocInfo.descriptorPool     = m_descriptorPoolList[renderpassIndex];
             descriptorSetAllocInfo.pSetLayouts        = descriptorSetLayoutList.data();
             descriptorSetAllocInfo.descriptorSetCount = static_cast<UINT>(descriptorSetNum);
 

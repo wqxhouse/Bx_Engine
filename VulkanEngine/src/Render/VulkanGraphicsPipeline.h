@@ -95,6 +95,7 @@ namespace VulkanEngine
 
         struct VulkanGraphicsPipelineCreateData
         {
+            UINT                                            renderPassIndex;
             UINT                                            subpassIndex;
 
             BOOL                                            enableColor;
