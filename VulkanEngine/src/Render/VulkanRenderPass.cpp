@@ -435,26 +435,59 @@ namespace VulkanEngine
                                                     pCmdBuffer->cmdBindVertexBuffers({ pVertexBuffer->GetVertexBuffer() },
                                                                                      { 0 });
 
+                                                    /*void* pData = NULL;
+                                                    VkBuffer indexBuffer = pIndexBuffer->GetBuffer();
+                                                    vkMapMemory(*m_pDevice, pIndexBuffer->m_gpuBufferMemory, 0, pIndexBuffer->GetIndexNum() * sizeof(UINT), 0, &pData);
+                                                    UINT* pUintData = (UINT*)pData;
+                                                    vkUnmapMemory(*m_pDevice, pIndexBuffer->m_gpuBufferMemory);
+
+                                                    void* pData2 = NULL;
+                                                    VkBuffer vertexBuffer = pVertexBuffer->GetBuffer();
+                                                    vkMapMemory(*m_pDevice, pVertexBuffer->m_gpuBufferMemory, 0, pVertexBuffer->GetVertexBufferSize(), 0, &pData2);
+                                                    UINT* pUintData2 = (UINT*)pData2;
+                                                    vkUnmapMemory(*m_pDevice, pVertexBuffer->m_gpuBufferMemory);*/
+
                                                     pCmdBuffer->cmdBindIndexBuffers(pIndexBuffer->GetBuffer(),
                                                                                     { 0 },
                                                                                     pIndexBuffer->GetIndexType());
 
-                                                    if (uniformBufferDescUpdateInfoList.size()  > 1 &&
+                                                    if (uniformBufferDescUpdateInfoList.size()  > 0 &&
                                                         m_pDescriptorMgr->GetDescriptorSetNum() > 0)
                                                     {
-                                                        const UINT descriptorSetIndex = uniformBufferDescUpdateInfoList[1].descriptorSetIndex;
-                                                        if (m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) != VK_NULL_HANDLE)
-                                                        {
-                                                            pDescriptorBuffer = uniformBufferDescUpdateInfoList[1].pDescriptorBuffer;
+                                                        // TODO: Avoid hard code
+                                                        UINT uniformBufferDescUpdateIndex = 0;
 
-                                                            materialUniformBufferOffset =
-                                                                meshCounter *
-                                                                static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
+                                                        if (uniformBufferDescUpdateInfoList.size() > 1)
+                                                        {
+                                                            uniformBufferDescUpdateIndex = 1;
+
+                                                            const UINT descriptorSetIndex =
+                                                                uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].descriptorSetIndex;
+                                                            if (m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) != VK_NULL_HANDLE)
+                                                            {
+                                                                pDescriptorBuffer = uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].pDescriptorBuffer;
+
+                                                                materialUniformBufferOffset =
+                                                                    meshCounter *
+                                                                    static_cast<UINT>(pDescriptorBuffer->GetDescriptorObjectSize());
+
+                                                                pCmdBuffer->cmdBindDynamicDescriptorSets(
+                                                                    graphicsPipeline.GetGraphicsPipelineLayout(),
+                                                                    { m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) },
+                                                                    { transUniformBufferOffset, materialUniformBufferOffset });
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            const UINT descriptorSetIndex =
+                                                                uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].descriptorSetIndex;
+
+                                                            pDescriptorBuffer = uniformBufferDescUpdateInfoList[uniformBufferDescUpdateIndex].pDescriptorBuffer;
 
                                                             pCmdBuffer->cmdBindDynamicDescriptorSets(
                                                                 graphicsPipeline.GetGraphicsPipelineLayout(),
                                                                 { m_pDescriptorMgr->GetDescriptorSet(descriptorSetIndex) },
-                                                                { transUniformBufferOffset, materialUniformBufferOffset });
+                                                                { transUniformBufferOffset });
                                                         }
                                                     }
 

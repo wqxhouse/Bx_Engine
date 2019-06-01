@@ -342,14 +342,6 @@ namespace VulkanEngine
 
             std::vector<VkSemaphore> waitSemaphoreList = { m_renderSemaphore };
 
-            if (preDrawPassNum > 0)
-            {
-                VkSemaphore lastPreDrawPassSemaphore = m_preDrawSemaphoreList.back();
-                waitSemaphoreList.push_back(lastPreDrawPassSemaphore);
-            }
-
-            VkSemaphore signalSemaphore[] = { m_presentSemaphore };
-
             for (UINT preDrawPassIndex = 0;
                  preDrawPassIndex < static_cast<UINT>(preDrawPassList.size());
                  ++preDrawPassIndex)
@@ -364,10 +356,24 @@ namespace VulkanEngine
                 submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
                     GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, cmdBufferIndexList[0])->GetCmdBufferPtr();
 
+                /*Render::VulkanGraphicsPipeline pipeline = preDrawPassList[preDrawPassIndex].m_graphicsPipelineList[0];
+                const std::vector<Render::VulkanVertexInputResource>* pVertexInputResourceList =
+                    pipeline.GetVertexInputResourceList();
+                const Render::VulkanVertexInputResource* pVertexInputResource =
+                    &(pVertexInputResourceList->at(0));
+
+                Buffer::VulkanIndexBuffer* pIndexBuffer = pVertexInputResource->pIndexBuffer.get();
+
+                void* pData = NULL;
+                VkBuffer indexBuffer = pIndexBuffer->GetBuffer();
+                vkMapMemory(m_vkDevice, pIndexBuffer->m_gpuBufferMemory, 0, pIndexBuffer->GetIndexNum() * sizeof(UINT), 0, &pData);
+                UINT* pUintData = (UINT*)pData;
+                vkUnmapMemory(m_vkDevice, pIndexBuffer->m_gpuBufferMemory);*/
+
                 if (preDrawPassIndex == 0)
                 {
-                    submitInfo.waitSemaphoreCount   = static_cast<UINT>(waitSemaphoreList.size());
-                    submitInfo.pWaitSemaphores      = waitSemaphoreList.data();
+                    submitInfo.waitSemaphoreCount   = 1;
+                    submitInfo.pWaitSemaphores      = &(waitSemaphoreList[0]);
                     submitInfo.signalSemaphoreCount = 1;
                     submitInfo.pSignalSemaphores    = &(m_preDrawSemaphoreList[0]);
                 }
@@ -392,9 +398,9 @@ namespace VulkanEngine
             submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
             submitInfo.pWaitDstStageMask    = waitStages;
             submitInfo.waitSemaphoreCount   = 1;
-            submitInfo.pWaitSemaphores      = &(waitSemaphoreList[0]);
+            submitInfo.pWaitSemaphores      = &(m_preDrawSemaphoreList[0]);
             submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores    = signalSemaphore;
+            submitInfo.pSignalSemaphores    = &m_presentSemaphore;
             submitInfo.commandBufferCount   = 1;
             submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
                 GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, renderImageIndex)->GetCmdBufferPtr();
@@ -414,7 +420,6 @@ namespace VulkanEngine
             const VkQueue& presentQueue    =
                 m_queueMgr.GetQueue(m_queueMgr.GetHwQueueIndices().presentSurfaceFamilyIndex).m_queue;
 
-            VkSemaphore    waitSemaphore[] = { m_presentSemaphore };
             VkSwapchainKHR swapchain[]     = { m_swapchain };
 
             VkPresentInfoKHR presentInfo   = {};
@@ -423,7 +428,7 @@ namespace VulkanEngine
             presentInfo.pSwapchains        = swapchain;
             presentInfo.pImageIndices      = &renderImageIndex;
             presentInfo.waitSemaphoreCount = 1;
-            presentInfo.pWaitSemaphores    = waitSemaphore;
+            presentInfo.pWaitSemaphores    = &m_presentSemaphore;
 
             VkResult presentResult = vkQueuePresentKHR(presentQueue, &presentInfo);
 

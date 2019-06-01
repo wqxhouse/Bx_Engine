@@ -109,6 +109,8 @@ namespace VulkanEngine
             INLINE const BOOL IsDepthEnabled()   const { return m_enableDepth;       }
             INLINE const BOOL IsStencilEnabled() const { return m_enableStencil;     }
 
+
+            std::vector<VulkanGraphicsPipeline>                 m_graphicsPipelineList;
         private:
             /*struct VulkanRenderPassUniformBufferUpdateData
             {
@@ -149,8 +151,6 @@ namespace VulkanEngine
             Mgr::DescriptorMgr* const                           m_pDescriptorMgr;
 
             VDeleter<VkRenderPass>                              m_renderPass;
-
-            std::vector<VulkanGraphicsPipeline>                 m_graphicsPipelineList;
 
             // Resources
             const Scene::RenderScene*                           m_pScene;

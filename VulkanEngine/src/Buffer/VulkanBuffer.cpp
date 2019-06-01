@@ -82,7 +82,7 @@ namespace VulkanEngine
                     gpuBufferCreateInfo.bufferUsage           = bufferCreateInfo.bufferUsage |
                                                                 VK_BUFFER_USAGE_TRANSFER_DST_BIT;
                     gpuBufferCreateInfo.bufferSize            = hostBufferCreateInfo.bufferSize;
-                    gpuBufferCreateInfo.bufferProperties      = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+                    gpuBufferCreateInfo.bufferProperties      = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
                     result = createRawBuffer(hwDevice, gpuBufferCreateInfo);
 
