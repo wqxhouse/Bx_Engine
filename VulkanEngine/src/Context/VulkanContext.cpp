@@ -356,20 +356,6 @@ namespace VulkanEngine
                 submitInfo.pCommandBuffers      = m_pCmdBufferMgr->
                     GetCmdBuffer(BX_GRAPHICS_COMMAND_BUFFER, cmdBufferIndexList[0])->GetCmdBufferPtr();
 
-                /*Render::VulkanGraphicsPipeline pipeline = preDrawPassList[preDrawPassIndex].m_graphicsPipelineList[0];
-                const std::vector<Render::VulkanVertexInputResource>* pVertexInputResourceList =
-                    pipeline.GetVertexInputResourceList();
-                const Render::VulkanVertexInputResource* pVertexInputResource =
-                    &(pVertexInputResourceList->at(0));
-
-                Buffer::VulkanIndexBuffer* pIndexBuffer = pVertexInputResource->pIndexBuffer.get();
-
-                void* pData = NULL;
-                VkBuffer indexBuffer = pIndexBuffer->GetBuffer();
-                vkMapMemory(m_vkDevice, pIndexBuffer->m_gpuBufferMemory, 0, pIndexBuffer->GetIndexNum() * sizeof(UINT), 0, &pData);
-                UINT* pUintData = (UINT*)pData;
-                vkUnmapMemory(m_vkDevice, pIndexBuffer->m_gpuBufferMemory);*/
-
                 if (preDrawPassIndex == 0)
                 {
                     submitInfo.waitSemaphoreCount   = 1;
@@ -398,7 +384,7 @@ namespace VulkanEngine
             submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
             submitInfo.pWaitDstStageMask    = waitStages;
             submitInfo.waitSemaphoreCount   = 1;
-            submitInfo.pWaitSemaphores      = &(m_preDrawSemaphoreList[0]);
+            submitInfo.pWaitSemaphores      = ((preDrawPassList.size() == 0) ? &(waitSemaphoreList[0]) : &(m_preDrawSemaphoreList.back()));
             submitInfo.signalSemaphoreCount = 1;
             submitInfo.pSignalSemaphores    = &m_presentSemaphore;
             submitInfo.commandBufferCount   = 1;
