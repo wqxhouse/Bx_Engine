@@ -265,12 +265,24 @@ namespace Math
         float inv_nag_z_dis = 1.0f / (nearClip - farClip);
 
         projMat[0][0] = 2.0f * inv_x_dis;
-        projMat[1][1] = 2.0f * inv_y_dis;
-        projMat[2][2] = 2.0f * inv_nag_z_dis;
         projMat[3][0] = -(viewport.right + viewport.left) * inv_x_dis;
-        projMat[3][1] = -(viewport.top + viewport.bottom) * inv_y_dis;
-        projMat[3][2] = (nearClip + farClip) * inv_nag_z_dis;
         projMat[3][3] = 1.0f;
+
+#if BX_COORDINATE_SYSTEM == BX_COORDINATE_SYATEM_RIGHT_HAND
+        projMat[1][1] = -2.0f * inv_y_dis;
+        projMat[3][1] = (viewport.top + viewport.bottom) * inv_y_dis;
+#else
+        projMat[1][1] = 2.0f * inv_y_dis;
+        projMat[3][1] = -(viewport.top + viewport.bottom) * inv_y_dis;
+#endif
+
+#if BX_CLIP_SPACE_DEPTH == BX_DEPTH_ZERO_TO_ONE
+        projMat[2][2] = inv_nag_z_dis;
+        projMat[3][2] = nearClip * inv_nag_z_dis;
+#else
+        projMat[2][2] = 2.0f * inv_nag_z_dis;
+        projMat[3][2] = (nearClip + farClip) * inv_nag_z_dis;
+#endif
 
         return projMat;
     }
