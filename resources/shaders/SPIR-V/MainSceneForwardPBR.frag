@@ -6,6 +6,7 @@
 #define MAX_SPOT_LIGHT_NUM        16
 
 #define MAX_MESH_NUM              512
+#define MAX_LIGHT_NUM             512
 
 #define PI    3.1415926f
 #define InvPI 0.318309886f
@@ -20,7 +21,7 @@ layout(location = 0) out vec4 outColor;
 struct LightBase
 {
     vec4 color;
-    mat4 lightTransVP;
+    mat4 lightTransMat;
 };
 
 struct DirectionalLight
@@ -73,11 +74,15 @@ layout (binding = 2) uniform LightData
 
 layout (binding = 3) uniform StaticUniform
 {
-    vec3  camPosWorld;
+    vec3 camPosWorld;
+    mat4 lightCamViewMat;
 };
 
 layout (binding = 4) uniform sampler2D AlbedoTexture[MAX_MESH_NUM];
 layout (binding = 5) uniform sampler2D SpecularTexture[MAX_MESH_NUM];
+
+// Shadow
+layout (binding = 6) uniform sampler2D shadowMap[MAX_LIGHT_NUM];
 
 /// BRDF functions
 // GGX NDF
@@ -168,6 +173,13 @@ vec3 calCooktorranceGGXBRDF(const vec3  V,
     vec3 brdf = clamp((kd * fd + fs), 0.0f, 1.0f);
 
     return brdf;
+}
+
+bool shadowCasting()
+{
+    bool isShadow = false;
+
+    return isShadow;
 }
 
 vec3 gammaCorrection(

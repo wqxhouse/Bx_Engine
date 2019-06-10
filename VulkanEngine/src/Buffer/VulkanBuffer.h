@@ -60,12 +60,6 @@ namespace VulkanEngine
                 return m_bufferFlags.bits.dynamicBuffer;
             }
 
-            VDeleter<VkBuffer>       m_hostBuffer;
-            VDeleter<VkDeviceMemory> m_hostBufferMemory;
-
-            VDeleter<VkBuffer>       m_gpuBuffer;
-            VDeleter<VkDeviceMemory> m_gpuBufferMemory;
-
         protected:
             BOOL updateBufferDataRange(
                 const VkDeviceSize                        bufferSize,
@@ -85,6 +79,12 @@ namespace VulkanEngine
 
             const VkDevice*    const m_pDevice;
             Mgr::CmdBufferMgr* const m_pCmdBufferMgr;
+
+            VDeleter<VkBuffer>       m_hostBuffer;
+            VDeleter<VkDeviceMemory> m_hostBufferMemory;
+
+            VDeleter<VkBuffer>       m_gpuBuffer;
+            VDeleter<VkDeviceMemory> m_gpuBufferMemory;
 
             union VulkanBufferFlags
             {

@@ -171,7 +171,9 @@ namespace VulkanEngine
             struct LightBaseUbo
             {
                 Math::Vector4 color;
-                Math::Mat4    lightTransVP;
+                // Transform fragment position from camera(eye) space to shadow map space:
+                // LightCamProjMat * LightCamViewMat * InverseCamViewMat
+                Math::Mat4    lightTransMat;
             };
 
             struct DirectionalLightUbo : public LightBaseUbo

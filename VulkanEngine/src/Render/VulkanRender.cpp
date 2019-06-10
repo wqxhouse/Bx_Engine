@@ -636,6 +636,7 @@ namespace VulkanEngine
             for (UINT lightIndex = 0; lightIndex < lightNum; ++lightIndex)
             {
                 const Object::Light::LightBase* pLight = m_pScene->GetLight(lightIndex);
+
                 switch (pLight->GetLightType())
                 {
                     case DIRECTIONAL_LIGHT:

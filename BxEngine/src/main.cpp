@@ -22,7 +22,7 @@
 
 int main()
 {
-	Setting setting;
+	Setting setting                           = {};
     setting.m_graphicsSetting.DisableSSAO();
     setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
     setting.m_graphicsSetting.shadowCasting   = TRUE;
@@ -98,6 +98,18 @@ int main()
     prosCamCreateInfo.farClip     = 1000.0f;
 
     m_pScene->AddProspectiveCamera(prosCamCreateInfo);
+
+    /*Trans orthoCamTrans(Math::Vector3(0.0f, 0.0f, -5.0f),
+                        Math::Vector3(0.0f, 0.0f,  0.0f),
+                        Math::Vector3(0.0f, 1.0f,  0.0f));
+
+    Object::Camera::OrthographicCameraCreateInfo orthoCamCreateInfo = {};
+    orthoCamCreateInfo.pTrans      = &orthoCamTrans;
+    orthoCamCreateInfo.speed       = 20.0f;
+    orthoCamCreateInfo.nearClip    = 0.1f;
+    orthoCamCreateInfo.farClip     = 100.0f;
+    orthoCamCreateInfo.viewport    = { -10.0f, 10.0f, -10.0f, 10.0f };
+    m_pScene->AddOrthographicCamera(orthoCamCreateInfo);*/
 
     Trans lightTrans(Math::Vector3(1.0f, 1.0f, 1.0f),
                      Math::Vector3(0.0f, 0.0f, 0.0f),

@@ -30,6 +30,7 @@
     <ClCompile Include="src\Render\VulkanGraphicsPipeline.cpp" />
     <ClCompile Include="src\Render\VulkanRender.cpp" />
     <ClCompile Include="src\Render\VulkanRenderPass.cpp" />
+    <ClCompile Include="src\Render\VulkanShadowRender.cpp" />
     <ClCompile Include="src\Shader\VulkanGraphicsShader.cpp" />
     <ClCompile Include="src\Shader\VulkanShader.cpp" />
     <ClCompile Include="src\Texture\VulkanTexture2D.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="src\Render\VulkanGraphicsPipeline.h" />
     <ClInclude Include="src\Render\VulkanRender.h" />
     <ClInclude Include="src\Render\VulkanRenderPass.h" />
+    <ClInclude Include="src\Render\VulkanShadowRender.h" />
     <ClInclude Include="src\Shader\VulkanGraphicsShader.h" />
     <ClInclude Include="src\Shader\VulkanShader.h" />
     <ClInclude Include="src\Texture\VulkanTexture.h" />
