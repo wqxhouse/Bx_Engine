@@ -22,17 +22,20 @@
 
 int main()
 {
-	Setting setting                           = {};
+	Setting setting = {};
     setting.m_graphicsSetting.DisableSSAO();
-    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
-    setting.m_graphicsSetting.shadowCasting   = TRUE;
-    setting.m_graphicsSetting.shadingMethod   = ShadingMethod::PBR_COOK_TORRANCE;
-    setting.m_graphicsSetting.antialasing     = AA_LOW;
+    setting.m_graphicsSetting.antialasing = AA_LOW;
 
 #if BX_OPENGL
+    setting.m_graphicsSetting.renderingMethod = FORWARD_PLUS_RENDERING;
+
     OpenGLTemplate m_oglTemplate(&setting);
     m_oglTemplate.run();
 #elif BX_VULKAN
+    setting.m_graphicsSetting.renderingMethod = FORWARD_RENDERING;
+    setting.m_graphicsSetting.shadowCasting = TRUE;
+    setting.m_graphicsSetting.shadingMethod = ShadingMethod::PBR_COOK_TORRANCE;
+
     // Memory
     Memory::MemoryPool          m_memPool(256 * 1024 * 1024);
     Memory::MemoryPoolAllocator m_allocator(&m_memPool,
